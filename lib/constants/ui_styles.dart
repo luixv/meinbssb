@@ -48,7 +48,7 @@ class UIStyles {
   );
 
   static const TextStyle dialogContentStyle = TextStyle(
-    fontSize: UIConstants.bodyFontSize,
+    fontSize: UIConstants.dialogFontSize,
     fontFamily: UIConstants.defaultFontFamily,
     color: UIConstants.textColor,
   );
@@ -153,49 +153,49 @@ class UIStyles {
 
   // Form Input Decoration
   static InputDecoration get formInputDecoration => InputDecoration(
-        labelStyle: formLabelStyle,
-        hintStyle: formLabelStyle,
-        errorStyle: errorStyle,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.mydarkGreyColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.mydarkGreyColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.primaryColor),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.errorColor),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          borderSide: const BorderSide(color: UIConstants.errorColor),
-        ),
-        filled: true,
-        fillColor: UIConstants.whiteColor,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: UIConstants.spacingM,
-          vertical: UIConstants.spacingS,
-        ),
-      );
+    labelStyle: formLabelStyle,
+    hintStyle: formLabelStyle,
+    errorStyle: errorStyle,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+      borderSide: const BorderSide(color: UIConstants.mydarkGreyColor),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+      borderSide: const BorderSide(color: UIConstants.mydarkGreyColor),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+      borderSide: const BorderSide(color: UIConstants.primaryColor),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+      borderSide: const BorderSide(color: UIConstants.errorColor),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+      borderSide: const BorderSide(color: UIConstants.errorColor),
+    ),
+    filled: true,
+    fillColor: UIConstants.whiteColor,
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: UIConstants.spacingM,
+      vertical: UIConstants.spacingS,
+    ),
+  );
 
   // Card Decoration
   static BoxDecoration get cardDecoration => BoxDecoration(
-        color: UIConstants.whiteColor,
-        borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black,
-            blurRadius: UIConstants.spacingM,
-            offset: Offset(0, 2),
-          ),
-        ],
-      );
+    color: UIConstants.whiteColor,
+    borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+    boxShadow: const [
+      BoxShadow(
+        color: Colors.black,
+        blurRadius: UIConstants.spacingM,
+        offset: Offset(0, 2),
+      ),
+    ],
+  );
 
   // Dialog Styles
   static final ButtonStyle defaultButtonStyle = ElevatedButton.styleFrom(
@@ -284,35 +284,46 @@ class UIStyles {
   static const double dividerEndIndent = 0.0;
 
   // Drawer Constants
-  static const EdgeInsets drawerPadding =
-      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
+  static const EdgeInsets drawerPadding = EdgeInsets.symmetric(
+    horizontal: 16.0,
+    vertical: 8.0,
+  );
   static const double drawerAvatarRadius = 32.0;
   static const double drawerAvatarIconSize = 32.0;
-  static const TextStyle drawerHeaderStyle =
-      TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold);
+  static const TextStyle drawerHeaderStyle = TextStyle(
+    fontSize: 18.0,
+    fontWeight: FontWeight.bold,
+  );
 
   // Info Message
   static const EdgeInsets infoMessagePadding = EdgeInsets.all(16.0);
-  static const EdgeInsets infoMessageMargin =
-      EdgeInsets.symmetric(vertical: 8.0);
+  static const EdgeInsets infoMessageMargin = EdgeInsets.symmetric(
+    vertical: 8.0,
+  );
   static const double infoMessageOpacity = 0.1;
-  static const BorderRadius infoMessageBorderRadius =
-      BorderRadius.all(Radius.circular(8.0));
+  static const BorderRadius infoMessageBorderRadius = BorderRadius.all(
+    Radius.circular(8.0),
+  );
 
   // Error Message
   static const EdgeInsets errorMessagePadding = EdgeInsets.all(16.0);
-  static const EdgeInsets errorMessageMargin =
-      EdgeInsets.symmetric(vertical: 8.0);
+  static const EdgeInsets errorMessageMargin = EdgeInsets.symmetric(
+    vertical: 8.0,
+  );
   static const double errorMessageOpacity = 0.1;
-  static const BorderRadius errorMessageBorderRadius =
-      BorderRadius.all(Radius.circular(8.0));
+  static const BorderRadius errorMessageBorderRadius = BorderRadius.all(
+    Radius.circular(8.0),
+  );
 
   // Tooltip
-  static const EdgeInsets tooltipPadding =
-      EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0);
+  static const EdgeInsets tooltipPadding = EdgeInsets.symmetric(
+    horizontal: 12.0,
+    vertical: 8.0,
+  );
   static const Color tooltipBackgroundColor = Color(0xFF333333);
-  static const BorderRadius tooltipBorderRadius =
-      BorderRadius.all(Radius.circular(4.0));
+  static const BorderRadius tooltipBorderRadius = BorderRadius.all(
+    Radius.circular(4.0),
+  );
   static const TextStyle tooltipTextStyle = TextStyle(
     color: Colors.white,
     fontSize: 12.0,
@@ -328,10 +339,13 @@ class UIStyles {
   static const Color snackBarTextColor = Colors.white;
   static const double snackBarFontSize = 14.0;
   static const Color snackBarBackgroundColor = Color(0xFF333333);
-  static const EdgeInsets snackBarPadding =
-      EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0);
-  static const BorderRadius snackBarBorderRadius =
-      BorderRadius.all(Radius.circular(4.0));
+  static const EdgeInsets snackBarPadding = EdgeInsets.symmetric(
+    horizontal: 16.0,
+    vertical: 12.0,
+  );
+  static const BorderRadius snackBarBorderRadius = BorderRadius.all(
+    Radius.circular(4.0),
+  );
 
   // TabBar
   static const double tabBarIndicatorWeight = 2.0;
@@ -345,8 +359,10 @@ class UIStyles {
   );
 
   // ListTile
-  static const EdgeInsets listTileContentPadding =
-      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
+  static const EdgeInsets listTileContentPadding = EdgeInsets.symmetric(
+    horizontal: 16.0,
+    vertical: 8.0,
+  );
   static const Color listTileBackgroundColor = Colors.white;
   static const Color listTileSelectedBackgroundColor = Color(0xFFF5F5F5);
   static const ShapeBorder listTileShape = RoundedRectangleBorder(
@@ -355,19 +371,23 @@ class UIStyles {
 
   // Success Message
   static const EdgeInsets successMessagePadding = EdgeInsets.all(16.0);
-  static const EdgeInsets successMessageMargin =
-      EdgeInsets.symmetric(vertical: 8.0);
+  static const EdgeInsets successMessageMargin = EdgeInsets.symmetric(
+    vertical: 8.0,
+  );
   static const double successMessageOpacity = 0.1;
-  static const BorderRadius successMessageBorderRadius =
-      BorderRadius.all(Radius.circular(8.0));
+  static const BorderRadius successMessageBorderRadius = BorderRadius.all(
+    Radius.circular(8.0),
+  );
 
   // Warning Message
   static const EdgeInsets warningMessagePadding = EdgeInsets.all(16.0);
-  static const EdgeInsets warningMessageMargin =
-      EdgeInsets.symmetric(vertical: 8.0);
+  static const EdgeInsets warningMessageMargin = EdgeInsets.symmetric(
+    vertical: 8.0,
+  );
   static const double warningMessageOpacity = 0.1;
-  static const BorderRadius warningMessageBorderRadius =
-      BorderRadius.all(Radius.circular(8.0));
+  static const BorderRadius warningMessageBorderRadius = BorderRadius.all(
+    Radius.circular(8.0),
+  );
 
   // Icon Colors
   static const Color menuIconColor = Colors.black;

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:provider/provider.dart';
+import '/constants/ui_styles.dart';
+import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class BankDataSuccessScreen extends StatelessWidget {
   const BankDataSuccessScreen({
@@ -18,44 +22,59 @@ class BankDataSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return BaseScreenLayout(
       title: 'Bankdaten',
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              success ? Icons.check_circle : Icons.error,
-              color:
-                  success ? UIConstants.successColor : UIConstants.errorColor,
-              size: UIConstants.iconSizeXL,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            Text(
+        child: Semantics(
+          label:
               success
                   ? 'Ihre Bankdaten wurden erfolgreich gespeichert.'
-                  : 'Es ist ein Fehler aufgetreten.',
-              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
-              textAlign: TextAlign.center,
-            ),
-          ],
+                  : 'Es ist ein Fehler beim Speichern der Bankdaten aufgetreten.',
+          liveRegion: true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                success ? Icons.check_circle : Icons.error,
+                color:
+                    success ? UIConstants.successColor : UIConstants.errorColor,
+                size: UIConstants.iconSizeXL,
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              ScaledText(
+                success
+                    ? 'Ihre Bankdaten wurden erfolgreich gespeichert.'
+                    : 'Es ist ein Fehler aufgetreten.',
+                style: UIStyles.dialogContentStyle.copyWith(
+                  fontSize:
+                      UIStyles.dialogContentStyle.fontSize! *
+                      fontSizeProvider.scaleFactor,
+                ),
+                //style: const TextStyle(fontSize: UIConstants.dialogFontSize),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'bankDataResultFab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/profile',
-            arguments: {'userData': userData, 'isLoggedIn': true},
-          );
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.person,
-          color: UIConstants.whiteColor,
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Zurück zum Profil',
+        child: FloatingActionButton(
+          heroTag: 'bankDataResultFab',
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(
+              '/profile',
+              arguments: {'userData': userData, 'isLoggedIn': true},
+            );
+          },
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.person, color: UIConstants.whiteColor),
         ),
       ),
     );

@@ -641,12 +641,17 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       appBar: AppBar(
         backgroundColor: UIConstants.backgroundColor,
         iconTheme: const IconThemeData(color: UIConstants.textColor),
-        title: ScaledText(
-          'Profilbild',
-          style: UIStyles.appBarTitleStyle.copyWith(
-            fontSize:
-                UIStyles.appBarTitleStyle.fontSize! *
-                fontSizeProvider.scaleFactor,
+        title: Semantics(
+          label:
+              'Profilbild Bildschirm. Hier können Sie Ihr Profilbild hochladen oder löschen.',
+          liveRegion: true,
+          child: ScaledText(
+            'Profilbild',
+            style: UIStyles.appBarTitleStyle.copyWith(
+              fontSize:
+                  UIStyles.appBarTitleStyle.fontSize! *
+                  fontSizeProvider.scaleFactor,
+            ),
           ),
         ),
         actions: [
@@ -677,19 +682,22 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
               ),
               const SizedBox(height: UIConstants.spacingM),
               Center(
-                child: ElevatedButton.icon(
-                  key: PersonalPictUploadScreen.selectBtnKey,
-                  onPressed: _pickImage,
-                  icon: const Icon(Icons.upload_file),
-                  label: ScaledText(
-                    'Bild auswählen',
-                    style: UIStyles.buttonStyle.copyWith(
-                      fontSize:
-                          UIStyles.buttonStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
+                child: Focus(
+                  autofocus: true,
+                  child: ElevatedButton.icon(
+                    key: PersonalPictUploadScreen.selectBtnKey,
+                    onPressed: _pickImage,
+                    icon: const Icon(Icons.upload_file),
+                    label: ScaledText(
+                      'Bild auswählen',
+                      style: UIStyles.buttonStyle.copyWith(
+                        fontSize:
+                            UIStyles.buttonStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
                     ),
+                    style: UIStyles.defaultButtonStyle,
                   ),
-                  style: UIStyles.defaultButtonStyle,
                 ),
               ),
               const SizedBox(height: UIConstants.spacingL),
@@ -705,19 +713,17 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Key on parent so test can always find it
                 Semantics(
                   key: PersonalPictUploadScreen.selectedTextKey,
-                  label: 'selected-image',
+                  label: 'Bild ausgewählt: ${_selectedImage!.name}',
+                  liveRegion: true,
                   child: Text(
                     'Bild ausgewählt: ${_selectedImage!.name}',
                     textAlign: TextAlign.center,
                   ),
                 ),
               ],
-
               const SizedBox(height: UIConstants.spacingM),
-              // Show validation requirements
               Consumer<ApiService>(
                 builder: (context, apiService, child) {
                   final maxSizeMB =
@@ -776,7 +782,6 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end, // Aligns FABs to the bottom
         children: [
-          // Delete FAB (visible only if an image is selected AND successfully uploaded to server, or if there's an existing photo)
           if ((_selectedImage != null && _isImageUploadedToServer) ||
               _existingProfilePhoto != null)
             FloatingActionButton(
@@ -797,7 +802,6 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             const SizedBox(
               height: UIConstants.spacingM,
             ), // Spacing between buttons
-          // Save FAB (enabled when there's a selected image to upload)
           FloatingActionButton(
             key: PersonalPictUploadScreen.saveFabKey,
             heroTag: 'saveFab',

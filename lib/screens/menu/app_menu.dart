@@ -406,6 +406,7 @@ class AppDrawer extends StatelessWidget {
                 onTap: () => navigator.logout(context, onLogout),
               ),
             ] else ...[
+              //Anmelden
               ListTile(
                 key: const Key('drawer_login'),
                 leading: const Icon(Icons.login, color: UIStyles.menuIconColor),
@@ -418,6 +419,7 @@ class AppDrawer extends StatelessWidget {
                   Navigator.of(context).pushNamed('/login');
                 },
               ),
+              // Registrieren
               ListTile(
                 key: const Key('drawer_register'),
                 leading: const Icon(
@@ -444,6 +446,7 @@ class AppDrawer extends StatelessWidget {
                   );
                 },
               ),
+              // Password reset
               ListTile(
                 key: const Key('drawer_pw_reset'),
                 leading: const Icon(
@@ -475,6 +478,8 @@ class AppDrawer extends StatelessWidget {
                 },
               ),
             ],
+
+            // Hilfe
           ],
         ),
       ),

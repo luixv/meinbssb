@@ -13,6 +13,8 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({required this.apiService, super.key});
@@ -284,6 +286,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
     return BaseScreenLayout(
       title: 'Registrierung',
       userData: null,
@@ -321,25 +324,25 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     canRequestFocus: true,
                     child: Semantics(
                       label: 'Vorname Eingabefeld',
-                      child: Consumer<FontSizeProvider>(
-                        builder: (context, fontSizeProvider, child) {
-                          return TextField(
-                            controller: _firstNameController,
-                            decoration: UIStyles.formInputDecoration.copyWith(
-                              labelText: Messages.firstNameLabel,
-                              labelStyle: UIStyles.formLabelStyle.copyWith(
-                                fontSize:
-                                    UIStyles.formLabelStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              ),
-                            ),
-                            style: UIStyles.formValueStyle.copyWith(
-                              fontSize:
-                                  UIStyles.formValueStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
-                            ),
-                          );
-                        },
+                      child: TextField(
+                        controller: _firstNameController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: Messages.firstNameLabel,
+                          labelStyle: UIStyles.formLabelStyle.copyWith(
+                            fontSize:
+                                UIStyles.formLabelStyle.fontSize != null
+                                    ? UIStyles.formLabelStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor
+                                    : null,
+                          ),
+                        ),
+                        style: UIStyles.formValueStyle.copyWith(
+                          fontSize:
+                              UIStyles.formValueStyle.fontSize != null
+                                  ? UIStyles.formValueStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor
+                                  : null,
+                        ),
                       ),
                     ),
                   ),
@@ -348,25 +351,25 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     canRequestFocus: true,
                     child: Semantics(
                       label: 'Nachname Eingabefeld',
-                      child: Consumer<FontSizeProvider>(
-                        builder: (context, fontSizeProvider, child) {
-                          return TextField(
-                            controller: _lastNameController,
-                            decoration: UIStyles.formInputDecoration.copyWith(
-                              labelText: Messages.lastNameLabel,
-                              labelStyle: UIStyles.formLabelStyle.copyWith(
-                                fontSize:
-                                    UIStyles.formLabelStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              ),
-                            ),
-                            style: UIStyles.formValueStyle.copyWith(
-                              fontSize:
-                                  UIStyles.formValueStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
-                            ),
-                          );
-                        },
+                      child: TextField(
+                        controller: _lastNameController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: Messages.lastNameLabel,
+                          labelStyle: UIStyles.formLabelStyle.copyWith(
+                            fontSize:
+                                UIStyles.formLabelStyle.fontSize != null
+                                    ? UIStyles.formLabelStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor
+                                    : null,
+                          ),
+                        ),
+                        style: UIStyles.formValueStyle.copyWith(
+                          fontSize:
+                              UIStyles.formValueStyle.fontSize != null
+                                  ? UIStyles.formValueStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor
+                                  : null,
+                        ),
                       ),
                     ),
                   ),
@@ -375,32 +378,32 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     canRequestFocus: true,
                     child: Semantics(
                       label: 'E-Mail Eingabefeld',
-                      child: Consumer<FontSizeProvider>(
-                        builder: (context, fontSizeProvider, child) {
-                          return TextField(
-                            controller: _emailController,
-                            decoration: UIStyles.formInputDecoration.copyWith(
-                              labelText: 'E-Mail',
-                              errorText: emailError,
-                              labelStyle: UIStyles.formLabelStyle.copyWith(
-                                fontSize:
-                                    UIStyles.formLabelStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              ),
-                            ),
-                            style: UIStyles.formValueStyle.copyWith(
-                              fontSize:
-                                  UIStyles.formValueStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            focusNode: _emailFocusNode,
-                            onChanged: (value) {
-                              setState(() {
-                                validateEmail(value);
-                              });
-                            },
-                          );
+                      child: TextField(
+                        controller: _emailController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'E-Mail',
+                          errorText: emailError,
+                          labelStyle: UIStyles.formLabelStyle.copyWith(
+                            fontSize:
+                                UIStyles.formLabelStyle.fontSize != null
+                                    ? UIStyles.formLabelStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor
+                                    : null,
+                          ),
+                        ),
+                        style: UIStyles.formValueStyle.copyWith(
+                          fontSize:
+                              UIStyles.formValueStyle.fontSize != null
+                                  ? UIStyles.formValueStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor
+                                  : null,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        focusNode: _emailFocusNode,
+                        onChanged: (value) {
+                          setState(() {
+                            validateEmail(value);
+                          });
                         },
                       ),
                     ),
@@ -418,31 +421,31 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                     canRequestFocus: true,
                     child: Semantics(
                       label: 'Schützenausweisnummer Eingabefeld',
-                      child: Consumer<FontSizeProvider>(
-                        builder: (context, fontSizeProvider, child) {
-                          return TextField(
-                            controller: _passNumberController,
-                            decoration: UIStyles.formInputDecoration.copyWith(
-                              labelText: 'Schützenausweisnummer',
-                              errorText: passNumberError,
-                              labelStyle: UIStyles.formLabelStyle.copyWith(
-                                fontSize:
-                                    UIStyles.formLabelStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                              ),
-                            ),
-                            style: UIStyles.formValueStyle.copyWith(
-                              fontSize:
-                                  UIStyles.formValueStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
-                            ),
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              setState(() {
-                                validatePassNumber(value);
-                              });
-                            },
-                          );
+                      child: TextField(
+                        controller: _passNumberController,
+                        decoration: UIStyles.formInputDecoration.copyWith(
+                          labelText: 'Schützenausweisnummer',
+                          errorText: passNumberError,
+                          labelStyle: UIStyles.formLabelStyle.copyWith(
+                            fontSize:
+                                UIStyles.formLabelStyle.fontSize != null
+                                    ? UIStyles.formLabelStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor
+                                    : null,
+                          ),
+                        ),
+                        style: UIStyles.formValueStyle.copyWith(
+                          fontSize:
+                              UIStyles.formValueStyle.fontSize != null
+                                  ? UIStyles.formValueStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor
+                                  : null,
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          setState(() {
+                            validatePassNumber(value);
+                          });
                         },
                       ),
                     ),
@@ -461,12 +464,12 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   const SizedBox(height: UIConstants.spacingM),
                   Semantics(
                     label: 'Datenschutzbestimmungen akzeptieren Checkbox',
-                    child: _buildPrivacyCheckbox(),
+                    child: _buildPrivacyCheckbox(fontSizeProvider),
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   Semantics(
                     label: 'Registrieren Button',
-                    child: _buildRegisterButton(),
+                    child: _buildRegisterButton(fontSizeProvider),
                   ),
                 ],
               ),
@@ -483,8 +486,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       ),
     );
   }
+  // fontSizeProvider now initialized in build method
 
-  Widget _buildPrivacyCheckbox() {
+  Widget _buildPrivacyCheckbox(FontSizeProvider fontSizeProvider) {
     return Row(
       children: [
         Checkbox(
@@ -499,7 +503,13 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: UIStyles.bodyStyle,
+              style: UIStyles.bodyStyle.copyWith(
+                fontSize:
+                    UIStyles.bodyStyle.fontSize != null
+                        ? UIStyles.bodyStyle.fontSize! *
+                            fontSizeProvider.scaleFactor
+                        : null,
+              ),
               children: <TextSpan>[
                 const TextSpan(text: 'Ich habe die '),
                 TextSpan(
@@ -507,6 +517,11 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                   style: UIStyles.linkStyle.copyWith(
                     color: UIConstants.linkColor,
                     decoration: TextDecoration.underline,
+                    fontSize:
+                        UIStyles.linkStyle.fontSize != null
+                            ? UIStyles.linkStyle.fontSize! *
+                                fontSizeProvider.scaleFactor
+                            : null,
                   ),
                   recognizer:
                       TapGestureRecognizer()
@@ -530,19 +545,28 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  Widget _buildRegisterButton() {
+  Widget _buildRegisterButton(FontSizeProvider fontSizeProvider) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         key: const Key('registerButton'),
         onPressed: _validateForm() ? _register : null,
         style: UIStyles.defaultButtonStyle,
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.app_registration, color: Colors.white),
-            SizedBox(width: UIConstants.spacingS),
-            ScaledText('Registrieren', style: UIStyles.buttonStyle),
+            const Icon(Icons.app_registration, color: Colors.white),
+            const SizedBox(width: UIConstants.spacingS),
+            ScaledText(
+              'Registrieren',
+              style: UIStyles.buttonStyle.copyWith(
+                fontSize:
+                    UIStyles.buttonStyle.fontSize != null
+                        ? UIStyles.buttonStyle.fontSize! *
+                            fontSizeProvider.scaleFactor
+                        : null,
+              ),
+            ),
           ],
         ),
       ),

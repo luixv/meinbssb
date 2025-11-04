@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:provider/provider.dart';
+import '/constants/ui_styles.dart';
+import '/widgets/scaled_text.dart';
+import '/providers/font_size_provider.dart';
 
 class ChangePasswordSuccessScreen extends StatelessWidget {
   const ChangePasswordSuccessScreen({
@@ -18,44 +22,58 @@ class ChangePasswordSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return BaseScreenLayout(
       title: 'Passwort ändern',
       userData: userData,
       isLoggedIn: isLoggedIn,
       onLogout: onLogout,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              success ? Icons.check_circle : Icons.error,
-              color:
-                  success ? UIConstants.successColor : UIConstants.errorColor,
-              size: UIConstants.iconSizeXL,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            Text(
+        child: Semantics(
+          label:
               success
                   ? 'Ihr Passwort wurde erfolgreich geändert.'
                   : 'Es ist ein Fehler beim Ändern des Passworts aufgetreten.',
-              style: const TextStyle(fontSize: UIConstants.dialogFontSize),
-              textAlign: TextAlign.center,
-            ),
-          ],
+          liveRegion: true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                success ? Icons.check_circle : Icons.error,
+                color:
+                    success ? UIConstants.successColor : UIConstants.errorColor,
+                size: UIConstants.iconSizeXL,
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              ScaledText(
+                success
+                    ? 'Ihr Passwort wurde erfolgreich geändert.'
+                    : 'Es ist ein Fehler beim Ändern des Passworts aufgetreten.',
+                style: UIStyles.dialogContentStyle.copyWith(
+                  fontSize:
+                      UIStyles.dialogContentStyle.fontSize! *
+                      fontSizeProvider.scaleFactor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'change_password_result_fab',
-        onPressed: () {
-          Navigator.of(context).pushReplacementNamed(
-            '/home',
-            arguments: {'userData': userData, 'isLoggedIn': true},
-          );
-        },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(
-          Icons.home,
-          color: UIConstants.whiteColor,
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Zurück zur Startseite',
+        child: FloatingActionButton(
+          heroTag: 'change_password_result_fab',
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(
+              '/home',
+              arguments: {'userData': userData, 'isLoggedIn': true},
+            );
+          },
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.home, color: UIConstants.whiteColor),
         ),
       ),
     );

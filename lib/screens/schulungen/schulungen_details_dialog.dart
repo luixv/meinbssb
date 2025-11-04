@@ -49,6 +49,10 @@ class SchulungenDetailsDialog {
     return showDialog<void>(
       context: context,
       builder: (context) {
+        // Create a focus node per dialog instance to move focus inside the dialog for screen readers on Web
+        final FocusNode dialogFocusNode = FocusNode(
+          debugLabel: 'SchulungenDetailsDialogFocus',
+        );
         return StatefulBuilder(
           builder: (context, setState) {
             return FutureBuilder<bool>(
@@ -56,12 +60,19 @@ class SchulungenDetailsDialog {
               builder: (context, snapshot) {
                 final cannotBook =
                     snapshot.data ?? true; // Default to disabled while loading
+                // After the first frame of this builder, request focus on the dialog content
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (dialogFocusNode.canRequestFocus) {
+                    dialogFocusNode.requestFocus();
+                  }
+                });
                 return Stack(
                   children: [
                     // Wrap dialog content in a Semantics for accessibility
                     Semantics(
                       label:
                           'Schulungsdetails Dialog. Enthält Informationen zur Schulung, wie Titel, freie Plätze, Datum, Ort, Gruppe, Preis, Lehrgangsleiter und Beschreibung.',
+                      liveRegion: true,
                       child: AlertDialog(
                         backgroundColor: UIConstants.backgroundColor,
                         contentPadding: EdgeInsets.zero,
@@ -75,35 +86,37 @@ class SchulungenDetailsDialog {
                                     MediaQuery.of(context).size.height * 0.8,
                                 minWidth: UIConstants.dialogMinWidth,
                               ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // Header: white background, title, availability, and info table
-                                    Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: UIConstants.spacingL,
-                                        horizontal: UIConstants.spacingXS,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: UIConstants.whiteColor,
-                                        borderRadius: BorderRadius.circular(
-                                          UIConstants.cornerRadius,
+                              child: Focus(
+                                focusNode: dialogFocusNode,
+                                autofocus: true,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Header: white background, title, availability, and info table
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: UIConstants.spacingL,
+                                          horizontal: UIConstants.spacingXS,
                                         ),
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: UIConstants.spacingL,
-                                            ),
-                                            child: Semantics(
-                                              label:
-                                                  'Titel der Schulung: ${termin.bezeichnung.isNotEmpty ? termin.bezeichnung : originalSchulungsTermin.bezeichnung}',
+                                        decoration: BoxDecoration(
+                                          color: UIConstants.whiteColor,
+                                          borderRadius: BorderRadius.circular(
+                                            UIConstants.cornerRadius,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        UIConstants.spacingL,
+                                                  ),
                                               child: Text(
                                                 termin.bezeichnung.isNotEmpty
                                                     ? termin.bezeichnung
@@ -114,14 +127,10 @@ class SchulungenDetailsDialog {
                                                 textAlign: TextAlign.center,
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(
-                                            height: UIConstants.spacingM,
-                                          ),
-                                          Semantics(
-                                            label:
-                                                'Freie Plätze: Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
-                                            child: Text(
+                                            const SizedBox(
+                                              height: UIConstants.spacingM,
+                                            ),
+                                            Text(
                                               'Es sind noch ${termin.maxTeilnehmer - termin.angemeldeteTeilnehmer} von ${termin.maxTeilnehmer} Plätzen frei',
                                               style: UIStyles.bodyStyle
                                                   .copyWith(
@@ -129,39 +138,38 @@ class SchulungenDetailsDialog {
                                                   ),
                                               textAlign: TextAlign.center,
                                             ),
-                                          ),
-                                          const SizedBox(
-                                            height: UIConstants.spacingM,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: UIConstants.spacingXL,
-                                              vertical: UIConstants.spacingS,
+                                            const SizedBox(
+                                              height: UIConstants.spacingM,
                                             ),
-                                            child: Row(
-                                              children: [
-                                                // First column: Date and Place
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          const Icon(
-                                                            Icons
-                                                                .calendar_today,
-                                                            size:
-                                                                UIConstants
-                                                                    .defaultIconSize,
-                                                          ),
-                                                          UIConstants
-                                                              .horizontalSpacingS,
-                                                          Flexible(
-                                                            child: Semantics(
-                                                              label:
-                                                                  'Datum der Schulung: ${DateFormat('dd.MM.yyyy', 'de_DE').format(termin.datum)}',
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        UIConstants.spacingXL,
+                                                    vertical:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                              child: Row(
+                                                children: [
+                                                  // First column: Date and Place
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .calendar_today,
+                                                              size:
+                                                                  UIConstants
+                                                                      .defaultIconSize,
+                                                            ),
+                                                            UIConstants
+                                                                .horizontalSpacingS,
+                                                            Flexible(
                                                               child: Text(
                                                                 DateFormat(
                                                                   'dd.MM.yyyy',
@@ -178,28 +186,24 @@ class SchulungenDetailsDialog {
                                                                 maxLines: 1,
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height:
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height:
+                                                              UIConstants
+                                                                  .spacingXS,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            const Icon(
+                                                              Icons.location_on,
+                                                              size:
+                                                                  UIConstants
+                                                                      .defaultIconSize,
+                                                            ),
                                                             UIConstants
-                                                                .spacingXS,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          const Icon(
-                                                            Icons.location_on,
-                                                            size:
-                                                                UIConstants
-                                                                    .defaultIconSize,
-                                                          ),
-                                                          UIConstants
-                                                              .horizontalSpacingS,
-                                                          Flexible(
-                                                            child: Semantics(
-                                                              label:
-                                                                  'Ort der Schulung: ${termin.ort}',
+                                                                .horizontalSpacingS,
+                                                            Flexible(
                                                               child: Text(
                                                                 termin.ort,
                                                                 style:
@@ -211,38 +215,34 @@ class SchulungenDetailsDialog {
                                                                 maxLines: 1,
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                                const SizedBox(
-                                                  width:
-                                                      UIConstants
-                                                          .dialogColumnGap,
-                                                ),
-                                                // Second column: Group and Price
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          const Icon(
-                                                            Icons.group,
-                                                            size:
-                                                                UIConstants
-                                                                    .defaultIconSize,
-                                                          ),
-                                                          UIConstants
-                                                              .horizontalSpacingS,
-                                                          Flexible(
-                                                            child: Semantics(
-                                                              label:
-                                                                  'Gruppe: ${termin.webGruppeLabel}',
+                                                  const SizedBox(
+                                                    width:
+                                                        UIConstants
+                                                            .dialogColumnGap,
+                                                  ),
+                                                  // Second column: Group and Price
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            const Icon(
+                                                              Icons.group,
+                                                              size:
+                                                                  UIConstants
+                                                                      .defaultIconSize,
+                                                            ),
+                                                            UIConstants
+                                                                .horizontalSpacingS,
+                                                            Flexible(
                                                               child: Text(
                                                                 termin
                                                                     .webGruppeLabel,
@@ -255,28 +255,25 @@ class SchulungenDetailsDialog {
                                                                 maxLines: 1,
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height:
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height:
+                                                              UIConstants
+                                                                  .spacingXS,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .request_quote,
+                                                              size:
+                                                                  UIConstants
+                                                                      .defaultIconSize,
+                                                            ),
                                                             UIConstants
-                                                                .spacingXS,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          const Icon(
-                                                            Icons.request_quote,
-                                                            size:
-                                                                UIConstants
-                                                                    .defaultIconSize,
-                                                          ),
-                                                          UIConstants
-                                                              .horizontalSpacingS,
-                                                          Flexible(
-                                                            child: Semantics(
-                                                              label:
-                                                                  'Preis: ${termin.kosten.toStringAsFixed(2)} Euro',
+                                                                .horizontalSpacingS,
+                                                            Flexible(
                                                               child: Text(
                                                                 '${termin.kosten.toStringAsFixed(2)} €',
                                                                 style:
@@ -288,30 +285,29 @@ class SchulungenDetailsDialog {
                                                                 maxLines: 1,
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(
-                                            height: UIConstants.spacingS,
-                                          ),
-                                          // "Lehrgangsleiter" section
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: UIConstants.spacingL,
+                                            const SizedBox(
+                                              height: UIConstants.spacingS,
                                             ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Semantics(
-                                                  label: 'Lehrgangsleiter',
-                                                  child: Text(
+                                            // "Lehrgangsleiter" section
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        UIConstants.spacingL,
+                                                  ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
                                                     'Lehrgangsleiter:',
                                                     style: UIStyles.bodyStyle
                                                         .copyWith(
@@ -319,26 +315,24 @@ class SchulungenDetailsDialog {
                                                               FontWeight.bold,
                                                         ),
                                                   ),
-                                                ),
-                                                const SizedBox(
-                                                  height: UIConstants.spacingXS,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.email,
-                                                      size:
-                                                          UIConstants
-                                                              .defaultIconSize,
-                                                    ),
-                                                    UIConstants
-                                                        .horizontalSpacingS,
-                                                    Flexible(
-                                                      child: Semantics(
-                                                        label:
-                                                            'E-Mail des Lehrgangsleiters: $lehrgangsleiterMail',
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingXS,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.email,
+                                                        size:
+                                                            UIConstants
+                                                                .defaultIconSize,
+                                                      ),
+                                                      UIConstants
+                                                          .horizontalSpacingS,
+                                                      Flexible(
                                                         child: Text(
                                                           lehrgangsleiterMail,
                                                           style:
@@ -350,29 +344,26 @@ class SchulungenDetailsDialog {
                                                           maxLines: 1,
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height:
-                                                      UIConstants.spacingXXS,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.phone,
-                                                      size:
-                                                          UIConstants
-                                                              .defaultIconSize,
-                                                    ),
-                                                    UIConstants
-                                                        .horizontalSpacingS,
-                                                    Flexible(
-                                                      child: Semantics(
-                                                        label:
-                                                            'Telefon des Lehrgangsleiters: $lehrgangsleiterTel',
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingXXS,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.phone,
+                                                        size:
+                                                            UIConstants
+                                                                .defaultIconSize,
+                                                      ),
+                                                      UIConstants
+                                                          .horizontalSpacingS,
+                                                      Flexible(
                                                         child: Text(
                                                           lehrgangsleiterTel,
                                                           style:
@@ -384,25 +375,22 @@ class SchulungenDetailsDialog {
                                                           maxLines: 1,
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
 
-                                    const Divider(
-                                      height: UIConstants.defaultStrokeWidth,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(
-                                        UIConstants.spacingM,
+                                      const Divider(
+                                        height: UIConstants.defaultStrokeWidth,
                                       ),
-                                      child: Semantics(
-                                        label: 'Beschreibung der Schulung',
+                                      Padding(
+                                        padding: const EdgeInsets.all(
+                                          UIConstants.spacingM,
+                                        ),
                                         child:
                                             termin
                                                     .lehrgangsinhaltHtml
@@ -427,11 +415,11 @@ class SchulungenDetailsDialog {
                                                   'Keine Beschreibung verfügbar.',
                                                 ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: UIConstants.spacingXL,
-                                    ),
-                                  ],
+                                      const SizedBox(
+                                        height: UIConstants.spacingXL,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

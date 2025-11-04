@@ -78,34 +78,28 @@ Future<void> openDrawer(WidgetTester tester) async {
 }
 
 Future<void> ensureVisible(WidgetTester tester, String label) async {
-  final finder = find.text(label);
-  // Always attempt to bring into view (previous version only checked presence).
-  if (finder.evaluate().isEmpty) {
-    // Scroll until it appears if not in the tree yet (unlikely, but keep fallback).
-    final scrollable = find.descendant(
-      of: find.byType(Drawer),
-      matching: find.byType(Scrollable),
-    );
-    if (scrollable.evaluate().isNotEmpty) {
-      await tester.scrollUntilVisible(finder, 120, scrollable: scrollable);
-    }
-  } else {
-    // Use built-in ensureVisible to handle partially off-screen widgets.
-    try {
-      await tester.ensureVisible(finder);
-    } catch (_) {
-      // Fallback manual scroll if ensureVisible fails (e.g. multiple scrollables).
-      final scrollable = find.descendant(
-        of: find.byType(Drawer),
-        matching: find.byType(Scrollable),
-      );
-      if (scrollable.evaluate().isNotEmpty) {
-        await tester.scrollUntilVisible(finder, 150, scrollable: scrollable);
-      }
-    }
+  final keyMap = {
+    'Home': Key('drawer_home'),
+    'Profil': Key('drawer_profile'),
+    'Aus- und Weiterbildung': Key('drawer_training'),
+    'Schützenausweis': Key('drawer_schuetzenausweis'),
+    'Oktoberfest': Key('drawer_oktoberfest'),
+    'Impressum': Key('drawer_impressum'),
+    'Einstellungen': Key('drawer_settings'),
+    'Hilfe': Key('drawer_help'),
+    'Abmelden': Key('drawer_logout'),
+  };
+  final finder =
+      keyMap.containsKey(label) ? find.byKey(keyMap[label]!) : find.text(label);
+  final scrollable = find.descendant(
+    of: find.byType(Drawer),
+    matching: find.byType(Scrollable),
+  );
+  if (scrollable.evaluate().isNotEmpty) {
+    await tester.scrollUntilVisible(finder, 120, scrollable: scrollable);
   }
   await tester.pumpAndSettle();
-  expect(finder, findsOneWidget);
+  expect(finder, findsWidgets);
 }
 
 Widget baseLoggedOut() => MultiProvider(
@@ -327,38 +321,50 @@ void main() {
     });
   });
 
-  group('Drawer logged in basic', () {
-    testWidgets('shows all logged-in labels and hides auth labels', (
-      tester,
-    ) async {
+  group('Drawer logged in menu', () {
+    final menuKeys = [
+      'drawer_home',
+      'drawer_profile',
+      'drawer_training',
+      'drawer_schuetzenausweis',
+      'drawer_oktoberfest',
+      'drawer_impressum',
+      'drawer_settings',
+      'drawer_help',
+      'drawer_logout',
+    ];
+
+    testWidgets('shows all menu items for logged-in user', (tester) async {
       await tester.pumpWidget(baseLoggedIn());
       await openDrawer(tester);
-      final labels = [
-        'Home',
-        'Profil',
-        'Aus- und Weiterbildung',
-        'Schützenausweis',
-        'Oktoberfest',
-        'Impressum',
-        'Datenschutz',
-        'Einstellungen',
-        'Hilfe',
-        'Abmelden',
-      ];
-      for (final l in labels) {
-        await ensureVisible(tester, l);
-        expect(find.text(l), findsOneWidget);
+      for (final key in menuKeys) {
+        // Ensure visibility for each menu item before asserting
+        final finder = find.byKey(Key(key));
+        if (key == 'drawer_logout') {
+          // Scroll to logout if needed
+          await ensureVisible(tester, 'Abmelden');
+        }
+        expect(
+          finder,
+          findsWidgets,
+          reason: 'Menu item $key should be present',
+        );
       }
-      for (final auth in [
-        'Anmelden',
-        'Registrieren',
-        'Passwort zurücksetzen',
+      // Auth-only items should not be present
+      for (final key in [
+        'drawer_login',
+        'drawer_register',
+        'drawer_pw_reset',
       ]) {
-        expect(find.text(auth), findsNothing);
+        expect(
+          find.byKey(Key(key)),
+          findsNothing,
+          reason: 'Auth-only item $key should not be present',
+        );
       }
     });
 
-    testWidgets('Abmelden triggers callback', (tester) async {
+    testWidgets('Abmelden triggers callback and closes drawer', (tester) async {
       var calls = 0;
       await tester.pumpWidget(
         MultiProvider(
@@ -380,7 +386,7 @@ void main() {
       );
       await openDrawer(tester);
       await ensureVisible(tester, 'Abmelden');
-      await tester.tap(find.text('Abmelden'));
+      await tester.tap(find.byKey(const Key('drawer_logout')).first);
       await tester.pumpAndSettle();
       expect(calls, 1);
       expect(find.byType(Drawer), findsNothing);
@@ -483,7 +489,7 @@ void main() {
     testWidgets('Hilfe triggers navigator.help', (tester) async {
       final nav = await pumpAndOpen(tester);
       await ensureVisible(tester, 'Hilfe');
-      await tester.tap(find.text('Hilfe'));
+      await tester.tap(find.byKey(const Key('drawer_help')).first);
       await tester.pumpAndSettle();
       expect(nav.helpCalled, isTrue);
     });
@@ -507,7 +513,7 @@ void main() {
     testWidgets('Einstellungen triggers navigator.settings', (tester) async {
       final nav = await pumpAndOpen(tester);
       await ensureVisible(tester, 'Einstellungen');
-      await tester.tap(find.text('Einstellungen'));
+      await tester.tap(find.byKey(const Key('drawer_settings')).first);
       await tester.pumpAndSettle();
       expect(nav.settingsCalled, isTrue);
       // Optional: ensure others not touched

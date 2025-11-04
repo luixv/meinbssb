@@ -141,22 +141,29 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
         Navigator.pushReplacementNamed(context, '/login');
       },
       body: Semantics(
+        container: true,
         label:
             'E-Mail-Bestätigung. Ihre E-Mail-Adresse wird überprüft und bestätigt. Bitte warten Sie, während der Vorgang abgeschlossen wird.',
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  UIConstants.circularProgressIndicator,
+              Semantics(
+                label: 'Fortschrittsanzeige: E-Mail-Bestätigung läuft',
+                child: const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    UIConstants.circularProgressIndicator,
+                  ),
                 ),
               ),
-              SizedBox(height: UIConstants.spacingM),
-              Text(
-                'E-Mail-Adresse wird bestätigt...',
-                style: TextStyle(fontSize: UIConstants.dialogFontSize),
-                textAlign: TextAlign.center,
+              const SizedBox(height: UIConstants.spacingM),
+              Semantics(
+                label: 'E-Mail-Adresse wird bestätigt...',
+                child: const Text(
+                  'E-Mail-Adresse wird bestätigt...',
+                  style: TextStyle(fontSize: UIConstants.dialogFontSize),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
           ),
