@@ -85,6 +85,7 @@ Future<void> ensureVisible(WidgetTester tester, String label) async {
     'Schützenausweis': Key('drawer_schuetzenausweis'),
     'Oktoberfest': Key('drawer_oktoberfest'),
     'Impressum': Key('drawer_impressum'),
+    'Datenschutz': Key('drawer_datenschutz'),
     'Einstellungen': Key('drawer_settings'),
     'Hilfe': Key('drawer_help'),
     'Abmelden': Key('drawer_logout'),
@@ -329,6 +330,7 @@ void main() {
       'drawer_schuetzenausweis',
       'drawer_oktoberfest',
       'drawer_impressum',
+      'drawer_datenschutz',
       'drawer_settings',
       'drawer_help',
       'drawer_logout',
@@ -339,11 +341,23 @@ void main() {
       await openDrawer(tester);
       for (final key in menuKeys) {
         // Ensure visibility for each menu item before asserting
-        final finder = find.byKey(Key(key));
-        if (key == 'drawer_logout') {
-          // Scroll to logout if needed
-          await ensureVisible(tester, 'Abmelden');
+        final labelMap = {
+          'drawer_home': 'Home',
+          'drawer_profile': 'Profil',
+          'drawer_training': 'Aus- und Weiterbildung',
+          'drawer_schuetzenausweis': 'Schützenausweis',
+          'drawer_oktoberfest': 'Oktoberfest',
+          'drawer_impressum': 'Impressum',
+          'drawer_datenschutz': 'Datenschutz',
+          'drawer_settings': 'Einstellungen',
+          'drawer_help': 'Hilfe',
+          'drawer_logout': 'Abmelden',
+        };
+        // Scroll to item if it's not on the initial screen
+        if (labelMap.containsKey(key)) {
+          await ensureVisible(tester, labelMap[key]!);
         }
+        final finder = find.byKey(Key(key));
         expect(
           finder,
           findsWidgets,

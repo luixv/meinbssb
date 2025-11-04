@@ -13,8 +13,6 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:provider/provider.dart';
-import 'package:meinbssb/providers/font_size_provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({required this.apiService, super.key});
