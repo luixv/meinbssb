@@ -489,147 +489,183 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   minLeadingWidth: 0,
                                                 ),
                                                 child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    Semantics(
-                                                      label:
-                                                          'Checkbox zum Akzeptieren der AGB',
-                                                      child: CheckboxListTile(
-                                                        value: agbChecked,
-                                                        onChanged: (val) {
-                                                          setState(
-                                                            () =>
-                                                                agbChecked =
-                                                                    val ??
-                                                                    false,
-                                                          );
-                                                        },
-                                                        title: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.of(
-                                                                  context,
-                                                                ).push(
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (_) =>
-                                                                            const AgbScreen(),
-                                                                  ),
-                                                                );
-                                                              },
-                                                              child: Text(
-                                                                'AGB',
-                                                                style: UIStyles
-                                                                    .linkStyle
-                                                                    .copyWith(
-                                                                      color:
-                                                                          UIConstants
-                                                                              .linkColor,
-                                                                      decoration:
-                                                                          TextDecoration
-                                                                              .underline,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width:
-                                                                  UIConstants
-                                                                      .spacingS,
-                                                            ),
-                                                            const Text(
-                                                              'akzeptieren',
-                                                            ),
-                                                            const SizedBox(
-                                                              width:
-                                                                  UIConstants
-                                                                      .spacingS,
-                                                            ),
-                                                            const Tooltip(
-                                                              message:
-                                                                  'Ich bin mit den AGB einverstanden.',
-                                                              triggerMode:
-                                                                  TooltipTriggerMode
-                                                                      .tap,
-                                                              child: Icon(
-                                                                Icons
-                                                                    .info_outline,
-                                                                color:
-                                                                    UIConstants
-                                                                        .defaultAppColor,
-                                                                size:
-                                                                    UIConstants
-                                                                        .tooltipIconSize,
-                                                              ),
-                                                            ),
-                                                          ],
+                                                    Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Semantics(
+                                                          label:
+                                                              'Checkbox zum Akzeptieren der AGB',
+                                                          child: Checkbox(
+                                                            value: agbChecked,
+                                                            onChanged: (val) {
+                                                              setState(
+                                                                () =>
+                                                                    agbChecked =
+                                                                        val ??
+                                                                        false,
+                                                              );
+                                                            },
+                                                          ),
                                                         ),
-                                                        controlAffinity:
-                                                            ListTileControlAffinity
-                                                                .leading,
-                                                        contentPadding:
-                                                            EdgeInsets.zero,
-                                                      ),
+                                                        const SizedBox(
+                                                          width:
+                                                              UIConstants
+                                                                  .spacingS,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (
+                                                                    context,
+                                                                  ) => Dialog(
+                                                                    child: SizedBox(
+                                                                      width:
+                                                                          600,
+                                                                      height:
+                                                                          600,
+                                                                      child:
+                                                                          const AgbScreen(),
+                                                                    ),
+                                                                  ),
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            'AGB',
+                                                            style: UIStyles.linkStyle.copyWith(
+                                                              color:
+                                                                  UIConstants
+                                                                      .linkColor,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                              fontSize:
+                                                                  UIStyles
+                                                                      .bodyStyle
+                                                                      .fontSize,
+                                                              fontWeight:
+                                                                  UIStyles
+                                                                      .bodyStyle
+                                                                      .fontWeight,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width:
+                                                              UIConstants
+                                                                  .spacingS,
+                                                        ),
+                                                        Text(
+                                                          'akzeptieren',
+                                                          style: UIStyles
+                                                              .bodyStyle
+                                                              .copyWith(
+                                                                fontSize:
+                                                                    UIStyles
+                                                                        .bodyStyle
+                                                                        .fontSize,
+                                                                fontWeight:
+                                                                    UIStyles
+                                                                        .bodyStyle
+                                                                        .fontWeight,
+                                                              ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width:
+                                                              UIConstants
+                                                                  .spacingS,
+                                                        ),
+                                                        const Tooltip(
+                                                          message:
+                                                              'Ich bin mit den AGB einverstanden.',
+                                                          triggerMode:
+                                                              TooltipTriggerMode
+                                                                  .tap,
+                                                          child: Icon(
+                                                            Icons.info_outline,
+                                                            color:
+                                                                UIConstants
+                                                                    .defaultAppColor,
+                                                            size:
+                                                                UIConstants
+                                                                    .tooltipIconSize,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Semantics(
-                                                      label:
-                                                          'Checkbox zur Bestätigung des Lastschrifteinzugs',
-                                                      child: CheckboxListTile(
-                                                        value:
-                                                            lastschriftChecked,
-                                                        onChanged: (val) {
-                                                          setState(
-                                                            () =>
-                                                                lastschriftChecked =
-                                                                    val ??
-                                                                    false,
-                                                          );
-                                                        },
-                                                        title: const Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Expanded(
-                                                              child: Wrap(
-                                                                crossAxisAlignment:
-                                                                    WrapCrossAlignment
-                                                                        .center,
-                                                                spacing:
-                                                                    UIConstants
-                                                                        .spacingS,
-                                                                children: [
-                                                                  Text(
-                                                                    'Bestätigung des\nLastschrifteinzugs',
-                                                                  ),
-                                                                  Tooltip(
-                                                                    message:
-                                                                        'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
-                                                                    triggerMode:
-                                                                        TooltipTriggerMode
-                                                                            .tap,
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .info_outline,
-                                                                      color:
-                                                                          UIConstants
-                                                                              .defaultAppColor,
-                                                                      size:
-                                                                          UIConstants
-                                                                              .tooltipIconSize,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ],
+                                                    Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Semantics(
+                                                          label:
+                                                              'Checkbox zur Bestätigung des Lastschrifteinzugs',
+                                                          child: Checkbox(
+                                                            value:
+                                                                lastschriftChecked,
+                                                            onChanged: (val) {
+                                                              setState(
+                                                                () =>
+                                                                    lastschriftChecked =
+                                                                        val ??
+                                                                        false,
+                                                              );
+                                                            },
+                                                          ),
                                                         ),
-                                                        controlAffinity:
-                                                            ListTileControlAffinity
-                                                                .leading,
-                                                        contentPadding:
-                                                            EdgeInsets.zero,
-                                                      ),
+                                                        const SizedBox(
+                                                          width:
+                                                              UIConstants
+                                                                  .spacingS,
+                                                        ),
+                                                        Text(
+                                                          'Bestätigung des\nLastschrifteinzugs',
+                                                          style: UIStyles
+                                                              .bodyStyle
+                                                              .copyWith(
+                                                                fontSize:
+                                                                    UIStyles
+                                                                        .bodyStyle
+                                                                        .fontSize,
+                                                                fontWeight:
+                                                                    UIStyles
+                                                                        .bodyStyle
+                                                                        .fontWeight,
+                                                              ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width:
+                                                              UIConstants
+                                                                  .spacingS,
+                                                        ),
+                                                        const Tooltip(
+                                                          message:
+                                                              'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
+                                                          triggerMode:
+                                                              TooltipTriggerMode
+                                                                  .tap,
+                                                          child: Icon(
+                                                            Icons.info_outline,
+                                                            color:
+                                                                UIConstants
+                                                                    .defaultAppColor,
+                                                            size:
+                                                                UIConstants
+                                                                    .tooltipIconSize,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
 
                                                     const SizedBox(
