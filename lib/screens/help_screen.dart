@@ -125,15 +125,15 @@ class HelpScreen extends StatelessWidget {
                       question:
                           'Die App funktioniert nicht richtig. Was kann ich tun?',
                       answer: ScaledText(
-                        'Überprüfen Sie zunächst Ihre Internetverbindung. Stellen Sie sicher, dass Sie die aktuellste Version der App installiert haben. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support des BSSB unter...',
-                      ), // TODO add contact link
+                        'Überprüfen Sie zunächst Ihre Internetverbindung. Stellen Sie sicher, dass Sie die aktuellste Version der App installiert haben. Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support des BSSB unter webportal@bssb.bayern.',
+                      ),
                     ),
 
                     _AccordionItem(
                       question: 'Ich habe mein Passwort vergessen. Was nun?',
                       answer: ScaledText(
-                        'Eine Funktion zum Zurücksetzen des Passworts ist bei MeinBSSB verfügbar. Folgen Sie den dortigen Anweisungen um Ihr Passwort zu ändern. Bei Problemen wenden Sie sich bitte an den Support des BSSB unter...',
-                      ), // TODO add contact link
+                        'Eine Funktion zum Zurücksetzen des Passworts ist bei MeinBSSB verfügbar. Folgen Sie den dortigen Anweisungen um Ihr Passwort zu ändern. Bei Problemen wenden Sie sich bitte an den Support des BSSB unter webportal@bssb.bayern.',
+                      ), 
                     ),
                   ],
                 ),
