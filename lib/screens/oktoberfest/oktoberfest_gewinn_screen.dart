@@ -654,7 +654,6 @@ class _BankDataDialogState extends State<BankDataDialog> {
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingL),
-                      // ...existing code...
                       const SizedBox(
                         height: 84,
                       ), // Increased space at the bottom of the dialog

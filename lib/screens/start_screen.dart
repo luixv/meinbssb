@@ -189,7 +189,6 @@ class StartScreenState extends State<StartScreen> {
                         const Icon(Icons.close, color: UIConstants.closeIcon),
                         UIConstants.horizontalSpacingM,
                         Flexible(
-                          // ...existing code...
                           child: ScaledText(
                             'Abbrechen',
                             style: UIStyles.dialogButtonTextStyle.copyWith(

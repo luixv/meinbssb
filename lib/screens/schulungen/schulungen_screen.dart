@@ -1301,7 +1301,6 @@ class _LoginDialogState extends State<LoginDialog> {
     }
   }
 
-  // ...existing code...
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
