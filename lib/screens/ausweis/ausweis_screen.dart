@@ -76,16 +76,49 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
                       color: UIConstants.backgroundColor,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: Center(
-                          child: InteractiveViewer(
-                            panEnabled: true,
-                            minScale: 1,
-                            maxScale: 5,
-                            child: Image.memory(
-                              snapshot.data!,
-                              fit: BoxFit.contain,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Center(
+                              child: InteractiveViewer(
+                                panEnabled: true,
+                                minScale: 1,
+                                maxScale: 5,
+                                child: Image.memory(
+                                  snapshot.data!,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
                             ),
-                          ),
+                            FutureBuilder<String?>(
+                              future: Provider.of<ApiService>(
+                                context,
+                                listen: false,
+                              ).imageService.getSchuetzenausweisCacheDate(
+                                widget.personId,
+                              ),
+                              builder: (context, dateSnapshot) {
+                                if (dateSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const SizedBox.shrink();
+                                }
+                                if (dateSnapshot.hasData &&
+                                    dateSnapshot.data != null) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: UIConstants.spacingS,
+                                    ),
+                                    child: Text(
+                                      'Stand: ${dateSnapshot.data}',
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -111,5 +144,3 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
     );
   }
 }
-
-// ...existing code...

@@ -850,7 +850,6 @@ void main() {
           'test@example.com',
         );
         expect(result, isTrue);
-        // ...existing code...
       });
 
       test('returns false when API result is false', () async {
@@ -866,7 +865,6 @@ void main() {
           'test@example.com',
         );
         expect(result, isFalse);
-        // ...existing code...
       });
 
       test('returns false when API response is missing result', () async {
@@ -882,7 +880,6 @@ void main() {
           'test@example.com',
         );
         expect(result, isFalse);
-        // ...existing code...
       });
 
       test('returns false on exception', () async {
@@ -898,7 +895,6 @@ void main() {
           'test@example.com',
         );
         expect(result, isFalse);
-        // ...existing code...
       });
 
       test('returns true when API result is true (with debug)', () async {
