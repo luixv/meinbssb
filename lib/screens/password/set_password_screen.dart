@@ -141,6 +141,42 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     return UIConstants.successColor;
   }
 
+  /// Parses date from API format like "1973-08-07T00:00:00.000+02:00"
+  static DateTime _parseDate(dynamic value) {
+    if (value is String && value.isNotEmpty) {
+      // Match: yyyy-MM-ddTHH:mm:ss.SSS (ignore offset)
+      final match = RegExp(
+        r'^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})',
+      ).firstMatch(value);
+      if (match != null) {
+          int.parse(match.group(1)!),
+          int.parse(match.group(2)!),
+          int.parse(match.group(3)!),
+          int.parse(match.group(4)!),
+          int.parse(match.group(5)!),
+          int.parse(match.group(6)!),
+          int.parse(match.group(7)!),
+        );
+      }
+      // Fallback: just the date part
+      try {
+        final dateOnly = value.split('T').first;
+        final parts = dateOnly.split('-');
+        if (parts.length == 3) {
+          return DateTime(
+            int.parse(parts[0]),
+            int.parse(parts[1]),
+            int.parse(parts[2]),
+          );
+        }
+      } catch (e) {
+        // If parsing fails, return default date
+        return DateTime(1970, 1, 1);
+      }
+    }
+    return DateTime(1970, 1, 1);
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_passwordController.text != _confirmController.text) {
@@ -181,38 +217,35 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         return;
       }
 
-      // Check PLZ
+      // Check PLZ and GEBURTSDATUM
       final apiPlz = passDaten['PLZ']?.toString().trim();
       final enteredPlz = _zipCodeController.text.trim();
-      if (apiPlz != enteredPlz) {
-        setState(() {
-          _loading = false;
-          _error = 'Postleitzahl stimmt nicht überein.';
-        });
-        return;
-      }
-
-      // Check GEBURTSDATUM
       final apiGeburtsdatum = passDaten['GEBURTSDATUM']?.toString();
+      
+      bool plzMatches = (apiPlz == enteredPlz);
+      bool birthdateMatches = false;
+      
+      // Validate GEBURTSDATUM
       if (apiGeburtsdatum != null && apiGeburtsdatum.isNotEmpty) {
         // Parse API date format: "1973-08-07T00:00:00.000+02:00"
-        final apiDate = DateTime.tryParse(apiGeburtsdatum);
-        if (apiDate != null) {
-          // Compare only date part (ignore time)
-          final apiDateOnly = DateTime(apiDate.year, apiDate.month, apiDate.day);
-          final selectedDateOnly = DateTime(
-            _selectedDate!.year,
-            _selectedDate!.month,
-            _selectedDate!.day,
-          );
-          if (apiDateOnly != selectedDateOnly) {
-            setState(() {
-              _loading = false;
-              _error = 'Geburtsdatum stimmt nicht überein.';
-            });
-            return;
-          }
-        }
+        final apiDate = _parseDate(apiGeburtsdatum);
+        // Compare only date part (ignore time)
+        final apiDateOnly = DateTime(apiDate.year, apiDate.month, apiDate.day);
+        final selectedDateOnly = DateTime(
+          _selectedDate!.year,
+          _selectedDate!.month,
+          _selectedDate!.day,
+        );
+        birthdateMatches = (apiDateOnly == selectedDateOnly);
+      }
+      
+      // Show generic error if either field doesn't match
+      if (!plzMatches || !birthdateMatches) {
+        setState(() {
+          _loading = false;
+          _error = 'Postleitzahl oder Geburtsdatum stimmen nicht mit dem Eintrag in ZMI überein.';
+        });
+        return;
       }
     } catch (e) {
       _failAndExit('Fehler beim Überprüfen der Daten: $e');
