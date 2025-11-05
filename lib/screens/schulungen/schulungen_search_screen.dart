@@ -283,12 +283,11 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Ort',
                         floatingLabelBehavior: FloatingLabelBehavior.auto,
-                        labelStyle: UIStyles.formInputDecoration.labelStyle
-                            ?.copyWith(
-                              fontSize: Provider.of<FontSizeProvider>(
-                                context,
-                              ).getScaledFontSize(UIConstants.bodyFontSize),
-                            ),
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize:
+                              UIStyles.formLabelStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
                         hintStyle: UIStyles.formInputDecoration.hintStyle
                             ?.copyWith(
                               fontSize: Provider.of<FontSizeProvider>(
@@ -316,12 +315,11 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                       ),
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Titel',
-                        labelStyle: UIStyles.formInputDecoration.labelStyle
-                            ?.copyWith(
-                              fontSize: Provider.of<FontSizeProvider>(
-                                context,
-                              ).getScaledFontSize(UIConstants.bodyFontSize),
-                            ),
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize:
+                              UIStyles.formLabelStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
                         hintStyle: UIStyles.formInputDecoration.hintStyle
                             ?.copyWith(
                               fontSize: Provider.of<FontSizeProvider>(
