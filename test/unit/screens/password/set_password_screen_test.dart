@@ -1,62 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/password/set_password_screen.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
-
-// Extension to access the private _parseDate method for testing
-extension SetPasswordScreenTestHelper on SetPasswordScreen {
-  static DateTime parseDate(dynamic value) {
-    // We need to test through reflection or create a test-specific method
-    // Since _parseDate is in _SetPasswordScreenState and is static,
-    // we'll test it through the actual implementation
-    return _SetPasswordScreenStateTestHelper.parseDate(value);
-  }
-}
-
-// Test helper to access private static method
-class _SetPasswordScreenStateTestHelper {
-  static DateTime parseDate(dynamic value) {
-    if (value is String && value.isNotEmpty) {
-      // Match: yyyy-MM-ddTHH:mm:ss.SSS (ignore offset)
-      final match = RegExp(
-        r'^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})',
-      ).firstMatch(value);
-      if (match != null) {
-        return DateTime(
-          int.parse(match.group(1)!),
-          int.parse(match.group(2)!),
-          int.parse(match.group(3)!),
-          int.parse(match.group(4)!),
-          int.parse(match.group(5)!),
-          int.parse(match.group(6)!),
-          int.parse(match.group(7)!),
-        );
-      }
-      // Fallback: just the date part
-      try {
-        final dateOnly = value.split('T').first;
-        final parts = dateOnly.split('-');
-        if (parts.length == 3) {
-          return DateTime(
-            int.parse(parts[0]),
-            int.parse(parts[1]),
-            int.parse(parts[2]),
-          );
-        }
-      } catch (e) {
-        // If parsing fails, return default date
-        return DateTime(1970, 1, 1);
-      }
-    }
-    return DateTime(1970, 1, 1);
-  }
-}
+import 'package:meinbssb/helpers/utils.dart';
 
 void main() {
-  group('SetPasswordScreen _parseDate', () {
+  group('SetPasswordScreen parseDate (from utils)', () {
     test('parses full API date format with timezone', () {
       const dateString = '1973-08-07T00:00:00.000+02:00';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 1973);
       expect(result.month, 8);
@@ -69,7 +20,7 @@ void main() {
 
     test('parses date with different timezone offset', () {
       const dateString = '1990-12-25T15:30:45.123-05:00';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 1990);
       expect(result.month, 12);
@@ -82,7 +33,7 @@ void main() {
 
     test('parses date without timezone (just time)', () {
       const dateString = '2000-01-01T12:00:00.000';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 2000);
       expect(result.month, 1);
@@ -95,7 +46,7 @@ void main() {
 
     test('parses date with only date part (fallback)', () {
       const dateString = '1985-03-15';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 1985);
       expect(result.month, 3);
@@ -107,7 +58,7 @@ void main() {
 
     test('parses date with T but no time details', () {
       const dateString = '2023-06-30T';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 2023);
       expect(result.month, 6);
@@ -116,7 +67,7 @@ void main() {
 
     test('returns default date for empty string', () {
       const dateString = '';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 1970);
       expect(result.month, 1);
@@ -124,7 +75,7 @@ void main() {
     });
 
     test('returns default date for null', () {
-      final result = _SetPasswordScreenStateTestHelper.parseDate(null);
+      final result = parseDate(null);
       
       expect(result.year, 1970);
       expect(result.month, 1);
@@ -133,7 +84,7 @@ void main() {
 
     test('returns default date for invalid format', () {
       const dateString = 'invalid-date-format';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 1970);
       expect(result.month, 1);
@@ -142,7 +93,7 @@ void main() {
 
     test('returns default date for partial date', () {
       const dateString = '2023-06';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 1970);
       expect(result.month, 1);
@@ -151,7 +102,7 @@ void main() {
 
     test('parses leap year date correctly', () {
       const dateString = '2024-02-29T00:00:00.000+00:00';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 2024);
       expect(result.month, 2);
@@ -160,7 +111,7 @@ void main() {
 
     test('parses end of year date correctly', () {
       const dateString = '2023-12-31T23:59:59.999+00:00';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       expect(result.year, 2023);
       expect(result.month, 12);
@@ -174,7 +125,7 @@ void main() {
     test('handles date string with Z timezone indicator', () {
       // This should fall through to fallback since it doesn't match the regex
       const dateString = '2023-06-15T12:00:00.000Z';
-      final result = _SetPasswordScreenStateTestHelper.parseDate(dateString);
+      final result = parseDate(dateString);
       
       // Will use fallback parser (date only)
       expect(result.year, 2023);

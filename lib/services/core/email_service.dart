@@ -279,17 +279,6 @@ class EmailService {
         return;
       }
 
-      // Send email to the newly registered email
-      final emailBody = emailContent.replaceAll('{email}', registeredEmail);
-      LoggerService.logInfo('Sending email to $registeredEmail');
-      LoggerService.logInfo(emailBody);
-      await sendEmail(
-        sender: fromEmail,
-        recipient: registeredEmail,
-        subject: subject,
-        htmlBody: emailBody,
-      );
-
       // Send notification to each email address
       for (final email in emailAddresses) {
         if (email.isNotEmpty && email != 'null') {
