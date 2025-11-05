@@ -9,6 +9,7 @@ import '../base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/constants/ui_constants.dart';
+import '/helpers/utils.dart';
 
 // import 'agb_screen.dart';
 import '/widgets/dialog_fabs.dart';
@@ -485,10 +486,6 @@ class _BankDataDialogState extends State<BankDataDialog> {
   late final TextEditingController _bicController;
   // Removed _agbChecked and AGB checkbox
 
-  bool _isBicRequired(String iban) {
-    return !iban.toUpperCase().startsWith('DE');
-  }
-
   bool _isBicValid(String bic) {
     // BIC must be 8 or 11 characters, alphanumeric, and uppercase
     final bicRegExp = RegExp(r'^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$');
@@ -620,7 +617,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                                 Expanded(
                                   child: Semantics(
                                     label:
-                                        _isBicRequired(
+                                        isBicRequired(
                                               _ibanController.text.trim(),
                                             )
                                             ? 'BIC Eingabefeld, Pflichtfeld für nicht-deutsche IBANs'
@@ -636,7 +633,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                                       decoration: UIStyles.formInputDecoration
                                           .copyWith(
                                             labelText:
-                                                _isBicRequired(
+                                                isBicRequired(
                                                       _ibanController.text
                                                           .trim(),
                                                     )
@@ -649,7 +646,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                                                 .trim()
                                                 .toUpperCase();
                                         final bic = value?.trim() ?? '';
-                                        if (_isBicRequired(iban)) {
+                                        if (isBicRequired(iban)) {
                                           if (bic.isEmpty) {
                                             return 'BIC ist erforderlich für nicht-deutsche IBANs';
                                           }
@@ -709,7 +706,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                   backgroundColor:
                       (_kontoinhaberController.text.trim().isNotEmpty &&
                               _ibanController.text.trim().isNotEmpty &&
-                              (_isBicRequired(_ibanController.text.trim())
+                              (isBicRequired(_ibanController.text.trim())
                                   ? _bicController.text.trim().isNotEmpty
                                   : true))
                           ? UIConstants.defaultAppColor
@@ -717,7 +714,7 @@ class _BankDataDialogState extends State<BankDataDialog> {
                   onPressed:
                       (_kontoinhaberController.text.trim().isNotEmpty &&
                               _ibanController.text.trim().isNotEmpty &&
-                              (_isBicRequired(_ibanController.text.trim())
+                              (isBicRequired(_ibanController.text.trim())
                                   ? _bicController.text.trim().isNotEmpty
                                   : true))
                           ? () {
