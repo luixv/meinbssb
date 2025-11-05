@@ -871,6 +871,14 @@ class StartScreenState extends State<StartScreen> {
                                                                   data:
                                                                       termin
                                                                           .lehrgangsinhaltHtml,
+                                                                  style: {
+                                                                    'body': Style(
+                                                                      fontSize: FontSize(
+                                                                        UIConstants
+                                                                            .bodyFontSize,
+                                                                      ),
+                                                                    ),
+                                                                  },
                                                                 )
                                                                 : termin
                                                                     .lehrgangsinhalt

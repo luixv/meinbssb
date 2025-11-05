@@ -151,6 +151,9 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
+        final FontSizeProvider fontSizeProvider = Provider.of<FontSizeProvider>(
+          context,
+        );
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -205,6 +208,13 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                       label: 'Eingabefeld für Kontoinhaber',
                                       child: TextFormField(
                                         controller: kontoinhaberController,
+                                        style: UIStyles.formValueStyle.copyWith(
+                                          fontSize:
+                                              UIStyles
+                                                  .formValueStyle
+                                                  .fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
                                         decoration: UIStyles.formInputDecoration
                                             .copyWith(
                                               labelText: 'Kontoinhaber',
@@ -225,6 +235,13 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                       label: 'Eingabefeld für IBAN',
                                       child: TextFormField(
                                         controller: ibanController,
+                                        style: UIStyles.formValueStyle.copyWith(
+                                          fontSize:
+                                              UIStyles
+                                                  .formValueStyle
+                                                  .fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
                                         decoration: UIStyles.formInputDecoration
                                             .copyWith(labelText: 'IBAN'),
                                         readOnly: true,
@@ -252,6 +269,13 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                       label: 'Eingabefeld für BIC',
                                       child: TextFormField(
                                         controller: bicController,
+                                        style: UIStyles.formValueStyle.copyWith(
+                                          fontSize:
+                                              UIStyles
+                                                  .formValueStyle
+                                                  .fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
                                         decoration: UIStyles.formInputDecoration
                                             .copyWith(
                                               labelText:
@@ -328,6 +352,7 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
                                                 },
                                                 child: Text(
                                                   'AGB',
+
                                                   style: UIStyles.linkStyle
                                                       .copyWith(
                                                         color:

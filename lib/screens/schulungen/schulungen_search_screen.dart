@@ -118,6 +118,9 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final FontSizeProvider fontSizeProvider = Provider.of<FontSizeProvider>(
+      context,
+    );
     return Semantics(
       label:
           'Suchmaske für Aus- und Weiterbildung. Wählen Sie Fachbereich, Regierungsbezirk, Ort, Titel und Optionen für Lizenz- oder VÜL-Verlängerung. Starten Sie die Suche mit dem Button unten rechts.',
@@ -272,14 +275,19 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                     child: TextFormField(
                       key: const Key('Ort'),
                       controller: _ortController,
+                      style: UIStyles.formValueStyle.copyWith(
+                        fontSize:
+                            UIStyles.formValueStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Ort',
-                        labelStyle: UIStyles.formInputDecoration.labelStyle
-                            ?.copyWith(
-                              fontSize: Provider.of<FontSizeProvider>(
-                                context,
-                              ).getScaledFontSize(UIConstants.bodyFontSize),
-                            ),
+                        floatingLabelBehavior: FloatingLabelBehavior.auto,
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize:
+                              UIStyles.formLabelStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
                         hintStyle: UIStyles.formInputDecoration.hintStyle
                             ?.copyWith(
                               fontSize: Provider.of<FontSizeProvider>(
@@ -300,14 +308,18 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                     child: TextFormField(
                       key: const Key('Titel'),
                       controller: _titelController,
+                      style: UIStyles.formValueStyle.copyWith(
+                        fontSize:
+                            UIStyles.formValueStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Titel',
-                        labelStyle: UIStyles.formInputDecoration.labelStyle
-                            ?.copyWith(
-                              fontSize: Provider.of<FontSizeProvider>(
-                                context,
-                              ).getScaledFontSize(UIConstants.bodyFontSize),
-                            ),
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize:
+                              UIStyles.formLabelStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
                         hintStyle: UIStyles.formInputDecoration.hintStyle
                             ?.copyWith(
                               fontSize: Provider.of<FontSizeProvider>(

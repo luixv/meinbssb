@@ -89,26 +89,26 @@ class UIStyles {
 
   // Additional Styles
   static const TextStyle appBarTitleStyle = TextStyle(
-    fontSize: 20.0,
+    fontSize: UIConstants.titleFontSize,
     fontFamily: UIConstants.defaultFontFamily,
     fontWeight: FontWeight.bold,
     color: UIConstants.textColor,
   );
 
   static const TextStyle formLabelStyle = TextStyle(
-    fontSize: UIConstants.bodyFontSize,
+    fontSize: UIConstants.fieldValueFontSize,
     fontFamily: UIConstants.defaultFontFamily,
     color: UIConstants.textColor,
   );
 
   static const TextStyle formValueStyle = TextStyle(
-    fontSize: UIConstants.bodyFontSize,
+    fontSize: UIConstants.fieldValueFontSize,
     fontFamily: UIConstants.defaultFontFamily,
     color: UIConstants.textColor,
   );
 
   static const TextStyle formValueBoldStyle = TextStyle(
-    fontSize: UIConstants.bodyFontSize,
+    fontSize: UIConstants.fieldValueFontSize,
     fontFamily: UIConstants.defaultFontFamily,
     fontWeight: FontWeight.bold,
     color: UIConstants.textColor,
@@ -146,7 +146,7 @@ class UIStyles {
   );
 
   static const TextStyle sectionTitleStyle = TextStyle(
-    fontSize: 20.0,
+    fontSize: UIConstants.titleFontSize,
     fontWeight: FontWeight.bold,
     color: UIConstants.textColor,
   );
@@ -291,7 +291,7 @@ class UIStyles {
   static const double drawerAvatarRadius = 32.0;
   static const double drawerAvatarIconSize = 32.0;
   static const TextStyle drawerHeaderStyle = TextStyle(
-    fontSize: 18.0,
+    fontSize: UIConstants.drawerHeaderFontSize,
     fontWeight: FontWeight.bold,
   );
 
@@ -326,15 +326,14 @@ class UIStyles {
   );
   static const TextStyle tooltipTextStyle = TextStyle(
     color: Colors.white,
-    fontSize: 12.0,
+    fontSize: UIConstants.tooltipFontSize,
   );
   static const Color tooltipTextColor = Colors.white;
-  static const double tooltipFontSize = 12.0;
 
   // SnackBar
   static const TextStyle snackBarTextStyle = TextStyle(
     color: Colors.white,
-    fontSize: 14.0,
+    fontSize: UIConstants.snackBarTextFontSize,
   );
   static const Color snackBarTextColor = Colors.white;
   static const double snackBarFontSize = 14.0;
@@ -354,7 +353,7 @@ class UIStyles {
     fontWeight: FontWeight.w500,
   );
   static const TextStyle tabBarUnselectedLabelStyle = TextStyle(
-    fontSize: 14.0,
+    fontSize: UIConstants.tabBarUnselectedFontSize,
     fontWeight: FontWeight.normal,
   );
 

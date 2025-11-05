@@ -247,9 +247,10 @@ class LoginScreenState extends State<LoginScreen> {
             enableInteractiveSelection: true,
             enableSuggestions: true,
             autocorrect: false,
-            style: UIStyles.bodyStyle.copyWith(
+            style: UIStyles.formValueStyle.copyWith(
               fontSize:
-                  UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+                  UIStyles.formValueStyle.fontSize! *
+                  fontSizeProvider.scaleFactor,
             ),
             decoration: UIStyles.formInputDecoration.copyWith(
               labelText: 'E-mail',
@@ -278,9 +279,10 @@ class LoginScreenState extends State<LoginScreen> {
             key: const Key('passwordField'),
             controller: _passwordController,
             obscureText: !_isPasswordVisible,
-            style: UIStyles.bodyStyle.copyWith(
+            style: UIStyles.formLabelStyle.copyWith(
               fontSize:
-                  UIStyles.bodyStyle.fontSize! * fontSizeProvider.scaleFactor,
+                  UIStyles.formLabelStyle.fontSize! *
+                  fontSizeProvider.scaleFactor,
             ),
             decoration: UIStyles.formInputDecoration.copyWith(
               labelText: 'Passwort',
