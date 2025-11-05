@@ -19,6 +19,7 @@ import 'schulungen_search_screen.dart';
 import 'schulungen_register_person_dialog.dart';
 import 'schulungen_list_item.dart';
 import 'schulungen_details_dialog.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -276,6 +277,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
               setState(() {});
             });
 
+            final FontSizeProvider fontSizeProvider =
+                Provider.of<FontSizeProvider>(context);
             return SafeArea(
               child: Center(
                 child: ConstrainedBox(
@@ -360,6 +363,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     child: TextFormField(
                                                       controller:
                                                           kontoinhaberController,
+                                                      style: UIStyles
+                                                          .formValueStyle
+                                                          .copyWith(
+                                                            fontSize:
+                                                                UIStyles
+                                                                    .formValueStyle
+                                                                    .fontSize! *
+                                                                fontSizeProvider
+                                                                    .scaleFactor,
+                                                          ),
                                                       decoration: UIStyles
                                                           .formInputDecoration
                                                           .copyWith(
@@ -385,6 +398,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     child: TextFormField(
                                                       controller:
                                                           ibanController,
+                                                      style: UIStyles
+                                                          .formValueStyle
+                                                          .copyWith(
+                                                            fontSize:
+                                                                UIStyles
+                                                                    .formValueStyle
+                                                                    .fontSize! *
+                                                                fontSizeProvider
+                                                                    .scaleFactor,
+                                                          ),
                                                       decoration: UIStyles
                                                           .formInputDecoration
                                                           .copyWith(
@@ -422,6 +445,16 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         'Eingabefeld für BIC',
                                                     child: TextFormField(
                                                       controller: bicController,
+                                                      style: UIStyles
+                                                          .formValueStyle
+                                                          .copyWith(
+                                                            fontSize:
+                                                                UIStyles
+                                                                    .formValueStyle
+                                                                    .fontSize! *
+                                                                fontSizeProvider
+                                                                    .scaleFactor,
+                                                          ),
                                                       decoration: UIStyles
                                                           .formInputDecoration
                                                           .copyWith(

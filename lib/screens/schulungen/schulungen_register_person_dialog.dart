@@ -10,6 +10,8 @@ import '/models/schulungstermine_zusatzfelder_data.dart';
 import '/services/api_service.dart';
 import '/widgets/dialog_fabs.dart';
 import '/widgets/scaled_text.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:provider/provider.dart';
 
 class RegisteredPerson {
   RegisteredPerson(this.vorname, this.nachname, this.passnummer);
@@ -263,6 +265,9 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final FontSizeProvider fontSizeProvider = Provider.of<FontSizeProvider>(
+      context,
+    );
     return AlertDialog(
       backgroundColor: UIConstants.backgroundColor,
       insetPadding: const EdgeInsets.all(UIConstants.spacingXL),
@@ -320,6 +325,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                               children: [
                                 TextFormField(
                                   controller: vornameController,
+                                  style: UIStyles.formValueStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.formValueStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
                                   decoration: const InputDecoration(
                                     labelText: 'Vorname',
                                   ),
@@ -333,6 +343,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                 const SizedBox(height: UIConstants.spacingS),
                                 TextFormField(
                                   controller: nachnameController,
+                                  style: UIStyles.formValueStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.formValueStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
                                   decoration: const InputDecoration(
                                     labelText: 'Nachname',
                                   ),
@@ -346,6 +361,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                 const SizedBox(height: UIConstants.spacingS),
                                 TextFormField(
                                   controller: passnummerController,
+                                  style: UIStyles.formValueStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.formValueStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
                                   decoration: const InputDecoration(
                                     labelText: 'Passnummer',
                                   ),
@@ -359,6 +379,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                 const SizedBox(height: UIConstants.spacingS),
                                 TextFormField(
                                   controller: emailController,
+                                  style: UIStyles.formValueStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.formValueStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
                                   decoration: const InputDecoration(
                                     labelText: 'E-Mail',
                                   ),
@@ -375,6 +400,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                 const SizedBox(height: UIConstants.spacingS),
                                 TextFormField(
                                   controller: telefonnummerController,
+                                  style: UIStyles.formValueStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.formValueStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
                                   decoration: const InputDecoration(
                                     labelText: 'Telefonnummer',
                                   ),

@@ -6,6 +6,8 @@ import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/password/password_reset_fail_screen.dart';
 import 'package:meinbssb/screens/password/password_reset_success_screen.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:provider/provider.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({
@@ -175,6 +177,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       );
     }
 
+    final FontSizeProvider fontSizeProvider = Provider.of<FontSizeProvider>(
+      context,
+    );
     return BaseScreenLayout(
       title: 'Passwort zurücksetzen',
       userData: null,
@@ -227,6 +232,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     textField: true,
                     child: TextFormField(
                       controller: _passwordController,
+                      style: UIStyles.formValueStyle.copyWith(
+                        fontSize:
+                            UIStyles.formValueStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
                       obscureText: !_showPassword,
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Neues Passwort',
@@ -242,7 +252,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                         ),
                       ),
-                      style: UIStyles.formValueStyle,
                       validator: _validatePassword,
                       onChanged: _checkStrength,
                     ),
@@ -288,6 +297,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     textField: true,
                     child: TextFormField(
                       controller: _confirmController,
+                      style: UIStyles.formValueStyle.copyWith(
+                        fontSize:
+                            UIStyles.formValueStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
                       obscureText: !_showConfirm,
                       decoration: UIStyles.formInputDecoration.copyWith(
                         labelText: 'Passwort wiederholen',
@@ -302,7 +316,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   setState(() => _showConfirm = !_showConfirm),
                         ),
                       ),
-                      style: UIStyles.formValueStyle,
                       validator:
                           (v) =>
                               v != _passwordController.text
