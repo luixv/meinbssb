@@ -13,6 +13,7 @@ import '/constants/ui_constants.dart';
 // import 'agb_screen.dart';
 import '/widgets/dialog_fabs.dart';
 import '/widgets/scaled_text.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class OktoberfestGewinnScreen extends StatefulWidget {
   const OktoberfestGewinnScreen({
@@ -522,6 +523,9 @@ class _BankDataDialogState extends State<BankDataDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final FontSizeProvider fontSizeProvider = Provider.of<FontSizeProvider>(
+      context,
+    );
     return Dialog(
       backgroundColor: UIConstants.backgroundColor,
       insetPadding: const EdgeInsets.all(32),
@@ -572,6 +576,11 @@ class _BankDataDialogState extends State<BankDataDialog> {
                               textField: true,
                               child: TextFormField(
                                 controller: _kontoinhaberController,
+                                style: UIStyles.formValueStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.formValueStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                ),
                                 decoration: UIStyles.formInputDecoration
                                     .copyWith(labelText: 'Kontoinhaber'),
                                 validator: (value) {
@@ -591,6 +600,11 @@ class _BankDataDialogState extends State<BankDataDialog> {
                                     textField: true,
                                     child: TextFormField(
                                       controller: _ibanController,
+                                      style: UIStyles.formValueStyle.copyWith(
+                                        fontSize:
+                                            UIStyles.formValueStyle.fontSize! *
+                                            fontSizeProvider.scaleFactor,
+                                      ),
                                       decoration: UIStyles.formInputDecoration
                                           .copyWith(labelText: 'IBAN'),
                                       validator: (value) {
@@ -614,6 +628,11 @@ class _BankDataDialogState extends State<BankDataDialog> {
                                     textField: true,
                                     child: TextFormField(
                                       controller: _bicController,
+                                      style: UIStyles.formValueStyle.copyWith(
+                                        fontSize:
+                                            UIStyles.formValueStyle.fontSize! *
+                                            fontSizeProvider.scaleFactor,
+                                      ),
                                       decoration: UIStyles.formInputDecoration
                                           .copyWith(
                                             labelText:

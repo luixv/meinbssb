@@ -109,10 +109,17 @@ class UIConstants {
   // Font Sizes
   static const double headerFontSize = 24.0;
   static const double bodyFontSize = 14.0;
+  static const double fieldValueFontSize = 16.0;
+
   static const double titleFontSize = 20.0;
+  static const double drawerHeaderFontSize = 18.0;
   static const double subtitleFontSize = 16.0;
   static const double buttonFontSize = 16.0;
   static const double defaultFontSize = 16.0;
+  static const double tooltipFontSize = 12.0;
+  static const double snackBarTextFontSize = 12.0;
+
+  static const double tabBarUnselectedFontSize = 14.0;
 
   // Spacing constants
   static const double spacingXXS = 1.0;

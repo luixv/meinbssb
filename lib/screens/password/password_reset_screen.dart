@@ -242,9 +242,9 @@ class PasswordResetScreenState extends State<PasswordResetScreen> {
                           hint: 'Geben Sie Ihre Schützenausweisnummer ein',
                           child: TextField(
                             controller: _passNumberController,
-                            style: UIStyles.bodyStyle.copyWith(
+                            style: UIStyles.formLabelStyle.copyWith(
                               fontSize:
-                                  UIStyles.bodyStyle.fontSize! *
+                                  UIStyles.formLabelStyle.fontSize! *
                                   fontSizeProvider.scaleFactor,
                             ),
                             decoration: UIStyles.formInputDecoration.copyWith(

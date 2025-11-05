@@ -7,6 +7,8 @@ import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/registration/registration_fail_screen.dart';
 import 'package:meinbssb/screens/registration/registration_success_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class SetPasswordScreen extends StatefulWidget {
   const SetPasswordScreen({
@@ -175,7 +177,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       final passDaten = await widget.authService.getPassDatenByPersonId(
         personId.toString(),
       );
-      
+
       if (passDaten.isEmpty) {
         _failAndExit('Passdaten nicht gefunden.');
         return;
@@ -199,7 +201,11 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         final apiDate = DateTime.tryParse(apiGeburtsdatum);
         if (apiDate != null) {
           // Compare only date part (ignore time)
-          final apiDateOnly = DateTime(apiDate.year, apiDate.month, apiDate.day);
+          final apiDateOnly = DateTime(
+            apiDate.year,
+            apiDate.month,
+            apiDate.day,
+          );
           final selectedDateOnly = DateTime(
             _selectedDate!.year,
             _selectedDate!.month,
@@ -263,6 +269,9 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       );
     }
 
+    final FontSizeProvider fontSizeProvider = Provider.of<FontSizeProvider>(
+      context,
+    );
     return BaseScreenLayout(
       title: 'Passwort setzen',
       userData: null,
@@ -303,13 +312,18 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
               Semantics(
                 label: 'Eingabefeld für Postleitzahl',
                 textField: true,
+
                 child: TextFormField(
                   controller: _zipCodeController,
                   keyboardType: TextInputType.number,
                   decoration: UIStyles.formInputDecoration.copyWith(
                     labelText: 'PLZ',
                   ),
-                  style: UIStyles.formValueStyle,
+                  style: UIStyles.formValueStyle.copyWith(
+                    fontSize:
+                        UIStyles.formValueStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
                   validator: _validateZipCode,
                   maxLength: 5,
                   onChanged: (_) {
@@ -333,7 +347,10 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                     child: Text(
                       _selectedDate == null
                           ? 'Geburtsdatum auswählen'
-                          : DateFormat('dd.MM.yyyy', 'de').format(_selectedDate!),
+                          : DateFormat(
+                            'dd.MM.yyyy',
+                            'de',
+                          ).format(_selectedDate!),
                       style: UIStyles.formValueStyle,
                     ),
                   ),
@@ -374,7 +391,12 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                           () => setState(() => _showPassword = !_showPassword),
                     ),
                   ),
-                  style: UIStyles.formValueStyle,
+
+                  style: UIStyles.formValueStyle.copyWith(
+                    fontSize:
+                        UIStyles.formValueStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
                   validator: _validatePassword,
                   onChanged: _checkStrength,
                 ),
@@ -427,7 +449,12 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                           () => setState(() => _showConfirm = !_showConfirm),
                     ),
                   ),
-                  style: UIStyles.formValueStyle,
+                  style: UIStyles.formValueStyle.copyWith(
+                    fontSize:
+                        UIStyles.formValueStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+
                   validator:
                       (v) =>
                           v != _passwordController.text
