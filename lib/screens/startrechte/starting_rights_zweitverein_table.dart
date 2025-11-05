@@ -3,6 +3,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class ZweitvereinTable extends StatelessWidget {
   const ZweitvereinTable({
@@ -197,85 +198,106 @@ class ZweitvereinTable extends StatelessWidget {
               children: [
                 Builder(
                   builder: (context) {
-                    TextEditingController? autocompleteController;
+                    final TextEditingController typeAheadController =
+                        TextEditingController();
                     return Semantics(
                       label: 'Disziplin hinzufügen',
                       hint: 'Tippen, um Disziplin zu suchen und hinzuzufügen',
-                      child: Autocomplete<Disziplin>(
-                        optionsBuilder: (TextEditingValue textEditingValue) {
-                          if (textEditingValue.text == '') {
-                            return const Iterable<Disziplin>.empty();
-                          }
-                          return disciplines.where((Disziplin d) {
-                            return (d.disziplin?.toLowerCase() ?? '').contains(
-                                  textEditingValue.text.toLowerCase(),
-                                ) ||
-                                (d.disziplinNr?.toLowerCase() ?? '').contains(
-                                  textEditingValue.text.toLowerCase(),
-                                );
-                          });
+                      child: TypeAheadField<Disziplin>(
+                        controller: typeAheadController,
+                        suggestionsCallback: (pattern) {
+                          if (pattern.isEmpty) return <Disziplin>[];
+                          return disciplines
+                              .where(
+                                (d) =>
+                                    (d.disziplin?.toLowerCase() ?? '').contains(
+                                      pattern.toLowerCase(),
+                                    ) ||
+                                    (d.disziplinNr?.toLowerCase() ?? '')
+                                        .contains(pattern.toLowerCase()),
+                              )
+                              .toList();
                         },
-                        displayStringForOption:
-                            (Disziplin d) =>
-                                ((d.disziplinNr != null &&
-                                        d.disziplinNr!.isNotEmpty)
-                                    ? '${d.disziplinNr} - '
-                                    : '') +
-                                (d.disziplin ?? ''),
-                        fieldViewBuilder: (
-                          context,
-                          controller,
-                          focusNode,
-                          onFieldSubmitted,
-                        ) {
-                          autocompleteController = controller;
-                          return LayoutBuilder(
-                            builder: (context, constraints) {
-                              return SizedBox(
-                                height: 32,
-                                child: Semantics(
-                                  textField: true,
-                                  label: 'Disziplin suchen',
-                                  hint: 'Namen oder Nummer eingeben',
-                                  child: TextField(
-                                    controller: controller,
-                                    focusNode: focusNode,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            vertical: 6,
-                                            horizontal: 10,
-                                          ),
-                                      border: const OutlineInputBorder(),
-                                      suffixIcon: Semantics(
-                                        button: true,
-                                        label: 'Hinzufügen',
-                                        hint:
-                                            'Ausgewählte Disziplin hinzufügen',
-                                        child: IconButton(
-                                          icon: const Icon(Icons.add),
-                                          onPressed: () {
-                                            focusNode.requestFocus();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                        builder: (context, controller, focusNode) {
+                          return TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 6,
+                                horizontal: 10,
+                              ),
+                              border: const OutlineInputBorder(),
+                              suffixIcon: Semantics(
+                                button: true,
+                                label: 'Hinzufügen',
+                                hint: 'Ausgewählte Disziplin hinzufügen',
+                                child: IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    final value = controller.text.trim();
+                                    try {
+                                      final match = disciplines.firstWhere(
+                                        (d) =>
+                                            (((d.disziplinNr != null &&
+                                                                d
+                                                                    .disziplinNr!
+                                                                    .isNotEmpty
+                                                            ? '${d.disziplinNr} - '
+                                                            : '') +
+                                                        (d.disziplin ?? ''))
+                                                    .trim()
+                                                    .toLowerCase() ==
+                                                value.toLowerCase()),
+                                      );
+                                      onAdd(match);
+                                      controller.clear();
+                                    } catch (_) {
+                                      // No match found
+                                    }
+                                  },
                                 ),
-                              );
+                              ),
+                            ),
+                            onSubmitted: (value) {
+                              try {
+                                final match = disciplines.firstWhere(
+                                  (d) =>
+                                      (((d.disziplinNr != null &&
+                                                          d
+                                                              .disziplinNr!
+                                                              .isNotEmpty
+                                                      ? '${d.disziplinNr} - '
+                                                      : '') +
+                                                  (d.disziplin ?? ''))
+                                              .trim()
+                                              .toLowerCase() ==
+                                          value.trim().toLowerCase()),
+                                );
+                                onAdd(match);
+                                controller.clear();
+                              } catch (_) {
+                                // No match found
+                              }
                             },
                           );
                         },
-                        onSelected: (selected) {
-                          onAdd(selected);
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            try {
-                              autocompleteController?.clear();
-                            } catch (_) {}
-                          });
+                        itemBuilder: (context, Disziplin suggestion) {
+                          return ListTile(
+                            title: Text(
+                              ((suggestion.disziplinNr != null &&
+                                          suggestion.disziplinNr!.isNotEmpty
+                                      ? '${suggestion.disziplinNr} - '
+                                      : '') +
+                                  (suggestion.disziplin ?? '')),
+                            ),
+                          );
+                        },
+                        onSelected: (Disziplin suggestion) {
+                          onAdd(suggestion);
+                          typeAheadController.clear();
                         },
                       ),
                     );
