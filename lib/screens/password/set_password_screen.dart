@@ -149,6 +149,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         r'^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})',
       ).firstMatch(value);
       if (match != null) {
+        return DateTime(
           int.parse(match.group(1)!),
           int.parse(match.group(2)!),
           int.parse(match.group(3)!),
