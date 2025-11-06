@@ -627,7 +627,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                             : 'Bitte geben Sie den Kontoinhaber ein.',
                     textField: true,
                     child: _buildTextField(
-                      label: 'Kontoinhaber Eingabefeld',
+                      label: 'Kontoinhaber',
                       controller: _kontoinhaberController,
                       isReadOnly: !_isEditing,
                       validator: (value) {
@@ -646,7 +646,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                             : 'Bitte geben Sie Ihre IBAN ein.',
                     textField: true,
                     child: _buildTextField(
-                      label: 'IBAN Eingabefeld',
+                      label: 'IBAN',
                       controller: _ibanController,
                       isReadOnly: !_isEditing,
                       validator: (value) {
@@ -668,7 +668,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                             : 'Bitte geben Sie Ihre BIC ein.',
                     textField: true,
                     child: _buildTextField(
-                      label: 'BIC Eingabefeld',
+                      label: 'BIC',
                       controller: _bicController,
                       isReadOnly: !_isEditing,
                       validator: (value) {
