@@ -227,7 +227,6 @@ class ZweitvereinTable extends StatelessWidget {
                               if (event is RawKeyDownEvent &&
                                   event.logicalKey ==
                                       LogicalKeyboardKey.enter) {
-                                // Try to select the highlighted suggestion if present
                                 final value = controller.text.trim();
                                 Disziplin? match;
                                 for (final d in disciplines) {
@@ -247,6 +246,8 @@ class ZweitvereinTable extends StatelessWidget {
                                 if (match != null) {
                                   onAdd(match);
                                   controller.clear();
+                                  focusNode
+                                      .unfocus(); // Close autocomplete after selection
                                 }
                               }
                             },
@@ -285,6 +286,8 @@ class ZweitvereinTable extends StatelessWidget {
                                         );
                                         onAdd(match);
                                         controller.clear();
+                                        focusNode
+                                            .unfocus(); // Close autocomplete after selection
                                       } catch (_) {
                                         // No match found
                                       }
@@ -309,6 +312,8 @@ class ZweitvereinTable extends StatelessWidget {
                                   );
                                   onAdd(match);
                                   controller.clear();
+                                  focusNode
+                                      .unfocus(); // Close autocomplete after selection
                                 } catch (_) {
                                   // No match found
                                 }
@@ -330,6 +335,20 @@ class ZweitvereinTable extends StatelessWidget {
                         onSelected: (Disziplin suggestion) {
                           onAdd(suggestion);
                           typeAheadController.clear();
+                          // Close autocomplete after selection
+                          // The focusNode is available in the builder, so we need to get it from the context
+                          // Use FocusScope to unfocus
+                          FocusScope.of(context).unfocus();
+                        },
+                        emptyBuilder: (context) {
+                          return Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              'Disziplinen...',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.grey),
+                            ),
+                          );
                         },
                       ),
                     );
