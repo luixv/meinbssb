@@ -4,6 +4,7 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter/services.dart';
 
 class ZweitvereinTable extends StatelessWidget {
   const ZweitvereinTable({
@@ -219,69 +220,100 @@ class ZweitvereinTable extends StatelessWidget {
                               .toList();
                         },
                         builder: (context, controller, focusNode) {
-                          return TextField(
-                            controller: controller,
-                            focusNode: focusNode,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 6,
-                                horizontal: 10,
-                              ),
-                              border: const OutlineInputBorder(),
-                              suffixIcon: Semantics(
-                                button: true,
-                                label: 'Hinzufügen',
-                                hint: 'Ausgewählte Disziplin hinzufügen',
-                                child: IconButton(
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    final value = controller.text.trim();
-                                    try {
-                                      final match = disciplines.firstWhere(
-                                        (d) =>
-                                            (((d.disziplinNr != null &&
-                                                                d
-                                                                    .disziplinNr!
-                                                                    .isNotEmpty
-                                                            ? '${d.disziplinNr} - '
-                                                            : '') +
-                                                        (d.disziplin ?? ''))
-                                                    .trim()
-                                                    .toLowerCase() ==
-                                                value.toLowerCase()),
-                                      );
-                                      onAdd(match);
-                                      controller.clear();
-                                    } catch (_) {
-                                      // No match found
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                            onSubmitted: (value) {
-                              try {
-                                final match = disciplines.firstWhere(
-                                  (d) =>
+                          final rawKeyboardFocusNode = FocusNode();
+                          return RawKeyboardListener(
+                            focusNode: rawKeyboardFocusNode,
+                            onKey: (event) {
+                              if (event is RawKeyDownEvent &&
+                                  event.logicalKey ==
+                                      LogicalKeyboardKey.enter) {
+                                // Try to select the highlighted suggestion if present
+                                final value = controller.text.trim();
+                                Disziplin? match;
+                                for (final d in disciplines) {
+                                  final label =
                                       (((d.disziplinNr != null &&
-                                                          d
-                                                              .disziplinNr!
-                                                              .isNotEmpty
-                                                      ? '${d.disziplinNr} - '
-                                                      : '') +
-                                                  (d.disziplin ?? ''))
-                                              .trim()
-                                              .toLowerCase() ==
-                                          value.trim().toLowerCase()),
-                                );
-                                onAdd(match);
-                                controller.clear();
-                              } catch (_) {
-                                // No match found
+                                                      d.disziplinNr!.isNotEmpty)
+                                                  ? '${d.disziplinNr} - '
+                                                  : '') +
+                                              (d.disziplin ?? ''))
+                                          .trim()
+                                          .toLowerCase();
+                                  if (label == value.toLowerCase()) {
+                                    match = d;
+                                    break;
+                                  }
+                                }
+                                if (match != null) {
+                                  onAdd(match);
+                                  controller.clear();
+                                }
                               }
                             },
+                            child: TextField(
+                              controller: controller,
+                              focusNode: focusNode,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 6,
+                                  horizontal: 10,
+                                ),
+                                border: const OutlineInputBorder(),
+                                suffixIcon: Semantics(
+                                  button: true,
+                                  label: 'Hinzufügen',
+                                  hint: 'Ausgewählte Disziplin hinzufügen',
+                                  child: IconButton(
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () {
+                                      final value = controller.text.trim();
+                                      try {
+                                        final match = disciplines.firstWhere(
+                                          (d) =>
+                                              (((d.disziplinNr != null &&
+                                                              d
+                                                                  .disziplinNr!
+                                                                  .isNotEmpty)
+                                                          ? '${d.disziplinNr} - '
+                                                          : '') +
+                                                      (d.disziplin ?? ''))
+                                                  .trim()
+                                                  .toLowerCase() ==
+                                              value.toLowerCase(),
+                                        );
+                                        onAdd(match);
+                                        controller.clear();
+                                      } catch (_) {
+                                        // No match found
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              onSubmitted: (value) {
+                                try {
+                                  final match = disciplines.firstWhere(
+                                    (d) =>
+                                        (((d.disziplinNr != null &&
+                                                        d
+                                                            .disziplinNr!
+                                                            .isNotEmpty)
+                                                    ? '${d.disziplinNr} - '
+                                                    : '') +
+                                                (d.disziplin ?? ''))
+                                            .trim()
+                                            .toLowerCase() ==
+                                        value.trim().toLowerCase(),
+                                  );
+                                  onAdd(match);
+                                  controller.clear();
+                                } catch (_) {
+                                  // No match found
+                                }
+                              },
+                            ),
                           );
                         },
                         itemBuilder: (context, Disziplin suggestion) {
