@@ -808,7 +808,6 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             onPressed:
                 (_selectedImage != null && !_isUploading) ? _uploadImage : null,
             child: Semantics(
-              label: 'Profilbild hochladen',
               hint: 'Tippen, um das ausgewählte Bild hochzuladen',
               button: true,
               child: Tooltip(
