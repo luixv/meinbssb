@@ -557,14 +557,14 @@ class DatenschutzScreen extends StatelessWidget {
       ),
       floatingActionButton: Semantics(
         child: Tooltip(
-          message: 'Impressum schließen',
+          message: 'Datenschütz schließen',
           child: FloatingActionButton(
             onPressed: () => Navigator.of(context).pop(),
             backgroundColor: UIConstants.defaultAppColor,
             child: Semantics(
-              label: 'Impressum schließen',
+              label: 'Datenschütz schließen',
               hint:
-                  'Tippen, um das Impressum zu schließen und zur vorherigen Seite zurückzukehren',
+                  'Tippen, um das Datenschütz zu schließen und zur vorherigen Seite zurückzukehren',
               button: true,
               child: const Icon(Icons.close, color: Colors.white),
             ),
