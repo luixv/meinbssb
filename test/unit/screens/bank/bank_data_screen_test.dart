@@ -5,7 +5,6 @@ import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/bankdata/bank_data_screen.dart';
 import 'package:meinbssb/screens/bankdata/bank_data_success_screen.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 
