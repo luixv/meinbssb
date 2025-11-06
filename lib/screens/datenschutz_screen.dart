@@ -45,10 +45,7 @@ class DatenschutzScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const ScaledText(
-                    'Datenschutz',
-                    style: UIStyles.headerStyle,
-                  ),
+                  const ScaledText('Datenschutz', style: UIStyles.headerStyle),
                   UIConstants.verticalSpacingM,
                   const Divider(),
                   UIConstants.verticalSpacingM,
@@ -86,7 +83,9 @@ class DatenschutzScreen extends StatelessWidget {
                   UIConstants.verticalSpacingM,
                   ScaledText(
                     'Gesetzliche Vertretung',
-                    style: UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                    style: UIStyles.bodyStyle.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   UIConstants.verticalSpacingS,
                   const ScaledText(
@@ -96,7 +95,9 @@ class DatenschutzScreen extends StatelessWidget {
                   UIConstants.verticalSpacingM,
                   ScaledText(
                     'Geschäftsführer',
-                    style: UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                    style: UIStyles.bodyStyle.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   UIConstants.verticalSpacingS,
                   const ScaledText(
@@ -106,17 +107,25 @@ class DatenschutzScreen extends StatelessWidget {
                   UIConstants.verticalSpacingM,
                   ScaledText(
                     'Datenschutzbeauftragter',
-                    style: UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                    style: UIStyles.bodyStyle.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   UIConstants.verticalSpacingS,
                   RichText(
                     text: TextSpan(
                       style: UIStyles.bodyStyle,
                       children: [
-                        const TextSpan(text: 'Herbert Isdebski\nScheibenhalde 1\n72160 Horb-Nordstetten\n\nTel: (07451) 6 25 42 40 '),
+                        const TextSpan(
+                          text:
+                              'Herbert Isdebski\nScheibenhalde 1\n72160 Horb-Nordstetten\n\nTel: (07451) 6 25 42 40 ',
+                        ),
                         TextSpan(
-                          text: '(Sprechstunde für BSSB-Mitglieder: jeder erste Donnerstag im Monat, 16 bis 18 Uhr)',
-                          style: UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                          text:
+                              '(Sprechstunde für BSSB-Mitglieder: jeder erste Donnerstag im Monat, 16 bis 18 Uhr)',
+                          style: UIStyles.bodyStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const TextSpan(text: '\nE-Mail: datenschutz@bssb.de'),
                       ],
@@ -546,6 +555,22 @@ class DatenschutzScreen extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: Semantics(
+        child: Tooltip(
+          message: 'Impressum schließen',
+          child: FloatingActionButton(
+            onPressed: () => Navigator.of(context).pop(),
+            backgroundColor: UIConstants.defaultAppColor,
+            child: Semantics(
+              label: 'Impressum schließen',
+              hint:
+                  'Tippen, um das Impressum zu schließen und zur vorherigen Seite zurückzukehren',
+              button: true,
+              child: const Icon(Icons.close, color: Colors.white),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -610,4 +635,3 @@ class DatenschutzScreen extends StatelessWidget {
     );
   }
 }
-
