@@ -370,48 +370,58 @@ class BankDataScreenState extends State<BankDataScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Semantics(
-            label: 'Abbrechen Button',
-            hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
-            button: true,
-            child: Focus(
-              canRequestFocus: true,
-              child: FloatingActionButton(
-                heroTag: 'bankDataCancelFab',
-                onPressed: () {
-                  setState(() {
-                    _isEditing = false;
-                    _kontoinhaberController.clear();
-                    _ibanController.clear();
-                    _bicController.clear();
-                    _loadInitialData();
-                  });
-                },
-                backgroundColor: UIConstants.defaultAppColor,
-                child: const Icon(Icons.close, color: UIConstants.whiteColor),
+          Tooltip(
+            message: 'Bearbeitung abbrechen',
+            child: Semantics(
+              label: 'Abbrechen Button',
+              hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
+              button: true,
+              child: Focus(
+                canRequestFocus: true,
+                child: FloatingActionButton(
+                  heroTag: 'bankDataCancelFab',
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = false;
+                      _kontoinhaberController.clear();
+                      _ibanController.clear();
+                      _bicController.clear();
+                      _loadInitialData();
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(Icons.close, color: UIConstants.whiteColor),
+                ),
               ),
             ),
           ),
           const SizedBox(height: UIConstants.spacingM),
-          Semantics(
-            label: 'Speichern Button',
-            hint: 'Bankdaten speichern',
-            button: true,
-            child: Focus(
-              canRequestFocus: true,
-              child: FloatingActionButton(
-                heroTag: 'bankDataSaveFab',
-                onPressed: _isSaving ? null : _onSaveBankData,
-                backgroundColor: UIConstants.defaultAppColor,
-                child:
-                    _isSaving
-                        ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            UIConstants.circularProgressIndicator,
+
+          Tooltip(
+            message: 'Bankdaten speichern',
+            child: Semantics(
+              label: 'Speichern Button',
+              hint: 'Bankdaten speichern',
+              button: true,
+              child: Focus(
+                canRequestFocus: true,
+                child: FloatingActionButton(
+                  heroTag: 'bankDataSaveFab',
+                  onPressed: _isSaving ? null : _onSaveBankData,
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child:
+                      _isSaving
+                          ? const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              UIConstants.circularProgressIndicator,
+                            ),
+                            strokeWidth: UIConstants.defaultStrokeWidth,
+                          )
+                          : const Icon(
+                            Icons.save,
+                            color: UIConstants.whiteColor,
                           ),
-                          strokeWidth: UIConstants.defaultStrokeWidth,
-                        )
-                        : const Icon(Icons.save, color: UIConstants.whiteColor),
+                ),
               ),
             ),
           ),
@@ -421,47 +431,51 @@ class BankDataScreenState extends State<BankDataScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Semantics(
-            label: 'Löschen Button',
-            hint: 'Bankdaten löschen',
-            button: true,
-            child: Focus(
-              canRequestFocus: true,
-              child: FloatingActionButton(
-                heroTag: 'bankDataDeleteFab',
-                onPressed: _isSaving ? null : _onDeleteBankData,
-                backgroundColor: UIConstants.defaultAppColor,
-                child:
-                    _isSaving
-                        ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            UIConstants.whiteColor,
+          Tooltip(
+            message: 'Bankdaten löschen',
+            child: Semantics(
+              hint: 'Bankdaten löschen',
+              button: true,
+              child: Focus(
+                canRequestFocus: true,
+                child: FloatingActionButton(
+                  heroTag: 'bankDataDeleteFab',
+                  onPressed: _isSaving ? null : _onDeleteBankData,
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child:
+                      _isSaving
+                          ? const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              UIConstants.whiteColor,
+                            ),
+                            strokeWidth: UIConstants.defaultStrokeWidth,
+                          )
+                          : const Icon(
+                            Icons.delete_outline,
+                            color: UIConstants.whiteColor,
                           ),
-                          strokeWidth: UIConstants.defaultStrokeWidth,
-                        )
-                        : const Icon(
-                          Icons.delete_outline,
-                          color: UIConstants.whiteColor,
-                        ),
+                ),
               ),
             ),
           ),
           const SizedBox(height: UIConstants.spacingM),
-          Semantics(
-            label: 'Bearbeiten Button',
-            hint: 'Bankdaten bearbeiten',
-            button: true,
-            child: Focus(
-              canRequestFocus: true,
-              child: FloatingActionButton(
-                heroTag: 'bankDataEditFab',
-                onPressed: () {
-                  setState(() {
-                    _isEditing = true;
-                  });
-                },
-                backgroundColor: UIConstants.defaultAppColor,
-                child: const Icon(Icons.edit, color: UIConstants.whiteColor),
+          Tooltip(
+            message: 'Bankdaten bearbeiten',
+            child: Semantics(
+              hint: 'Bankdaten bearbeiten',
+              button: true,
+              child: Focus(
+                canRequestFocus: true,
+                child: FloatingActionButton(
+                  heroTag: 'bankDataEditFab',
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(Icons.edit, color: UIConstants.whiteColor),
+                ),
               ),
             ),
           ),
@@ -614,14 +628,13 @@ class BankDataScreenState extends State<BankDataScreen> {
                   Focus(
                     canRequestFocus: true,
                     child: Semantics(
-                      label: 'Kontoinhaber Eingabefeld',
                       hint:
                           !_isEditing
                               ? 'Dieses Feld ist nicht bearbeitbar.'
                               : 'Bitte geben Sie den Kontoinhaber ein.',
                       textField: true,
                       child: _buildTextField(
-                        label: 'Kontoinhaber',
+                        label: 'Kontoinhaber Eingabefeld',
                         controller: _kontoinhaberController,
                         isReadOnly: !_isEditing,
                         validator: (value) {
@@ -637,14 +650,13 @@ class BankDataScreenState extends State<BankDataScreen> {
                   Focus(
                     canRequestFocus: true,
                     child: Semantics(
-                      label: 'IBAN Eingabefeld',
                       hint:
                           !_isEditing
                               ? 'Dieses Feld ist nicht bearbeitbar.'
                               : 'Bitte geben Sie Ihre IBAN ein.',
                       textField: true,
                       child: _buildTextField(
-                        label: 'IBAN',
+                        label: 'IBAN Eingabefeld',
                         controller: _ibanController,
                         isReadOnly: !_isEditing,
                         validator: (value) {
@@ -663,14 +675,13 @@ class BankDataScreenState extends State<BankDataScreen> {
                   Focus(
                     canRequestFocus: true,
                     child: Semantics(
-                      label: 'BIC Eingabefeld',
                       hint:
                           !_isEditing
                               ? 'Dieses Feld ist nicht bearbeitbar.'
                               : 'Bitte geben Sie Ihre BIC ein.',
                       textField: true,
                       child: _buildTextField(
-                        label: 'BIC',
+                        label: 'BIC Eingabefeld',
                         controller: _bicController,
                         isReadOnly: !_isEditing,
                         validator: (value) {
