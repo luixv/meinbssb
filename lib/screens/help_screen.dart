@@ -31,7 +31,9 @@ class HelpScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
           onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'zurück',
         ),
+
         title: const ScaledText(
           Messages.helpTitle,
           style: UIStyles.appBarTitleStyle,
@@ -133,7 +135,7 @@ class HelpScreen extends StatelessWidget {
                       question: 'Ich habe mein Passwort vergessen. Was nun?',
                       answer: ScaledText(
                         'Eine Funktion zum Zurücksetzen des Passworts ist bei MeinBSSB verfügbar. Folgen Sie den dortigen Anweisungen um Ihr Passwort zu ändern. Bei Problemen wenden Sie sich bitte an den Support des BSSB unter webportal@bssb.bayern.',
-                      ), 
+                      ),
                     ),
                   ],
                 ),

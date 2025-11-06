@@ -270,22 +270,6 @@ class UIConstants {
   static const IconData bluetoothIcon = Icons.bluetooth_connected;
   static const IconData networkCheckIcon = Icons.network_check;
 
-  // Menu Icons
-  static const IconData schoolIcon = Icons.school;
-  static const IconData taskIcon = Icons.task_alt;
-  static const IconData cameraIcon = Icons.photo_camera;
-  static const IconData personIcon = Icons.person;
-  static const IconData contactIcon = Icons.contact_phone;
-  static const IconData bankIcon = Icons.account_balance;
-  static const IconData logoutIcon = Icons.logout;
-  static const IconData loginIcon = Icons.login;
-  static const IconData registrationIcon = Icons.app_registration;
-  static const IconData helpIcon = Icons.help_outline;
-  static const IconData lockResetIcon = Icons.lock_reset;
-
-  // UI Icons
-  static const IconData circleIcon = Icons.circle;
-
   static const List<String> contactTypes = [
     'Telefon',
     'Mobil',

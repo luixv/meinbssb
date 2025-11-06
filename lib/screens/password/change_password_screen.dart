@@ -369,6 +369,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         suffixIcon: IconButton(
           icon: Icon(
             isVisible ? Icons.visibility_off : Icons.visibility,
+            semanticLabel:
+                isVisible ? 'Passwort verbergen' : 'Passwort anzeigen',
             color: eyeIconColor,
           ),
           onPressed: onToggleVisibility,

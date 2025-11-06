@@ -262,38 +262,8 @@ class ZweitvereinTable extends StatelessWidget {
                                   horizontal: 10,
                                 ),
                                 border: const OutlineInputBorder(),
-                                suffixIcon: Semantics(
-                                  button: true,
-                                  label: 'Hinzufügen',
-                                  hint: 'Ausgewählte Disziplin hinzufügen',
-                                  child: IconButton(
-                                    icon: const Icon(Icons.add),
-                                    onPressed: () {
-                                      final value = controller.text.trim();
-                                      try {
-                                        final match = disciplines.firstWhere(
-                                          (d) =>
-                                              (((d.disziplinNr != null &&
-                                                              d
-                                                                  .disziplinNr!
-                                                                  .isNotEmpty)
-                                                          ? '${d.disziplinNr} - '
-                                                          : '') +
-                                                      (d.disziplin ?? ''))
-                                                  .trim()
-                                                  .toLowerCase() ==
-                                              value.toLowerCase(),
-                                        );
-                                        onAdd(match);
-                                        controller.clear();
-                                        focusNode
-                                            .unfocus(); // Close autocomplete after selection
-                                      } catch (_) {
-                                        // No match found
-                                      }
-                                    },
-                                  ),
-                                ),
+                                // Removed '+' IconButton from suffixIcon
+                                suffixIcon: null,
                               ),
                               onSubmitted: (value) {
                                 try {

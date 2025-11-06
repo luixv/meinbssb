@@ -59,14 +59,17 @@ class BaseScreenLayout extends StatelessWidget {
                   (context) => Semantics(
                     label: 'menu',
                     button: true,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.menu,
-                        color: UIConstants.textColor,
+                    child: Tooltip(
+                      message: 'Menü öffnen',
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.menu,
+                          color: UIConstants.textColor,
+                        ),
+                        onPressed: () {
+                          Scaffold.of(context).openEndDrawer();
+                        },
                       ),
-                      onPressed: () {
-                        Scaffold.of(context).openEndDrawer();
-                      },
                     ),
                   ),
             ),
@@ -75,7 +78,7 @@ class BaseScreenLayout extends StatelessWidget {
       endDrawer:
           showMenu
               ? Semantics(
-                label: 'Navigationsmenü',
+                label: 'menü',
                 container: true,
                 child: AppDrawer(
                   userData: userData,

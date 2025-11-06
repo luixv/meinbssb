@@ -246,6 +246,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
+                          tooltip: 'Passwort anzeigen/verbergen',
                           onPressed:
                               () => setState(
                                 () => _showPassword = !_showPassword,
@@ -311,6 +312,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
+                          tooltip: 'Passwort anzeigen/verbergen',
+
                           onPressed:
                               () =>
                                   setState(() => _showConfirm = !_showConfirm),
