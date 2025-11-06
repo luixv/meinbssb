@@ -59,108 +59,6 @@ class BankDataScreenState extends State<BankDataScreen> {
       });
       return;
     }
-
-    try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      _bankDataFuture = apiService.fetchBankdatenMyBSSB(widget.webloginId).then(
-        (list) {
-          final hasData = list.isNotEmpty;
-          if (mounted) {
-            setState(() {});
-          }
-          return hasData ? list.first : null;
-        },
-      );
-      LoggerService.logInfo('BankDataScreen: Initiating bank data fetch.');
-    } catch (e) {
-      LoggerService.logError('Error setting up bank data fetch: $e');
-      _bankDataFuture = Future.value(null);
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
-  Future<void> _onSaveBankData() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() {
-      _isSaving = true;
-    });
-
-    // Check offline status before saving
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    final isOffline = !(await apiService.hasInternet());
-    if (isOffline) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bankdaten können offline nicht gespeichert werden'),
-          duration: UIConstants.snackbarDuration,
-          backgroundColor: UIConstants.errorColor,
-        ),
-      );
-      // turn off spinner if offline
-      setState(() {
-        _isSaving = false;
-      });
-      return;
-    }
-
-    try {
-      final bankData = BankData(
-        id: 0,
-        webloginId: widget.webloginId,
-        kontoinhaber: _kontoinhaberController.text,
-        iban: _ibanController.text,
-        bic: _bicController.text,
-        mandatSeq: 2,
-      );
-
-      final bool success = await apiService.registerBankData(bankData);
-
-      if (!mounted) return;
-      if (success) {
-        if (!mounted) return;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder:
-                (context) => BankDataSuccessScreen(
-                  success: true,
-                  userData: widget.userData,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                ),
-          ),
-        );
-      } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Fehler beim Speichern der Bankdaten.'),
-            duration: UIConstants.snackbarDuration,
-            backgroundColor: UIConstants.errorColor,
-          ),
-        );
-      }
-    } catch (e) {
-      LoggerService.logError('Exception during bank data save: $e');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Ein Fehler ist aufgetreten: $e'),
-          duration: UIConstants.snackbarDuration,
-          backgroundColor: UIConstants.errorColor,
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-          _isEditing = false;
-        });
-      }
-    }
   }
 
   Future<void> _onDeleteBankData() async {
@@ -353,6 +251,88 @@ class BankDataScreenState extends State<BankDataScreen> {
             _isSaving = false;
           });
         }
+      }
+    }
+  }
+
+  Future<void> _onSaveBankData() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    // Check offline status before saving
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final isOffline = !(await apiService.hasInternet());
+    if (isOffline) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bankdaten können offline nicht gespeichert werden'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      // turn off spinner if offline
+      setState(() {
+        _isSaving = false;
+      });
+      return;
+    }
+
+    try {
+      final bankData = BankData(
+        id: 0,
+        webloginId: widget.webloginId,
+        kontoinhaber: _kontoinhaberController.text,
+        iban: _ibanController.text,
+        bic: _bicController.text,
+        mandatSeq: 2,
+      );
+
+      final bool success = await apiService.registerBankData(bankData);
+
+      if (!mounted) return;
+      if (success) {
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder:
+                (context) => BankDataSuccessScreen(
+                  success: true,
+                  userData: widget.userData,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                ),
+          ),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fehler beim Speichern der Bankdaten.'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during bank data save: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Ein Fehler ist aufgetreten: $e'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+          _isEditing = false;
+        });
       }
     }
   }
@@ -625,83 +605,74 @@ class BankDataScreenState extends State<BankDataScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      hint:
-                          !_isEditing
-                              ? 'Dieses Feld ist nicht bearbeitbar.'
-                              : 'Bitte geben Sie den Kontoinhaber ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Kontoinhaber Eingabefeld',
-                        controller: _kontoinhaberController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Kontoinhaber ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie den Kontoinhaber ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Kontoinhaber Eingabefeld',
+                      controller: _kontoinhaberController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Kontoinhaber ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingXXS),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      hint:
-                          !_isEditing
-                              ? 'Dieses Feld ist nicht bearbeitbar.'
-                              : 'Bitte geben Sie Ihre IBAN ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'IBAN Eingabefeld',
-                        controller: _ibanController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'IBAN ist erforderlich';
-                          }
-                          if (!BankService.validateIBAN(value)) {
-                            return 'Ungültige IBAN';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie Ihre IBAN ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'IBAN Eingabefeld',
+                      controller: _ibanController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'IBAN ist erforderlich';
+                        }
+                        if (!BankService.validateIBAN(value)) {
+                          return 'Ungültige IBAN';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingXXS),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      hint:
-                          !_isEditing
-                              ? 'Dieses Feld ist nicht bearbeitbar.'
-                              : 'Bitte geben Sie Ihre BIC ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'BIC Eingabefeld',
-                        controller: _bicController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          String ibanText = _ibanController.text.trim();
-                          // For German IBAN, BIC optional
-                          if (ibanText.startsWith('DE')) {
-                            // BIC optional; validate only if provided
-                            if (value == null || value.isEmpty) {
-                              return null;
-                            }
-                            return BankService.validateBIC(value);
-                          } else {
-                            // For non-German IBAN, BIC required
-                            if (value == null || value.isEmpty) {
-                              return 'Bitte geben Sie die BIC ein';
-                            }
-                            return BankService.validateBIC(value);
+                  Semantics(
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie Ihre BIC ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'BIC Eingabefeld',
+                      controller: _bicController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        String ibanText = _ibanController.text.trim();
+                        // For German IBAN, BIC optional
+                        if (ibanText.startsWith('DE')) {
+                          // BIC optional; validate only if provided
+                          if (value == null || value.isEmpty) {
+                            return null;
                           }
-                        },
-                      ),
+                          return BankService.validateBIC(value);
+                        } else {
+                          // For non-German IBAN, BIC required
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte geben Sie die BIC ein';
+                          }
+                          return BankService.validateBIC(value);
+                        }
+                      },
                     ),
                   ),
                 ],
