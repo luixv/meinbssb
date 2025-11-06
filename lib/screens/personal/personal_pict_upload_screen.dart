@@ -807,10 +807,18 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             heroTag: 'saveFab',
             onPressed:
                 (_selectedImage != null && !_isUploading) ? _uploadImage : null,
-            child:
-                _isUploading
-                    ? const CircularProgressIndicator()
-                    : const Icon(Icons.cloud_upload),
+            child: Semantics(
+              label: 'Profilbild hochladen',
+              hint: 'Tippen, um das ausgewählte Bild hochzuladen',
+              button: true,
+              child: Tooltip(
+                message: 'Profilbild hochladen',
+                child:
+                    _isUploading
+                        ? const CircularProgressIndicator()
+                        : const Icon(Icons.cloud_upload),
+              ),
+            ),
           ),
         ],
       ),
