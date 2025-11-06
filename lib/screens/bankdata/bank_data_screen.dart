@@ -47,10 +47,7 @@ class BankDataScreenState extends State<BankDataScreen> {
   }
 
   void _loadInitialData() {
-    setState(() {
-      _bankDataFuture = Future.value(null);
-    });
-
+    final apiService = Provider.of<ApiService>(context, listen: false);
     if (widget.webloginId == 0) {
       setState(() {
         _bankDataFuture = Future.error(
@@ -59,6 +56,24 @@ class BankDataScreenState extends State<BankDataScreen> {
       });
       return;
     }
+    setState(() {
+      _bankDataFuture = apiService.fetchBankdatenMyBSSB(widget.webloginId).then(
+        (bankDataList) {
+          BankData? bankData =
+              bankDataList.isNotEmpty ? bankDataList.first : null;
+          if (bankData != null) {
+            _kontoinhaberController.text = bankData.kontoinhaber;
+            _ibanController.text = bankData.iban;
+            _bicController.text = bankData.bic;
+          } else {
+            _kontoinhaberController.text = '';
+            _ibanController.text = '';
+            _bicController.text = '';
+          }
+          return bankData;
+        },
+      );
+    });
   }
 
   Future<void> _onDeleteBankData() async {
@@ -623,7 +638,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: UIConstants.spacingXXS),
+                  const SizedBox(height: UIConstants.spacingS),
                   Semantics(
                     hint:
                         !_isEditing
@@ -645,7 +660,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: UIConstants.spacingXXS),
+                  const SizedBox(height: 8),
                   Semantics(
                     hint:
                         !_isEditing
