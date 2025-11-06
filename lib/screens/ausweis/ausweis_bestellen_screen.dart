@@ -10,6 +10,7 @@ import '/models/bank_data.dart';
 import '/providers/font_size_provider.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
+import '/helpers/utils.dart';
 
 import 'package:meinbssb/services/api_service.dart';
 
@@ -125,10 +126,6 @@ class _AusweisBestellenScreenState extends State<AusweisBestellenScreen> {
         );
       },
     );
-
-    bool isBicRequired(String iban) {
-      return !iban.toUpperCase().startsWith('DE');
-    }
 
     final List<BankData> bankDataList = await apiService.fetchBankdatenMyBSSB(
       user.webLoginId,

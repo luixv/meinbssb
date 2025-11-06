@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
+import '/helpers/utils.dart';
 
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
@@ -67,14 +67,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     _search();
   }
 
-  String _formatDate(DateTime date) {
-    return DateFormat('dd.MM.yyyy', 'de_DE').format(date);
-  }
-
-  bool _isBicRequired(String iban) {
-    return !iban.toUpperCase().startsWith('DE');
-  }
-
   Future<void> _search() async {
     setState(() {
       _isLoading = true;
@@ -83,7 +75,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     });
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final abDatum = _formatDate(widget.searchDate);
+      final abDatum = formatDate(widget.searchDate);
       final webGruppe =
           (widget.webGruppe != null && widget.webGruppe != 0)
               ? widget.webGruppe.toString()
@@ -201,37 +193,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     if (!mounted) return;
     final List<Map<String, dynamic>> contacts = await contactsFuture;
     if (!mounted) return;
-
-    // Get phone number from contacts
-    String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
-      final privateContacts =
-          contacts.firstWhere(
-                (category) => category['category'] == 'Privat',
-                orElse: () => {'contacts': []},
-              )['contacts']
-              as List<dynamic>;
-      var phoneContact = privateContacts
-          .cast<Map<String, dynamic>>()
-          .firstWhere(
-            (contact) =>
-                contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
-            orElse: () => {'value': ''},
-          );
-      if (phoneContact['value'] == '') {
-        final businessContacts =
-            contacts.firstWhere(
-                  (category) => category['category'] == 'Geschäftlich',
-                  orElse: () => {'contacts': []},
-                )['contacts']
-                as List<dynamic>;
-        phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
-          (contact) =>
-              contact['rawKontaktTyp'] == 5 || contact['rawKontaktTyp'] == 6,
-          orElse: () => {'value': ''},
-        );
-      }
-      return phoneContact['value'] as String;
-    }
 
     final String phoneNumber = extractPhoneNumber(contacts);
     final bankData = bankDataList.isNotEmpty ? bankDataList.first : null;
@@ -459,7 +420,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           .formInputDecoration
                                                           .copyWith(
                                                             labelText:
-                                                                _isBicRequired(
+                                                                isBicRequired(
                                                                       ibanController
                                                                           .text
                                                                           .trim(),
@@ -756,7 +717,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     ibanController.text
                                                         .trim()
                                                         .isNotEmpty &&
-                                                    (!_isBicRequired(
+                                                    (!isBicRequired(
                                                           ibanController.text
                                                               .trim(),
                                                         ) ||
@@ -775,7 +736,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                     ibanController.text
                                                         .trim()
                                                         .isNotEmpty &&
-                                                    (!_isBicRequired(
+                                                    (!isBicRequired(
                                                           ibanController.text
                                                               .trim(),
                                                         ) ||

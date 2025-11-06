@@ -9,6 +9,7 @@ import 'package:meinbssb/screens/registration/registration_fail_screen.dart';
 import 'package:meinbssb/screens/registration/registration_success_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:meinbssb/helpers/utils.dart';
 
 class SetPasswordScreen extends StatefulWidget {
   const SetPasswordScreen({
@@ -183,42 +184,35 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         return;
       }
 
-      // Check PLZ
+      // Check PLZ and GEBURTSDATUM
       final apiPlz = passDaten['PLZ']?.toString().trim();
       final enteredPlz = _zipCodeController.text.trim();
-      if (apiPlz != enteredPlz) {
-        setState(() {
-          _loading = false;
-          _error = 'Postleitzahl stimmt nicht überein.';
-        });
-        return;
-      }
-
-      // Check GEBURTSDATUM
       final apiGeburtsdatum = passDaten['GEBURTSDATUM']?.toString();
+      
+      bool plzMatches = (apiPlz == enteredPlz);
+      bool birthdateMatches = false;
+      
+      // Validate GEBURTSDATUM
       if (apiGeburtsdatum != null && apiGeburtsdatum.isNotEmpty) {
         // Parse API date format: "1973-08-07T00:00:00.000+02:00"
-        final apiDate = DateTime.tryParse(apiGeburtsdatum);
-        if (apiDate != null) {
-          // Compare only date part (ignore time)
-          final apiDateOnly = DateTime(
-            apiDate.year,
-            apiDate.month,
-            apiDate.day,
-          );
-          final selectedDateOnly = DateTime(
-            _selectedDate!.year,
-            _selectedDate!.month,
-            _selectedDate!.day,
-          );
-          if (apiDateOnly != selectedDateOnly) {
-            setState(() {
-              _loading = false;
-              _error = 'Geburtsdatum stimmt nicht überein.';
-            });
-            return;
-          }
-        }
+        final apiDate = parseDate(apiGeburtsdatum);
+        // Compare only date part (ignore time)
+        final apiDateOnly = DateTime(apiDate.year, apiDate.month, apiDate.day);
+        final selectedDateOnly = DateTime(
+          _selectedDate!.year,
+          _selectedDate!.month,
+          _selectedDate!.day,
+        );
+        birthdateMatches = (apiDateOnly == selectedDateOnly);
+      }
+      
+      // Show generic error if either field doesn't match
+      if (!plzMatches || !birthdateMatches) {
+        setState(() {
+          _loading = false;
+          _error = 'Postleitzahl oder Geburtsdatum stimmen nicht mit dem Eintrag in ZMI überein.';
+        });
+        return;
       }
     } catch (e) {
       _failAndExit('Fehler beim Überprüfen der Daten: $e');
