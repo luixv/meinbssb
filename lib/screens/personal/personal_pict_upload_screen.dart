@@ -683,20 +683,81 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingL),
+
+                  // --- Info about allowed formats, size, and data type ---
+                  Consumer<ApiService>(
+                    builder: (context, apiService, child) {
+                      final maxSizeMB =
+                          apiService.configService.getInt(
+                            'maxSizeMB',
+                            'profilePhoto',
+                          ) ??
+                          2;
+                      final allowedFormats =
+                          apiService.configService.getList(
+                            'allowedFormats',
+                            'profilePhoto',
+                          ) ??
+                          ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+                      return Center(
+                        child: Column(
+                          children: [
+                            ScaledText(
+                              'Anforderungen:',
+                              style: UIStyles.bodyStyle.copyWith(
+                                fontSize:
+                                    UIStyles.bodyStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: UIConstants.spacingXS),
+                            ScaledText(
+                              'Maximale Größe: ${maxSizeMB}MB',
+                              style: UIStyles.bodyStyle.copyWith(
+                                fontSize:
+                                    UIStyles.bodyStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                                color: UIConstants.greySubtitleTextColor,
+                              ),
+                            ),
+                            ScaledText(
+                              'Formate: ${allowedFormats.join(', ')}',
+                              style: UIStyles.bodyStyle.copyWith(
+                                fontSize:
+                                    UIStyles.bodyStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                                color: UIConstants.greySubtitleTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   if (_selectedImage != null) ...[
-                    Center(
-                      child: ScaledText(
-                        _selectedImage!.name,
-                        key: PersonalPictUploadScreen.selectedTextKey,
-                        style: UIStyles.bodyStyle,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Semantics(
-                      label: 'Ausgewähltes Bild: ${_selectedImage!.name}',
-                      child: ScaledText(
-                        'Bild ausgewählt',
-                        style: UIStyles.bodyStyle,
+                    const SizedBox(height: UIConstants.spacingM),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ScaledText(
+                            _selectedImage!.name,
+                            key: PersonalPictUploadScreen.selectedTextKey,
+                            style: UIStyles.bodyStyle,
+                            textAlign: TextAlign.left,
+                          ),
+                          const SizedBox(height: 8),
+                          Semantics(
+                            label: 'Ausgewähltes Bild: ${_selectedImage!.name}',
+                            child: ScaledText(
+                              'Bild ausgewählt',
+                              style: UIStyles.bodyStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -742,7 +803,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             onLogout: widget.onLogout,
           ),
         ),
-        if (_isUploading || _isDeleting)
+        if (_isUploading)
           Positioned.fill(
             child: Container(
               color: UIConstants.textColor.withOpacity(0.3),
