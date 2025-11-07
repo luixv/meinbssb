@@ -523,7 +523,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                                       );
                                     }).toList(),
                                 onChanged: (int? newValue) {
-                                  setState(() {
+                                  setStateDialog(() {
                                     _selectedKontaktTyp = newValue;
                                   });
                                 },
@@ -626,7 +626,7 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                             constraints: const BoxConstraints(minHeight: 40),
                             child: ElevatedButton(
                               onPressed:
-                                  _isAdding
+                                  _isAdding || _selectedKontaktTyp == null
                                       ? null
                                       : () async {
                                         setStateDialog(() => _isAdding = true);
