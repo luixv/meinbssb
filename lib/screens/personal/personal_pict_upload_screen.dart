@@ -676,6 +676,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                     child: Focus(
                       autofocus: true,
                       child: ElevatedButton.icon(
+                        key: PersonalPictUploadScreen.selectBtnKey,
                         onPressed: _pickImage,
                         icon: const Icon(Icons.photo_library),
                         label: const Text('Bild auswählen'),
