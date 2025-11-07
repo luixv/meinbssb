@@ -165,237 +165,241 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   Future<void> _onDeleteBankData() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    await showDialog<bool>(
+    
+    // Show confirmation dialog
+    bool? confirmDelete = await showDialog<bool>(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext dialogContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setDialogState) {
-            return AlertDialog(
-              backgroundColor: UIConstants.backgroundColor,
-              title: const Center(
-                child:
-                    Text('Bankdaten löschen', style: UIStyles.dialogTitleStyle),
-              ),
-              content: RichText(
-                textAlign: TextAlign.center,
-                text: const TextSpan(
-                  style: UIStyles.dialogContentStyle,
-                  children: <TextSpan>[
-                    TextSpan(
-                      text:
-                          'Sind Sie sicher, dass Sie Ihre Bankdaten löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: UIConstants.spacingM,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minHeight: UIConstants.defaultButtonHeight,
-                        ),
-                        child: Semantics(
-                          label: 'Abbrechen Button',
-                          hint: 'Dialog schließen und Bankdaten nicht löschen',
-                          button: true,
-                          child: ElevatedButton(
-                            onPressed:
-                                _isSaving
-                                    ? null
-                                    : () =>
-                                        Navigator.of(dialogContext).pop(false),
-                            style: UIStyles.dialogCancelButtonStyle.copyWith(
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                  horizontal: UIConstants.spacingM,
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.close,
-                                  color: UIConstants.closeIcon,
-                                  size: UIConstants.defaultIconSize,
-                                ),
-                                const SizedBox(width: UIConstants.spacingS),
-                                Text(
-                                  'Abbrechen',
-                                  style: UIStyles.dialogButtonTextStyle.copyWith(
-                                    color: UIConstants.cancelButtonText,
-                                    fontSize: UIConstants.buttonFontSize,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minHeight: UIConstants.defaultButtonHeight,
-                        ),
-                        child: Semantics(
-                          label: 'Löschen Button',
-                          hint: 'Bankdaten unwiderruflich löschen',
-                          button: true,
-                          child: ElevatedButton(
-                            onPressed:
-                                _isSaving
-                                    ? null
-                                    : () async {
-                                      // Check offline status first
-                                      final isOffline =
-                                          !(await apiService.hasInternet());
-                                      if (isOffline) {
-                                        if (!mounted) return;
-                                        Navigator.of(dialogContext).pop(false);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Bankdaten können offline nicht gelöscht werden',
-                                            ),
-                                            duration:
-                                                UIConstants.snackbarDuration,
-                                            backgroundColor:
-                                                UIConstants.errorColor,
-                                          ),
-                                        );
-                                        return;
-                                      }
-
-                                      // Show spinner
-                                      setState(() {
-                                        _isSaving = true;
-                                      });
-
-                                      try {
-                                        final bankData = BankData(
-                                          id: 0,
-                                          webloginId: widget.webloginId,
-                                          kontoinhaber:
-                                              _kontoinhaberController.text,
-                                          iban: _ibanController.text,
-                                          bic: _bicController.text,
-                                          mandatSeq: 2,
-                                        );
-                                        final bool success = await apiService
-                                            .deleteBankData(bankData);
-
-                                        if (!mounted) return;
-
-                                        // Close dialog first
-                                        Navigator.of(dialogContext).pop(false);
-
-                                        if (success) {
-                                          if (!mounted) return;
-                                          Navigator.of(context)
-                                              .pushReplacement(
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (context) =>
-                                                      BankDataSuccessScreen(
-                                                        success: true,
-                                                        userData:
-                                                            widget.userData,
-                                                        isLoggedIn:
-                                                            widget.isLoggedIn,
-                                                        onLogout:
-                                                            widget.onLogout,
-                                                      ),
-                                            ),
-                                          );
-                                        } else {
-                                          if (!mounted) return;
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Fehler beim Löschen der Bankdaten.',
-                                              ),
-                                              duration:
-                                                  UIConstants.snackbarDuration,
-                                              backgroundColor:
-                                                  UIConstants.errorColor,
-                                            ),
-                                          );
-                                        }
-                                      } catch (e) {
-                                        LoggerService.logError(
-                                          'Exception during bank data delete: $e',
-                                        );
-                                        if (!mounted) return;
-
-                                        // Close dialog on error
-                                        Navigator.of(dialogContext).pop(false);
-
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Ein Fehler ist aufgetreten: $e',
-                                            ),
-                                            duration:
-                                                UIConstants.snackbarDuration,
-                                            backgroundColor:
-                                                UIConstants.errorColor,
-                                          ),
-                                        );
-                                      } finally {
-                                        if (mounted) {
-                                          setState(() {
-                                            _isSaving = false;
-                                          });
-                                        }
-                                      }
-                                    },
-                            style: UIStyles.dialogAcceptButtonStyle.copyWith(
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                  vertical: UIConstants.spacingS,
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.check,
-                                  color: UIConstants.checkIcon,
-                                  size: UIConstants.defaultIconSize,
-                                ),
-                                const SizedBox(width: UIConstants.spacingS),
-                                Text(
-                                  'Löschen',
-                                  style: UIStyles.dialogButtonTextStyle.copyWith(
-                                    color: UIConstants.deleteButtonText,
-                                    fontSize: UIConstants.buttonFontSize,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: Text('Bankdaten löschen', style: UIStyles.dialogTitleStyle),
+          ),
+          content: RichText(
+            textAlign: TextAlign.center,
+            text: const TextSpan(
+              style: UIStyles.dialogContentStyle,
+              children: <TextSpan>[
+                TextSpan(
+                  text:
+                      'Sind Sie sicher, dass Sie Ihre Bankdaten löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
                 ),
               ],
-            );
-          },
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minHeight: UIConstants.defaultButtonHeight,
+                    ),
+                    child: Semantics(
+                      label: 'Abbrechen Button',
+                      hint: 'Dialog schließen und Bankdaten nicht löschen',
+                      button: true,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: UIStyles.dialogCancelButtonStyle.copyWith(
+                          padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                              horizontal: UIConstants.spacingM,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.close,
+                              color: UIConstants.closeIcon,
+                              size: UIConstants.defaultIconSize,
+                            ),
+                            const SizedBox(width: UIConstants.spacingS),
+                            Text(
+                              'Abbrechen',
+                              style: UIStyles.dialogButtonTextStyle.copyWith(
+                                color: UIConstants.cancelButtonText,
+                                fontSize: UIConstants.buttonFontSize,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minHeight: UIConstants.defaultButtonHeight,
+                    ),
+                    child: Semantics(
+                      label: 'Löschen Button',
+                      hint: 'Bankdaten unwiderruflich löschen',
+                      button: true,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: UIStyles.dialogAcceptButtonStyle.copyWith(
+                          padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                              vertical: UIConstants.spacingS,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.check,
+                              color: UIConstants.checkIcon,
+                              size: UIConstants.defaultIconSize,
+                            ),
+                            const SizedBox(width: UIConstants.spacingS),
+                            Text(
+                              'Löschen',
+                              style: UIStyles.dialogButtonTextStyle.copyWith(
+                                color: UIConstants.deleteButtonText,
+                                fontSize: UIConstants.buttonFontSize,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         );
       },
     );
+
+    if (!mounted || confirmDelete != true) {
+      LoggerService.logInfo(
+        'Bank data deletion cancelled or widget not mounted.',
+      );
+      return;
+    }
+
+    // Store the navigator context
+    final navigator = Navigator.of(context, rootNavigator: true);
+    LoggerService.logInfo('Showing loading dialog for bank data deletion...');
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      useRootNavigator: true,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  UIConstants.circularProgressIndicator,
+                ),
+              ),
+              SizedBox(height: UIConstants.spacingM),
+              Text(
+                'Bankdaten werden gelöscht...',
+                style: UIStyles.dialogContentStyle,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      LoggerService.logInfo('Checking network status before deleting bank data...');
+      
+      // Check network status
+      final isOffline = !(await apiService.hasInternet());
+      LoggerService.logInfo('Network status: ${isOffline ? "offline" : "online"}');
+      
+      if (!mounted) {
+        LoggerService.logWarning('Widget not mounted after network check.');
+        return;
+      }
+      
+      if (isOffline) {
+        LoggerService.logWarning('Cannot delete bank data while offline.');
+        navigator.pop(); // Close loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Bankdaten können offline nicht gelöscht werden'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+        return;
+      }
+
+      // Perform deletion
+      LoggerService.logInfo('Calling deleteBankData...');
+      final bankData = BankData(
+        id: 0,
+        webloginId: widget.webloginId,
+        kontoinhaber: _kontoinhaberController.text,
+        iban: _ibanController.text,
+        bic: _bicController.text,
+        mandatSeq: 2,
+      );
+      final bool success = await apiService.deleteBankData(bankData);
+      LoggerService.logInfo('deleteBankData result: $success');
+
+      if (!mounted) {
+        LoggerService.logWarning('Widget not mounted after deleteBankData.');
+        return;
+      }
+      
+      navigator.pop(); // Close loading dialog
+      LoggerService.logInfo('Loading dialog closed after bank data deletion.');
+
+      if (success) {
+        LoggerService.logInfo('Bank data deleted successfully.');
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => BankDataSuccessScreen(
+              success: true,
+              userData: widget.userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+            ),
+          ),
+        );
+      } else {
+        LoggerService.logWarning('Failed to delete bank data.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fehler beim Löschen der Bankdaten.'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during bank data deletion: $e');
+      if (mounted) {
+        navigator.pop(); // Close loading dialog
+        LoggerService.logInfo('Loading dialog closed after exception.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ein Fehler ist aufgetreten: $e'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+      }
+    }
   }
 
   @override
