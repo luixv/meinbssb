@@ -31,6 +31,7 @@ class ContactDataScreen extends StatefulWidget {
 class ContactDataScreenState extends State<ContactDataScreen> {
   late Future<List<Map<String, dynamic>>> _contactDataFuture;
   bool _isAdding = false;
+  bool _isDeleting = false;
   final ScrollController _scrollController = ScrollController();
 
   final Map<int, String> _contactTypeLabels = {
@@ -151,64 +152,41 @@ class ContactDataScreenState extends State<ContactDataScreen> {
       return;
     }
 
-    // Store the navigator context
-    final navigator = Navigator.of(context, rootNavigator: true);
-    LoggerService.logInfo('Showing loading dialog for contact deletion...');
+    // Show spinner immediately
+    setState(() {
+      _isDeleting = true;
+    });
 
-    // Show loading dialog and store its reference
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      useRootNavigator: true,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  UIConstants.circularProgressIndicator,
-                ),
-              ),
-              SizedBox(height: UIConstants.spacingM),
-              Text(
-                'Kontakt wird gelöscht...',
-                style: UIStyles.dialogContentStyle,
-              ),
-            ],
-          ),
-        );
-      },
+    LoggerService.logInfo('Starting contact deletion...');
+
+    // Check network status and get API service
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final isOffline = !(await apiService.hasInternet());
+    LoggerService.logInfo(
+      'Network status: ${isOffline ? "offline" : "online"}',
     );
+    
+    if (!mounted) {
+      LoggerService.logWarning('Widget not mounted after network check.');
+      return;
+    }
+    
+    if (isOffline) {
+      LoggerService.logWarning('Cannot delete contact while offline.');
+      setState(() {
+        _isDeleting = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Kontaktdaten können offline nicht gelöscht werden'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      return;
+    }
 
     try {
-      LoggerService.logInfo(
-        'Checking network status before deleting contact...',
-      );
-      // Check network status and get API service
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      final isOffline = !(await apiService.hasInternet());
-      LoggerService.logInfo(
-        'Network status: ${isOffline ? "offline" : "online"}',
-      );
-      if (!mounted) {
-        LoggerService.logWarning('Widget not mounted after network check.');
-        return;
-      }
-      if (isOffline) {
-        LoggerService.logWarning('Cannot delete contact while offline.');
-        navigator.pop(); // Close loading dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Kontaktdaten können offline nicht gelöscht werden'),
-            duration: UIConstants.snackbarDuration,
-            backgroundColor: UIConstants.errorColor,
-          ),
-        );
-        return;
-      }
-
       // Perform deletion
       LoggerService.logInfo(
         'Calling deleteKontakt for contactId=$kontaktId, kontaktTyp=$kontaktTyp',
@@ -226,8 +204,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
         LoggerService.logWarning('Widget not mounted after deleteKontakt.');
         return;
       }
-      navigator.pop(); // Close loading dialog
-      LoggerService.logInfo('Loading dialog closed after contact deletion.');
 
       if (success) {
         LoggerService.logInfo('Contact deleted successfully.');
@@ -251,8 +227,6 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     } catch (e) {
       LoggerService.logError('Exception during contact deletion: $e');
       if (mounted) {
-        navigator.pop(); // Close loading dialog
-        LoggerService.logInfo('Loading dialog closed after exception.');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
@@ -260,6 +234,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
             backgroundColor: UIConstants.errorColor,
           ),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDeleting = false;
+        });
       }
     }
   }
@@ -707,62 +687,80 @@ class ContactDataScreenState extends State<ContactDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreenLayout(
-      title: 'Kontaktdaten',
-      userData: widget.userData,
-      isLoggedIn: widget.isLoggedIn,
-      onLogout: _handleLogout,
-      body: Semantics(
-        label:
-            'Kontaktdatenbereich. Hier können Sie Ihre gespeicherten Kontakte einsehen, hinzufügen und löschen.',
-        child: FutureBuilder<List<Map<String, dynamic>>>(
-          future: _contactDataFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              LoggerService.logError(
-                'Error loading contact data in FutureBuilder:  [${snapshot.error}',
-              );
-              return Center(
-                child: ScaledText(
-                  'Fehler beim Laden der Kontaktdaten:  [${snapshot.error}',
-                  style: UIStyles.errorStyle,
-                ),
-              );
-            } else if (snapshot.hasData && snapshot.data != null) {
-              final List<Map<String, dynamic>> categorizedContactData =
-                  snapshot.data!;
-              return _buildContactDataList(
-                categorizedContactData,
-                widget.userData?.personId ?? 0,
-                _onDeleteContact,
-                false,
-              );
-            } else {
-              return const Center(
-                child: ScaledText('Keine Kontaktdaten gefunden.'),
-              );
-            }
-          },
-        ),
-      ),
-      floatingActionButton: Semantics(
-        label: 'Kontakt hinzufügen Button',
-        hint: 'Neuen Kontakt erfassen',
-        button: true,
-        child: Semantics(
-          label: 'Kontakt hinzufügen',
-          hint: 'Tippen, um einen neuen Kontakt hinzuzufügen',
-          button: true,
-          child: FloatingActionButton(
-            heroTag: 'contactDataFab',
-            onPressed: _showAddContactForm,
-            backgroundColor: UIConstants.defaultAppColor,
-            child: const Icon(Icons.add, color: UIConstants.whiteColor),
+    return Stack(
+      children: [
+        BaseScreenLayout(
+          title: 'Kontaktdaten',
+          userData: widget.userData,
+          isLoggedIn: widget.isLoggedIn,
+          onLogout: _handleLogout,
+          body: Semantics(
+            label:
+                'Kontaktdatenbereich. Hier können Sie Ihre gespeicherten Kontakte einsehen, hinzufügen und löschen.',
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: _contactDataFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  LoggerService.logError(
+                    'Error loading contact data in FutureBuilder:  [${snapshot.error}',
+                  );
+                  return Center(
+                    child: ScaledText(
+                      'Fehler beim Laden der Kontaktdaten:  [${snapshot.error}',
+                      style: UIStyles.errorStyle,
+                    ),
+                  );
+                } else if (snapshot.hasData && snapshot.data != null) {
+                  final List<Map<String, dynamic>> categorizedContactData =
+                      snapshot.data!;
+                  return _buildContactDataList(
+                    categorizedContactData,
+                    widget.userData?.personId ?? 0,
+                    _onDeleteContact,
+                    false,
+                  );
+                } else {
+                  return const Center(
+                    child: ScaledText('Keine Kontaktdaten gefunden.'),
+                  );
+                }
+              },
+            ),
+          ),
+          floatingActionButton: Semantics(
+            label: 'Kontakt hinzufügen Button',
+            hint: 'Neuen Kontakt erfassen',
+            button: true,
+            child: Semantics(
+              label: 'Kontakt hinzufügen',
+              hint: 'Tippen, um einen neuen Kontakt hinzuzufügen',
+              button: true,
+              child: FloatingActionButton(
+                heroTag: 'contactDataFab',
+                onPressed: _showAddContactForm,
+                backgroundColor: UIConstants.defaultAppColor,
+                child: const Icon(Icons.add, color: UIConstants.whiteColor),
+              ),
+            ),
           ),
         ),
-      ),
+        // Whole-screen overlay spinner for deletion
+        if (_isDeleting)
+          Positioned.fill(
+            child: Container(
+              color: UIConstants.textColor.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    UIConstants.circularProgressIndicator,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

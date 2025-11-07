@@ -287,62 +287,35 @@ class BankDataScreenState extends State<BankDataScreen> {
       return;
     }
 
-    // Store the navigator context
-    final navigator = Navigator.of(context, rootNavigator: true);
-    LoggerService.logInfo('Showing loading dialog for bank data deletion...');
+    // Show spinner immediately
+    setState(() {
+      _isSaving = true;
+    });
 
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      useRootNavigator: true,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  UIConstants.circularProgressIndicator,
-                ),
-              ),
-              SizedBox(height: UIConstants.spacingM),
-              Text(
-                'Bankdaten werden gelöscht...',
-                style: UIStyles.dialogContentStyle,
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    LoggerService.logInfo('Starting bank data deletion...');
+
+    // Check network status
+    final isOffline = !(await apiService.hasInternet());
+    LoggerService.logInfo('Network status: ${isOffline ? "offline" : "online"}');
+    
+    if (!mounted) return;
+    
+    if (isOffline) {
+      LoggerService.logWarning('Cannot delete bank data while offline.');
+      setState(() {
+        _isSaving = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bankdaten können offline nicht gelöscht werden'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      return;
+    }
 
     try {
-      LoggerService.logInfo('Checking network status before deleting bank data...');
-      
-      // Check network status
-      final isOffline = !(await apiService.hasInternet());
-      LoggerService.logInfo('Network status: ${isOffline ? "offline" : "online"}');
-      
-      if (!mounted) {
-        LoggerService.logWarning('Widget not mounted after network check.');
-        return;
-      }
-      
-      if (isOffline) {
-        LoggerService.logWarning('Cannot delete bank data while offline.');
-        navigator.pop(); // Close loading dialog
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Bankdaten können offline nicht gelöscht werden'),
-            duration: UIConstants.snackbarDuration,
-            backgroundColor: UIConstants.errorColor,
-          ),
-        );
-        return;
-      }
-
       // Perform deletion
       LoggerService.logInfo('Calling deleteBankData...');
       final bankData = BankData(
@@ -360,9 +333,6 @@ class BankDataScreenState extends State<BankDataScreen> {
         LoggerService.logWarning('Widget not mounted after deleteBankData.');
         return;
       }
-      
-      navigator.pop(); // Close loading dialog
-      LoggerService.logInfo('Loading dialog closed after bank data deletion.');
 
       if (success) {
         LoggerService.logInfo('Bank data deleted successfully.');
@@ -389,8 +359,6 @@ class BankDataScreenState extends State<BankDataScreen> {
     } catch (e) {
       LoggerService.logError('Exception during bank data deletion: $e');
       if (mounted) {
-        navigator.pop(); // Close loading dialog
-        LoggerService.logInfo('Loading dialog closed after exception.');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
@@ -398,6 +366,12 @@ class BankDataScreenState extends State<BankDataScreen> {
             backgroundColor: UIConstants.errorColor,
           ),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
       }
     }
   }
