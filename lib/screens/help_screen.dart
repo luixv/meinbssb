@@ -149,7 +149,7 @@ class HelpScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ScaledText(
-                            'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an den Support des BSSB unter...',
+                            'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an den Support des BSSB unter webportal@bssb.bayern.',
                           ),
                         ],
                       ),
