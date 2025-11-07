@@ -93,10 +93,10 @@ packages:
     dependency: transitive
     description:
       name: build_modules
-      sha256: d7088898b59b2a6d839854a1f46e8c6b656f4a367bba98164f4389d2ee1ea0b0
+      sha256: "8adf3cb2dafa858fe9dbc32c58aae831da5fe402fb68ad2dc6de43a642b9773d"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "5.1.1"
   build_resolvers:
     dependency: "direct overridden"
     description:
@@ -125,10 +125,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_web_compilers
-      sha256: "599f7f2908e428dd3d42970c28a102fd3bad17e509d3792aab460a4b34f727d8"
+      sha256: "4ee1971832ebd53676db1942ffd68a31688e1850a848bd71125a2ef11e0c8fdb"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.0"
+    version: "4.4.1"
   built_collection:
     dependency: transitive
     description:
@@ -1056,10 +1056,10 @@ packages:
     dependency: "direct overridden"
     description:
       name: protobuf
-      sha256: "826d6a306be26f29e5cd9faeb0c97aad5897270341dab6dbd7b8acd675937006"
+      sha256: "2fcc8a202ca7ec17dab7c97d6b6d91cf03aa07fe6f65f8afbb6dfa52cc5bd902"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.0"
+    version: "5.1.0"
   provider:
     dependency: "direct main"
     description:
