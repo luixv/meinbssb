@@ -133,7 +133,7 @@ class HelpScreen extends StatelessWidget {
                       question: 'Ich habe mein Passwort vergessen. Was nun?',
                       answer: ScaledText(
                         'Eine Funktion zum Zurücksetzen des Passworts ist bei MeinBSSB verfügbar. Folgen Sie den dortigen Anweisungen um Ihr Passwort zu ändern. Bei Problemen wenden Sie sich bitte an den Support des BSSB unter webportal@bssb.bayern.',
-                      ), 
+                      ),
                     ),
                   ],
                 ),
@@ -147,7 +147,7 @@ class HelpScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ScaledText(
-                            'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an den Support des BSSB unter...',
+                            'Bei weiteren Fragen oder Problemen wenden Sie sich bitte an den Support des BSSB unter webportal@bssb.bayern.',
                           ),
                         ],
                       ),
