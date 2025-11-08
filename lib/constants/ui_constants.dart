@@ -152,14 +152,14 @@ class UIConstants {
   static SizedBox get horizontalSpacingXS => const SizedBox(width: spacingXS);
   static SizedBox get horizontalSpacingS => const SizedBox(width: spacingS);
   static SizedBox get horizontalSpacingM => const SizedBox(width: spacingM);
-  static SizedBox get horizontalSpacingL => const SizedBox(width: spacingL);
-  static SizedBox get horizontalSpacingXL => const SizedBox(width: spacingXL);
+  // static SizedBox get horizontalSpacingL => const SizedBox(width: spacingL);
+  // static SizedBox get horizontalSpacingXL => const SizedBox(width: spacingXL);
 
   static SizedBox get verticalSpacingXS => const SizedBox(height: spacingXS);
   static SizedBox get verticalSpacingS => const SizedBox(height: spacingS);
   static SizedBox get verticalSpacingM => const SizedBox(height: spacingM);
-  static SizedBox get verticalSpacingL => const SizedBox(height: spacingL);
-  static SizedBox get verticalSpacingXL => const SizedBox(height: spacingXL);
+  // static SizedBox get verticalSpacingL => const SizedBox(height: spacingL);
+  // static SizedBox get verticalSpacingXL => const SizedBox(height: spacingXL);
 
   // Padding
   static const EdgeInsets defaultPadding = EdgeInsets.all(16.0);
