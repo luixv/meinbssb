@@ -309,23 +309,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           ),
         ),
       ),
-      floatingActionButton: Semantics(
-        label: 'Passwort speichern',
-        hint: 'Tippen, um das neue Passwort zu speichern',
-        button: true,
-        child: FloatingActionButton(
-          heroTag: 'save_password',
-          onPressed: _isLoading ? null : _handleSave,
-          backgroundColor: UIConstants.defaultAppColor,
-          child:
-              _isLoading
-                  ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      UIConstants.whiteColor,
-                    ),
-                    strokeWidth: UIConstants.defaultStrokeWidth,
-                  )
-                  : const Icon(Icons.save, color: UIConstants.whiteColor),
+      floatingActionButton: Tooltip(
+        message: 'Passwort speichern',
+        child: Focus(
+          canRequestFocus: true,
+          child: Semantics(
+            hint: 'Tippen, um das neue Passwort zu speichern',
+            button: true,
+            child: FloatingActionButton(
+              heroTag: 'save_password',
+              onPressed: _isLoading ? null : _handleSave,
+              backgroundColor: UIConstants.defaultAppColor,
+              child:
+                  _isLoading
+                      ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          UIConstants.whiteColor,
+                        ),
+                        strokeWidth: UIConstants.defaultStrokeWidth,
+                      )
+                      : const Icon(Icons.save, color: UIConstants.whiteColor),
+            ),
+          ),
         ),
       ),
     );
@@ -369,6 +374,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         suffixIcon: IconButton(
           icon: Icon(
             isVisible ? Icons.visibility_off : Icons.visibility,
+            semanticLabel:
+                isVisible ? 'Passwort verbergen' : 'Passwort anzeigen',
             color: eyeIconColor,
           ),
           onPressed: onToggleVisibility,

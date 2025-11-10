@@ -139,7 +139,14 @@ class _SchuetzenausweisScreenState extends State<SchuetzenausweisScreen> {
           );
         },
         backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.home, color: UIConstants.whiteColor),
+        child: Semantics(
+          //label: 'Zur Startseite wechseln',
+          button: true,
+          child: const Tooltip(
+            message: 'Zur Startseite',
+            child: Icon(Icons.home, color: UIConstants.whiteColor),
+          ),
+        ),
       ),
     );
   }

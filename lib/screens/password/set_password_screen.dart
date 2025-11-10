@@ -381,6 +381,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                       icon: Icon(
                         _showPassword ? Icons.visibility_off : Icons.visibility,
                       ),
+                      tooltip: 'Passwort anzeigen/verbergen',
+
                       onPressed:
                           () => setState(() => _showPassword = !_showPassword),
                     ),
@@ -439,6 +441,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                       icon: Icon(
                         _showConfirm ? Icons.visibility_off : Icons.visibility,
                       ),
+                      tooltip: 'Passwort anzeigen/verbergen',
+
                       onPressed:
                           () => setState(() => _showConfirm = !_showConfirm),
                     ),

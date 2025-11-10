@@ -797,9 +797,11 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       Icons.delete_outline,
+
                       size:
                           UIConstants.iconSizeS * fontSizeProvider.scaleFactor,
                     ),
+                    tooltip: 'delete contact',
                     color: UIConstants.deleteIcon,
                     onPressed:
                         () => onDelete(

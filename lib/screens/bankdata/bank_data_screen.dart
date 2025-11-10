@@ -47,10 +47,7 @@ class BankDataScreenState extends State<BankDataScreen> {
   }
 
   void _loadInitialData() {
-    setState(() {
-      _bankDataFuture = Future.value(null);
-    });
-
+    final apiService = Provider.of<ApiService>(context, listen: false);
     if (widget.webloginId == 0) {
       setState(() {
         _bankDataFuture = Future.error(
@@ -59,108 +56,24 @@ class BankDataScreenState extends State<BankDataScreen> {
       });
       return;
     }
-
-    try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
+    setState(() {
       _bankDataFuture = apiService.fetchBankdatenMyBSSB(widget.webloginId).then(
-        (list) {
-          final hasData = list.isNotEmpty;
-          if (mounted) {
-            setState(() {});
+        (bankDataList) {
+          BankData? bankData =
+              bankDataList.isNotEmpty ? bankDataList.first : null;
+          if (bankData != null) {
+            _kontoinhaberController.text = bankData.kontoinhaber;
+            _ibanController.text = bankData.iban;
+            _bicController.text = bankData.bic;
+          } else {
+            _kontoinhaberController.text = '';
+            _ibanController.text = '';
+            _bicController.text = '';
           }
-          return hasData ? list.first : null;
+          return bankData;
         },
       );
-      LoggerService.logInfo('BankDataScreen: Initiating bank data fetch.');
-    } catch (e) {
-      LoggerService.logError('Error setting up bank data fetch: $e');
-      _bankDataFuture = Future.value(null);
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
-  Future<void> _onSaveBankData() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() {
-      _isSaving = true;
     });
-
-    // Check offline status before saving
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    final isOffline = !(await apiService.hasInternet());
-    if (isOffline) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bankdaten können offline nicht gespeichert werden'),
-          duration: UIConstants.snackbarDuration,
-          backgroundColor: UIConstants.errorColor,
-        ),
-      );
-      // turn off spinner if offline
-      setState(() {
-        _isSaving = false;
-      });
-      return;
-    }
-
-    try {
-      final bankData = BankData(
-        id: 0,
-        webloginId: widget.webloginId,
-        kontoinhaber: _kontoinhaberController.text,
-        iban: _ibanController.text,
-        bic: _bicController.text,
-        mandatSeq: 2,
-      );
-
-      final bool success = await apiService.registerBankData(bankData);
-
-      if (!mounted) return;
-      if (success) {
-        if (!mounted) return;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder:
-                (context) => BankDataSuccessScreen(
-                  success: true,
-                  userData: widget.userData,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                ),
-          ),
-        );
-      } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Fehler beim Speichern der Bankdaten.'),
-            duration: UIConstants.snackbarDuration,
-            backgroundColor: UIConstants.errorColor,
-          ),
-        );
-      }
-    } catch (e) {
-      LoggerService.logError('Exception during bank data save: $e');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Ein Fehler ist aufgetreten: $e'),
-          duration: UIConstants.snackbarDuration,
-          backgroundColor: UIConstants.errorColor,
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-          _isEditing = false;
-        });
-      }
-    }
   }
 
   Future<void> _onDeleteBankData() async {
@@ -376,6 +289,88 @@ class BankDataScreenState extends State<BankDataScreen> {
     }
   }
 
+  Future<void> _onSaveBankData() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    // Check offline status before saving
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final isOffline = !(await apiService.hasInternet());
+    if (isOffline) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bankdaten können offline nicht gespeichert werden'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      // turn off spinner if offline
+      setState(() {
+        _isSaving = false;
+      });
+      return;
+    }
+
+    try {
+      final bankData = BankData(
+        id: 0,
+        webloginId: widget.webloginId,
+        kontoinhaber: _kontoinhaberController.text,
+        iban: _ibanController.text,
+        bic: _bicController.text,
+        mandatSeq: 2,
+      );
+
+      final bool success = await apiService.registerBankData(bankData);
+
+      if (!mounted) return;
+      if (success) {
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder:
+                (context) => BankDataSuccessScreen(
+                  success: true,
+                  userData: widget.userData,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                ),
+          ),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fehler beim Speichern der Bankdaten.'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+      }
+    } catch (e) {
+      LoggerService.logError('Exception during bank data save: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Ein Fehler ist aufgetreten: $e'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+          _isEditing = false;
+        });
+      }
+    }
+  }
+
   @override
   void dispose() {
     _kontoinhaberController.dispose();
@@ -389,48 +384,58 @@ class BankDataScreenState extends State<BankDataScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Semantics(
-            label: 'Abbrechen Button',
-            hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
-            button: true,
-            child: Focus(
-              canRequestFocus: true,
-              child: FloatingActionButton(
-                heroTag: 'bankDataCancelFab',
-                onPressed: () {
-                  setState(() {
-                    _isEditing = false;
-                    _kontoinhaberController.clear();
-                    _ibanController.clear();
-                    _bicController.clear();
-                    _loadInitialData();
-                  });
-                },
-                backgroundColor: UIConstants.defaultAppColor,
-                child: const Icon(Icons.close, color: UIConstants.whiteColor),
+          Tooltip(
+            message: 'Bearbeitung abbrechen',
+            child: Semantics(
+              label: 'Abbrechen Button',
+              hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
+              button: true,
+              child: Focus(
+                canRequestFocus: true,
+                child: FloatingActionButton(
+                  heroTag: 'bankDataCancelFab',
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = false;
+                      _kontoinhaberController.clear();
+                      _ibanController.clear();
+                      _bicController.clear();
+                      _loadInitialData();
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(Icons.close, color: UIConstants.whiteColor),
+                ),
               ),
             ),
           ),
           const SizedBox(height: UIConstants.spacingM),
-          Semantics(
-            label: 'Speichern Button',
-            hint: 'Bankdaten speichern',
-            button: true,
-            child: Focus(
-              canRequestFocus: true,
-              child: FloatingActionButton(
-                heroTag: 'bankDataSaveFab',
-                onPressed: _isSaving ? null : _onSaveBankData,
-                backgroundColor: UIConstants.defaultAppColor,
-                child:
-                    _isSaving
-                        ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            UIConstants.circularProgressIndicator,
+
+          Tooltip(
+            message: 'Bankdaten speichern',
+            child: Semantics(
+              label: 'Speichern Button',
+              hint: 'Bankdaten speichern',
+              button: true,
+              child: Focus(
+                canRequestFocus: true,
+                child: FloatingActionButton(
+                  heroTag: 'bankDataSaveFab',
+                  onPressed: _isSaving ? null : _onSaveBankData,
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child:
+                      _isSaving
+                          ? const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              UIConstants.circularProgressIndicator,
+                            ),
+                            strokeWidth: UIConstants.defaultStrokeWidth,
+                          )
+                          : const Icon(
+                            Icons.save,
+                            color: UIConstants.whiteColor,
                           ),
-                          strokeWidth: UIConstants.defaultStrokeWidth,
-                        )
-                        : const Icon(Icons.save, color: UIConstants.whiteColor),
+                ),
               ),
             ),
           ),
@@ -440,47 +445,51 @@ class BankDataScreenState extends State<BankDataScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Semantics(
-            label: 'Löschen Button',
-            hint: 'Bankdaten löschen',
-            button: true,
-            child: Focus(
-              canRequestFocus: true,
-              child: FloatingActionButton(
-                heroTag: 'bankDataDeleteFab',
-                onPressed: _isSaving ? null : _onDeleteBankData,
-                backgroundColor: UIConstants.defaultAppColor,
-                child:
-                    _isSaving
-                        ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            UIConstants.whiteColor,
+          Tooltip(
+            message: 'Bankdaten löschen',
+            child: Semantics(
+              hint: 'Bankdaten löschen',
+              button: true,
+              child: Focus(
+                canRequestFocus: true,
+                child: FloatingActionButton(
+                  heroTag: 'bankDataDeleteFab',
+                  onPressed: _isSaving ? null : _onDeleteBankData,
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child:
+                      _isSaving
+                          ? const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              UIConstants.whiteColor,
+                            ),
+                            strokeWidth: UIConstants.defaultStrokeWidth,
+                          )
+                          : const Icon(
+                            Icons.delete_outline,
+                            color: UIConstants.whiteColor,
                           ),
-                          strokeWidth: UIConstants.defaultStrokeWidth,
-                        )
-                        : const Icon(
-                          Icons.delete_outline,
-                          color: UIConstants.whiteColor,
-                        ),
+                ),
               ),
             ),
           ),
           const SizedBox(height: UIConstants.spacingM),
-          Semantics(
-            label: 'Bearbeiten Button',
-            hint: 'Bankdaten bearbeiten',
-            button: true,
-            child: Focus(
-              canRequestFocus: true,
-              child: FloatingActionButton(
-                heroTag: 'bankDataEditFab',
-                onPressed: () {
-                  setState(() {
-                    _isEditing = true;
-                  });
-                },
-                backgroundColor: UIConstants.defaultAppColor,
-                child: const Icon(Icons.edit, color: UIConstants.whiteColor),
+          Tooltip(
+            message: 'Bankdaten bearbeiten',
+            child: Semantics(
+              hint: 'Bankdaten bearbeiten',
+              button: true,
+              child: Focus(
+                canRequestFocus: true,
+                child: FloatingActionButton(
+                  heroTag: 'bankDataEditFab',
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                  },
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(Icons.edit, color: UIConstants.whiteColor),
+                ),
               ),
             ),
           ),
@@ -630,86 +639,74 @@ class BankDataScreenState extends State<BankDataScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Kontoinhaber Eingabefeld',
-                      hint:
-                          !_isEditing
-                              ? 'Dieses Feld ist nicht bearbeitbar.'
-                              : 'Bitte geben Sie den Kontoinhaber ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Kontoinhaber',
-                        controller: _kontoinhaberController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Kontoinhaber ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie den Kontoinhaber ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Kontoinhaber',
+                      controller: _kontoinhaberController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Kontoinhaber ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  const SizedBox(height: UIConstants.spacingXXS),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'IBAN Eingabefeld',
-                      hint:
-                          !_isEditing
-                              ? 'Dieses Feld ist nicht bearbeitbar.'
-                              : 'Bitte geben Sie Ihre IBAN ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'IBAN',
-                        controller: _ibanController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'IBAN ist erforderlich';
-                          }
-                          if (!BankService.validateIBAN(value)) {
-                            return 'Ungültige IBAN';
-                          }
-                          return null;
-                        },
-                      ),
+                  const SizedBox(height: UIConstants.spacingS),
+                  Semantics(
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie Ihre IBAN ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'IBAN',
+                      controller: _ibanController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'IBAN ist erforderlich';
+                        }
+                        if (!BankService.validateIBAN(value)) {
+                          return 'Ungültige IBAN';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  const SizedBox(height: UIConstants.spacingXXS),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'BIC Eingabefeld',
-                      hint:
-                          !_isEditing
-                              ? 'Dieses Feld ist nicht bearbeitbar.'
-                              : 'Bitte geben Sie Ihre BIC ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'BIC',
-                        controller: _bicController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          String ibanText = _ibanController.text.trim();
-                          // For German IBAN, BIC optional
-                          if (ibanText.startsWith('DE')) {
-                            // BIC optional; validate only if provided
-                            if (value == null || value.isEmpty) {
-                              return null;
-                            }
-                            return BankService.validateBIC(value);
-                          } else {
-                            // For non-German IBAN, BIC required
-                            if (value == null || value.isEmpty) {
-                              return 'Bitte geben Sie die BIC ein';
-                            }
-                            return BankService.validateBIC(value);
+                  const SizedBox(height: 8),
+                  Semantics(
+                    hint:
+                        !_isEditing
+                            ? 'Dieses Feld ist nicht bearbeitbar.'
+                            : 'Bitte geben Sie Ihre BIC ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'BIC',
+                      controller: _bicController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        String ibanText = _ibanController.text.trim();
+                        // For German IBAN, BIC optional
+                        if (ibanText.startsWith('DE')) {
+                          // BIC optional; validate only if provided
+                          if (value == null || value.isEmpty) {
+                            return null;
                           }
-                        },
-                      ),
+                          return BankService.validateBIC(value);
+                        } else {
+                          // For non-German IBAN, BIC required
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte geben Sie die BIC ein';
+                          }
+                          return BankService.validateBIC(value);
+                        }
+                      },
                     ),
                   ),
                 ],

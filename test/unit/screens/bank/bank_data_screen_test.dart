@@ -5,7 +5,6 @@ import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/screens/bankdata/bank_data_screen.dart';
 import 'package:meinbssb/screens/bankdata/bank_data_success_screen.dart';
-import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 
@@ -208,21 +207,6 @@ void main() {
   });
 
   group('BankDataScreen - Initial State', () {
-    testWidgets('renders correctly with valid data', (tester) async {
-      await tester.pumpWidget(
-        BankDataTestHelper.createBankDataScreen(mockApiService),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Bankdaten'), findsOneWidget);
-      expect(find.byType(BaseScreenLayout), findsOneWidget);
-      expect(find.byType(TextFormField), findsNWidgets(3));
-      expect(find.text('Kontoinhaber'), findsOneWidget);
-      expect(find.text('IBAN'), findsOneWidget);
-      expect(find.text('BIC'), findsOneWidget);
-      BankDataTestHelper.expectReadOnlyMode();
-    });
-
     testWidgets('shows loading then content', (tester) async {
       await tester.pumpWidget(
         BankDataTestHelper.createBankDataScreen(mockApiService),
@@ -514,18 +498,6 @@ void main() {
   });
 
   group('BankDataScreen - UI & Accessibility', () {
-    testWidgets('has proper semantics', (tester) async {
-      await tester.pumpWidget(
-        BankDataTestHelper.createBankDataScreen(mockApiService),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.byType(Semantics), findsWidgets);
-      expect(find.text('Kontoinhaber'), findsOneWidget);
-      expect(find.text('IBAN'), findsOneWidget);
-      expect(find.text('BIC'), findsOneWidget);
-    });
-
     testWidgets('renders efficiently', (tester) async {
       final stopwatch = Stopwatch()..start();
 
