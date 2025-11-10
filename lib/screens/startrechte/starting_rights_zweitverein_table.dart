@@ -237,9 +237,10 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
   int _highlightedIndex = -1;
   List<Disziplin> _suggestions = [];
   bool _showOverlay = false;
+  bool _justSelectedWithKeyboard = false;
 
   void _updateSuggestions(String pattern) {
-    debugPrint('Suggestions update: pattern="$pattern"');
+    //debugPrint('Suggestions update: pattern="$pattern"');
     setState(() {
       if (pattern.isEmpty) {
         _suggestions = [];
@@ -261,20 +262,16 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
         _showOverlay = _suggestions.isNotEmpty;
         _highlightedIndex = _suggestions.isNotEmpty ? 0 : -1;
       }
-      debugPrint(
-        'Suggestions: count=${_suggestions.length}, overlay=$_showOverlay',
-      );
+      //debugPrint('Suggestions: count=${_suggestions.length}, overlay=$_showOverlay',);
     });
   }
 
   void _handleKey(RawKeyEvent event) {
-    debugPrint(
-      'RawKeyboardListener event: ${event.logicalKey}, text="${_controller.text}"',
-    );
+    //debugPrint('RawKeyboardListener event: ${event.logicalKey}, text="${_controller.text}"',);
     if (event is RawKeyDownEvent) {
       if (_controller.text.isEmpty &&
           event.logicalKey == LogicalKeyboardKey.tab) {
-        debugPrint('TAB pressed in empty autocomplete');
+        //debugPrint('TAB pressed in empty autocomplete');
         widget.onTabToNextTable();
         return;
       }
@@ -282,13 +279,14 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
         if (event.logicalKey == LogicalKeyboardKey.tab) {
           setState(() {
             _highlightedIndex = (_highlightedIndex + 1) % _suggestions.length;
-            debugPrint('TAB cycles to index $_highlightedIndex');
+            // debugPrint('TAB cycles to index $_highlightedIndex');
           });
         } else if (event.logicalKey == LogicalKeyboardKey.enter) {
           if (_highlightedIndex >= 0 &&
               _highlightedIndex < _suggestions.length) {
             final selected = _suggestions[_highlightedIndex];
-            debugPrint('ENTER selects: $selected');
+            //debugPrint('ENTER selects: $selected');
+            _justSelectedWithKeyboard = true;
             widget.onAdd(selected);
             _controller.clear();
             setState(() {
@@ -297,6 +295,9 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
               _highlightedIndex = -1;
             });
             FocusScope.of(context).unfocus();
+            Future.delayed(const Duration(milliseconds: 100), () {
+              _justSelectedWithKeyboard = false;
+            });
           }
         }
       } else if (event.logicalKey == LogicalKeyboardKey.enter) {
@@ -352,22 +353,7 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
               suffixIcon: null,
             ),
             onChanged: _updateSuggestions,
-            onSubmitted: (value) {
-              if (_showOverlay &&
-                  _highlightedIndex >= 0 &&
-                  _highlightedIndex < _suggestions.length) {
-                final selected = _suggestions[_highlightedIndex];
-                //debugPrint('onSubmitted selects: $selected');
-                widget.onAdd(selected);
-                _controller.clear();
-                setState(() {
-                  _showOverlay = false;
-                  _suggestions = [];
-                  _highlightedIndex = -1;
-                });
-                FocusScope.of(context).unfocus();
-              }
-            },
+            // ENTER is handled exclusively in RawKeyboardListener's _handleKey
           ),
           if (_showOverlay)
             Container(
@@ -385,30 +371,34 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
                 itemBuilder: (context, idx) {
                   final suggestion = _suggestions[idx];
                   final isHighlighted = idx == _highlightedIndex;
-                  return Material(
-                    color:
-                        isHighlighted
-                            ? Colors.blue.shade100
-                            : Colors.transparent,
-                    child: ListTile(
-                      title: Text(
+                  return InkWell(
+                    onTap: () {
+                      if (_justSelectedWithKeyboard) return;
+                      widget.onAdd(suggestion);
+                      _controller.clear();
+                      setState(() {
+                        _showOverlay = false;
+                        _suggestions = [];
+                        _highlightedIndex = -1;
+                      });
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: Container(
+                      color:
+                          isHighlighted
+                              ? Colors.blue.shade100
+                              : Colors.transparent,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4,
+                        horizontal: 8,
+                      ),
+                      child: Text(
                         ((suggestion.disziplinNr != null &&
                                     suggestion.disziplinNr!.isNotEmpty
                                 ? '${suggestion.disziplinNr} - '
                                 : '') +
                             (suggestion.disziplin ?? '')),
                       ),
-                      onTap: () {
-                        //debugPrint('Tapped suggestion: $suggestion');
-                        widget.onAdd(suggestion);
-                        _controller.clear();
-                        setState(() {
-                          _showOverlay = false;
-                          _suggestions = [];
-                          _highlightedIndex = -1;
-                        });
-                        FocusScope.of(context).unfocus();
-                      },
                     ),
                   );
                 },

@@ -93,10 +93,10 @@ packages:
     dependency: transitive
     description:
       name: build_modules
-      sha256: "8adf3cb2dafa858fe9dbc32c58aae831da5fe402fb68ad2dc6de43a642b9773d"
+      sha256: "0126ba5111c4b8f5b1f557beb23eb0bd9266f9114199ff42d9270c29c997b1be"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.1"
+    version: "5.0.18"
   build_resolvers:
     dependency: "direct overridden"
     description:
@@ -125,10 +125,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_web_compilers
-      sha256: "4ee1971832ebd53676db1942ffd68a31688e1850a848bd71125a2ef11e0c8fdb"
+      sha256: "75732844afcadb8e1ec2103acfeb813bb35f4754a8cd89ad9fd3378edb59378b"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.1"
+    version: "4.3.2"
   built_collection:
     dependency: transitive
     description:
@@ -556,10 +556,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_svg
-      sha256: "055de8921be7b8e8b98a233c7a5ef84b3a6fcc32f46f1ebf5b9bb3576d108355"
+      sha256: b9c2ad5872518a27507ab432d1fb97e8813b05f0fc693f9d40fad06d073e0678
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.2"
+    version: "2.2.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -1056,10 +1056,10 @@ packages:
     dependency: "direct overridden"
     description:
       name: protobuf
-      sha256: "2fcc8a202ca7ec17dab7c97d6b6d91cf03aa07fe6f65f8afbb6dfa52cc5bd902"
+      sha256: "826d6a306be26f29e5cd9faeb0c97aad5897270341dab6dbd7b8acd675937006"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "5.0.0"
   provider:
     dependency: "direct main"
     description:
@@ -1088,10 +1088,10 @@ packages:
     dependency: transitive
     description:
       name: scratch_space
-      sha256: "3417e014d20b12cebc5bfb1c0b1f63806054177158596cc31cc4d9aaca767a60"
+      sha256: efe807ddf27b148b500465957ceee4255deb4a8558575530b6398840436300ce
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.1.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1369,14 +1369,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.4"
-  uuid:
-    dependency: transitive
-    description:
-      name: uuid
-      sha256: a11b666489b1954e01d992f3d601b1804a33937b5a8fe677bd26b8a9f96f96e8
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.5.2"
   vector_graphics:
     dependency: transitive
     description:
