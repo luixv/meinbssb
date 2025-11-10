@@ -720,11 +720,11 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                   WrapCrossAlignment
                                       .center, // Align items vertically
                               spacing:
-                                  UIConstants.spacingS /
+                                  UIConstants.spacingXS /
                                   2, // Small horizontal space between items
                               runSpacing:
                                   UIConstants
-                                      .spacingS, // Vertical space between wrapped lines
+                                      .spacingXS, // Vertical space between wrapped lines
                               children: [
                                 Semantics(
                                   label: 'Zusätzlicher physikalischer Ausweis',
