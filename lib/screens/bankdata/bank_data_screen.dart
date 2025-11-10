@@ -78,7 +78,9 @@ class BankDataScreenState extends State<BankDataScreen> {
 
   Future<void> _onDeleteBankData() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final confirm = await showDialog<bool>(
+    
+    // Show confirmation dialog
+    bool? confirmDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
@@ -115,10 +117,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       hint: 'Dialog schließen und Bankdaten nicht löschen',
                       button: true,
                       child: ElevatedButton(
-                        onPressed:
-                            _isSaving
-                                ? null
-                                : () => Navigator.of(dialogContext).pop(false),
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: UIStyles.dialogCancelButtonStyle.copyWith(
                           padding: MaterialStateProperty.all(
                             const EdgeInsets.symmetric(
@@ -157,10 +156,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                       hint: 'Bankdaten unwiderruflich löschen',
                       button: true,
                       child: ElevatedButton(
-                        onPressed:
-                            _isSaving
-                                ? null
-                                : () => Navigator.of(dialogContext).pop(true),
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: UIStyles.dialogAcceptButtonStyle.copyWith(
                           padding: MaterialStateProperty.all(
                             const EdgeInsets.symmetric(
@@ -197,62 +193,85 @@ class BankDataScreenState extends State<BankDataScreen> {
       },
     );
 
-    if (!mounted) return;
+    if (!mounted || confirmDelete != true) {
+      LoggerService.logInfo(
+        'Bank data deletion cancelled or widget not mounted.',
+      );
+      return;
+    }
 
-    if (confirm == true) {
-      final isOffline = !(await apiService.hasInternet());
-      if (isOffline) {
-        if (!mounted) return;
+    // Show spinner immediately
+    setState(() {
+      _isSaving = true;
+    });
+
+    LoggerService.logInfo('Starting bank data deletion...');
+
+    // Check network status
+    final isOffline = !(await apiService.hasInternet());
+    LoggerService.logInfo('Network status: ${isOffline ? "offline" : "online"}');
+    
+    if (!mounted) return;
+    
+    if (isOffline) {
+      LoggerService.logWarning('Cannot delete bank data while offline.');
+      setState(() {
+        _isSaving = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bankdaten können offline nicht gelöscht werden'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+      return;
+    }
+
+    try {
+      // Perform deletion
+      LoggerService.logInfo('Calling deleteBankData...');
+      final bankData = BankData(
+        id: 0,
+        webloginId: widget.webloginId,
+        kontoinhaber: _kontoinhaberController.text,
+        iban: _ibanController.text,
+        bic: _bicController.text,
+        mandatSeq: 2,
+      );
+      final bool success = await apiService.deleteBankData(bankData);
+      LoggerService.logInfo('deleteBankData result: $success');
+
+      if (!mounted) {
+        LoggerService.logWarning('Widget not mounted after deleteBankData.');
+        return;
+      }
+
+      if (success) {
+        LoggerService.logInfo('Bank data deleted successfully.');
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => BankDataSuccessScreen(
+              success: true,
+              userData: widget.userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+            ),
+          ),
+        );
+      } else {
+        LoggerService.logWarning('Failed to delete bank data.');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Bankdaten können offline nicht gelöscht werden'),
+            content: Text('Fehler beim Löschen der Bankdaten.'),
             duration: UIConstants.snackbarDuration,
             backgroundColor: UIConstants.errorColor,
           ),
         );
-        return;
       }
-      setState(() {
-        _isSaving = true;
-      });
-
-      try {
-        final bankData = BankData(
-          id: 0,
-          webloginId: widget.webloginId,
-          kontoinhaber: _kontoinhaberController.text,
-          iban: _ibanController.text,
-          bic: _bicController.text,
-          mandatSeq: 2,
-        );
-        final bool success = await apiService.deleteBankData(bankData);
-        if (!mounted) return;
-        if (success) {
-          if (!mounted) return;
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder:
-                  (context) => BankDataSuccessScreen(
-                    success: true,
-                    userData: widget.userData,
-                    isLoggedIn: widget.isLoggedIn,
-                    onLogout: widget.onLogout,
-                  ),
-            ),
-          );
-        } else {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler beim Löschen der Bankdaten.'),
-              duration: UIConstants.snackbarDuration,
-              backgroundColor: UIConstants.errorColor,
-            ),
-          );
-        }
-      } catch (e) {
-        LoggerService.logError('Exception during bank data delete: $e');
-        if (!mounted) return;
+    } catch (e) {
+      LoggerService.logError('Exception during bank data deletion: $e');
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ein Fehler ist aufgetreten: $e'),
@@ -260,12 +279,12 @@ class BankDataScreenState extends State<BankDataScreen> {
             backgroundColor: UIConstants.errorColor,
           ),
         );
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isSaving = false;
-          });
-        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
       }
     }
   }

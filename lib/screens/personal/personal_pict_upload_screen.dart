@@ -272,17 +272,7 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
 
       if (success) {
         widget.testOnUploadComplete?.call(); // fire early
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Profilbild erfolgreich hochgeladen!',
-                style: TextStyle(color: UIConstants.successColor),
-              ),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+
         if (mounted) {
           setState(() {
             _isImageUploadedToServer = true;
@@ -635,197 +625,199 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
   @override
   Widget build(BuildContext context) {
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: UIConstants.backgroundColor,
+          appBar: AppBar(
+            backgroundColor: UIConstants.backgroundColor,
+            iconTheme: const IconThemeData(color: UIConstants.textColor),
+            title: Semantics(
+              label:
+                  'Profilbild Bildschirm. Hier können Sie Ihr Profilbild hochladen oder löschen.',
+              liveRegion: true,
+              child: ScaledText(
+                'Profilbild',
+                style: UIStyles.appBarTitleStyle.copyWith(
+                  fontSize:
+                      UIStyles.appBarTitleStyle.fontSize! *
+                      fontSizeProvider.scaleFactor,
+                ),
+              ),
+            ),
+            actions: [
+              const Padding(
+                padding: UIConstants.appBarRightPadding,
+                child: ConnectivityIcon(),
+              ),
+              AppMenu(
+                context: context,
+                userData: widget.userData,
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+              ),
+            ],
+          ),
+          body: Padding(
+            padding: UIConstants.defaultPadding,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: UIConstants.spacingXL),
+                  Center(
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: _buildProfileImageWidget(),
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingM),
+                  Center(
+                    child: Focus(
+                      autofocus: true,
+                      child: ElevatedButton.icon(
+                        key: PersonalPictUploadScreen.selectBtnKey,
+                        onPressed: _pickImage,
+                        icon: const Icon(Icons.photo_library),
+                        label: const Text('Bild auswählen'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: UIConstants.spacingL),
 
-    return Scaffold(
-      backgroundColor: UIConstants.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: UIConstants.backgroundColor,
-        iconTheme: const IconThemeData(color: UIConstants.textColor),
-        title: Semantics(
-          label:
-              'Profilbild Bildschirm. Hier können Sie Ihr Profilbild hochladen oder löschen.',
-          liveRegion: true,
-          child: ScaledText(
-            'Profilbild',
-            style: UIStyles.appBarTitleStyle.copyWith(
-              fontSize:
-                  UIStyles.appBarTitleStyle.fontSize! *
-                  fontSizeProvider.scaleFactor,
+                  // --- Info about allowed formats, size, and data type ---
+                  Consumer<ApiService>(
+                    builder: (context, apiService, child) {
+                      final maxSizeMB =
+                          apiService.configService.getInt(
+                            'maxSizeMB',
+                            'profilePhoto',
+                          ) ??
+                          2;
+                      final allowedFormats =
+                          apiService.configService.getList(
+                            'allowedFormats',
+                            'profilePhoto',
+                          ) ??
+                          ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+                      return Center(
+                        child: Column(
+                          children: [
+                            ScaledText(
+                              'Anforderungen:',
+                              style: UIStyles.bodyStyle.copyWith(
+                                fontSize:
+                                    UIStyles.bodyStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: UIConstants.spacingXS),
+                            ScaledText(
+                              'Maximale Größe: ${maxSizeMB}MB',
+                              style: UIStyles.bodyStyle.copyWith(
+                                fontSize:
+                                    UIStyles.bodyStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                                color: UIConstants.greySubtitleTextColor,
+                              ),
+                            ),
+                            ScaledText(
+                              'Formate: ${allowedFormats.join(', ')}',
+                              style: UIStyles.bodyStyle.copyWith(
+                                fontSize:
+                                    UIStyles.bodyStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                                color: UIConstants.greySubtitleTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  if (_selectedImage != null) ...[
+                    const SizedBox(height: UIConstants.spacingM),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ScaledText(
+                            _selectedImage!.name,
+                            key: PersonalPictUploadScreen.selectedTextKey,
+                            style: UIStyles.bodyStyle,
+                            textAlign: TextAlign.left,
+                          ),
+                          const SizedBox(height: 8),
+                          Semantics(
+                            label: 'Ausgewähltes Bild: ${_selectedImage!.name}',
+                            child: ScaledText(
+                              'Bild ausgewählt',
+                              style: UIStyles.bodyStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: UIConstants.spacingM),
+                  Consumer<ApiService>(
+                    builder: (context, apiService, child) {
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        actions: [
-          const Padding(
-            padding: UIConstants.appBarRightPadding,
-            child: ConnectivityIcon(),
+          floatingActionButton: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if ((_selectedImage != null && _isImageUploadedToServer) ||
+                  _existingProfilePhoto != null)
+                FloatingActionButton(
+                  key: PersonalPictUploadScreen.deleteFabKey,
+                  heroTag: 'deleteFab',
+                  onPressed: _isDeleting ? null : _deleteImage,
+                  backgroundColor: UIConstants.defaultAppColor,
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+              if ((_selectedImage != null && _isImageUploadedToServer) ||
+                  _existingProfilePhoto != null)
+                const SizedBox(height: UIConstants.spacingM),
+              FloatingActionButton(
+                key: PersonalPictUploadScreen.saveFabKey,
+                heroTag: 'saveFab',
+                onPressed:
+                    (_selectedImage != null && !_isUploading)
+                        ? _uploadImage
+                        : null,
+                child: const Icon(Icons.cloud_upload),
+              ),
+            ],
           ),
-          AppMenu(
-            context: context,
+          endDrawer: AppDrawer(
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
             onLogout: widget.onLogout,
           ),
-        ],
-      ),
-      body: Padding(
-        padding: UIConstants.defaultPadding,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: UIConstants.spacingXL),
-              Center(
-                child: GestureDetector(
-                  onTap: _pickImage,
-                  child: _buildProfileImageWidget(),
-                ),
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              Center(
-                child: Focus(
-                  autofocus: true,
-                  child: ElevatedButton.icon(
-                    key: PersonalPictUploadScreen.selectBtnKey,
-                    onPressed: _pickImage,
-                    icon: const Icon(Icons.upload_file),
-                    label: ScaledText(
-                      'Bild auswählen',
-                      style: UIStyles.buttonStyle.copyWith(
-                        fontSize:
-                            UIStyles.buttonStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
-                      ),
-                    ),
-                    style: UIStyles.defaultButtonStyle,
-                  ),
-                ),
-              ),
-              const SizedBox(height: UIConstants.spacingL),
-              if (_selectedImage != null) ...[
-                Center(
-                  child: ScaledText(
-                    'Bild ausgewählt: ${_selectedImage!.name}',
-                    style: UIStyles.bodyStyle.copyWith(
-                      fontSize:
-                          UIStyles.bodyStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Semantics(
-                  key: PersonalPictUploadScreen.selectedTextKey,
-                  label: 'Bild ausgewählt: ${_selectedImage!.name}',
-                  liveRegion: true,
-                  child: Text(
-                    'Bild ausgewählt: ${_selectedImage!.name}',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-              const SizedBox(height: UIConstants.spacingM),
-              Consumer<ApiService>(
-                builder: (context, apiService, child) {
-                  final maxSizeMB =
-                      apiService.configService.getInt(
-                        'maxSizeMB',
-                        'profilePhoto',
-                      ) ??
-                      2;
-                  final allowedFormats =
-                      apiService.configService.getList(
-                        'allowedFormats',
-                        'profilePhoto',
-                      ) ??
-                      ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-
-                  return Center(
-                    child: Column(
-                      children: [
-                        ScaledText(
-                          'Anforderungen:',
-                          style: UIStyles.bodyStyle.copyWith(
-                            fontSize:
-                                UIStyles.bodyStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: UIConstants.spacingXS),
-                        ScaledText(
-                          'Maximale Größe: ${maxSizeMB}MB',
-                          style: UIStyles.bodyStyle.copyWith(
-                            fontSize:
-                                UIStyles.bodyStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
-                            color: UIConstants.greySubtitleTextColor,
-                          ),
-                        ),
-                        ScaledText(
-                          'Formate: ${allowedFormats.join(', ')}',
-                          style: UIStyles.bodyStyle.copyWith(
-                            fontSize:
-                                UIStyles.bodyStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
-                            color: UIConstants.greySubtitleTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
         ),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end, // Aligns FABs to the bottom
-        children: [
-          if ((_selectedImage != null && _isImageUploadedToServer) ||
-              _existingProfilePhoto != null)
-            FloatingActionButton(
-              key: PersonalPictUploadScreen.deleteFabKey,
-              heroTag: 'deleteFab',
-              onPressed: _isDeleting ? null : _deleteImage,
-              backgroundColor:
-                  UIConstants.defaultAppColor, // Same color as save
-              child:
-                  _isDeleting
-                      ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      )
-                      : const Icon(Icons.delete, color: Colors.white),
-            ),
-          if ((_selectedImage != null && _isImageUploadedToServer) ||
-              _existingProfilePhoto != null)
-            const SizedBox(
-              height: UIConstants.spacingM,
-            ), // Spacing between buttons
-          FloatingActionButton(
-            key: PersonalPictUploadScreen.saveFabKey,
-            heroTag: 'saveFab',
-            onPressed:
-                (_selectedImage != null && !_isUploading) ? _uploadImage : null,
-            child: Semantics(
-              hint: 'Tippen, um das ausgewählte Bild hochzuladen',
-              button: true,
-              child: Tooltip(
-                message: 'Profilbild hochladen',
-                child:
-                    _isUploading
-                        ? const CircularProgressIndicator()
-                        : const Icon(Icons.cloud_upload),
+        if (_isUploading)
+          Positioned.fill(
+            child: Container(
+              color: UIConstants.textColor.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    UIConstants.circularProgressIndicator,
+                  ),
+                ),
               ),
             ),
           ),
-        ],
-      ),
-      endDrawer: AppDrawer(
-        userData: widget.userData,
-        isLoggedIn: widget.isLoggedIn,
-        onLogout: widget.onLogout,
-      ),
+      ],
     );
   }
 }
