@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     verified_at TIMESTAMP WITH TIME ZONE,
     is_verified BOOLEAN DEFAULT FALSE,
+    is_deleted BOOLEAN DEFAULT FALSE,
     profile_photo BYTEA
 );
 

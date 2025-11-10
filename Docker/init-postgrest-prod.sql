@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     verified_at TIMESTAMPTZ,
     is_verified BOOLEAN DEFAULT FALSE,
+    is_deleted BOOLEAN DEFAULT FALSE,
     profile_photo BYTEA
 );
 

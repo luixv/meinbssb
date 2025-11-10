@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
     verification_token VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     verified_at TIMESTAMP WITH TIME ZONE,
-    is_verified BOOLEAN DEFAULT FALSE
+    is_verified BOOLEAN DEFAULT FALSE,
+    is_deleted BOOLEAN DEFAULT FALSE
 );
 
 -- Create index for faster lookups
