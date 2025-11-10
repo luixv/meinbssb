@@ -239,7 +239,7 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
   bool _showOverlay = false;
 
   void _updateSuggestions(String pattern) {
-    // debugPrint('Suggestions update: pattern="$pattern"');
+    debugPrint('Suggestions update: pattern="$pattern"');
     setState(() {
       if (pattern.isEmpty) {
         _suggestions = [];
@@ -261,7 +261,9 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
         _showOverlay = _suggestions.isNotEmpty;
         _highlightedIndex = _suggestions.isNotEmpty ? 0 : -1;
       }
-      //  debugPrint('Suggestions: count=${_suggestions.length}, overlay=$_showOverlay',);
+      debugPrint(
+        'Suggestions: count=${_suggestions.length}, overlay=$_showOverlay',
+      );
     });
   }
 
@@ -272,7 +274,7 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
     if (event is RawKeyDownEvent) {
       if (_controller.text.isEmpty &&
           event.logicalKey == LogicalKeyboardKey.tab) {
-        // debugPrint('TAB pressed in empty autocomplete');
+        debugPrint('TAB pressed in empty autocomplete');
         widget.onTabToNextTable();
         return;
       }
@@ -280,13 +282,13 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
         if (event.logicalKey == LogicalKeyboardKey.tab) {
           setState(() {
             _highlightedIndex = (_highlightedIndex + 1) % _suggestions.length;
-            // debugPrint('TAB cycles to index $_highlightedIndex');
+            debugPrint('TAB cycles to index $_highlightedIndex');
           });
         } else if (event.logicalKey == LogicalKeyboardKey.enter) {
           if (_highlightedIndex >= 0 &&
               _highlightedIndex < _suggestions.length) {
             final selected = _suggestions[_highlightedIndex];
-            //debugPrint('ENTER selects: $selected');
+            debugPrint('ENTER selects: $selected');
             widget.onAdd(selected);
             _controller.clear();
             setState(() {
