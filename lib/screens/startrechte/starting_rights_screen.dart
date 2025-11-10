@@ -1,3 +1,4 @@
+import 'package:meinbssb/screens/startrechte/starting_rights_success.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
@@ -33,30 +34,13 @@ class StartingRightsScreen extends StatefulWidget {
 }
 
 class _StartingRightsScreenState extends State<StartingRightsScreen> {
-  bool _digitalerPass = false;
-
-  int get _seasonInt {
-    final now = DateTime.now();
-    int yy;
-    // Use September 16 as the deadline
-    final deadline = DateTime(now.year, 9, 16);
-    if (now.isBefore(deadline)) {
-      yy = now.year + 1;
-    } else {
-      yy = now.year + 2;
-    }
-    return yy;
-  }
-
   bool _hasUnsavedChanges = false;
-
   Future<void> _onSaveConfirmed() async {
     setState(() {
       _isLoading = true;
       _hasUnsavedChanges = false;
     });
 
-    // Compose the full JSON object
     final int? passdatenId = widget.userData?.passdatenId;
     final int? personId = widget.userData?.personId;
     final int? erstVereinId = widget.userData?.erstVereinId;
@@ -79,12 +63,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
       antragsTyp,
     );
 
-    setState(() {
-      _isLoading = false;
-    });
-
     if (success) {
-      // Send email notifications for starting rights changes
       try {
         await apiService.sendStartingRightsChangeNotifications(
           personId: personId!,
@@ -94,21 +73,45 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         LoggerService.logError(
           'Failed to send starting rights change notifications: $e',
         );
-        // Don't fail the save operation if email notifications fail
+      }
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder:
+                (context) => StartrechteSuccessScreen(
+                  userData: widget.userData,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                ),
+          ),
+        );
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        // No snackbar, just stop spinner
       }
     }
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success
-              ? 'Änderungen wurden erfolgreich gespeichert.'
-              : 'Fehler beim Speichern der Änderungen.',
-        ),
-        backgroundColor:
-            success ? UIConstants.successColor : UIConstants.errorColor,
-      ),
-    );
+  bool _digitalerPass = false;
+
+  int get _seasonInt {
+    final now = DateTime.now();
+    int yy;
+    // Use September 16 as the deadline
+    final deadline = DateTime(now.year, 9, 16);
+    if (now.isBefore(deadline)) {
+      yy = now.year + 1;
+    } else {
+      yy = now.year + 2;
+    }
+    return yy;
   }
 
   void _onSave() {
