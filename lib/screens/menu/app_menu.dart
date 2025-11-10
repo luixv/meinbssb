@@ -215,11 +215,18 @@ class AppMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.menu, color: UIStyles.menuIconColor),
-      onPressed: () {
-        Scaffold.of(context).openEndDrawer();
-      },
+    return Semantics(
+      label: 'Menü',
+      button: true,
+      child: Tooltip(
+        message: 'Menü',
+        child: IconButton(
+          icon: const Icon(Icons.menu, color: UIStyles.menuIconColor),
+          onPressed: () {
+            Scaffold.of(context).openEndDrawer();
+          },
+        ),
+      ),
     );
   }
 }

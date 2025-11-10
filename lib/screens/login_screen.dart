@@ -295,6 +295,7 @@ class LoginScreenState extends State<LoginScreen> {
                 icon: Icon(
                   _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                 ),
+                tooltip: 'Passwort anzeigen/verbergen',
                 onPressed: () {
                   if (mounted) {
                     setState(() {

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/models/bank_data.dart';
 
 class MockConfigService implements ConfigService {
   @override
@@ -33,6 +34,12 @@ class FakeApiService implements ApiService {
 
   @override
   ConfigService get configService => _configService;
+
+  @override
+  Future<List<BankData>> fetchBankdatenMyBSSB(int webloginId) async {
+    // Return empty list or mock data for tests
+    return [];
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => null;

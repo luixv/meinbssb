@@ -31,7 +31,9 @@ class HelpScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
           onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'zurück',
         ),
+
         title: const ScaledText(
           Messages.helpTitle,
           style: UIStyles.appBarTitleStyle,
