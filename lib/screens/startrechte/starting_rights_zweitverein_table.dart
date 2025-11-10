@@ -3,7 +3,6 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/services.dart';
 
 class ZweitvereinTable extends StatelessWidget {
@@ -197,137 +196,222 @@ class ZweitvereinTable extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Builder(
-                  builder: (context) {
-                    final TextEditingController typeAheadController =
-                        TextEditingController();
-                    return Semantics(
-                      label: 'Disziplin hinzufügen',
-                      hint: 'Tippen, um Disziplin zu suchen und hinzuzufügen',
-                      child: TypeAheadField<Disziplin>(
-                        controller: typeAheadController,
-                        suggestionsCallback: (pattern) {
-                          if (pattern.isEmpty) return <Disziplin>[];
-                          return disciplines
-                              .where(
-                                (d) =>
-                                    (d.disziplin?.toLowerCase() ?? '').contains(
-                                      pattern.toLowerCase(),
-                                    ) ||
-                                    (d.disziplinNr?.toLowerCase() ?? '')
-                                        .contains(pattern.toLowerCase()),
-                              )
-                              .toList();
-                        },
-                        builder: (context, controller, focusNode) {
-                          final rawKeyboardFocusNode = FocusNode();
-                          return RawKeyboardListener(
-                            focusNode: rawKeyboardFocusNode,
-                            onKey: (event) {
-                              if (event is RawKeyDownEvent &&
-                                  event.logicalKey ==
-                                      LogicalKeyboardKey.enter) {
-                                final value = controller.text.trim();
-                                Disziplin? match;
-                                for (final d in disciplines) {
-                                  final label =
-                                      (((d.disziplinNr != null &&
-                                                      d.disziplinNr!.isNotEmpty)
-                                                  ? '${d.disziplinNr} - '
-                                                  : '') +
-                                              (d.disziplin ?? ''))
-                                          .trim()
-                                          .toLowerCase();
-                                  if (label == value.toLowerCase()) {
-                                    match = d;
-                                    break;
-                                  }
-                                }
-                                if (match != null) {
-                                  onAdd(match);
-                                  controller.clear();
-                                  focusNode
-                                      .unfocus(); // Close autocomplete after selection
-                                }
-                              }
-                            },
-                            child: TextField(
-                              controller: controller,
-                              focusNode: focusNode,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 6,
-                                  horizontal: 10,
-                                ),
-                                border: const OutlineInputBorder(),
-                                // Removed '+' IconButton from suffixIcon
-                                suffixIcon: null,
-                              ),
-                              onSubmitted: (value) {
-                                try {
-                                  final match = disciplines.firstWhere(
-                                    (d) =>
-                                        (((d.disziplinNr != null &&
-                                                        d
-                                                            .disziplinNr!
-                                                            .isNotEmpty)
-                                                    ? '${d.disziplinNr} - '
-                                                    : '') +
-                                                (d.disziplin ?? ''))
-                                            .trim()
-                                            .toLowerCase() ==
-                                        value.trim().toLowerCase(),
-                                  );
-                                  onAdd(match);
-                                  controller.clear();
-                                  focusNode
-                                      .unfocus(); // Close autocomplete after selection
-                                } catch (_) {
-                                  // No match found
-                                }
-                              },
-                            ),
-                          );
-                        },
-                        itemBuilder: (context, Disziplin suggestion) {
-                          return ListTile(
-                            title: Text(
-                              ((suggestion.disziplinNr != null &&
-                                          suggestion.disziplinNr!.isNotEmpty
-                                      ? '${suggestion.disziplinNr} - '
-                                      : '') +
-                                  (suggestion.disziplin ?? '')),
-                            ),
-                          );
-                        },
-                        onSelected: (Disziplin suggestion) {
-                          onAdd(suggestion);
-                          typeAheadController.clear();
-                          // Close autocomplete after selection
-                          // The focusNode is available in the builder, so we need to get it from the context
-                          // Use FocusScope to unfocus
-                          FocusScope.of(context).unfocus();
-                        },
-                        emptyBuilder: (context) {
-                          return Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              'Disziplinen...',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(color: Colors.grey),
-                            ),
-                          );
-                        },
-                      ),
-                    );
+                ZveAutocompleteField(
+                  disciplines: disciplines,
+                  onAdd: (selected) {
+                    //debugPrint('Selected discipline: $selected');
+                    onAdd(selected);
+                  },
+                  onTabToNextTable: () {
+                    //debugPrint('TAB in empty autocomplete: move to next ZVE');
                   },
                 ),
                 const SizedBox(height: UIConstants.spacingM),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// Local stateful widget for improved autocomplete keyboard navigation
+class ZveAutocompleteField extends StatefulWidget {
+  const ZveAutocompleteField({
+    required this.disciplines,
+    required this.onAdd,
+    required this.onTabToNextTable,
+    super.key,
+  });
+  final List<Disziplin> disciplines;
+  final void Function(Disziplin) onAdd;
+  final VoidCallback onTabToNextTable;
+
+  @override
+  State<ZveAutocompleteField> createState() => ZveAutocompleteFieldState();
+}
+
+class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
+  final TextEditingController _controller = TextEditingController();
+  int _highlightedIndex = -1;
+  List<Disziplin> _suggestions = [];
+  bool _showOverlay = false;
+
+  void _updateSuggestions(String pattern) {
+    // debugPrint('Suggestions update: pattern="$pattern"');
+    setState(() {
+      if (pattern.isEmpty) {
+        _suggestions = [];
+        _showOverlay = false;
+        _highlightedIndex = -1;
+      } else {
+        _suggestions =
+            widget.disciplines
+                .where(
+                  (d) =>
+                      (d.disziplin?.toLowerCase() ?? '').contains(
+                        pattern.toLowerCase(),
+                      ) ||
+                      (d.disziplinNr?.toLowerCase() ?? '').contains(
+                        pattern.toLowerCase(),
+                      ),
+                )
+                .toList();
+        _showOverlay = _suggestions.isNotEmpty;
+        _highlightedIndex = _suggestions.isNotEmpty ? 0 : -1;
+      }
+      //  debugPrint('Suggestions: count=${_suggestions.length}, overlay=$_showOverlay',);
+    });
+  }
+
+  void _handleKey(RawKeyEvent event) {
+    debugPrint(
+      'RawKeyboardListener event: ${event.logicalKey}, text="${_controller.text}"',
+    );
+    if (event is RawKeyDownEvent) {
+      if (_controller.text.isEmpty &&
+          event.logicalKey == LogicalKeyboardKey.tab) {
+        // debugPrint('TAB pressed in empty autocomplete');
+        widget.onTabToNextTable();
+        return;
+      }
+      if (_showOverlay && _suggestions.isNotEmpty) {
+        if (event.logicalKey == LogicalKeyboardKey.tab) {
+          setState(() {
+            _highlightedIndex = (_highlightedIndex + 1) % _suggestions.length;
+            // debugPrint('TAB cycles to index $_highlightedIndex');
+          });
+        } else if (event.logicalKey == LogicalKeyboardKey.enter) {
+          if (_highlightedIndex >= 0 &&
+              _highlightedIndex < _suggestions.length) {
+            final selected = _suggestions[_highlightedIndex];
+            //debugPrint('ENTER selects: $selected');
+            widget.onAdd(selected);
+            _controller.clear();
+            setState(() {
+              _showOverlay = false;
+              _suggestions = [];
+              _highlightedIndex = -1;
+            });
+            FocusScope.of(context).unfocus();
+          }
+        }
+      } else if (event.logicalKey == LogicalKeyboardKey.enter) {
+        // If overlay not shown, try to match by text
+        final value = _controller.text.trim();
+        Disziplin? match;
+        for (final d in widget.disciplines) {
+          final label =
+              (((d.disziplinNr != null && d.disziplinNr!.isNotEmpty)
+                          ? '${d.disziplinNr} - '
+                          : '') +
+                      (d.disziplin ?? ''))
+                  .trim()
+                  .toLowerCase();
+          if (label == value.toLowerCase()) {
+            match = d;
+            break;
+          }
+        }
+        if (match != null) {
+          //debugPrint('ENTER (no overlay) selects: $match');
+          widget.onAdd(match);
+          _controller.clear();
+          setState(() {
+            _showOverlay = false;
+            _suggestions = [];
+            _highlightedIndex = -1;
+          });
+          FocusScope.of(context).unfocus();
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: _handleKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: _controller,
+            style: Theme.of(context).textTheme.bodyMedium,
+            decoration: InputDecoration(
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 6,
+                horizontal: 10,
+              ),
+              border: const OutlineInputBorder(),
+              suffixIcon: null,
+            ),
+            onChanged: _updateSuggestions,
+            onSubmitted: (value) {
+              if (_showOverlay &&
+                  _highlightedIndex >= 0 &&
+                  _highlightedIndex < _suggestions.length) {
+                final selected = _suggestions[_highlightedIndex];
+                //debugPrint('onSubmitted selects: $selected');
+                widget.onAdd(selected);
+                _controller.clear();
+                setState(() {
+                  _showOverlay = false;
+                  _suggestions = [];
+                  _highlightedIndex = -1;
+                });
+                FocusScope.of(context).unfocus();
+              }
+            },
+          ),
+          if (_showOverlay)
+            Container(
+              constraints: const BoxConstraints(maxHeight: 200),
+              margin: const EdgeInsets.only(top: 2),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(4),
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+              ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _suggestions.length,
+                itemBuilder: (context, idx) {
+                  final suggestion = _suggestions[idx];
+                  final isHighlighted = idx == _highlightedIndex;
+                  return Material(
+                    color:
+                        isHighlighted
+                            ? Colors.blue.shade100
+                            : Colors.transparent,
+                    child: ListTile(
+                      title: Text(
+                        ((suggestion.disziplinNr != null &&
+                                    suggestion.disziplinNr!.isNotEmpty
+                                ? '${suggestion.disziplinNr} - '
+                                : '') +
+                            (suggestion.disziplin ?? '')),
+                      ),
+                      onTap: () {
+                        //debugPrint('Tapped suggestion: $suggestion');
+                        widget.onAdd(suggestion);
+                        _controller.clear();
+                        setState(() {
+                          _showOverlay = false;
+                          _suggestions = [];
+                          _highlightedIndex = -1;
+                        });
+                        FocusScope.of(context).unfocus();
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
         ],
       ),
     );

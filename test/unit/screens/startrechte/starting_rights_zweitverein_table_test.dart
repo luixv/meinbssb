@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/startrechte/starting_rights_zweitverein_table.dart';
+import 'package:meinbssb/screens/startrechte/starting_rights_zweitverein_table.dart'
+    show ZweitvereinTable, ZveAutocompleteField;
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:provider/provider.dart';
@@ -178,8 +178,8 @@ void main() {
       await tester.pumpWidget(testWidget);
       await tester.pumpAndSettle();
 
-      // Verify TypeAheadField is present
-      expect(find.byType(TypeAheadField<Disziplin>), findsOneWidget);
+      // Verify ZveAutocompleteField is present
+      expect(find.byType(ZveAutocompleteField), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
     });
 
@@ -648,19 +648,19 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Initially expanded -> TypeAheadField present
-      expect(find.byType(TypeAheadField<Disziplin>), findsOneWidget);
+      // Initially expanded -> ZveAutocompleteField present
+      expect(find.byType(ZveAutocompleteField), findsOneWidget);
 
       // Tap header to collapse
       await tester.tap(find.text('Test Verein'));
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeAheadField<Disziplin>), findsNothing);
+      expect(find.byType(ZveAutocompleteField), findsNothing);
 
       // Tap again to expand
       await tester.tap(find.text('Test Verein'));
       await tester.pumpAndSettle();
-      expect(find.byType(TypeAheadField<Disziplin>), findsOneWidget);
+      expect(find.byType(ZveAutocompleteField), findsOneWidget);
     });
 
     testWidgets('autocomplete clears after selection', (tester) async {
