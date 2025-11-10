@@ -73,11 +73,11 @@ class PostgrestService {
     }
   }
 
-  /// Get user by email
+  /// Get user by email (excludes deleted users)
   Future<Map<String, dynamic>?> getUserByEmail(String email) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}users?email=eq.$email'),
+        Uri.parse('${_baseUrl}users?email=eq.$email&is_deleted=eq.false'),
         headers: _headers,
       );
 
@@ -96,11 +96,11 @@ class PostgrestService {
     }
   }
 
-  /// Get user by Person ID
+  /// Get user by Person ID (excludes deleted users)
   Future<Map<String, dynamic>?> getUserByPersonId(String personId) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}users?person_id=eq.$personId'),
+        Uri.parse('${_baseUrl}users?person_id=eq.$personId&is_deleted=eq.false'),
         headers: _headers,
       );
 
@@ -119,16 +119,16 @@ class PostgrestService {
     }
   }
 
-  /// Get user by pass number
+  /// Get user by pass number (excludes deleted users)
   Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
     try {
       
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}users?pass_number=eq.$passNumber'),
+        Uri.parse('${_baseUrl}users?pass_number=eq.$passNumber&is_deleted=eq.false'),
         headers: _headers,
       );
       LoggerService.logInfo(
-        'Searching DB ${_baseUrl}users?pass_number=eq.$passNumber',
+        'Searching DB ${_baseUrl}users?pass_number=eq.$passNumber&is_deleted=eq.false',
       );
       if (response.statusCode == 200) {
         final List<dynamic> users = jsonDecode(response.body);
@@ -508,6 +508,34 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError('Error deleting profile photo: $e');
+      return false;
+    }
+  }
+
+  /// Soft delete a user by setting is_deleted to true
+  Future<bool> softDeleteUser(String personId) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}users?person_id=eq.$personId'),
+        headers: _headers,
+        body: jsonEncode({
+          'is_deleted': true,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('User soft deleted successfully for person_id: $personId');
+        // Clear cache for this user
+        _profilePhotoCache.remove(personId);
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to soft delete user. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error soft deleting user: $e');
       return false;
     }
   }

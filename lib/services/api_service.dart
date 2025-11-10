@@ -467,6 +467,10 @@ class ApiService {
     return _postgrestService.deleteUserRegistration(id);
   }
 
+  Future<bool> softDeleteUser(String personId) async {
+    return _postgrestService.softDeleteUser(personId);
+  }
+
   Future<Map<String, dynamic>?> getUserByVerificationToken(String token) async {
     return _postgrestService.getUserByVerificationToken(token);
   }

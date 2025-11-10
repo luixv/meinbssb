@@ -121,6 +121,8 @@ class _PersonalAccountDeleteScreenState
     });
 
     final int? webloginId = widget.userData?.webLoginId;
+    final int? personId = widget.userData?.personId;
+    
     if (webloginId == null) {
       setState(() {
         isLoading = false;
@@ -131,21 +133,43 @@ class _PersonalAccountDeleteScreenState
       return;
     }
 
+    if (personId == null) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('PersonId ist nicht verfügbar.')),
+      );
+      return;
+    }
+
     final apiService = Provider.of<ApiService>(context, listen: false);
 
-    final bool success = await apiService.deleteMeinBSSBLogin(webloginId);
+    // Perform both delete operations
+    // 1. Delete login, bank data, and access rights in main system
+    final bool deleteLoginSuccess = await apiService.deleteMeinBSSBLogin(webloginId);
+    
+    // 2. Soft delete in PostgreSQL (mark user as deleted)
+    final bool softDeleteSuccess = await apiService.softDeleteUser(personId.toString());
 
     if (mounted) {
       setState(() {
         isLoading = false;
       });
 
-      if (success) {
-        // Redirect to login screen
+      if (deleteLoginSuccess && softDeleteSuccess) {
+        // Both operations succeeded - redirect to login screen
         Navigator.pushReplacementNamed(context, '/login');
       } else {
+        // Show error if either operation failed
+        String errorMessage = 'Fehler beim Löschen des Kontos.';
+        if (!deleteLoginSuccess) {
+          errorMessage = 'Fehler beim Löschen der Login-Daten.';
+        } else if (!softDeleteSuccess) {
+          errorMessage = 'Fehler beim Markieren des Kontos als gelöscht.';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Antrag konnte nicht gesendet werden.')),
+          SnackBar(content: Text(errorMessage)),
         );
       }
     }
