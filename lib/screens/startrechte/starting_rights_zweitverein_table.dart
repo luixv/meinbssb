@@ -234,10 +234,44 @@ class ZveAutocompleteField extends StatefulWidget {
 
 class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
   final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   int _highlightedIndex = -1;
   List<Disziplin> _suggestions = [];
   bool _showOverlay = false;
   bool _justSelectedWithKeyboard = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToHighlightedItem() {
+    if (_highlightedIndex < 0 || !_scrollController.hasClients) return;
+    
+    // Approximate item height (padding + text)
+    const double itemHeight = 40.0;
+    final double offset = _highlightedIndex * itemHeight;
+    final double viewportHeight = _scrollController.position.viewportDimension;
+    
+    // Scroll to keep the item visible
+    if (offset < _scrollController.offset) {
+      // Item is above viewport, scroll up
+      _scrollController.animateTo(
+        offset,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+    } else if (offset + itemHeight > _scrollController.offset + viewportHeight) {
+      // Item is below viewport, scroll down
+      _scrollController.animateTo(
+        offset + itemHeight - viewportHeight,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
 
   void _updateSuggestions(String pattern) {
     //debugPrint('Suggestions update: pattern="$pattern"');
@@ -280,6 +314,10 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
           setState(() {
             _highlightedIndex = (_highlightedIndex + 1) % _suggestions.length;
             // debugPrint('TAB cycles to index $_highlightedIndex');
+          });
+          // Scroll to keep highlighted item visible
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollToHighlightedItem();
           });
         } else if (event.logicalKey == LogicalKeyboardKey.enter) {
           if (_highlightedIndex >= 0 &&
@@ -377,6 +415,7 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
                     child: Material(
                       color: Colors.transparent,
                       child: ListView.builder(
+                        controller: _scrollController,
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         itemCount: _suggestions.length,
