@@ -479,7 +479,12 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                                 ),
                       )
                       : SingleChildScrollView(
-                        padding: const EdgeInsets.all(UIConstants.spacingM),
+                        padding: const EdgeInsets.only(
+                          left: UIConstants.spacingM,
+                          right: UIConstants.spacingM,
+                          top: UIConstants.spacingM,
+                          bottom: 200, // Extra bottom padding for autocomplete dropdowns
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

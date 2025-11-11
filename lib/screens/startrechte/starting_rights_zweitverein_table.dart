@@ -337,74 +337,90 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
     return RawKeyboardListener(
       focusNode: FocusNode(),
       onKey: _handleKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _controller,
-            style: Theme.of(context).textTheme.bodyMedium,
-            decoration: InputDecoration(
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 6,
-                horizontal: 10,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _controller,
+                style: Theme.of(context).textTheme.bodyMedium,
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 6,
+                    horizontal: 10,
+                  ),
+                  border: const OutlineInputBorder(),
+                  suffixIcon: null,
+                ),
+                onChanged: _updateSuggestions,
+                // ENTER is handled exclusively in RawKeyboardListener's _handleKey
               ),
-              border: const OutlineInputBorder(),
-              suffixIcon: null,
-            ),
-            onChanged: _updateSuggestions,
-            // ENTER is handled exclusively in RawKeyboardListener's _handleKey
-          ),
-          if (_showOverlay)
-            Container(
-              constraints: const BoxConstraints(maxHeight: 200),
-              margin: const EdgeInsets.only(top: 2),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(4),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-              ),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: _suggestions.length,
-                itemBuilder: (context, idx) {
-                  final suggestion = _suggestions[idx];
-                  final isHighlighted = idx == _highlightedIndex;
-                  return InkWell(
-                    onTap: () {
-                      if (_justSelectedWithKeyboard) return;
-                      widget.onAdd(suggestion);
-                      _controller.clear();
-                      setState(() {
-                        _showOverlay = false;
-                        _suggestions = [];
-                        _highlightedIndex = -1;
-                      });
-                      FocusScope.of(context).unfocus();
-                    },
-                    child: Container(
-                      color:
-                          isHighlighted
-                              ? Colors.blue.shade100
-                              : Colors.transparent,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 8,
-                      ),
-                      child: Text(
-                        ((suggestion.disziplinNr != null &&
-                                    suggestion.disziplinNr!.isNotEmpty
-                                ? '${suggestion.disziplinNr} - '
-                                : '') +
-                            (suggestion.disziplin ?? '')),
+              if (_showOverlay)
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 150,
+                    maxWidth: constraints.maxWidth,
+                  ),
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black12, blurRadius: 4),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: _suggestions.length,
+                        itemBuilder: (context, idx) {
+                          final suggestion = _suggestions[idx];
+                          final isHighlighted = idx == _highlightedIndex;
+                          return InkWell(
+                            onTap: () {
+                              if (_justSelectedWithKeyboard) return;
+                              widget.onAdd(suggestion);
+                              _controller.clear();
+                              setState(() {
+                                _showOverlay = false;
+                                _suggestions = [];
+                                _highlightedIndex = -1;
+                              });
+                              FocusScope.of(context).unfocus();
+                            },
+                            child: Container(
+                              color:
+                                  isHighlighted
+                                      ? Colors.blue.shade100
+                                      : Colors.transparent,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 12,
+                              ),
+                              child: Text(
+                                ((suggestion.disziplinNr != null &&
+                                            suggestion.disziplinNr!.isNotEmpty
+                                        ? '${suggestion.disziplinNr} - '
+                                        : '') +
+                                    (suggestion.disziplin ?? '')),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-        ],
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

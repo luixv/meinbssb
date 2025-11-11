@@ -131,6 +131,7 @@ class DatenschutzScreen extends StatelessWidget {
                       ),
                       UIConstants.verticalSpacingM,
                       const Divider(),
+                      const SizedBox(height: UIConstants.helpSpacing),
                     ],
                   ),
                 ),
