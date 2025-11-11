@@ -394,7 +394,42 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
                   suffixIcon: null,
                 ),
                 onChanged: _updateSuggestions,
-                // ENTER is handled exclusively in RawKeyboardListener's _handleKey
+                onSubmitted: (value) {
+                  // Handle Enter key press
+                  if (_showOverlay && _suggestions.isNotEmpty && _highlightedIndex >= 0) {
+                    final selected = _suggestions[_highlightedIndex];
+                    widget.onAdd(selected);
+                    _controller.clear();
+                    setState(() {
+                      _showOverlay = false;
+                      _suggestions = [];
+                      _highlightedIndex = -1;
+                    });
+                  } else if (value.trim().isNotEmpty) {
+                    // Try to find exact match if overlay is not shown
+                    final match = widget.disciplines.firstWhere(
+                      (d) {
+                        final label = (((d.disziplinNr != null && d.disziplinNr!.isNotEmpty)
+                                    ? '${d.disziplinNr} - '
+                                    : '') +
+                                (d.disziplin ?? ''))
+                            .trim()
+                            .toLowerCase();
+                        return label == value.trim().toLowerCase();
+                      },
+                      orElse: () => Disziplin(disziplinId: -1, disziplinNr: null, disziplin: null),
+                    );
+                    if (match.disziplinId != -1) {
+                      widget.onAdd(match);
+                      _controller.clear();
+                      setState(() {
+                        _showOverlay = false;
+                        _suggestions = [];
+                        _highlightedIndex = -1;
+                      });
+                    }
+                  }
+                },
               ),
               if (_showOverlay)
                 ConstrainedBox(
