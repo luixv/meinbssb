@@ -175,6 +175,42 @@ void main() {
         verify(mockHttpClient.get('FindeMailadressen/123')).called(1);
       });
 
+      test('removes duplicate email addresses', () async {
+        // Setup
+        final mockResponse = [
+          {
+            'MAILADRESSEN': 'duplicate@example.com',
+            'LOGINMAIL': 'duplicate@example.com',
+          },
+          {
+            'MAILADRESSEN': 'unique1@example.com',
+            'LOGINMAIL': 'unique2@example.com',
+          },
+          {'MAILADRESSEN': 'duplicate@example.com', 'LOGINMAIL': null},
+        ];
+        when(mockHttpClient.get(any)).thenAnswer((_) async => mockResponse);
+
+        // Execute
+        final result = await emailService.getEmailAddressesByPersonId('123');
+
+        // Verify - should only contain unique email addresses
+        expect(result, hasLength(3));
+        expect(
+          result,
+          containsAll([
+            'duplicate@example.com',
+            'unique1@example.com',
+            'unique2@example.com',
+          ]),
+        );
+        // Verify that duplicate@example.com appears only once
+        expect(
+          result.where((email) => email == 'duplicate@example.com').length,
+          equals(1),
+        );
+        verify(mockHttpClient.get('FindeMailadressen/123')).called(1);
+      });
+
       test('returns empty list on API error', () async {
         // Setup
         when(mockHttpClient.get(any)).thenThrow(Exception('API Error'));

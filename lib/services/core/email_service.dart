@@ -229,24 +229,25 @@ class EmailService {
       final endpoint = 'FindeMailadressen/$personId';
       final response = await _httpClient.get(endpoint);
       if (response is List) {
-        // Parse the response to extract MAILADRESSEN from each object
-        final List<String> emailAddresses = [];
+        // Use a Set to automatically filter out duplicate email addresses
+        final Set<String> uniqueEmailAddresses = {};
         for (final item in response) {
           if (item is Map<String, dynamic> && item['MAILADRESSEN'] != null) {
             final email = item['MAILADRESSEN'].toString();
             if (email.isNotEmpty && email != 'null') {
-              emailAddresses.add(email);
+              uniqueEmailAddresses.add(email);
             }
           }
           if (item is Map<String, dynamic> && item['LOGINMAIL'] != null) {
             final email = item['LOGINMAIL'].toString();
             if (email.isNotEmpty && email != 'null') {
-              emailAddresses.add(email);
+              uniqueEmailAddresses.add(email);
             }
           }
         }
+        final emailAddresses = uniqueEmailAddresses.toList();
         LoggerService.logInfo(
-          'Found ${emailAddresses.length} email addresses for person $personId: $emailAddresses',
+          'Found ${emailAddresses.length} unique email addresses for person $personId: $emailAddresses',
         );
         return emailAddresses;
       }

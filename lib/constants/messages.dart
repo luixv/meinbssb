@@ -24,7 +24,7 @@ class Messages {
 
   // Registration Process Messages
   static const String noPersonIdFound =
-      'Keine PersonID gefunden. Bitte überprüfen Sie Ihre Schützenausweisnummer und versuchen Sie es erneut.';
+      'Die eingegebenen Daten stimmen nicht mit den Daten in ZMI überein.';
   static const String configError =
       'Systemkonfigurationsfehler. Bitte kontaktieren Sie den Support.';
   static const String emailConfigError =
