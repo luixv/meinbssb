@@ -871,54 +871,70 @@ class _ContactTileWithKeyboardFocus extends StatefulWidget {
 }
 
 class _ContactTileWithKeyboardFocusState extends State<_ContactTileWithKeyboardFocus> {
+  final FocusNode _focusNode = FocusNode();
   bool _hasKeyboardFocus = false;
 
   @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    // Check if focus highlight mode is traditional (keyboard navigation)
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FocusableActionDetector(
-      onShowFocusHighlight: (highlighted) {
-        setState(() {
-          _hasKeyboardFocus = highlighted;
-        });
-      },
-      child: Semantics(
-        label: 'Kontaktfeld: ${widget.displayLabel}',
-        hint: 'Gespeicherter Wert: ${widget.displayValue}. Löschen mit Button rechts.',
-        textField: true,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: TextFormField(
-            initialValue: widget.displayValue.isNotEmpty ? widget.displayValue : '-',
-            readOnly: true,
-            style: UIStyles.formValueBoldStyle.copyWith(
-              fontSize:
-                  UIStyles.formValueBoldStyle.fontSize! *
-                  widget.fontSizeProvider.scaleFactor,
-            ),
-            decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: widget.displayLabel.isNotEmpty ? widget.displayLabel : 'Unbekannt',
-              fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
-              focusedBorder: _hasKeyboardFocus
-                  ? OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.yellow.shade700,
-                      width: 2.0,
-                    ),
-                  )
-                  : null,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.delete_outline,
-                  size: UIConstants.iconSizeS * widget.fontSizeProvider.scaleFactor,
-                ),
-                tooltip: 'Löschen',
-                color: UIConstants.deleteIcon,
-                onPressed: () => widget.onDelete(
-                  widget.kontaktId,
-                  widget.rawKontaktTyp,
-                  widget.displayValue,
-                  widget.displayLabel,
-                ),
+    return Semantics(
+      label: 'Kontaktfeld: ${widget.displayLabel}',
+      hint: 'Gespeicherter Wert: ${widget.displayValue}. Löschen mit Button rechts.',
+      textField: true,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+        child: TextFormField(
+          focusNode: _focusNode,
+          initialValue: widget.displayValue.isNotEmpty ? widget.displayValue : '-',
+          readOnly: true,
+          style: UIStyles.formValueBoldStyle.copyWith(
+            fontSize:
+                UIStyles.formValueBoldStyle.fontSize! *
+                widget.fontSizeProvider.scaleFactor,
+          ),
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: widget.displayLabel.isNotEmpty ? widget.displayLabel : 'Unbekannt',
+            fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+            focusedBorder: _hasKeyboardFocus
+                ? OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.yellow.shade700,
+                    width: 2.0,
+                  ),
+                )
+                : null,
+            suffixIcon: IconButton(
+              icon: Icon(
+                Icons.delete_outline,
+                size: UIConstants.iconSizeS * widget.fontSizeProvider.scaleFactor,
+              ),
+              tooltip: 'Löschen',
+              color: UIConstants.deleteIcon,
+              onPressed: () => widget.onDelete(
+                widget.kontaktId,
+                widget.rawKontaktTyp,
+                widget.displayValue,
+                widget.displayLabel,
               ),
             ),
           ),

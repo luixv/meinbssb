@@ -550,72 +550,88 @@ class _TextFieldWithKeyboardFocus extends StatefulWidget {
 }
 
 class _TextFieldWithKeyboardFocusState extends State<_TextFieldWithKeyboardFocus> {
+  final FocusNode _focusNode = FocusNode();
   bool _hasKeyboardFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    // Check if focus highlight mode is traditional (keyboard navigation)
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: FocusableActionDetector(
-        onShowFocusHighlight: (highlighted) {
-          setState(() {
-            _hasKeyboardFocus = highlighted;
-          });
-        },
-        child: TextFormField(
-          controller: widget.controller,
-          style:
-              widget.isReadOnly
-                  ? UIStyles.formValueBoldStyle.copyWith(
-                    fontSize:
-                        UIStyles.formValueBoldStyle.fontSize! *
-                        widget.fontSizeProvider.scaleFactor,
-                  )
-                  : UIStyles.formValueStyle.copyWith(
-                    fontSize:
-                        UIStyles.formValueStyle.fontSize! *
-                        widget.fontSizeProvider.scaleFactor,
-                  ),
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: widget.label,
-            labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-              fontSize:
-                  UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                  widget.fontSizeProvider.scaleFactor,
-            ),
-            floatingLabelStyle: UIStyles
-                .formInputDecoration
-                .floatingLabelStyle
-                ?.copyWith(
+      child: TextFormField(
+        focusNode: _focusNode,
+        controller: widget.controller,
+        style:
+            widget.isReadOnly
+                ? UIStyles.formValueBoldStyle.copyWith(
                   fontSize:
-                      UIStyles
-                          .formInputDecoration
-                          .floatingLabelStyle!
-                          .fontSize! *
+                      UIStyles.formValueBoldStyle.fontSize! *
+                      widget.fontSizeProvider.scaleFactor,
+                )
+                : UIStyles.formValueStyle.copyWith(
+                  fontSize:
+                      UIStyles.formValueStyle.fontSize! *
                       widget.fontSizeProvider.scaleFactor,
                 ),
-            floatingLabelBehavior: widget.floatingLabelBehavior,
-            hintText: widget.isReadOnly ? null : widget.label,
-            hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-              fontSize:
-                  UIStyles.formInputDecoration.hintStyle!.fontSize! *
-                  widget.fontSizeProvider.scaleFactor,
-            ),
-            filled: true,
-            fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
-            focusedBorder: _hasKeyboardFocus
-                ? OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.yellow.shade700,
-                    width: 2.0,
-                  ),
-                )
-                : null,
-            suffixIcon: widget.suffixIcon,
+        decoration: UIStyles.formInputDecoration.copyWith(
+          labelText: widget.label,
+          labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                widget.fontSizeProvider.scaleFactor,
           ),
-          validator: widget.validator,
-          readOnly: widget.isReadOnly,
+          floatingLabelStyle: UIStyles
+              .formInputDecoration
+              .floatingLabelStyle
+              ?.copyWith(
+                fontSize:
+                    UIStyles
+                        .formInputDecoration
+                        .floatingLabelStyle!
+                        .fontSize! *
+                    widget.fontSizeProvider.scaleFactor,
+              ),
+          floatingLabelBehavior: widget.floatingLabelBehavior,
+          hintText: widget.isReadOnly ? null : widget.label,
+          hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                widget.fontSizeProvider.scaleFactor,
+          ),
+          filled: true,
+          fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+          focusedBorder: _hasKeyboardFocus
+              ? OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.yellow.shade700,
+                  width: 2.0,
+                ),
+              )
+              : null,
+          suffixIcon: widget.suffixIcon,
         ),
+        validator: widget.validator,
+        readOnly: widget.isReadOnly,
       ),
     );
   }
@@ -642,86 +658,102 @@ class _DropdownWithKeyboardFocus extends StatefulWidget {
 }
 
 class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> {
+  final FocusNode _focusNode = FocusNode();
   bool _hasKeyboardFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    // Check if focus highlight mode is traditional (keyboard navigation)
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-      child: FocusableActionDetector(
-        onShowFocusHighlight: (highlighted) {
-          setState(() {
-            _hasKeyboardFocus = highlighted;
-          });
-        },
-        child: DropdownButtonFormField<String>(
-          value:
-              widget.titelOptions.contains(widget.titelController.text)
-                  ? widget.titelController.text
-                  : '',
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Titel',
-            labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-              fontSize:
-                  UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                  widget.fontSizeProvider.scaleFactor,
-            ),
-            floatingLabelStyle: UIStyles
-                .formInputDecoration
-                .floatingLabelStyle
-                ?.copyWith(
-                  fontSize:
-                      UIStyles
-                          .formInputDecoration
-                          .floatingLabelStyle!
-                          .fontSize! *
-                      widget.fontSizeProvider.scaleFactor,
-                ),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            filled: true,
-            fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
-            focusedBorder: _hasKeyboardFocus
-                ? OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.yellow.shade700,
-                    width: 2.0,
-                  ),
-                )
-                : null,
+      child: DropdownButtonFormField<String>(
+        focusNode: _focusNode,
+        value:
+            widget.titelOptions.contains(widget.titelController.text)
+                ? widget.titelController.text
+                : '',
+        decoration: UIStyles.formInputDecoration.copyWith(
+          labelText: 'Titel',
+          labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                widget.fontSizeProvider.scaleFactor,
           ),
-          items:
-              widget.titelOptions
-                  .map(
-                    (titel) => DropdownMenuItem<String>(
-                      value: titel,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 0.0,
-                        ),
-                        child: Text(
-                          titel.isEmpty ? '(Kein Titel)' : titel,
-                          style:
-                              widget.isEditing
-                                  ? UIStyles.formValueStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.formValueStyle.fontSize! *
-                                        widget.fontSizeProvider.scaleFactor,
-                                  )
-                                  : UIStyles.formValueBoldStyle.copyWith(
-                                    fontSize:
-                                        UIStyles
-                                            .formValueBoldStyle
-                                            .fontSize! *
-                                        widget.fontSizeProvider.scaleFactor,
-                                  ),
-                        ),
+          floatingLabelStyle: UIStyles
+              .formInputDecoration
+              .floatingLabelStyle
+              ?.copyWith(
+                fontSize:
+                    UIStyles
+                        .formInputDecoration
+                        .floatingLabelStyle!
+                        .fontSize! *
+                    widget.fontSizeProvider.scaleFactor,
+              ),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          filled: true,
+          fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+          focusedBorder: _hasKeyboardFocus
+              ? OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.yellow.shade700,
+                  width: 2.0,
+                ),
+              )
+              : null,
+        ),
+        items:
+            widget.titelOptions
+                .map(
+                  (titel) => DropdownMenuItem<String>(
+                    value: titel,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 0.0,
+                      ),
+                      child: Text(
+                        titel.isEmpty ? '(Kein Titel)' : titel,
+                        style:
+                            widget.isEditing
+                                ? UIStyles.formValueStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.formValueStyle.fontSize! *
+                                      widget.fontSizeProvider.scaleFactor,
+                                )
+                                : UIStyles.formValueBoldStyle.copyWith(
+                                  fontSize:
+                                      UIStyles
+                                          .formValueBoldStyle
+                                          .fontSize! *
+                                      widget.fontSizeProvider.scaleFactor,
+                                ),
                       ),
                     ),
-                  )
-                  .toList(),
-          onChanged: widget.isEditing ? widget.onChanged : null,
-          validator: (value) => null,
-        ),
+                  ),
+                )
+                .toList(),
+        onChanged: widget.isEditing ? widget.onChanged : null,
+        validator: (value) => null,
       ),
     );
   }
