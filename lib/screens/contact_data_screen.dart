@@ -729,21 +729,8 @@ class ContactDataScreenState extends State<ContactDataScreen> {
               },
             ),
           ),
-          floatingActionButton: Semantics(
-            label: 'Kontakt hinzufügen Button',
-            hint: 'Neuen Kontakt erfassen',
-            button: true,
-            child: Semantics(
-              label: 'Kontakt hinzufügen',
-              hint: 'Tippen, um einen neuen Kontakt hinzuzufügen',
-              button: true,
-              child: FloatingActionButton(
-                heroTag: 'contactDataFab',
-                onPressed: _showAddContactForm,
-                backgroundColor: UIConstants.defaultAppColor,
-                child: const Icon(Icons.add, color: UIConstants.whiteColor),
-              ),
-            ),
+          floatingActionButton: _AddContactButton(
+            onPressed: _showAddContactForm,
           ),
         ),
         // Whole-screen overlay spinner for deletion
@@ -774,47 +761,13 @@ class ContactDataScreenState extends State<ContactDataScreen> {
   }) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Focus(
-          canRequestFocus: true,
-          child: Semantics(
-            label: 'Kontaktfeld: $displayLabel',
-            hint:
-                'Gespeicherter Wert: $displayValue. Löschen mit Button rechts.',
-            textField: true,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-              child: TextFormField(
-                initialValue: displayValue.isNotEmpty ? displayValue : '-',
-                readOnly: true,
-                style: UIStyles.formValueBoldStyle.copyWith(
-                  fontSize:
-                      UIStyles.formValueBoldStyle.fontSize! *
-                      fontSizeProvider.scaleFactor,
-                ),
-                decoration: UIStyles.formInputDecoration.copyWith(
-                  labelText:
-                      displayLabel.isNotEmpty ? displayLabel : 'Unbekannt',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      Icons.delete_outline,
-
-                      size:
-                          UIConstants.iconSizeS * fontSizeProvider.scaleFactor,
-                    ),
-                    tooltip: 'delete contact',
-                    color: UIConstants.deleteIcon,
-                    onPressed:
-                        () => onDelete(
-                          kontaktId,
-                          rawKontaktTyp,
-                          displayValue,
-                          displayLabel,
-                        ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+        return _ContactTileWithKeyboardFocus(
+          displayValue: displayValue,
+          displayLabel: displayLabel,
+          kontaktId: kontaktId,
+          rawKontaktTyp: rawKontaktTyp,
+          onDelete: onDelete,
+          fontSizeProvider: fontSizeProvider,
         );
       },
     );
@@ -890,6 +843,139 @@ class ContactDataScreenState extends State<ContactDataScreen> {
           ),
           const SizedBox(height: UIConstants.spacingXXXL),
         ],
+      ),
+    );
+  }
+}
+
+// Custom Contact Tile with keyboard-only focus highlighting
+class _ContactTileWithKeyboardFocus extends StatefulWidget {
+  const _ContactTileWithKeyboardFocus({
+    required this.displayValue,
+    required this.displayLabel,
+    required this.kontaktId,
+    required this.rawKontaktTyp,
+    required this.onDelete,
+    required this.fontSizeProvider,
+  });
+
+  final String displayValue;
+  final String displayLabel;
+  final int kontaktId;
+  final int rawKontaktTyp;
+  final Function(int kontaktId, int kontaktTyp, String value, String label) onDelete;
+  final FontSizeProvider fontSizeProvider;
+
+  @override
+  State<_ContactTileWithKeyboardFocus> createState() => _ContactTileWithKeyboardFocusState();
+}
+
+class _ContactTileWithKeyboardFocusState extends State<_ContactTileWithKeyboardFocus> {
+  bool _hasKeyboardFocus = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FocusableActionDetector(
+      onShowFocusHighlight: (highlighted) {
+        setState(() {
+          _hasKeyboardFocus = highlighted;
+        });
+      },
+      child: Semantics(
+        label: 'Kontaktfeld: ${widget.displayLabel}',
+        hint: 'Gespeicherter Wert: ${widget.displayValue}. Löschen mit Button rechts.',
+        textField: true,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+          child: TextFormField(
+            initialValue: widget.displayValue.isNotEmpty ? widget.displayValue : '-',
+            readOnly: true,
+            style: UIStyles.formValueBoldStyle.copyWith(
+              fontSize:
+                  UIStyles.formValueBoldStyle.fontSize! *
+                  widget.fontSizeProvider.scaleFactor,
+            ),
+            decoration: UIStyles.formInputDecoration.copyWith(
+              labelText: widget.displayLabel.isNotEmpty ? widget.displayLabel : 'Unbekannt',
+              fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+              focusedBorder: _hasKeyboardFocus
+                  ? OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.yellow.shade700,
+                      width: 2.0,
+                    ),
+                  )
+                  : null,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  Icons.delete_outline,
+                  size: UIConstants.iconSizeS * widget.fontSizeProvider.scaleFactor,
+                ),
+                tooltip: 'Löschen',
+                color: UIConstants.deleteIcon,
+                onPressed: () => widget.onDelete(
+                  widget.kontaktId,
+                  widget.rawKontaktTyp,
+                  widget.displayValue,
+                  widget.displayLabel,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Add Contact Button widget with hover and focus support
+class _AddContactButton extends StatefulWidget {
+  const _AddContactButton({required this.onPressed});
+  
+  final VoidCallback onPressed;
+
+  @override
+  State<_AddContactButton> createState() => _AddContactButtonState();
+}
+
+class _AddContactButtonState extends State<_AddContactButton> {
+  bool _isHovered = false;
+  bool _isFocused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = (_isHovered || _isFocused) 
+        ? Colors.black 
+        : UIConstants.defaultAppColor;
+
+    return Semantics(
+      label: 'Kontakt hinzufügen',
+      hint: 'Tippen, um einen neuen Kontakt hinzuzufügen',
+      button: true,
+      child: Focus(
+        onFocusChange: (hasFocus) {
+          setState(() {
+            _isFocused = hasFocus;
+          });
+        },
+        child: MouseRegion(
+          onEnter: (_) {
+            setState(() {
+              _isHovered = true;
+            });
+          },
+          onExit: (_) {
+            setState(() {
+              _isHovered = false;
+            });
+          },
+          child: FloatingActionButton(
+            heroTag: 'contactDataFab',
+            onPressed: widget.onPressed,
+            backgroundColor: backgroundColor,
+            child: const Icon(Icons.add, color: UIConstants.whiteColor),
+          ),
+        ),
       ),
     );
   }

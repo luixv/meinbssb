@@ -292,20 +292,12 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                   _SaveButton(onPressed: _handleSave),
                 ],
               )
-              : Semantics(
-                label: 'Bearbeiten Button',
-                hint: 'Persönliche Daten bearbeiten',
-                button: true,
-                child: FloatingActionButton(
-                  heroTag: 'personalDataEditFab',
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = true;
-                    });
-                  },
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(Icons.edit, color: Colors.white),
-                ),
+              : _EditButton(
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true;
+                  });
+                },
               );
         },
       ),
@@ -316,96 +308,16 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     final titelOptions = ['', 'Dr.', 'Dr. Dr.', 'Dr. hc.', 'Dr. Eh.'];
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: Focus(
-            onFocusChange: (hasFocus) {
-              // Trigger a rebuild to update decoration
-              if (mounted) {
-                setState(() {});
-              }
-            },
-            child: Builder(
-              builder: (BuildContext context) {
-                final hasFocus = Focus.of(context).hasFocus;
-                return DropdownButtonFormField<String>(
-                  value:
-                      titelOptions.contains(_titelController.text)
-                          ? _titelController.text
-                          : '',
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Titel',
-                    labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                      fontSize:
-                          UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                    floatingLabelStyle: UIStyles
-                        .formInputDecoration
-                        .floatingLabelStyle
-                        ?.copyWith(
-                          fontSize:
-                              UIStyles
-                                  .formInputDecoration
-                                  .floatingLabelStyle!
-                                  .fontSize! *
-                              fontSizeProvider.scaleFactor,
-                        ),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    filled: true,
-                    fillColor: hasFocus ? Colors.yellow.shade100 : null,
-                    focusedBorder: hasFocus
-                        ? OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.yellow.shade700,
-                            width: 2.0,
-                          ),
-                        )
-                        : null,
-                  ),
-                  items:
-                      titelOptions
-                          .map(
-                            (titel) => DropdownMenuItem<String>(
-                              value: titel,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 0.0,
-                                ), // Minimum space
-                                child: Text(
-                                  titel.isEmpty ? '(Kein Titel)' : titel,
-                                  style:
-                                      _isEditing
-                                          ? UIStyles.formValueStyle.copyWith(
-                                            fontSize:
-                                                UIStyles.formValueStyle.fontSize! *
-                                                fontSizeProvider.scaleFactor,
-                                          )
-                                          : UIStyles.formValueBoldStyle.copyWith(
-                                            fontSize:
-                                                UIStyles
-                                                    .formValueBoldStyle
-                                                    .fontSize! *
-                                                fontSizeProvider.scaleFactor,
-                                          ),
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                  onChanged:
-                      _isEditing
-                          ? (value) {
-                            setState(() {
-                              _titelController.text = value ?? '';
-                            });
-                          }
-                          : null,
-                  validator: (value) => null,
-                );
-              },
-            ),
-          ),
+        return _DropdownWithKeyboardFocus(
+          titelOptions: titelOptions,
+          titelController: _titelController,
+          isEditing: _isEditing,
+          fontSizeProvider: fontSizeProvider,
+          onChanged: (value) {
+            setState(() {
+              _titelController.text = value ?? '';
+            });
+          },
         );
       },
     );
@@ -421,75 +333,14 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   }) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: Focus(
-            onFocusChange: (hasFocus) {
-              // Trigger a rebuild to update decoration
-              if (mounted) {
-                setState(() {});
-              }
-            },
-            child: Builder(
-              builder: (BuildContext context) {
-                final hasFocus = Focus.of(context).hasFocus;
-                return TextFormField(
-                  controller: controller,
-                  style:
-                      isReadOnly
-                          ? UIStyles.formValueBoldStyle.copyWith(
-                            fontSize:
-                                UIStyles.formValueBoldStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
-                          )
-                          : UIStyles.formValueStyle.copyWith(
-                            fontSize:
-                                UIStyles.formValueStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
-                          ),
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: label,
-                    labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                      fontSize:
-                          UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                    floatingLabelStyle: UIStyles
-                        .formInputDecoration
-                        .floatingLabelStyle
-                        ?.copyWith(
-                          fontSize:
-                              UIStyles
-                                  .formInputDecoration
-                                  .floatingLabelStyle!
-                                  .fontSize! *
-                              fontSizeProvider.scaleFactor,
-                        ),
-                    floatingLabelBehavior: floatingLabelBehavior,
-                    hintText: isReadOnly ? null : label,
-                    hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-                      fontSize:
-                          UIStyles.formInputDecoration.hintStyle!.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-                    filled: true,
-                    fillColor: hasFocus ? Colors.yellow.shade100 : null,
-                    focusedBorder: hasFocus
-                        ? OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.yellow.shade700,
-                            width: 2.0,
-                          ),
-                        )
-                        : null,
-                    suffixIcon: suffixIcon,
-                  ),
-                  validator: validator,
-                  readOnly: isReadOnly,
-                );
-              },
-            ),
-          ),
+        return _TextFieldWithKeyboardFocus(
+          label: label,
+          controller: controller,
+          validator: validator,
+          isReadOnly: isReadOnly,
+          floatingLabelBehavior: floatingLabelBehavior,
+          suffixIcon: suffixIcon,
+          fontSizeProvider: fontSizeProvider,
         );
       },
     );
@@ -674,6 +525,208 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   }
 }
 
+// Custom Text Field with keyboard-only focus highlighting
+class _TextFieldWithKeyboardFocus extends StatefulWidget {
+  const _TextFieldWithKeyboardFocus({
+    required this.label,
+    required this.controller,
+    required this.fontSizeProvider,
+    this.validator,
+    this.isReadOnly = false,
+    this.floatingLabelBehavior = FloatingLabelBehavior.always,
+    this.suffixIcon,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final FontSizeProvider fontSizeProvider;
+  final String? Function(String?)? validator;
+  final bool isReadOnly;
+  final FloatingLabelBehavior floatingLabelBehavior;
+  final Widget? suffixIcon;
+
+  @override
+  State<_TextFieldWithKeyboardFocus> createState() => _TextFieldWithKeyboardFocusState();
+}
+
+class _TextFieldWithKeyboardFocusState extends State<_TextFieldWithKeyboardFocus> {
+  bool _hasKeyboardFocus = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+      child: FocusableActionDetector(
+        onShowFocusHighlight: (highlighted) {
+          setState(() {
+            _hasKeyboardFocus = highlighted;
+          });
+        },
+        child: TextFormField(
+          controller: widget.controller,
+          style:
+              widget.isReadOnly
+                  ? UIStyles.formValueBoldStyle.copyWith(
+                    fontSize:
+                        UIStyles.formValueBoldStyle.fontSize! *
+                        widget.fontSizeProvider.scaleFactor,
+                  )
+                  : UIStyles.formValueStyle.copyWith(
+                    fontSize:
+                        UIStyles.formValueStyle.fontSize! *
+                        widget.fontSizeProvider.scaleFactor,
+                  ),
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: widget.label,
+            labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+              fontSize:
+                  UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                  widget.fontSizeProvider.scaleFactor,
+            ),
+            floatingLabelStyle: UIStyles
+                .formInputDecoration
+                .floatingLabelStyle
+                ?.copyWith(
+                  fontSize:
+                      UIStyles
+                          .formInputDecoration
+                          .floatingLabelStyle!
+                          .fontSize! *
+                      widget.fontSizeProvider.scaleFactor,
+                ),
+            floatingLabelBehavior: widget.floatingLabelBehavior,
+            hintText: widget.isReadOnly ? null : widget.label,
+            hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+              fontSize:
+                  UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                  widget.fontSizeProvider.scaleFactor,
+            ),
+            filled: true,
+            fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+            focusedBorder: _hasKeyboardFocus
+                ? OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.yellow.shade700,
+                    width: 2.0,
+                  ),
+                )
+                : null,
+            suffixIcon: widget.suffixIcon,
+          ),
+          validator: widget.validator,
+          readOnly: widget.isReadOnly,
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Dropdown with keyboard-only focus highlighting
+class _DropdownWithKeyboardFocus extends StatefulWidget {
+  const _DropdownWithKeyboardFocus({
+    required this.titelOptions,
+    required this.titelController,
+    required this.isEditing,
+    required this.fontSizeProvider,
+    required this.onChanged,
+  });
+
+  final List<String> titelOptions;
+  final TextEditingController titelController;
+  final bool isEditing;
+  final FontSizeProvider fontSizeProvider;
+  final void Function(String?) onChanged;
+
+  @override
+  State<_DropdownWithKeyboardFocus> createState() => _DropdownWithKeyboardFocusState();
+}
+
+class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> {
+  bool _hasKeyboardFocus = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+      child: FocusableActionDetector(
+        onShowFocusHighlight: (highlighted) {
+          setState(() {
+            _hasKeyboardFocus = highlighted;
+          });
+        },
+        child: DropdownButtonFormField<String>(
+          value:
+              widget.titelOptions.contains(widget.titelController.text)
+                  ? widget.titelController.text
+                  : '',
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: 'Titel',
+            labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+              fontSize:
+                  UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                  widget.fontSizeProvider.scaleFactor,
+            ),
+            floatingLabelStyle: UIStyles
+                .formInputDecoration
+                .floatingLabelStyle
+                ?.copyWith(
+                  fontSize:
+                      UIStyles
+                          .formInputDecoration
+                          .floatingLabelStyle!
+                          .fontSize! *
+                      widget.fontSizeProvider.scaleFactor,
+                ),
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            filled: true,
+            fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+            focusedBorder: _hasKeyboardFocus
+                ? OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.yellow.shade700,
+                    width: 2.0,
+                  ),
+                )
+                : null,
+          ),
+          items:
+              widget.titelOptions
+                  .map(
+                    (titel) => DropdownMenuItem<String>(
+                      value: titel,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 0.0,
+                        ),
+                        child: Text(
+                          titel.isEmpty ? '(Kein Titel)' : titel,
+                          style:
+                              widget.isEditing
+                                  ? UIStyles.formValueStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.formValueStyle.fontSize! *
+                                        widget.fontSizeProvider.scaleFactor,
+                                  )
+                                  : UIStyles.formValueBoldStyle.copyWith(
+                                    fontSize:
+                                        UIStyles
+                                            .formValueBoldStyle
+                                            .fontSize! *
+                                        widget.fontSizeProvider.scaleFactor,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+          onChanged: widget.isEditing ? widget.onChanged : null,
+          validator: (value) => null,
+        ),
+      ),
+    );
+  }
+}
+
 // Custom Save Button widget with hover and focus support
 class _SaveButton extends StatefulWidget {
   const _SaveButton({required this.onPressed});
@@ -720,6 +773,59 @@ class _SaveButtonState extends State<_SaveButton> {
             onPressed: widget.onPressed,
             backgroundColor: backgroundColor,
             child: const Icon(Icons.save, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Edit Button widget with hover and focus support
+class _EditButton extends StatefulWidget {
+  const _EditButton({required this.onPressed});
+  
+  final VoidCallback onPressed;
+
+  @override
+  State<_EditButton> createState() => _EditButtonState();
+}
+
+class _EditButtonState extends State<_EditButton> {
+  bool _isHovered = false;
+  bool _isFocused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = (_isHovered || _isFocused) 
+        ? Colors.black 
+        : UIConstants.defaultAppColor;
+
+    return Semantics(
+      label: 'Bearbeiten Button',
+      hint: 'Persönliche Daten bearbeiten',
+      button: true,
+      child: Focus(
+        onFocusChange: (hasFocus) {
+          setState(() {
+            _isFocused = hasFocus;
+          });
+        },
+        child: MouseRegion(
+          onEnter: (_) {
+            setState(() {
+              _isHovered = true;
+            });
+          },
+          onExit: (_) {
+            setState(() {
+              _isHovered = false;
+            });
+          },
+          child: FloatingActionButton(
+            heroTag: 'personalDataEditFab',
+            onPressed: widget.onPressed,
+            backgroundColor: backgroundColor,
+            child: const Icon(Icons.edit, color: Colors.white),
           ),
         ),
       ),
