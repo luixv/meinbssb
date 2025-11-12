@@ -146,7 +146,7 @@ void main() {
 
         // Should show delete buttons for Disziplin 1 and 3 (they exist in secondColumns)
         expect(
-          find.byIcon(Icons.delete),
+          find.byIcon(Icons.delete_outline),
           findsNWidgets(3),
         ); // Currently finding 3, need to investigate why
       },
@@ -159,7 +159,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find and tap the first delete button
-      final deleteButtons = find.byIcon(Icons.delete);
+      final deleteButtons = find.byIcon(Icons.delete_outline);
       expect(
         deleteButtons,
         findsNWidgets(3),
@@ -561,7 +561,7 @@ void main() {
       // Each pivot key yields one check per column => length * 2
       expect(find.byIcon(Icons.check), findsNWidgets(pivot.length * 2));
       // Delete buttons appear for every key in secondCols
-      expect(find.byIcon(Icons.delete), findsNWidgets(secondCols.length));
+      expect(find.byIcon(Icons.delete_outline), findsNWidgets(secondCols.length));
     });
 
     testWidgets('subset secondCols -> delete icons only for present keys', (
@@ -594,7 +594,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.check), findsNWidgets(3 + 2));
-      expect(find.byIcon(Icons.delete), findsNWidgets(2));
+      expect(find.byIcon(Icons.delete_outline), findsNWidgets(2));
     });
 
     testWidgets('delete callback passes correct key', (tester) async {
@@ -620,7 +620,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final deleteButtons = find.byIcon(Icons.delete);
+      final deleteButtons = find.byIcon(Icons.delete_outline);
       expect(deleteButtons, findsNWidgets(2));
       await tester.tap(deleteButtons.last); // Should map to 'Y'
       await tester.pump();

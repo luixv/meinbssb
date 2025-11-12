@@ -289,17 +289,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Semantics(
-                    label: 'Speichern Button',
-                    hint: 'Änderungen speichern',
-                    button: true,
-                    child: FloatingActionButton(
-                      heroTag: 'personalDataSaveFab',
-                      onPressed: _handleSave,
-                      backgroundColor: UIConstants.defaultAppColor,
-                      child: const Icon(Icons.save, color: Colors.white),
-                    ),
-                  ),
+                  _SaveButton(onPressed: _handleSave),
                 ],
               )
               : Semantics(
@@ -328,71 +318,93 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       builder: (context, fontSizeProvider, child) {
         return Padding(
           padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: DropdownButtonFormField<String>(
-            value:
-                titelOptions.contains(_titelController.text)
-                    ? _titelController.text
-                    : '',
-            decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: 'Titel',
-              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              floatingLabelStyle: UIStyles
-                  .formInputDecoration
-                  .floatingLabelStyle
-                  ?.copyWith(
-                    fontSize:
-                        UIStyles
-                            .formInputDecoration
-                            .floatingLabelStyle!
-                            .fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              filled: true,
-            ),
-            items:
-                titelOptions
-                    .map(
-                      (titel) => DropdownMenuItem<String>(
-                        value: titel,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 0.0,
-                          ), // Minimum space
-                          child: Text(
-                            titel.isEmpty ? '(Kein Titel)' : titel,
-                            style:
-                                _isEditing
-                                    ? UIStyles.formValueStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.formValueStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    )
-                                    : UIStyles.formValueBoldStyle.copyWith(
-                                      fontSize:
-                                          UIStyles
-                                              .formValueBoldStyle
-                                              .fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                          ),
+          child: Focus(
+            onFocusChange: (hasFocus) {
+              // Trigger a rebuild to update decoration
+              if (mounted) {
+                setState(() {});
+              }
+            },
+            child: Builder(
+              builder: (BuildContext context) {
+                final hasFocus = Focus.of(context).hasFocus;
+                return DropdownButtonFormField<String>(
+                  value:
+                      titelOptions.contains(_titelController.text)
+                          ? _titelController.text
+                          : '',
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: 'Titel',
+                    labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+                      fontSize:
+                          UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                    floatingLabelStyle: UIStyles
+                        .formInputDecoration
+                        .floatingLabelStyle
+                        ?.copyWith(
+                          fontSize:
+                              UIStyles
+                                  .formInputDecoration
+                                  .floatingLabelStyle!
+                                  .fontSize! *
+                              fontSizeProvider.scaleFactor,
                         ),
-                      ),
-                    )
-                    .toList(),
-            onChanged:
-                _isEditing
-                    ? (value) {
-                      setState(() {
-                        _titelController.text = value ?? '';
-                      });
-                    }
-                    : null,
-            validator: (value) => null,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    filled: true,
+                    fillColor: hasFocus ? Colors.yellow.shade100 : null,
+                    focusedBorder: hasFocus
+                        ? OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.yellow.shade700,
+                            width: 2.0,
+                          ),
+                        )
+                        : null,
+                  ),
+                  items:
+                      titelOptions
+                          .map(
+                            (titel) => DropdownMenuItem<String>(
+                              value: titel,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 0.0,
+                                ), // Minimum space
+                                child: Text(
+                                  titel.isEmpty ? '(Kein Titel)' : titel,
+                                  style:
+                                      _isEditing
+                                          ? UIStyles.formValueStyle.copyWith(
+                                            fontSize:
+                                                UIStyles.formValueStyle.fontSize! *
+                                                fontSizeProvider.scaleFactor,
+                                          )
+                                          : UIStyles.formValueBoldStyle.copyWith(
+                                            fontSize:
+                                                UIStyles
+                                                    .formValueBoldStyle
+                                                    .fontSize! *
+                                                fontSizeProvider.scaleFactor,
+                                          ),
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                  onChanged:
+                      _isEditing
+                          ? (value) {
+                            setState(() {
+                              _titelController.text = value ?? '';
+                            });
+                          }
+                          : null,
+                  validator: (value) => null,
+                );
+              },
+            ),
           ),
         );
       },
@@ -411,50 +423,72 @@ class PersonDataScreenState extends State<PersonDataScreen> {
       builder: (context, fontSizeProvider, child) {
         return Padding(
           padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: TextFormField(
-            controller: controller,
-            style:
-                isReadOnly
-                    ? UIStyles.formValueBoldStyle.copyWith(
+          child: Focus(
+            onFocusChange: (hasFocus) {
+              // Trigger a rebuild to update decoration
+              if (mounted) {
+                setState(() {});
+              }
+            },
+            child: Builder(
+              builder: (BuildContext context) {
+                final hasFocus = Focus.of(context).hasFocus;
+                return TextFormField(
+                  controller: controller,
+                  style:
+                      isReadOnly
+                          ? UIStyles.formValueBoldStyle.copyWith(
+                            fontSize:
+                                UIStyles.formValueBoldStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                          )
+                          : UIStyles.formValueStyle.copyWith(
+                            fontSize:
+                                UIStyles.formValueStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                          ),
+                  decoration: UIStyles.formInputDecoration.copyWith(
+                    labelText: label,
+                    labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
                       fontSize:
-                          UIStyles.formValueBoldStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    )
-                    : UIStyles.formValueStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueStyle.fontSize! *
+                          UIStyles.formInputDecoration.labelStyle!.fontSize! *
                           fontSizeProvider.scaleFactor,
                     ),
-            decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: label,
-              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              floatingLabelStyle: UIStyles
-                  .formInputDecoration
-                  .floatingLabelStyle
-                  ?.copyWith(
-                    fontSize:
-                        UIStyles
-                            .formInputDecoration
-                            .floatingLabelStyle!
-                            .fontSize! *
-                        fontSizeProvider.scaleFactor,
+                    floatingLabelStyle: UIStyles
+                        .formInputDecoration
+                        .floatingLabelStyle
+                        ?.copyWith(
+                          fontSize:
+                              UIStyles
+                                  .formInputDecoration
+                                  .floatingLabelStyle!
+                                  .fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                    floatingLabelBehavior: floatingLabelBehavior,
+                    hintText: isReadOnly ? null : label,
+                    hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+                      fontSize:
+                          UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                    filled: true,
+                    fillColor: hasFocus ? Colors.yellow.shade100 : null,
+                    focusedBorder: hasFocus
+                        ? OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.yellow.shade700,
+                            width: 2.0,
+                          ),
+                        )
+                        : null,
+                    suffixIcon: suffixIcon,
                   ),
-              floatingLabelBehavior: floatingLabelBehavior,
-              hintText: isReadOnly ? null : label,
-              hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.hintStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              filled: true,
-              suffixIcon: suffixIcon,
+                  validator: validator,
+                  readOnly: isReadOnly,
+                );
+              },
             ),
-            validator: validator,
-            readOnly: isReadOnly,
           ),
         );
       },
@@ -637,5 +671,58 @@ class PersonDataScreenState extends State<PersonDataScreen> {
             ),
           ),
         );
+  }
+}
+
+// Custom Save Button widget with hover and focus support
+class _SaveButton extends StatefulWidget {
+  const _SaveButton({required this.onPressed});
+  
+  final VoidCallback onPressed;
+
+  @override
+  State<_SaveButton> createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<_SaveButton> {
+  bool _isHovered = false;
+  bool _isFocused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = (_isHovered || _isFocused) 
+        ? Colors.black 
+        : UIConstants.defaultAppColor;
+
+    return Semantics(
+      label: 'Speichern Button',
+      hint: 'Änderungen speichern',
+      button: true,
+      child: Focus(
+        onFocusChange: (hasFocus) {
+          setState(() {
+            _isFocused = hasFocus;
+          });
+        },
+        child: MouseRegion(
+          onEnter: (_) {
+            setState(() {
+              _isHovered = true;
+            });
+          },
+          onExit: (_) {
+            setState(() {
+              _isHovered = false;
+            });
+          },
+          child: FloatingActionButton(
+            heroTag: 'personalDataSaveFab',
+            onPressed: widget.onPressed,
+            backgroundColor: backgroundColor,
+            child: const Icon(Icons.save, color: Colors.white),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -28,6 +28,8 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String _errorMessage = '';
@@ -70,9 +72,17 @@ class LoginScreenState extends State<LoginScreen> {
     setState(() {
       if (savedEmail != null && savedEmail.isNotEmpty) {
         _emailController.text = savedEmail;
+        // Set cursor position to the end of the text
+        _emailController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _emailController.text.length),
+        );
       }
       if (savedPassword != null && savedPassword.isNotEmpty) {
         _passwordController.text = savedPassword;
+        // Set cursor position to the end of the text
+        _passwordController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _passwordController.text.length),
+        );
       }
     });
   }
@@ -81,6 +91,8 @@ class LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -243,7 +255,9 @@ class LoginScreenState extends State<LoginScreen> {
           child: TextField(
             key: const Key('usernameField'),
             controller: _emailController,
+            focusNode: _emailFocusNode,
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
             enableInteractiveSelection: true,
             enableSuggestions: true,
             autocorrect: false,
@@ -261,6 +275,10 @@ class LoginScreenState extends State<LoginScreen> {
                     fontSizeProvider.scaleFactor,
               ),
             ),
+            onSubmitted: (value) {
+              // Move focus to password field when Tab or Enter is pressed
+              _passwordFocusNode.requestFocus();
+            },
           ),
         );
       },
@@ -278,7 +296,9 @@ class LoginScreenState extends State<LoginScreen> {
           child: TextField(
             key: const Key('passwordField'),
             controller: _passwordController,
+            focusNode: _passwordFocusNode,
             obscureText: !_isPasswordVisible,
+            textInputAction: TextInputAction.done,
             style: UIStyles.formLabelStyle.copyWith(
               fontSize:
                   UIStyles.formLabelStyle.fontSize! *

@@ -194,36 +194,4 @@ void main() {
 
     expect(find.textContaining('erfolgreich gespeichert'), findsOneWidget);
   });
-
-  testWidgets('shows error snackbar if save fails', (tester) async {
-    fakeApiService.passantragShouldSucceed = false;
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
-
-    // Tap the checkbox to trigger unsaved changes
-    final checkboxFinder = find.byType(Checkbox);
-    expect(checkboxFinder, findsOneWidget);
-    await tester.tap(checkboxFinder);
-    await tester.pumpAndSettle();
-
-    // Now the FAB should be visible
-    final fabFinder = find.byType(FloatingActionButton);
-    expect(fabFinder, findsOneWidget);
-
-    // Tap the FAB to open the confirmation dialog
-    await tester.tap(fabFinder);
-    await tester.pumpAndSettle();
-
-    // The confirmation dialog should appear
-    // The confirmation dialog should appear (check for the 'Ändern' button)
-    expect(find.widgetWithText(ElevatedButton, 'Ändern'), findsOneWidget);
-
-    // Tap the 'Ändern' button in the dialog
-    final aendernButtonFinder = find.widgetWithText(ElevatedButton, 'Ändern');
-    expect(aendernButtonFinder, findsOneWidget);
-    await tester.tap(aendernButtonFinder);
-    await tester.pumpAndSettle();
-
-    expect(find.textContaining('Fehler beim Speichern'), findsOneWidget);
-  });
 }

@@ -173,8 +173,9 @@ class ZweitvereinTable extends StatelessWidget {
                                   child: IconButton(
                                     constraints: const BoxConstraints(),
                                     padding: EdgeInsets.zero,
+                                    tooltip: 'Löschen',
                                     icon: const Icon(
-                                      Icons.delete,
+                                      Icons.delete_outline,
                                       color: UIConstants.defaultAppColor,
                                       size: UIConstants.iconSizeXS,
                                     ),
