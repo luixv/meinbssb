@@ -236,16 +236,33 @@ class ZveAutocompleteField extends StatefulWidget {
 class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
   int _highlightedIndex = -1;
   List<Disziplin> _suggestions = [];
   bool _showOverlay = false;
   bool _justSelectedWithKeyboard = false;
+  bool _hasKeyboardFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onFocusChange() {
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
+    });
   }
 
   void _scrollToHighlightedItem() {
@@ -311,16 +328,28 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
         return;
       }
       if (_showOverlay && _suggestions.isNotEmpty) {
-        if (event.logicalKey == LogicalKeyboardKey.tab) {
+        if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+          // Navigate down with arrow key
           setState(() {
             _highlightedIndex = (_highlightedIndex + 1) % _suggestions.length;
-            // debugPrint('TAB cycles to index $_highlightedIndex');
+            // debugPrint('Arrow Down cycles to index $_highlightedIndex');
           });
           // Scroll to keep highlighted item visible
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _scrollToHighlightedItem();
           });
-        } else if (event.logicalKey == LogicalKeyboardKey.enter) {
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+          // Navigate up with arrow key
+          setState(() {
+            _highlightedIndex = (_highlightedIndex - 1 + _suggestions.length) % _suggestions.length;
+            // debugPrint('Arrow Up cycles to index $_highlightedIndex');
+          });
+          // Scroll to keep highlighted item visible
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollToHighlightedItem();
+          });
+        } else if (event.logicalKey == LogicalKeyboardKey.enter ||
+                   event.logicalKey == LogicalKeyboardKey.numpadEnter) {
           if (_highlightedIndex >= 0 &&
               _highlightedIndex < _suggestions.length) {
             final selected = _suggestions[_highlightedIndex];
@@ -339,7 +368,8 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
             });
           }
         }
-      } else if (event.logicalKey == LogicalKeyboardKey.enter) {
+      } else if (event.logicalKey == LogicalKeyboardKey.enter ||
+                 event.logicalKey == LogicalKeyboardKey.numpadEnter) {
         // If overlay not shown, try to match by text
         final value = _controller.text.trim();
         Disziplin? match;
@@ -383,6 +413,7 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
+                focusNode: _focusNode,
                 controller: _controller,
                 style: Theme.of(context).textTheme.bodyMedium,
                 decoration: InputDecoration(
@@ -394,6 +425,16 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
                   ),
                   border: const OutlineInputBorder(),
                   suffixIcon: null,
+                  filled: true,
+                  fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+                  focusedBorder: _hasKeyboardFocus
+                      ? OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.yellow.shade700,
+                            width: 2.0,
+                          ),
+                        )
+                      : null,
                 ),
                 onChanged: _updateSuggestions,
                 onSubmitted: (value) {
@@ -472,10 +513,15 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
                               FocusScope.of(context).unfocus();
                             },
                             child: Container(
-                              color:
-                                  isHighlighted
-                                      ? Colors.blue.shade100
-                                      : Colors.transparent,
+                              decoration: isHighlighted
+                                  ? BoxDecoration(
+                                      color: Colors.yellow.shade100,
+                                      border: Border.all(
+                                        color: Colors.yellow.shade700,
+                                        width: 2.0,
+                                      ),
+                                    )
+                                  : null,
                               padding: const EdgeInsets.symmetric(
                                 vertical: 8,
                                 horizontal: 12,

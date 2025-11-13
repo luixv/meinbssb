@@ -6,6 +6,7 @@ import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import '/providers/font_size_provider.dart';
+import '/widgets/keyboard_focus_profile_button.dart';
 
 class PersonalPictUploadSuccessScreen extends StatelessWidget {
   const PersonalPictUploadSuccessScreen({
@@ -54,23 +55,15 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: Semantics(
-        button: true,
-        label: 'Zurück zum Profil',
-        child: FloatingActionButton(
-          heroTag: 'personalPictUploadSuccessFab',
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed(
-              '/profile',
-              arguments: {'userData': userData, 'isLoggedIn': isLoggedIn},
-            );
-          },
-          backgroundColor: UIConstants.defaultAppColor,
-          child: const Tooltip(
-            message: 'Profil',
-            child: Icon(Icons.person, color: UIConstants.whiteColor),
-          ),
-        ),
+      floatingActionButton: KeyboardFocusProfileButton(
+        heroTag: 'personalPictUploadSuccessFab',
+        semanticLabel: 'Zurück zum Profil',
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed(
+            '/profile',
+            arguments: {'userData': userData, 'isLoggedIn': isLoggedIn},
+          );
+        },
       ),
     );
   }

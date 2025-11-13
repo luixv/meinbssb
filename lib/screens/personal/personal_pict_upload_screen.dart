@@ -1,5 +1,4 @@
 import 'dart:async'; // for unawaited
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -680,14 +679,9 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   Center(
-                    child: Focus(
-                      autofocus: true,
-                      child: ElevatedButton.icon(
-                        key: PersonalPictUploadScreen.selectBtnKey,
-                        onPressed: _pickImage,
-                        icon: const Icon(Icons.photo_library),
-                        label: const Text('Bild auswählen'),
-                      ),
+                    child: _SelectImageButton(
+                      onPressed: _pickImage,
+                      buttonKey: PersonalPictUploadScreen.selectBtnKey,
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingL),
@@ -1005,6 +999,77 @@ class _UploadButtonState extends State<_UploadButton> {
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Select Image Button with keyboard focus highlighting
+class _SelectImageButton extends StatefulWidget {
+  const _SelectImageButton({
+    required this.onPressed,
+    required this.buttonKey,
+  });
+
+  final VoidCallback onPressed;
+  final Key buttonKey;
+
+  @override
+  State<_SelectImageButton> createState() => _SelectImageButtonState();
+}
+
+class _SelectImageButtonState extends State<_SelectImageButton> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      button: true,
+      label: 'Bild auswählen',
+      hint: 'Tippen, um ein Profilbild aus der Galerie auszuwählen',
+      child: Focus(
+        focusNode: _focusNode,
+        autofocus: true,
+        child: Container(
+          decoration: hasKeyboardFocus
+              ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: Colors.yellow.shade700,
+                    width: 3.0,
+                  ),
+                )
+              : null,
+          child: ElevatedButton.icon(
+            key: widget.buttonKey,
+            onPressed: widget.onPressed,
+            icon: const Icon(Icons.photo_library),
+            label: const Text('Bild auswählen'),
           ),
         ),
       ),

@@ -6,6 +6,7 @@ import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 import '/models/schulungstermin_data.dart';
 import '/providers/font_size_provider.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 class SchulungenListItem extends StatelessWidget {
   const SchulungenListItem({
@@ -179,21 +180,15 @@ class SchulungenListItem extends StatelessWidget {
                         ),
                       ),
                       // Right: description icon
-                      Semantics(
-                        button: true,
-                        label:
-                            schulungsTermin.anmeldungenGesperrt
-                                ? 'Details nicht verfügbar, Anmeldung gesperrt.'
-                                : 'Details anzeigen',
-                        child: Tooltip(
-                          message: 'Details',
-                          child: FloatingActionButton(
-                            heroTag: 'schulungenContentFab$index',
-                            backgroundColor: fabBackgroundColor,
-                            onPressed: onDetailsPressed,
-                            child: fabIconWidget,
-                          ),
-                        ),
+                      KeyboardFocusFAB(
+                        heroTag: 'schulungenContentFab$index',
+                        backgroundColor: fabBackgroundColor,
+                        onPressed: onDetailsPressed,
+                        tooltip: 'Details',
+                        semanticLabel: schulungsTermin.anmeldungenGesperrt
+                            ? 'Details nicht verfügbar, Anmeldung gesperrt.'
+                            : 'Details anzeigen',
+                        child: fabIconWidget,
                       ),
                     ],
                   ),

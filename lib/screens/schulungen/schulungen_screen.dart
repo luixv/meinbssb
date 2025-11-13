@@ -13,6 +13,7 @@ import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 import '/screens/agb/agb_screen.dart';
 
@@ -676,118 +677,102 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 right: UIConstants.spacingM,
                                 child: DialogFABs(
                                   children: [
-                                    Semantics(
-                                      container: true,
-                                      button: true,
-                                      label: 'Buchung abbrechen',
-                                      child: FloatingActionButton(
-                                        heroTag: 'cancelBookingFab',
-                                        mini: true,
-                                        tooltip: 'Abbrechen',
-                                        backgroundColor:
-                                            UIConstants.defaultAppColor,
-                                        onPressed:
-                                            () => Navigator.of(context).pop(),
-                                        child: const Icon(
-                                          Icons.close,
-                                          color: UIConstants.whiteColor,
-                                        ),
-                                      ),
+                                    KeyboardFocusFAB(
+                                      heroTag: 'cancelBookingFab',
+                                      mini: true,
+                                      tooltip: 'Abbrechen',
+                                      icon: Icons.close,
+                                      semanticLabel: 'Buchung abbrechen',
+                                      onPressed:
+                                          () => Navigator.of(context).pop(),
                                     ),
-                                    Semantics(
-                                      container: true,
-                                      button: true,
-                                      label: 'Button zum Buchen der Buchung',
-                                      child: FloatingActionButton(
-                                        heroTag: 'submitBookingFab',
-                                        mini: true,
-                                        tooltip: 'Buchen',
-                                        backgroundColor:
-                                            (agbChecked &&
-                                                    lastschriftChecked &&
-                                                    kontoinhaberController.text
-                                                        .trim()
-                                                        .isNotEmpty &&
-                                                    ibanController.text
-                                                        .trim()
-                                                        .isNotEmpty &&
-                                                    (!isBicRequired(
-                                                          ibanController.text
-                                                              .trim(),
-                                                        ) ||
-                                                        bicController.text
-                                                            .trim()
-                                                            .isNotEmpty))
-                                                ? UIConstants.defaultAppColor
-                                                : UIConstants
-                                                    .cancelButtonBackground,
-                                        onPressed:
-                                            (agbChecked &&
-                                                    lastschriftChecked &&
-                                                    kontoinhaberController.text
-                                                        .trim()
-                                                        .isNotEmpty &&
-                                                    ibanController.text
-                                                        .trim()
-                                                        .isNotEmpty &&
-                                                    (!isBicRequired(
-                                                          ibanController.text
-                                                              .trim(),
-                                                        ) ||
-                                                        bicController.text
-                                                            .trim()
-                                                            .isNotEmpty))
-                                                ? () async {
-                                                  if (formKey.currentState !=
-                                                          null &&
-                                                      formKey.currentState!
-                                                          .validate()) {
-                                                    Navigator.of(context).pop();
-                                                    final apiService =
-                                                        Provider.of<ApiService>(
-                                                          context,
-                                                          listen: false,
-                                                        );
-                                                    final String email =
-                                                        await apiService
-                                                            .getCachedUsername() ??
-                                                        '';
-                                                    final BankData
-                                                    safeBankData =
-                                                        bankData ??
-                                                        BankData(
-                                                          id: 0,
-                                                          webloginId:
-                                                              user.webLoginId,
-                                                          kontoinhaber: '',
-                                                          iban: '',
-                                                          bic: '',
-                                                          mandatSeq: 2,
-                                                          bankName: '',
-                                                          mandatNr: '',
-                                                          mandatName: '',
-                                                        );
-                                                    await registerPersonAndShowDialog(
-                                                      schulungsTermin:
-                                                          schulungsTermin,
-                                                      registeredPersons:
-                                                          registeredPersons,
-                                                      bankData: safeBankData,
-                                                      prefillUser: user.copyWith(
-                                                        telefon:
-                                                            telefonController
-                                                                .text,
-                                                      ),
-                                                      prefillEmail: email,
-                                                    );
-                                                  }
+                                    KeyboardFocusFAB(
+                                      heroTag: 'submitBookingFab',
+                                      mini: true,
+                                      tooltip: 'Buchen',
+                                      icon: Icons.check,
+                                      semanticLabel: 'Button zum Buchen der Buchung',
+                                      backgroundColor:
+                                          (agbChecked &&
+                                                  lastschriftChecked &&
+                                                  kontoinhaberController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  ibanController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  (!isBicRequired(
+                                                        ibanController.text
+                                                            .trim(),
+                                                      ) ||
+                                                      bicController.text
+                                                          .trim()
+                                                          .isNotEmpty))
+                                              ? UIConstants.defaultAppColor
+                                              : UIConstants
+                                                  .cancelButtonBackground,
+                                      onPressed:
+                                          (agbChecked &&
+                                                  lastschriftChecked &&
+                                                  kontoinhaberController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  ibanController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  (!isBicRequired(
+                                                        ibanController.text
+                                                            .trim(),
+                                                      ) ||
+                                                      bicController.text
+                                                          .trim()
+                                                          .isNotEmpty))
+                                              ? () async {
+                                                if (formKey.currentState !=
+                                                        null &&
+                                                    formKey.currentState!
+                                                        .validate()) {
+                                                  Navigator.of(context).pop();
+                                                  final apiService =
+                                                      Provider.of<ApiService>(
+                                                        context,
+                                                        listen: false,
+                                                      );
+                                                  final String email =
+                                                      await apiService
+                                                          .getCachedUsername() ??
+                                                      '';
+                                                  final BankData
+                                                  safeBankData =
+                                                      bankData ??
+                                                      BankData(
+                                                        id: 0,
+                                                        webloginId:
+                                                            user.webLoginId,
+                                                        kontoinhaber: '',
+                                                        iban: '',
+                                                        bic: '',
+                                                        mandatSeq: 2,
+                                                        bankName: '',
+                                                        mandatNr: '',
+                                                        mandatName: '',
+                                                      );
+                                                  await registerPersonAndShowDialog(
+                                                    schulungsTermin:
+                                                        schulungsTermin,
+                                                    registeredPersons:
+                                                        registeredPersons,
+                                                    bankData: safeBankData,
+                                                    prefillUser: user.copyWith(
+                                                      telefon:
+                                                          telefonController
+                                                              .text,
+                                                    ),
+                                                    prefillEmail: email,
+                                                  );
                                                 }
-                                                : null,
-                                        child: const Icon(
-                                          Icons.check,
-                                          color: UIConstants.whiteColor,
-                                        ),
-                                      ),
+                                              }
+                                              : null,
                                     ),
                                   ],
                                 ),

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '/constants/ui_styles.dart';
 import '/widgets/scaled_text.dart';
 import '/providers/font_size_provider.dart';
+import '/widgets/keyboard_focus_profile_button.dart';
 
 class PersonalDataSuccessScreen extends StatelessWidget {
   const PersonalDataSuccessScreen({
@@ -64,23 +65,15 @@ class PersonalDataSuccessScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: Semantics(
-        button: true,
-        label: 'Zurück zum Profil',
-        child: FloatingActionButton(
-          heroTag: 'personalDataResultFab',
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed(
-              '/profile',
-              arguments: {'userData': userData, 'isLoggedIn': true},
-            );
-          },
-          backgroundColor: UIConstants.defaultAppColor,
-          child: const Tooltip(
-            message: 'Profil',
-            child: Icon(Icons.person, color: UIConstants.whiteColor),
-          ),
-        ),
+      floatingActionButton: KeyboardFocusProfileButton(
+        heroTag: 'personalDataResultFab',
+        semanticLabel: 'Zurück zum Profil',
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed(
+            '/profile',
+            arguments: {'userData': userData, 'isLoggedIn': true},
+          );
+        },
       ),
     );
   }
