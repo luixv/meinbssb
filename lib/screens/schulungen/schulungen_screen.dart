@@ -494,32 +494,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        Semantics(
-                                                          label:
-                                                              'Checkbox zum Akzeptieren der AGB',
-                                                          child: Focus(
-                                                            onKey: (node, event) {
-                                                              if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
-                                                                  event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
-                                                                setState(() {
-                                                                  agbChecked = !agbChecked;
-                                                                });
-                                                                return KeyEventResult.handled;
-                                                              }
-                                                              return KeyEventResult.ignored;
-                                                            },
-                                                            child: Checkbox(
-                                                              value: agbChecked,
-                                                              onChanged: (val) {
-                                                                setState(
-                                                                  () =>
-                                                                      agbChecked =
-                                                                          val ??
-                                                                          false,
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
+                                                        _KeyboardFocusCheckbox(
+                                                          label: 'Checkbox zum Akzeptieren der AGB',
+                                                          value: agbChecked,
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () =>
+                                                                  agbChecked =
+                                                                      val ??
+                                                                      false,
+                                                            );
+                                                          },
                                                         ),
                                                         const SizedBox(
                                                           width:
@@ -615,33 +600,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        Semantics(
-                                                          label:
-                                                              'Checkbox zur Bestätigung des Lastschrifteinzugs',
-                                                          child: Focus(
-                                                            onKey: (node, event) {
-                                                              if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
-                                                                  event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
-                                                                setState(() {
-                                                                  lastschriftChecked = !lastschriftChecked;
-                                                                });
-                                                                return KeyEventResult.handled;
-                                                              }
-                                                              return KeyEventResult.ignored;
-                                                            },
-                                                            child: Checkbox(
-                                                              value:
-                                                                  lastschriftChecked,
-                                                              onChanged: (val) {
-                                                                setState(
-                                                                  () =>
-                                                                      lastschriftChecked =
-                                                                          val ??
-                                                                          false,
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
+                                                        _KeyboardFocusCheckbox(
+                                                          label: 'Checkbox zur Bestätigung des Lastschrifteinzugs',
+                                                          value: lastschriftChecked,
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () =>
+                                                                  lastschriftChecked =
+                                                                      val ??
+                                                                      false,
+                                                            );
+                                                          },
                                                         ),
                                                         const SizedBox(
                                                           width:
@@ -1466,6 +1435,83 @@ class _LoginDialogState extends State<LoginDialog> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// Custom Checkbox widget with keyboard-only focus highlighting
+class _KeyboardFocusCheckbox extends StatefulWidget {
+  const _KeyboardFocusCheckbox({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool?> onChanged;
+
+  @override
+  State<_KeyboardFocusCheckbox> createState() => _KeyboardFocusCheckboxState();
+}
+
+class _KeyboardFocusCheckboxState extends State<_KeyboardFocusCheckbox> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      label: widget.label,
+      child: Focus(
+        focusNode: _focusNode,
+        onKey: (node, event) {
+          if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
+              event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
+            widget.onChanged(!widget.value);
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: Container(
+          decoration: hasKeyboardFocus
+              ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: Colors.yellow.shade700,
+                    width: 3.0,
+                  ),
+                )
+              : null,
+          child: Checkbox(
+            value: widget.value,
+            onChanged: widget.onChanged,
+          ),
+        ),
+      ),
     );
   }
 }

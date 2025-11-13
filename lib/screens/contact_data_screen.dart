@@ -515,6 +515,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         const SizedBox(height: UIConstants.spacingM),
                         TextFormField(
                           controller: _kontaktController,
+                          onChanged: (value) {
+                            setStateDialog(() {});
+                          },
                           decoration: UIStyles.formInputDecoration.copyWith(
                             labelText: 'Kontakt',
                             labelStyle: UIStyles.formInputDecoration.labelStyle
@@ -607,7 +610,9 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                             constraints: const BoxConstraints(minHeight: 40),
                             child: ElevatedButton(
                               onPressed:
-                                  _isAdding || _selectedKontaktTyp == null
+                                  _isAdding ||
+                                  _selectedKontaktTyp == null ||
+                                  _kontaktController.text.trim().isEmpty
                                       ? null
                                       : () async {
                                         setStateDialog(() => _isAdding = true);
@@ -924,21 +929,85 @@ class _ContactTileWithKeyboardFocusState extends State<_ContactTileWithKeyboardF
                   ),
                 )
                 : null,
-            suffixIcon: IconButton(
-              icon: Icon(
-                Icons.delete_outline,
-                size: UIConstants.iconSizeS * widget.fontSizeProvider.scaleFactor,
-              ),
-              tooltip: 'Löschen',
-              color: UIConstants.deleteIcon,
+            suffixIcon: _DeleteIconButton(
               onPressed: () => widget.onDelete(
                 widget.kontaktId,
                 widget.rawKontaktTyp,
                 widget.displayValue,
                 widget.displayLabel,
               ),
+              iconSize: UIConstants.iconSizeS * widget.fontSizeProvider.scaleFactor,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Delete Icon Button with keyboard-only focus highlighting
+class _DeleteIconButton extends StatefulWidget {
+  const _DeleteIconButton({
+    required this.onPressed,
+    required this.iconSize,
+  });
+
+  final VoidCallback onPressed;
+  final double iconSize;
+
+  @override
+  State<_DeleteIconButton> createState() => _DeleteIconButtonState();
+}
+
+class _DeleteIconButtonState extends State<_DeleteIconButton> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Focus(
+      focusNode: _focusNode,
+      child: Container(
+        decoration: hasKeyboardFocus
+            ? BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: Colors.yellow.shade700,
+                  width: 3.0,
+                ),
+              )
+            : null,
+        child: IconButton(
+          icon: Icon(
+            Icons.delete_outline,
+            size: widget.iconSize,
+          ),
+          tooltip: 'Löschen',
+          color: hasKeyboardFocus ? Colors.yellow.shade700 : UIConstants.deleteIcon,
+          onPressed: widget.onPressed,
         ),
       ),
     );
@@ -1023,21 +1092,23 @@ class _AddContactButtonState extends State<_AddContactButton> {
               },
               child: Tooltip(
                 message: 'Hinzufügen',
-                child: Container(
-                  decoration: hasKeyboardFocus
-                      ? BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.yellow.shade700,
-                            width: 3.0,
-                          ),
-                        )
-                      : null,
-                  child: FloatingActionButton(
-                    heroTag: 'contactDataFab',
-                    onPressed: widget.onPressed,
-                    backgroundColor: backgroundColor,
-                    child: const Icon(Icons.add, color: UIConstants.whiteColor),
+                child: Padding(
+                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  child: Container(
+                    decoration: hasKeyboardFocus
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                        : null,
+                    child: FloatingActionButton(
+                      heroTag: 'contactDataFab',
+                      onPressed: widget.onPressed,
+                      backgroundColor: backgroundColor,
+                      child: const Icon(Icons.add, color: UIConstants.whiteColor),
+                    ),
                   ),
                 ),
               ),

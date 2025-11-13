@@ -368,145 +368,121 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const SizedBox(height: UIConstants.spacingS),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Passnummer Eingabefeld',
-                      hint: 'Dieses Feld ist nicht bearbeitbar.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Passnummer',
-                        controller: _passnummerController,
-                        isReadOnly: true,
-                      ),
+                  Semantics(
+                    label: 'Passnummer Eingabefeld',
+                    hint: 'Dieses Feld ist nicht bearbeitbar.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Passnummer',
+                      controller: _passnummerController,
+                      isReadOnly: true,
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Geburtsdatum Eingabefeld',
-                      hint: 'Dieses Feld ist nicht bearbeitbar.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Geburtsdatum',
-                        controller: _geburtsdatumController,
-                        isReadOnly: true,
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        suffixIcon: const Tooltip(
-                          message:
-                              'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                          triggerMode: TooltipTriggerMode.tap,
-                          preferBelow: false,
-                          child: Icon(
-                            Icons.info_outline,
-                            size: UIConstants.tooltipIconSize,
-                          ),
+                  Semantics(
+                    label: 'Geburtsdatum Eingabefeld',
+                    hint: 'Dieses Feld ist nicht bearbeitbar.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Geburtsdatum',
+                      controller: _geburtsdatumController,
+                      isReadOnly: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      suffixIcon: const Tooltip(
+                        message:
+                            'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                        triggerMode: TooltipTriggerMode.tap,
+                        preferBelow: false,
+                        child: Icon(
+                          Icons.info_outline,
+                          size: UIConstants.tooltipIconSize,
                         ),
                       ),
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Titel Auswahlfeld',
-                      hint: 'Bitte wählen Sie Ihren Titel aus',
-                      textField: true,
-                      child: _buildTitelDropdown(fontSizeProvider),
+                  Semantics(
+                    label: 'Titel Auswahlfeld',
+                    hint: 'Bitte wählen Sie Ihren Titel aus',
+                    textField: true,
+                    child: _buildTitelDropdown(fontSizeProvider),
+                  ),
+                  Semantics(
+                    label: 'Vorname Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Vornamen ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Vorname',
+                      controller: _vornameController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vorname ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Vorname Eingabefeld',
-                      hint: 'Bitte geben Sie Ihren Vornamen ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Vorname',
-                        controller: _vornameController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Vorname ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    label: 'Nachname Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Nachnamen ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Nachname',
+                      controller: _nachnameController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Nachname ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Nachname Eingabefeld',
-                      hint: 'Bitte geben Sie Ihren Nachnamen ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Nachname',
-                        controller: _nachnameController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Nachname ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    label: 'Straße und Hausnummer Eingabefeld',
+                    hint: 'Bitte geben Sie Ihre Straße und Hausnummer ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Straße und Hausnummer',
+                      controller: _strasseHausnummerController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Straße und Hausnummer sind erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Straße und Hausnummer Eingabefeld',
-                      hint: 'Bitte geben Sie Ihre Straße und Hausnummer ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Straße und Hausnummer',
-                        controller: _strasseHausnummerController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Straße und Hausnummer sind erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    label: 'Postleitzahl Eingabefeld',
+                    hint: 'Bitte geben Sie Ihre Postleitzahl ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Postleitzahl',
+                      controller: _postleitzahlController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Postleitzahl ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Postleitzahl Eingabefeld',
-                      hint: 'Bitte geben Sie Ihre Postleitzahl ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Postleitzahl',
-                        controller: _postleitzahlController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Postleitzahl ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Ort Eingabefeld',
-                      hint: 'Bitte geben Sie Ihren Wohnort ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Ort',
-                        controller: _ortController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Ort ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    label: 'Ort Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Wohnort ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Ort',
+                      controller: _ortController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Ort ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingS),
@@ -842,21 +818,23 @@ class _SaveButtonState extends State<_SaveButton> {
               },
               child: Tooltip(
                 message: 'Speichern',
-                child: Container(
-                  decoration: hasKeyboardFocus
-                      ? BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.yellow.shade700,
-                            width: 3.0,
-                          ),
-                        )
-                      : null,
-                  child: FloatingActionButton(
-                    heroTag: 'personalDataSaveFab',
-                    onPressed: widget.onPressed,
-                    backgroundColor: backgroundColor,
-                    child: const Icon(Icons.save, color: Colors.white),
+                child: Padding(
+                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  child: Container(
+                    decoration: hasKeyboardFocus
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                        : null,
+                    child: FloatingActionButton(
+                      heroTag: 'personalDataSaveFab',
+                      onPressed: widget.onPressed,
+                      backgroundColor: backgroundColor,
+                      child: const Icon(Icons.save, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
@@ -946,21 +924,23 @@ class _EditButtonState extends State<_EditButton> {
               },
               child: Tooltip(
                 message: 'Bearbeiten',
-                child: Container(
-                  decoration: hasKeyboardFocus
-                      ? BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.yellow.shade700,
-                            width: 3.0,
-                          ),
-                        )
-                      : null,
-                  child: FloatingActionButton(
-                    heroTag: 'personalDataEditFab',
-                    onPressed: widget.onPressed,
-                    backgroundColor: backgroundColor,
-                    child: const Icon(Icons.edit, color: Colors.white),
+                child: Padding(
+                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  child: Container(
+                    decoration: hasKeyboardFocus
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                        : null,
+                    child: FloatingActionButton(
+                      heroTag: 'personalDataEditFab',
+                      onPressed: widget.onPressed,
+                      backgroundColor: backgroundColor,
+                      child: const Icon(Icons.edit, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
@@ -1050,21 +1030,23 @@ class _CancelButtonState extends State<_CancelButton> {
               },
               child: Tooltip(
                 message: 'Abbrechen',
-                child: Container(
-                  decoration: hasKeyboardFocus
-                      ? BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.yellow.shade700,
-                            width: 3.0,
-                          ),
-                        )
-                      : null,
-                  child: FloatingActionButton(
-                    heroTag: 'personalDataCancelFab',
-                    onPressed: widget.onPressed,
-                    backgroundColor: backgroundColor,
-                    child: const Icon(Icons.close, color: Colors.white),
+                child: Padding(
+                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  child: Container(
+                    decoration: hasKeyboardFocus
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                        : null,
+                    child: FloatingActionButton(
+                      heroTag: 'personalDataCancelFab',
+                      onPressed: widget.onPressed,
+                      backgroundColor: backgroundColor,
+                      child: const Icon(Icons.close, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
