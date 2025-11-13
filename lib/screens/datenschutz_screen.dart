@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/screens/base_screen_layout.dart';
 
-class DatenschutzScreen extends StatelessWidget {
+class DatenschutzScreen extends StatefulWidget {
   const DatenschutzScreen({
     super.key,
     required this.userData,
@@ -17,14 +18,28 @@ class DatenschutzScreen extends StatelessWidget {
   final Function() onLogout;
 
   @override
+  State<DatenschutzScreen> createState() => _DatenschutzScreenState();
+}
+
+class _DatenschutzScreenState extends State<DatenschutzScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BaseScreenLayout(
       title: 'Datenschutz',
-      userData: userData,
-      isLoggedIn: isLoggedIn,
-      onLogout: onLogout,
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
       body: Center(
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Container(
             constraints: const BoxConstraints(
               maxWidth: UIConstants.maxContentWidth,
@@ -41,6 +56,24 @@ class DatenschutzScreen extends StatelessWidget {
             ),
             child: Focus(
               autofocus: true,
+              onKey: (node, event) {
+                if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+                  _scrollController.animateTo(
+                    _scrollController.offset + 100,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.easeOut,
+                  );
+                  return KeyEventResult.handled;
+                } else if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+                  _scrollController.animateTo(
+                    _scrollController.offset - 100,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.easeOut,
+                  );
+                  return KeyEventResult.handled;
+                }
+                return KeyEventResult.ignored;
+              },
               child: Semantics(
                 container: true,
                 label: 'Datenschutzerklärung der MeinBSSB App',

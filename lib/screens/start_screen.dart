@@ -338,10 +338,13 @@ class StartScreenState extends State<StartScreen> {
                                       LoggerService.logError(
                                         'Error displaying profile picture: $error',
                                       );
-                                      return const Icon(
-                                        Icons.person,
-                                        size: UIConstants.profilePictureSize,
-                                        color: UIConstants.defaultAppColor,
+                                      return const Tooltip(
+                                        message: 'Profil',
+                                        child: Icon(
+                                          Icons.person,
+                                          size: UIConstants.profilePictureSize,
+                                          color: UIConstants.defaultAppColor,
+                                        ),
                                       );
                                     },
                                   ),
@@ -360,10 +363,13 @@ class StartScreenState extends State<StartScreen> {
                                     ),
                                   );
                                 },
-                                child: const Icon(
-                                  Icons.person,
-                                  size: UIConstants.profilePictureSize,
-                                  color: UIConstants.defaultAppColor,
+                                child: const Tooltip(
+                                  message: 'Profil',
+                                  child: Icon(
+                                    Icons.person,
+                                    size: UIConstants.profilePictureSize,
+                                    color: UIConstants.defaultAppColor,
+                                  ),
                                 ),
                               ),
                     ),

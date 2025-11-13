@@ -534,11 +534,10 @@ class UserService {
 
   Future<bool> deleteKontakt(Contact contact) async {
     try {
-      const endpoint = 'Kontakt';
-      final response = await _httpClient.delete(endpoint, body: {
-        'PersonID': contact.personId,
-        'KontaktID': contact.id,
-      });
+      String personId = contact.personId.toString();	
+      String id = contact.id.toString();
+      final endpoint = 'Kontakt/$personId/$id';
+      final response = await _httpClient.delete(endpoint);
 
       if (response is Map<String, dynamic>) {
         if (response.containsKey('error') || response['result'] == false) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
@@ -8,7 +9,7 @@ import 'package:provider/provider.dart';
 import '/widgets/scaled_text.dart';
 import '/providers/font_size_provider.dart';
 
-class ImpressumScreen extends StatelessWidget {
+class ImpressumScreen extends StatefulWidget {
   const ImpressumScreen({
     super.key,
     required this.userData,
@@ -20,6 +21,19 @@ class ImpressumScreen extends StatelessWidget {
   final Function() onLogout;
 
   @override
+  State<ImpressumScreen> createState() => _ImpressumScreenState();
+}
+
+class _ImpressumScreenState extends State<ImpressumScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final FontSizeProvider fontSizeProvider = Provider.of<FontSizeProvider>(
       context,
@@ -27,16 +41,35 @@ class ImpressumScreen extends StatelessWidget {
 
     return BaseScreenLayout(
       title: 'Impressum',
-      userData: userData,
-      isLoggedIn: isLoggedIn,
-      onLogout: onLogout,
+      userData: widget.userData,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
       body: Focus(
         autofocus: true,
+        onKey: (node, event) {
+          if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+            _scrollController.animateTo(
+              _scrollController.offset + 100,
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+            return KeyEventResult.handled;
+          } else if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+            _scrollController.animateTo(
+              _scrollController.offset - 100,
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
         child: Semantics(
           label:
               'Impressum. Rechtliche Informationen, Verantwortlichkeiten und Kontaktangaben des Bayerischen Sportschützenbundes e.V. für diese App. Alle relevanten Angaben und Hinweise zur Nutzung und Haftung.',
           child: Center(
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: Container(
                 constraints: const BoxConstraints(
                   maxWidth: UIConstants.maxContentWidth,

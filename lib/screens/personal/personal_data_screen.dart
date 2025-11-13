@@ -1,6 +1,7 @@
 // In lib/screens/personal_data_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -272,21 +273,13 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               ? Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Semantics(
-                    label: 'Abbrechen Button',
-                    hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
-                    button: true,
-                    child: FloatingActionButton(
-                      heroTag: 'personalDataCancelFab',
-                      onPressed: () {
-                        setState(() {
-                          _isEditing = false;
-                          _populateFields(_currentPassData!);
-                        });
-                      },
-                      backgroundColor: UIConstants.defaultAppColor,
-                      child: const Icon(Icons.close, color: Colors.white),
-                    ),
+                  _CancelButton(
+                    onPressed: () {
+                      setState(() {
+                        _isEditing = false;
+                        _populateFields(_currentPassData!);
+                      });
+                    },
                   ),
                   const SizedBox(height: 16),
                   _SaveButton(onPressed: _handleSave),
@@ -572,6 +565,18 @@ class _TextFieldWithKeyboardFocusState extends State<_TextFieldWithKeyboardFocus
     setState(() {
       _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
     });
+    
+    // When field gains focus, position cursor at the end to prevent overwriting
+    if (_focusNode.hasFocus && widget.controller.text.isNotEmpty) {
+      // Use a post-frame callback to ensure the selection is set after the focus change
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.controller.text.isNotEmpty) {
+          widget.controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: widget.controller.text.length),
+          );
+        }
+      });
+    }
   }
 
   @override
@@ -772,39 +777,90 @@ class _SaveButton extends StatefulWidget {
 class _SaveButtonState extends State<_SaveButton> {
   bool _isHovered = false;
   bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = (_isHovered || _isFocused) 
         ? Colors.black 
         : UIConstants.defaultAppColor;
+    
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
       label: 'Speichern Button',
       hint: 'Änderungen speichern',
       button: true,
-      child: Focus(
-        onFocusChange: (hasFocus) {
-          setState(() {
-            _isFocused = hasFocus;
-          });
+      child: Shortcuts(
+        shortcuts: {
+          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
         },
-        child: MouseRegion(
-          onEnter: (_) {
-            setState(() {
-              _isHovered = true;
-            });
+        child: Actions(
+          actions: {
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) => widget.onPressed(),
+            ),
           },
-          onExit: (_) {
-            setState(() {
-              _isHovered = false;
-            });
-          },
-          child: FloatingActionButton(
-            heroTag: 'personalDataSaveFab',
-            onPressed: widget.onPressed,
-            backgroundColor: backgroundColor,
-            child: const Icon(Icons.save, color: Colors.white),
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isFocused = hasFocus;
+              });
+            },
+            child: MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  _isHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  _isHovered = false;
+                });
+              },
+              child: Tooltip(
+                message: 'Speichern',
+                child: Container(
+                  decoration: hasKeyboardFocus
+                      ? BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.yellow.shade700,
+                            width: 3.0,
+                          ),
+                        )
+                      : null,
+                  child: FloatingActionButton(
+                    heroTag: 'personalDataSaveFab',
+                    onPressed: widget.onPressed,
+                    backgroundColor: backgroundColor,
+                    child: const Icon(Icons.save, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -825,42 +881,202 @@ class _EditButton extends StatefulWidget {
 class _EditButtonState extends State<_EditButton> {
   bool _isHovered = false;
   bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = (_isHovered || _isFocused) 
         ? Colors.black 
         : UIConstants.defaultAppColor;
+    
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
       label: 'Bearbeiten Button',
       hint: 'Persönliche Daten bearbeiten',
       button: true,
-      child: Focus(
-        onFocusChange: (hasFocus) {
-          setState(() {
-            _isFocused = hasFocus;
-          });
+      child: Shortcuts(
+        shortcuts: {
+          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
         },
-        child: MouseRegion(
-          onEnter: (_) {
-            setState(() {
-              _isHovered = true;
-            });
+        child: Actions(
+          actions: {
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) => widget.onPressed(),
+            ),
           },
-          onExit: (_) {
-            setState(() {
-              _isHovered = false;
-            });
-          },
-          child: FloatingActionButton(
-            heroTag: 'personalDataEditFab',
-            onPressed: widget.onPressed,
-            backgroundColor: backgroundColor,
-            child: const Icon(Icons.edit, color: Colors.white),
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isFocused = hasFocus;
+              });
+            },
+            child: MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  _isHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  _isHovered = false;
+                });
+              },
+              child: Tooltip(
+                message: 'Bearbeiten',
+                child: Container(
+                  decoration: hasKeyboardFocus
+                      ? BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.yellow.shade700,
+                            width: 3.0,
+                          ),
+                        )
+                      : null,
+                  child: FloatingActionButton(
+                    heroTag: 'personalDataEditFab',
+                    onPressed: widget.onPressed,
+                    backgroundColor: backgroundColor,
+                    child: const Icon(Icons.edit, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+// Custom Cancel Button widget with hover and focus support
+class _CancelButton extends StatefulWidget {
+  const _CancelButton({required this.onPressed});
+  
+  final VoidCallback onPressed;
+
+  @override
+  State<_CancelButton> createState() => _CancelButtonState();
+}
+
+class _CancelButtonState extends State<_CancelButton> {
+  bool _isHovered = false;
+  bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = (_isHovered || _isFocused) 
+        ? Colors.black 
+        : UIConstants.defaultAppColor;
+    
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      label: 'Abbrechen Button',
+      hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
+      button: true,
+      child: Shortcuts(
+        shortcuts: {
+          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
+        },
+        child: Actions(
+          actions: {
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) => widget.onPressed(),
+            ),
+          },
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isFocused = hasFocus;
+              });
+            },
+            child: MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  _isHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  _isHovered = false;
+                });
+              },
+              child: Tooltip(
+                message: 'Abbrechen',
+                child: Container(
+                  decoration: hasKeyboardFocus
+                      ? BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.yellow.shade700,
+                            width: 3.0,
+                          ),
+                        )
+                      : null,
+                  child: FloatingActionButton(
+                    heroTag: 'personalDataCancelFab',
+                    onPressed: widget.onPressed,
+                    backgroundColor: backgroundColor,
+                    child: const Icon(Icons.close, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Intent class for button activation via keyboard
+class _ButtonActivateIntent extends Intent {
+  const _ButtonActivateIntent();
 }

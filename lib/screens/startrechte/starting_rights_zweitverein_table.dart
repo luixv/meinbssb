@@ -386,6 +386,7 @@ class ZveAutocompleteFieldState extends State<ZveAutocompleteField> {
                 controller: _controller,
                 style: Theme.of(context).textTheme.bodyMedium,
                 decoration: InputDecoration(
+                  labelText: 'Disziplin hinzufügen',
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 6,

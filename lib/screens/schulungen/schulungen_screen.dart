@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '/constants/ui_constants.dart';
@@ -496,16 +497,28 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         Semantics(
                                                           label:
                                                               'Checkbox zum Akzeptieren der AGB',
-                                                          child: Checkbox(
-                                                            value: agbChecked,
-                                                            onChanged: (val) {
-                                                              setState(
-                                                                () =>
-                                                                    agbChecked =
-                                                                        val ??
-                                                                        false,
-                                                              );
+                                                          child: Focus(
+                                                            onKey: (node, event) {
+                                                              if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                                                                  event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
+                                                                setState(() {
+                                                                  agbChecked = !agbChecked;
+                                                                });
+                                                                return KeyEventResult.handled;
+                                                              }
+                                                              return KeyEventResult.ignored;
                                                             },
+                                                            child: Checkbox(
+                                                              value: agbChecked,
+                                                              onChanged: (val) {
+                                                                setState(
+                                                                  () =>
+                                                                      agbChecked =
+                                                                          val ??
+                                                                          false,
+                                                                );
+                                                              },
+                                                            ),
                                                           ),
                                                         ),
                                                         const SizedBox(
@@ -605,17 +618,29 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                         Semantics(
                                                           label:
                                                               'Checkbox zur Bestätigung des Lastschrifteinzugs',
-                                                          child: Checkbox(
-                                                            value:
-                                                                lastschriftChecked,
-                                                            onChanged: (val) {
-                                                              setState(
-                                                                () =>
-                                                                    lastschriftChecked =
-                                                                        val ??
-                                                                        false,
-                                                              );
+                                                          child: Focus(
+                                                            onKey: (node, event) {
+                                                              if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                                                                  event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
+                                                                setState(() {
+                                                                  lastschriftChecked = !lastschriftChecked;
+                                                                });
+                                                                return KeyEventResult.handled;
+                                                              }
+                                                              return KeyEventResult.ignored;
                                                             },
+                                                            child: Checkbox(
+                                                              value:
+                                                                  lastschriftChecked,
+                                                              onChanged: (val) {
+                                                                setState(
+                                                                  () =>
+                                                                      lastschriftChecked =
+                                                                          val ??
+                                                                          false,
+                                                                );
+                                                              },
+                                                            ),
                                                           ),
                                                         ),
                                                         const SizedBox(

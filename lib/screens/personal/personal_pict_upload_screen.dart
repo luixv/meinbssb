@@ -531,10 +531,13 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                       width: UIConstants.defaultStrokeWidth,
                     ),
                   ),
-                  child: const Icon(
-                    Icons.person,
-                    size: UIConstants.defaultImageHeight,
-                    color: UIConstants.mydarkGreyColor,
+                  child: const Tooltip(
+                    message: 'Profil',
+                    child: Icon(
+                      Icons.person,
+                      size: UIConstants.defaultImageHeight,
+                      color: UIConstants.mydarkGreyColor,
+                    ),
                   ),
                 );
               },
@@ -583,10 +586,13 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
               width: UIConstants.defaultStrokeWidth,
             ),
           ),
-          child: const Icon(
-            Icons.person,
-            size: UIConstants.defaultImageHeight,
-            color: UIConstants.mydarkGreyColor,
+          child: const Tooltip(
+            message: 'Profil',
+            child: Icon(
+              Icons.person,
+              size: UIConstants.defaultImageHeight,
+              color: UIConstants.mydarkGreyColor,
+            ),
           ),
         ),
         Positioned(
@@ -777,24 +783,30 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             children: [
               if ((_selectedImage != null && _isImageUploadedToServer) ||
                   _existingProfilePhoto != null)
-                FloatingActionButton(
-                  key: PersonalPictUploadScreen.deleteFabKey,
-                  heroTag: 'deleteFab',
-                  onPressed: _isDeleting ? null : _deleteImage,
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(Icons.delete, color: Colors.white),
+                Tooltip(
+                  message: 'Löschen',
+                  child: FloatingActionButton(
+                    key: PersonalPictUploadScreen.deleteFabKey,
+                    heroTag: 'deleteFab',
+                    onPressed: _isDeleting ? null : _deleteImage,
+                    backgroundColor: UIConstants.defaultAppColor,
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
                 ),
               if ((_selectedImage != null && _isImageUploadedToServer) ||
                   _existingProfilePhoto != null)
                 const SizedBox(height: UIConstants.spacingM),
-              FloatingActionButton(
-                key: PersonalPictUploadScreen.saveFabKey,
-                heroTag: 'saveFab',
-                onPressed:
-                    (_selectedImage != null && !_isUploading)
-                        ? _uploadImage
-                        : null,
-                child: const Icon(Icons.cloud_upload),
+              Tooltip(
+                message: 'Hochladen',
+                child: FloatingActionButton(
+                  key: PersonalPictUploadScreen.saveFabKey,
+                  heroTag: 'saveFab',
+                  onPressed:
+                      (_selectedImage != null && !_isUploading)
+                          ? _uploadImage
+                          : null,
+                  child: const Icon(Icons.cloud_upload),
+                ),
               ),
             ],
           ),

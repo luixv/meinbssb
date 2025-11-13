@@ -174,11 +174,20 @@ class ProfileScreen extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.only(bottom: UIConstants.spacingS),
         child: ListTile(
-          leading: Icon(
-            icon,
-            color: UIStyles.profileIconColor,
-            semanticLabel: title,
-          ),
+          leading: icon == Icons.person
+              ? Tooltip(
+                  message: 'Profil',
+                  child: Icon(
+                    icon,
+                    color: UIStyles.profileIconColor,
+                    semanticLabel: title,
+                  ),
+                )
+              : Icon(
+                  icon,
+                  color: UIStyles.profileIconColor,
+                  semanticLabel: title,
+                ),
           title: ScaledText(
             title,
             style: const TextStyle(

@@ -185,11 +185,14 @@ class SchulungenListItem extends StatelessWidget {
                             schulungsTermin.anmeldungenGesperrt
                                 ? 'Details nicht verfügbar, Anmeldung gesperrt.'
                                 : 'Details anzeigen',
-                        child: FloatingActionButton(
-                          heroTag: 'schulungenContentFab$index',
-                          backgroundColor: fabBackgroundColor,
-                          onPressed: onDetailsPressed,
-                          child: fabIconWidget,
+                        child: Tooltip(
+                          message: 'Details',
+                          child: FloatingActionButton(
+                            heroTag: 'schulungenContentFab$index',
+                            backgroundColor: fabBackgroundColor,
+                            onPressed: onDetailsPressed,
+                            child: fabIconWidget,
+                          ),
                         ),
                       ),
                     ],

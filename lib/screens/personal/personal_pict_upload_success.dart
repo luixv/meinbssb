@@ -66,7 +66,10 @@ class PersonalPictUploadSuccessScreen extends StatelessWidget {
             );
           },
           backgroundColor: UIConstants.defaultAppColor,
-          child: const Icon(Icons.person, color: UIConstants.whiteColor),
+          child: const Tooltip(
+            message: 'Profil',
+            child: Icon(Icons.person, color: UIConstants.whiteColor),
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -957,42 +958,98 @@ class _AddContactButton extends StatefulWidget {
 class _AddContactButtonState extends State<_AddContactButton> {
   bool _isHovered = false;
   bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = (_isHovered || _isFocused) 
         ? Colors.black 
         : UIConstants.defaultAppColor;
+    
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
       label: 'Kontakt hinzufügen',
       hint: 'Tippen, um einen neuen Kontakt hinzuzufügen',
       button: true,
-      child: Focus(
-        onFocusChange: (hasFocus) {
-          setState(() {
-            _isFocused = hasFocus;
-          });
+      child: Shortcuts(
+        shortcuts: {
+          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
         },
-        child: MouseRegion(
-          onEnter: (_) {
-            setState(() {
-              _isHovered = true;
-            });
+        child: Actions(
+          actions: {
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) => widget.onPressed(),
+            ),
           },
-          onExit: (_) {
-            setState(() {
-              _isHovered = false;
-            });
-          },
-          child: FloatingActionButton(
-            heroTag: 'contactDataFab',
-            onPressed: widget.onPressed,
-            backgroundColor: backgroundColor,
-            child: const Icon(Icons.add, color: UIConstants.whiteColor),
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isFocused = hasFocus;
+              });
+            },
+            child: MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  _isHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  _isHovered = false;
+                });
+              },
+              child: Tooltip(
+                message: 'Hinzufügen',
+                child: Container(
+                  decoration: hasKeyboardFocus
+                      ? BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.yellow.shade700,
+                            width: 3.0,
+                          ),
+                        )
+                      : null,
+                  child: FloatingActionButton(
+                    heroTag: 'contactDataFab',
+                    onPressed: widget.onPressed,
+                    backgroundColor: backgroundColor,
+                    child: const Icon(Icons.add, color: UIConstants.whiteColor),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+// Intent class for button activation via keyboard
+class _ButtonActivateIntent extends Intent {
+  const _ButtonActivateIntent();
 }

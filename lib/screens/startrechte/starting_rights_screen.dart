@@ -396,26 +396,29 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                   label: 'Änderungen speichern',
                   hint:
                       'Tippen, um Änderungen an den Startrechten zu speichern',
-                  child: FloatingActionButton(
-                    heroTag: 'saveFab',
-                    onPressed: _onSave,
-                    backgroundColor: UIConstants.defaultAppColor,
-                    child:
-                        _isLoading
-                            ? const SizedBox(
-                              width: UIConstants.fabIconSize,
-                              height: UIConstants.fabIconSize,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  UIConstants.whiteColor,
+                  child: Tooltip(
+                    message: 'Speichern',
+                    child: FloatingActionButton(
+                      heroTag: 'saveFab',
+                      onPressed: _onSave,
+                      backgroundColor: UIConstants.defaultAppColor,
+                      child:
+                          _isLoading
+                              ? const SizedBox(
+                                width: UIConstants.fabIconSize,
+                                height: UIConstants.fabIconSize,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    UIConstants.whiteColor,
+                                  ),
+                                  strokeWidth: UIConstants.defaultStrokeWidth,
                                 ),
-                                strokeWidth: UIConstants.defaultStrokeWidth,
+                              )
+                              : const Icon(
+                                Icons.save,
+                                color: UIConstants.whiteColor,
                               ),
-                            )
-                            : const Icon(
-                              Icons.save,
-                              color: UIConstants.whiteColor,
-                            ),
+                    ),
                   ),
                 )
                 : null,
