@@ -7,6 +7,7 @@ import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import '/providers/font_size_provider.dart';
+import '/widgets/keyboard_focus_profile_button.dart';
 
 class AusweisBestellendSuccessScreen extends StatelessWidget {
   const AusweisBestellendSuccessScreen({
@@ -53,16 +54,15 @@ class AusweisBestellendSuccessScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: KeyboardFocusProfileButton(
         heroTag: 'ausweisBestellenSuccessFab',
+        semanticLabel: 'Zurück zum Profil',
         onPressed: () {
           Navigator.of(context).pushReplacementNamed(
             '/profile',
             arguments: {'userData': userData, 'isLoggedIn': isLoggedIn},
           );
         },
-        backgroundColor: UIConstants.defaultAppColor,
-        child: const Icon(Icons.person, color: UIConstants.whiteColor),
       ),
     );
   }

@@ -534,13 +534,10 @@ class UserService {
 
   Future<bool> deleteKontakt(Contact contact) async {
     try {
-      const endpoint = 'KontaktAendern';
-      final response = await _httpClient.put(endpoint, {
-        'PersonID': contact.personId,
-        'KontaktID': contact.id,
-        'KontaktTyp': contact.type,
-        'Kontakt': '', // Empty contact value to indicate deletion
-      });
+      String personId = contact.personId.toString();	
+      String id = contact.id.toString();
+      final endpoint = 'Kontakt/$personId/$id';
+      final response = await _httpClient.delete(endpoint);
 
       if (response is Map<String, dynamic>) {
         if (response.containsKey('error') || response['result'] == false) {
@@ -549,7 +546,7 @@ class UserService {
           );
           return false;
         }
-        return response['result'] == true;
+        return response['result'] == 1;
       } else {
         LoggerService.logError(
           'Invalid response type from deleteKontakt: ${response.runtimeType}',

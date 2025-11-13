@@ -299,9 +299,12 @@ class AppDrawer extends StatelessWidget {
               ),
               ListTile(
                 key: const Key('drawer_profile'),
-                leading: const Icon(
-                  Icons.person,
-                  color: UIStyles.menuIconColor,
+                leading: const Tooltip(
+                  message: 'Profil',
+                  child: Icon(
+                    Icons.person,
+                    color: UIStyles.menuIconColor,
+                  ),
                 ),
                 title: const ScaledText(
                   'Profil',

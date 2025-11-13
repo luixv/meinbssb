@@ -70,19 +70,22 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 );
               }),
-              _buildMenuItem(context, 'Bestellen', Icons.search_off, () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => AusweisBestellenScreen(
-                          userData: userData,
-                          isLoggedIn: isLoggedIn,
-                          onLogout: onLogout,
-                        ),
-                  ),
-                );
-              }),
+              Visibility(
+                visible: false,
+                child: _buildMenuItem(context, 'Bestellen', Icons.search_off, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => AusweisBestellenScreen(
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                }),
+              ),
               const SizedBox(height: UIConstants.helpSpacing),
             ],
           ),

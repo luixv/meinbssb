@@ -199,11 +199,11 @@ void main() {
       ); // header (can appear more than once)
       expect(find.text('Anzeigen'), findsOneWidget);
       expect(find.text('Startrechte'), findsOneWidget);
-      expect(find.text('Bestellen'), findsOneWidget);
+      // Bestellen button is now invisible, so we don't check for it
       expect(find.byIcon(Icons.visibility), findsOneWidget);
       expect(find.byIcon(Icons.rule), findsOneWidget);
-      expect(find.byIcon(Icons.search_off), findsOneWidget);
-      expect(find.byIcon(Icons.chevron_right), findsNWidgets(3));
+      // search_off icon is now invisible, so we don't check for it
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(2)); // Only 2 visible menu items
     });
 
     testWidgets('navigates to SchuetzenausweisScreen on tap', (tester) async {
@@ -220,11 +220,12 @@ void main() {
       expect(find.byType(ProfileScreen), findsNothing);
     });
 
-    testWidgets('navigates to AusweisBestellenScreen on tap', (tester) async {
-      await tester.pumpWidget(createScreen());
-      await tester.tap(find.text('Bestellen'));
-      await tester.pumpAndSettle();
-      expect(find.byType(ProfileScreen), findsNothing);
-    });
+    // Bestellen button is now invisible, so this test is removed
+    // testWidgets('navigates to AusweisBestellenScreen on tap', (tester) async {
+    //   await tester.pumpWidget(createScreen());
+    //   await tester.tap(find.text('Bestellen'));
+    //   await tester.pumpAndSettle();
+    //   expect(find.byType(ProfileScreen), findsNothing);
+    // });
   });
 }

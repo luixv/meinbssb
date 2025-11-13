@@ -1,6 +1,6 @@
 import 'dart:async'; // for unawaited
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
@@ -531,10 +531,13 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                       width: UIConstants.defaultStrokeWidth,
                     ),
                   ),
-                  child: const Icon(
-                    Icons.person,
-                    size: UIConstants.defaultImageHeight,
-                    color: UIConstants.mydarkGreyColor,
+                  child: const Tooltip(
+                    message: 'Profil',
+                    child: Icon(
+                      Icons.person,
+                      size: UIConstants.defaultImageHeight,
+                      color: UIConstants.mydarkGreyColor,
+                    ),
                   ),
                 );
               },
@@ -583,10 +586,13 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
               width: UIConstants.defaultStrokeWidth,
             ),
           ),
-          child: const Icon(
-            Icons.person,
-            size: UIConstants.defaultImageHeight,
-            color: UIConstants.mydarkGreyColor,
+          child: const Tooltip(
+            message: 'Profil',
+            child: Icon(
+              Icons.person,
+              size: UIConstants.defaultImageHeight,
+              color: UIConstants.mydarkGreyColor,
+            ),
           ),
         ),
         Positioned(
@@ -673,14 +679,9 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
                   ),
                   const SizedBox(height: UIConstants.spacingM),
                   Center(
-                    child: Focus(
-                      autofocus: true,
-                      child: ElevatedButton.icon(
-                        key: PersonalPictUploadScreen.selectBtnKey,
-                        onPressed: _pickImage,
-                        icon: const Icon(Icons.photo_library),
-                        label: const Text('Bild auswählen'),
-                      ),
+                    child: _SelectImageButton(
+                      onPressed: _pickImage,
+                      buttonKey: PersonalPictUploadScreen.selectBtnKey,
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingL),
@@ -777,24 +778,19 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             children: [
               if ((_selectedImage != null && _isImageUploadedToServer) ||
                   _existingProfilePhoto != null)
-                FloatingActionButton(
-                  key: PersonalPictUploadScreen.deleteFabKey,
-                  heroTag: 'deleteFab',
+                _DeleteButton(
                   onPressed: _isDeleting ? null : _deleteImage,
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(Icons.delete, color: Colors.white),
+                  fabKey: PersonalPictUploadScreen.deleteFabKey,
                 ),
               if ((_selectedImage != null && _isImageUploadedToServer) ||
                   _existingProfilePhoto != null)
                 const SizedBox(height: UIConstants.spacingM),
-              FloatingActionButton(
-                key: PersonalPictUploadScreen.saveFabKey,
-                heroTag: 'saveFab',
+              _UploadButton(
                 onPressed:
                     (_selectedImage != null && !_isUploading)
                         ? _uploadImage
                         : null,
-                child: const Icon(Icons.cloud_upload),
+                fabKey: PersonalPictUploadScreen.saveFabKey,
               ),
             ],
           ),
@@ -818,6 +814,265 @@ class _PersonalPictUploadScreenState extends State<PersonalPictUploadScreen> {
             ),
           ),
       ],
+    );
+  }
+}
+
+// Intent class for button activation
+class _ButtonActivateIntent extends Intent {
+  const _ButtonActivateIntent();
+}
+
+// Custom Delete Button with keyboard focus highlighting
+class _DeleteButton extends StatefulWidget {
+  const _DeleteButton({
+    required this.onPressed,
+    required this.fabKey,
+  });
+
+  final VoidCallback? onPressed;
+  final Key fabKey;
+
+  @override
+  State<_DeleteButton> createState() => _DeleteButtonState();
+}
+
+class _DeleteButtonState extends State<_DeleteButton> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      button: true,
+      label: 'Profilbild löschen',
+      enabled: widget.onPressed != null,
+      child: Shortcuts(
+        shortcuts: const <ShortcutActivator, Intent>{
+          SingleActivator(LogicalKeyboardKey.enter): _ButtonActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.numpadEnter): _ButtonActivateIntent(),
+        },
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) {
+                widget.onPressed?.call();
+                return null;
+              },
+            ),
+          },
+          child: Focus(
+            focusNode: _focusNode,
+            child: Tooltip(
+              message: 'Löschen',
+              child: Padding(
+                padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                child: Container(
+                  decoration: hasKeyboardFocus
+                      ? BoxDecoration(
+                          border: Border.all(
+                            color: Colors.yellow.shade700,
+                            width: 3.0,
+                          ),
+                        )
+                      : null,
+                  child: FloatingActionButton(
+                    key: widget.fabKey,
+                    heroTag: 'deleteFab',
+                    onPressed: widget.onPressed,
+                    backgroundColor: UIConstants.defaultAppColor,
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Upload Button with keyboard focus highlighting
+class _UploadButton extends StatefulWidget {
+  const _UploadButton({
+    required this.onPressed,
+    required this.fabKey,
+  });
+
+  final VoidCallback? onPressed;
+  final Key fabKey;
+
+  @override
+  State<_UploadButton> createState() => _UploadButtonState();
+}
+
+class _UploadButtonState extends State<_UploadButton> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      button: true,
+      label: 'Profilbild hochladen',
+      enabled: widget.onPressed != null,
+      child: Shortcuts(
+        shortcuts: const <ShortcutActivator, Intent>{
+          SingleActivator(LogicalKeyboardKey.enter): _ButtonActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.numpadEnter): _ButtonActivateIntent(),
+        },
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) {
+                widget.onPressed?.call();
+                return null;
+              },
+            ),
+          },
+          child: Focus(
+            focusNode: _focusNode,
+            child: Tooltip(
+              message: 'Hochladen',
+              child: Padding(
+                padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                child: Container(
+                  decoration: hasKeyboardFocus
+                      ? BoxDecoration(
+                          border: Border.all(
+                            color: Colors.yellow.shade700,
+                            width: 3.0,
+                          ),
+                        )
+                      : null,
+                  child: FloatingActionButton(
+                    key: widget.fabKey,
+                    heroTag: 'saveFab',
+                    onPressed: widget.onPressed,
+                    child: const Icon(Icons.cloud_upload),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Select Image Button with keyboard focus highlighting
+class _SelectImageButton extends StatefulWidget {
+  const _SelectImageButton({
+    required this.onPressed,
+    required this.buttonKey,
+  });
+
+  final VoidCallback onPressed;
+  final Key buttonKey;
+
+  @override
+  State<_SelectImageButton> createState() => _SelectImageButtonState();
+}
+
+class _SelectImageButtonState extends State<_SelectImageButton> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      button: true,
+      label: 'Bild auswählen',
+      hint: 'Tippen, um ein Profilbild aus der Galerie auszuwählen',
+      child: Focus(
+        focusNode: _focusNode,
+        autofocus: true,
+        child: Container(
+          decoration: hasKeyboardFocus
+              ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: Colors.yellow.shade700,
+                    width: 3.0,
+                  ),
+                )
+              : null,
+          child: ElevatedButton.icon(
+            key: widget.buttonKey,
+            onPressed: widget.onPressed,
+            icon: const Icon(Icons.photo_library),
+            label: const Text('Bild auswählen'),
+          ),
+        ),
+      ),
     );
   }
 }

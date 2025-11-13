@@ -1,6 +1,7 @@
 // In lib/screens/personal_data_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -272,50 +273,24 @@ class PersonDataScreenState extends State<PersonDataScreen> {
               ? Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Semantics(
-                    label: 'Abbrechen Button',
-                    hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
-                    button: true,
-                    child: FloatingActionButton(
-                      heroTag: 'personalDataCancelFab',
-                      onPressed: () {
-                        setState(() {
-                          _isEditing = false;
-                          _populateFields(_currentPassData!);
-                        });
-                      },
-                      backgroundColor: UIConstants.defaultAppColor,
-                      child: const Icon(Icons.close, color: Colors.white),
-                    ),
+                  _CancelButton(
+                    onPressed: () {
+                      setState(() {
+                        _isEditing = false;
+                        _populateFields(_currentPassData!);
+                      });
+                    },
                   ),
                   const SizedBox(height: 16),
-                  Semantics(
-                    label: 'Speichern Button',
-                    hint: 'Änderungen speichern',
-                    button: true,
-                    child: FloatingActionButton(
-                      heroTag: 'personalDataSaveFab',
-                      onPressed: _handleSave,
-                      backgroundColor: UIConstants.defaultAppColor,
-                      child: const Icon(Icons.save, color: Colors.white),
-                    ),
-                  ),
+                  _SaveButton(onPressed: _handleSave),
                 ],
               )
-              : Semantics(
-                label: 'Bearbeiten Button',
-                hint: 'Persönliche Daten bearbeiten',
-                button: true,
-                child: FloatingActionButton(
-                  heroTag: 'personalDataEditFab',
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = true;
-                    });
-                  },
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(Icons.edit, color: Colors.white),
-                ),
+              : _EditButton(
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true;
+                  });
+                },
               );
         },
       ),
@@ -326,74 +301,16 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     final titelOptions = ['', 'Dr.', 'Dr. Dr.', 'Dr. hc.', 'Dr. Eh.'];
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: DropdownButtonFormField<String>(
-            value:
-                titelOptions.contains(_titelController.text)
-                    ? _titelController.text
-                    : '',
-            decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: 'Titel',
-              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              floatingLabelStyle: UIStyles
-                  .formInputDecoration
-                  .floatingLabelStyle
-                  ?.copyWith(
-                    fontSize:
-                        UIStyles
-                            .formInputDecoration
-                            .floatingLabelStyle!
-                            .fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              filled: true,
-            ),
-            items:
-                titelOptions
-                    .map(
-                      (titel) => DropdownMenuItem<String>(
-                        value: titel,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 0.0,
-                          ), // Minimum space
-                          child: Text(
-                            titel.isEmpty ? '(Kein Titel)' : titel,
-                            style:
-                                _isEditing
-                                    ? UIStyles.formValueStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.formValueStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    )
-                                    : UIStyles.formValueBoldStyle.copyWith(
-                                      fontSize:
-                                          UIStyles
-                                              .formValueBoldStyle
-                                              .fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-            onChanged:
-                _isEditing
-                    ? (value) {
-                      setState(() {
-                        _titelController.text = value ?? '';
-                      });
-                    }
-                    : null,
-            validator: (value) => null,
-          ),
+        return _DropdownWithKeyboardFocus(
+          titelOptions: titelOptions,
+          titelController: _titelController,
+          isEditing: _isEditing,
+          fontSizeProvider: fontSizeProvider,
+          onChanged: (value) {
+            setState(() {
+              _titelController.text = value ?? '';
+            });
+          },
         );
       },
     );
@@ -409,53 +326,14 @@ class PersonDataScreenState extends State<PersonDataScreen> {
   }) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: TextFormField(
-            controller: controller,
-            style:
-                isReadOnly
-                    ? UIStyles.formValueBoldStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueBoldStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    )
-                    : UIStyles.formValueStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-            decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: label,
-              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              floatingLabelStyle: UIStyles
-                  .formInputDecoration
-                  .floatingLabelStyle
-                  ?.copyWith(
-                    fontSize:
-                        UIStyles
-                            .formInputDecoration
-                            .floatingLabelStyle!
-                            .fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-              floatingLabelBehavior: floatingLabelBehavior,
-              hintText: isReadOnly ? null : label,
-              hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.hintStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              filled: true,
-              suffixIcon: suffixIcon,
-            ),
-            validator: validator,
-            readOnly: isReadOnly,
-          ),
+        return _TextFieldWithKeyboardFocus(
+          label: label,
+          controller: controller,
+          validator: validator,
+          isReadOnly: isReadOnly,
+          floatingLabelBehavior: floatingLabelBehavior,
+          suffixIcon: suffixIcon,
+          fontSizeProvider: fontSizeProvider,
         );
       },
     );
@@ -490,145 +368,121 @@ class PersonDataScreenState extends State<PersonDataScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const SizedBox(height: UIConstants.spacingS),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Passnummer Eingabefeld',
-                      hint: 'Dieses Feld ist nicht bearbeitbar.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Passnummer',
-                        controller: _passnummerController,
-                        isReadOnly: true,
-                      ),
+                  Semantics(
+                    label: 'Passnummer Eingabefeld',
+                    hint: 'Dieses Feld ist nicht bearbeitbar.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Passnummer',
+                      controller: _passnummerController,
+                      isReadOnly: true,
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Geburtsdatum Eingabefeld',
-                      hint: 'Dieses Feld ist nicht bearbeitbar.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Geburtsdatum',
-                        controller: _geburtsdatumController,
-                        isReadOnly: true,
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        suffixIcon: const Tooltip(
-                          message:
-                              'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
-                          triggerMode: TooltipTriggerMode.tap,
-                          preferBelow: false,
-                          child: Icon(
-                            Icons.info_outline,
-                            size: UIConstants.tooltipIconSize,
-                          ),
+                  Semantics(
+                    label: 'Geburtsdatum Eingabefeld',
+                    hint: 'Dieses Feld ist nicht bearbeitbar.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Geburtsdatum',
+                      controller: _geburtsdatumController,
+                      isReadOnly: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      suffixIcon: const Tooltip(
+                        message:
+                            'Eine Änderung des Geburtsdatums ist per Mail an schuetzenausweis@bssb.bayern möglich.',
+                        triggerMode: TooltipTriggerMode.tap,
+                        preferBelow: false,
+                        child: Icon(
+                          Icons.info_outline,
+                          size: UIConstants.tooltipIconSize,
                         ),
                       ),
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Titel Auswahlfeld',
-                      hint: 'Bitte wählen Sie Ihren Titel aus',
-                      textField: true,
-                      child: _buildTitelDropdown(fontSizeProvider),
+                  Semantics(
+                    label: 'Titel Auswahlfeld',
+                    hint: 'Bitte wählen Sie Ihren Titel aus',
+                    textField: true,
+                    child: _buildTitelDropdown(fontSizeProvider),
+                  ),
+                  Semantics(
+                    label: 'Vorname Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Vornamen ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Vorname',
+                      controller: _vornameController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vorname ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Vorname Eingabefeld',
-                      hint: 'Bitte geben Sie Ihren Vornamen ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Vorname',
-                        controller: _vornameController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Vorname ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    label: 'Nachname Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Nachnamen ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Nachname',
+                      controller: _nachnameController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Nachname ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Nachname Eingabefeld',
-                      hint: 'Bitte geben Sie Ihren Nachnamen ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Nachname',
-                        controller: _nachnameController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Nachname ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    label: 'Straße und Hausnummer Eingabefeld',
+                    hint: 'Bitte geben Sie Ihre Straße und Hausnummer ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Straße und Hausnummer',
+                      controller: _strasseHausnummerController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Straße und Hausnummer sind erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Straße und Hausnummer Eingabefeld',
-                      hint: 'Bitte geben Sie Ihre Straße und Hausnummer ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Straße und Hausnummer',
-                        controller: _strasseHausnummerController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Straße und Hausnummer sind erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    label: 'Postleitzahl Eingabefeld',
+                    hint: 'Bitte geben Sie Ihre Postleitzahl ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Postleitzahl',
+                      controller: _postleitzahlController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Postleitzahl ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Postleitzahl Eingabefeld',
-                      hint: 'Bitte geben Sie Ihre Postleitzahl ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Postleitzahl',
-                        controller: _postleitzahlController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Postleitzahl ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ),
-                  Focus(
-                    canRequestFocus: true,
-                    child: Semantics(
-                      label: 'Ort Eingabefeld',
-                      hint: 'Bitte geben Sie Ihren Wohnort ein.',
-                      textField: true,
-                      child: _buildTextField(
-                        label: 'Ort',
-                        controller: _ortController,
-                        isReadOnly: !_isEditing,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Ort ist erforderlich';
-                          }
-                          return null;
-                        },
-                      ),
+                  Semantics(
+                    label: 'Ort Eingabefeld',
+                    hint: 'Bitte geben Sie Ihren Wohnort ein.',
+                    textField: true,
+                    child: _buildTextField(
+                      label: 'Ort',
+                      controller: _ortController,
+                      isReadOnly: !_isEditing,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Ort ist erforderlich';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingS),
@@ -638,4 +492,573 @@ class PersonDataScreenState extends State<PersonDataScreen> {
           ),
         );
   }
+}
+
+// Custom Text Field with keyboard-only focus highlighting
+class _TextFieldWithKeyboardFocus extends StatefulWidget {
+  const _TextFieldWithKeyboardFocus({
+    required this.label,
+    required this.controller,
+    required this.fontSizeProvider,
+    this.validator,
+    this.isReadOnly = false,
+    this.floatingLabelBehavior = FloatingLabelBehavior.always,
+    this.suffixIcon,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final FontSizeProvider fontSizeProvider;
+  final String? Function(String?)? validator;
+  final bool isReadOnly;
+  final FloatingLabelBehavior floatingLabelBehavior;
+  final Widget? suffixIcon;
+
+  @override
+  State<_TextFieldWithKeyboardFocus> createState() => _TextFieldWithKeyboardFocusState();
+}
+
+class _TextFieldWithKeyboardFocusState extends State<_TextFieldWithKeyboardFocus> {
+  final FocusNode _focusNode = FocusNode();
+  bool _hasKeyboardFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    // Check if focus highlight mode is traditional (keyboard navigation)
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
+    });
+    
+    // When field gains focus, position cursor at the end to prevent overwriting
+    if (_focusNode.hasFocus && widget.controller.text.isNotEmpty) {
+      // Use a post-frame callback to ensure the selection is set after the focus change
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.controller.text.isNotEmpty) {
+          widget.controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: widget.controller.text.length),
+          );
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+      child: TextFormField(
+        focusNode: _focusNode,
+        controller: widget.controller,
+        style:
+            widget.isReadOnly
+                ? UIStyles.formValueBoldStyle.copyWith(
+                  fontSize:
+                      UIStyles.formValueBoldStyle.fontSize! *
+                      widget.fontSizeProvider.scaleFactor,
+                )
+                : UIStyles.formValueStyle.copyWith(
+                  fontSize:
+                      UIStyles.formValueStyle.fontSize! *
+                      widget.fontSizeProvider.scaleFactor,
+                ),
+        decoration: UIStyles.formInputDecoration.copyWith(
+          labelText: widget.label,
+          labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                widget.fontSizeProvider.scaleFactor,
+          ),
+          floatingLabelStyle: UIStyles
+              .formInputDecoration
+              .floatingLabelStyle
+              ?.copyWith(
+                fontSize:
+                    UIStyles
+                        .formInputDecoration
+                        .floatingLabelStyle!
+                        .fontSize! *
+                    widget.fontSizeProvider.scaleFactor,
+              ),
+          floatingLabelBehavior: widget.floatingLabelBehavior,
+          hintText: widget.isReadOnly ? null : widget.label,
+          hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                widget.fontSizeProvider.scaleFactor,
+          ),
+          filled: true,
+          fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+          focusedBorder: _hasKeyboardFocus
+              ? OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.yellow.shade700,
+                  width: 2.0,
+                ),
+              )
+              : null,
+          suffixIcon: widget.suffixIcon,
+        ),
+        validator: widget.validator,
+        readOnly: widget.isReadOnly,
+      ),
+    );
+  }
+}
+
+// Custom Dropdown with keyboard-only focus highlighting
+class _DropdownWithKeyboardFocus extends StatefulWidget {
+  const _DropdownWithKeyboardFocus({
+    required this.titelOptions,
+    required this.titelController,
+    required this.isEditing,
+    required this.fontSizeProvider,
+    required this.onChanged,
+  });
+
+  final List<String> titelOptions;
+  final TextEditingController titelController;
+  final bool isEditing;
+  final FontSizeProvider fontSizeProvider;
+  final void Function(String?) onChanged;
+
+  @override
+  State<_DropdownWithKeyboardFocus> createState() => _DropdownWithKeyboardFocusState();
+}
+
+class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> {
+  final FocusNode _focusNode = FocusNode();
+  bool _hasKeyboardFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    // Check if focus highlight mode is traditional (keyboard navigation)
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+      child: DropdownButtonFormField<String>(
+        focusNode: _focusNode,
+        value:
+            widget.titelOptions.contains(widget.titelController.text)
+                ? widget.titelController.text
+                : '',
+        decoration: UIStyles.formInputDecoration.copyWith(
+          labelText: 'Titel',
+          labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                widget.fontSizeProvider.scaleFactor,
+          ),
+          floatingLabelStyle: UIStyles
+              .formInputDecoration
+              .floatingLabelStyle
+              ?.copyWith(
+                fontSize:
+                    UIStyles
+                        .formInputDecoration
+                        .floatingLabelStyle!
+                        .fontSize! *
+                    widget.fontSizeProvider.scaleFactor,
+              ),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          filled: true,
+          fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+          focusedBorder: _hasKeyboardFocus
+              ? OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.yellow.shade700,
+                  width: 2.0,
+                ),
+              )
+              : null,
+        ),
+        items:
+            widget.titelOptions
+                .map(
+                  (titel) => DropdownMenuItem<String>(
+                    value: titel,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 0.0,
+                      ),
+                      child: Text(
+                        titel.isEmpty ? '(Kein Titel)' : titel,
+                        style:
+                            widget.isEditing
+                                ? UIStyles.formValueStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.formValueStyle.fontSize! *
+                                      widget.fontSizeProvider.scaleFactor,
+                                )
+                                : UIStyles.formValueBoldStyle.copyWith(
+                                  fontSize:
+                                      UIStyles
+                                          .formValueBoldStyle
+                                          .fontSize! *
+                                      widget.fontSizeProvider.scaleFactor,
+                                ),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+        onChanged: widget.isEditing ? widget.onChanged : null,
+        validator: (value) => null,
+      ),
+    );
+  }
+}
+
+// Custom Save Button widget with hover and focus support
+class _SaveButton extends StatefulWidget {
+  const _SaveButton({required this.onPressed});
+  
+  final VoidCallback onPressed;
+
+  @override
+  State<_SaveButton> createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<_SaveButton> {
+  bool _isHovered = false;
+  bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = (_isHovered || _isFocused) 
+        ? Colors.black 
+        : UIConstants.defaultAppColor;
+    
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      label: 'Speichern Button',
+      hint: 'Änderungen speichern',
+      button: true,
+      child: Shortcuts(
+        shortcuts: {
+          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
+        },
+        child: Actions(
+          actions: {
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) => widget.onPressed(),
+            ),
+          },
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isFocused = hasFocus;
+              });
+            },
+            child: MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  _isHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  _isHovered = false;
+                });
+              },
+              child: Tooltip(
+                message: 'Speichern',
+                child: Padding(
+                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  child: Container(
+                    decoration: hasKeyboardFocus
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                        : null,
+                    child: FloatingActionButton(
+                      heroTag: 'personalDataSaveFab',
+                      onPressed: widget.onPressed,
+                      backgroundColor: backgroundColor,
+                      child: const Icon(Icons.save, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Edit Button widget with hover and focus support
+class _EditButton extends StatefulWidget {
+  const _EditButton({required this.onPressed});
+  
+  final VoidCallback onPressed;
+
+  @override
+  State<_EditButton> createState() => _EditButtonState();
+}
+
+class _EditButtonState extends State<_EditButton> {
+  bool _isHovered = false;
+  bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = (_isHovered || _isFocused) 
+        ? Colors.black 
+        : UIConstants.defaultAppColor;
+    
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      label: 'Bearbeiten Button',
+      hint: 'Persönliche Daten bearbeiten',
+      button: true,
+      child: Shortcuts(
+        shortcuts: {
+          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
+        },
+        child: Actions(
+          actions: {
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) => widget.onPressed(),
+            ),
+          },
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isFocused = hasFocus;
+              });
+            },
+            child: MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  _isHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  _isHovered = false;
+                });
+              },
+              child: Tooltip(
+                message: 'Bearbeiten',
+                child: Padding(
+                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  child: Container(
+                    decoration: hasKeyboardFocus
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                        : null,
+                    child: FloatingActionButton(
+                      heroTag: 'personalDataEditFab',
+                      onPressed: widget.onPressed,
+                      backgroundColor: backgroundColor,
+                      child: const Icon(Icons.edit, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Cancel Button widget with hover and focus support
+class _CancelButton extends StatefulWidget {
+  const _CancelButton({required this.onPressed});
+  
+  final VoidCallback onPressed;
+
+  @override
+  State<_CancelButton> createState() => _CancelButtonState();
+}
+
+class _CancelButtonState extends State<_CancelButton> {
+  bool _isHovered = false;
+  bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = (_isHovered || _isFocused) 
+        ? Colors.black 
+        : UIConstants.defaultAppColor;
+    
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      label: 'Abbrechen Button',
+      hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
+      button: true,
+      child: Shortcuts(
+        shortcuts: {
+          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
+        },
+        child: Actions(
+          actions: {
+            _ButtonActivateIntent: CallbackAction<_ButtonActivateIntent>(
+              onInvoke: (_) => widget.onPressed(),
+            ),
+          },
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isFocused = hasFocus;
+              });
+            },
+            child: MouseRegion(
+              onEnter: (_) {
+                setState(() {
+                  _isHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  _isHovered = false;
+                });
+              },
+              child: Tooltip(
+                message: 'Abbrechen',
+                child: Padding(
+                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  child: Container(
+                    decoration: hasKeyboardFocus
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                        : null,
+                    child: FloatingActionButton(
+                      heroTag: 'personalDataCancelFab',
+                      onPressed: widget.onPressed,
+                      backgroundColor: backgroundColor,
+                      child: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Intent class for button activation via keyboard
+class _ButtonActivateIntent extends Intent {
+  const _ButtonActivateIntent();
 }

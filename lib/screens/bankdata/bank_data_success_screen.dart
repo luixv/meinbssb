@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '/constants/ui_styles.dart';
 import '/widgets/scaled_text.dart';
 import '/providers/font_size_provider.dart';
+import '/widgets/keyboard_focus_profile_button.dart';
 
 class BankDataSuccessScreen extends StatelessWidget {
   const BankDataSuccessScreen({
@@ -62,20 +63,15 @@ class BankDataSuccessScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: Semantics(
-        button: true,
-        label: 'Zurück zum Profil',
-        child: FloatingActionButton(
-          heroTag: 'bankDataResultFab',
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed(
-              '/profile',
-              arguments: {'userData': userData, 'isLoggedIn': true},
-            );
-          },
-          backgroundColor: UIConstants.defaultAppColor,
-          child: const Icon(Icons.person, color: UIConstants.whiteColor),
-        ),
+      floatingActionButton: KeyboardFocusProfileButton(
+        heroTag: 'bankDataResultFab',
+        semanticLabel: 'Zurück zum Profil',
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed(
+            '/profile',
+            arguments: {'userData': userData, 'isLoggedIn': true},
+          );
+        },
       ),
     );
   }

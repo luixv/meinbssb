@@ -51,62 +51,26 @@ class SettingsScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            SizedBox(
-                              width: UIConstants.smallButtonSize,
-                              height: UIConstants.smallButtonSize,
-                              child: FloatingActionButton(
-                                heroTag: 'decrease_font_size',
-                                onPressed: fontSizeProvider.scaleFactor <= 0.8
-                                    ? null
-                                    : () => fontSizeProvider.decreaseFontSize(),
-                                backgroundColor: UIConstants.defaultAppColor,
-                                disabledElevation: 0,
-                                elevation: 2,
-                                shape: const CircleBorder(),
-                                child: const Icon(
-                                  Icons.remove,
-                                  color: Colors.white,
-                                  size: UIConstants.fabSmallIconSize,
-                                ),
-                              ),
+                            _SettingsButton(
+                              heroTag: 'decrease_font_size',
+                              onPressed: fontSizeProvider.scaleFactor <= 0.8
+                                  ? null
+                                  : () => fontSizeProvider.decreaseFontSize(),
+                              icon: Icons.remove,
                             ),
                             const SizedBox(width: UIConstants.spacingS),
-                            SizedBox(
-                              width: UIConstants.smallButtonSize,
-                              height: UIConstants.smallButtonSize,
-                              child: FloatingActionButton(
-                                heroTag: 'reset_font_size',
-                                onPressed: () =>
-                                    fontSizeProvider.resetFontSize(),
-                                backgroundColor: UIConstants.defaultAppColor,
-                                elevation: 2,
-                                shape: const CircleBorder(),
-                                child: const Icon(
-                                  Icons.refresh,
-                                  color: Colors.white,
-                                  size: UIConstants.fabSmallIconSize,
-                                ),
-                              ),
+                            _SettingsButton(
+                              heroTag: 'reset_font_size',
+                              onPressed: () => fontSizeProvider.resetFontSize(),
+                              icon: Icons.refresh,
                             ),
                             const SizedBox(width: UIConstants.spacingS),
-                            SizedBox(
-                              width: UIConstants.smallButtonSize,
-                              height: UIConstants.smallButtonSize,
-                              child: FloatingActionButton(
-                                heroTag: 'increase_font_size',
-                                onPressed: fontSizeProvider.scaleFactor >= 1.6
-                                    ? null
-                                    : () => fontSizeProvider.increaseFontSize(),
-                                backgroundColor: UIConstants.defaultAppColor,
-                                disabledElevation: 0,
-                                elevation: 2,
-                                shape: const CircleBorder(),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                  size: UIConstants.fabSmallIconSize,
-                                ),
-                              ),
+                            _SettingsButton(
+                              heroTag: 'increase_font_size',
+                              onPressed: fontSizeProvider.scaleFactor >= 1.6
+                                  ? null
+                                  : () => fontSizeProvider.increaseFontSize(),
+                              icon: Icons.add,
                             ),
                           ],
                         ),
@@ -128,6 +92,84 @@ class SettingsScreen extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+// Custom Settings Button widget with keyboard-only focus highlighting
+class _SettingsButton extends StatefulWidget {
+  const _SettingsButton({
+    required this.heroTag,
+    required this.onPressed,
+    required this.icon,
+  });
+
+  final String heroTag;
+  final VoidCallback? onPressed;
+  final IconData icon;
+
+  @override
+  State<_SettingsButton> createState() => _SettingsButtonState();
+}
+
+class _SettingsButtonState extends State<_SettingsButton> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return SizedBox(
+      width: UIConstants.smallButtonSize,
+      height: UIConstants.smallButtonSize,
+      child: Focus(
+        focusNode: _focusNode,
+          child: Container(
+            decoration: hasKeyboardFocus
+                ? BoxDecoration(
+                    border: Border.all(
+                      color: Colors.yellow.shade700,
+                      width: 3.0,
+                    ),
+                  )
+                : null,
+          child: FloatingActionButton(
+            heroTag: widget.heroTag,
+            onPressed: widget.onPressed,
+            backgroundColor: UIConstants.defaultAppColor,
+            disabledElevation: 0,
+            elevation: 2,
+            shape: const CircleBorder(),
+            child: Icon(
+              widget.icon,
+              color: Colors.white,
+              size: UIConstants.fabSmallIconSize,
+            ),
+          ),
+        ),
       ),
     );
   }

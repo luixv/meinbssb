@@ -17,6 +17,7 @@ import 'personal/personal_pict_upload_screen.dart';
 import '/models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen(
@@ -338,10 +339,13 @@ class StartScreenState extends State<StartScreen> {
                                       LoggerService.logError(
                                         'Error displaying profile picture: $error',
                                       );
-                                      return const Icon(
-                                        Icons.person,
-                                        size: UIConstants.profilePictureSize,
-                                        color: UIConstants.defaultAppColor,
+                                      return const Tooltip(
+                                        message: 'Profil',
+                                        child: Icon(
+                                          Icons.person,
+                                          size: UIConstants.profilePictureSize,
+                                          color: UIConstants.defaultAppColor,
+                                        ),
                                       );
                                     },
                                   ),
@@ -360,10 +364,13 @@ class StartScreenState extends State<StartScreen> {
                                     ),
                                   );
                                 },
-                                child: const Icon(
-                                  Icons.person,
-                                  size: UIConstants.profilePictureSize,
-                                  color: UIConstants.defaultAppColor,
+                                child: const Tooltip(
+                                  message: 'Profil',
+                                  child: Icon(
+                                    Icons.person,
+                                    size: UIConstants.profilePictureSize,
+                                    color: UIConstants.defaultAppColor,
+                                  ),
                                 ),
                               ),
                     ),
@@ -912,14 +919,13 @@ class StartScreenState extends State<StartScreen> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.end,
                                                   children: [
-                                                    FloatingActionButton(
+                                                    KeyboardFocusFAB(
                                                       heroTag:
                                                           'descDialogDeleteFab$index',
                                                       mini: true,
                                                       tooltip: 'Löschen',
-                                                      backgroundColor:
-                                                          UIConstants
-                                                              .defaultAppColor,
+                                                      icon: Icons.delete_outline_outlined,
+                                                      semanticLabel: 'Schulung löschen',
                                                       onPressed: () {
                                                         Navigator.of(
                                                           context,
@@ -931,37 +937,23 @@ class StartScreenState extends State<StartScreen> {
                                                           schulung.bezeichnung,
                                                         );
                                                       },
-                                                      child: const Icon(
-                                                        Icons
-                                                            .delete_outline_outlined,
-                                                        color:
-                                                            UIConstants
-                                                                .whiteColor,
-                                                      ),
                                                     ),
                                                     const SizedBox(
                                                       height:
                                                           UIConstants.spacingM,
                                                     ),
-                                                    FloatingActionButton(
+                                                    KeyboardFocusFAB(
                                                       heroTag:
                                                           'descDialogCloseFab$index',
                                                       mini: true,
                                                       tooltip: 'Schließen',
-                                                      backgroundColor:
-                                                          UIConstants
-                                                              .defaultAppColor,
+                                                      icon: Icons.close,
+                                                      semanticLabel: 'Dialog schließen',
                                                       onPressed:
                                                           () =>
                                                               Navigator.of(
                                                                 context,
                                                               ).pop(),
-                                                      child: const Icon(
-                                                        Icons.close,
-                                                        color:
-                                                            UIConstants
-                                                                .whiteColor,
-                                                      ),
                                                     ),
                                                   ],
                                                 ),

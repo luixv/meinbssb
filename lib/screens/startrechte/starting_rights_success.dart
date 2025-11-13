@@ -6,6 +6,7 @@ import '/screens/base_screen_layout.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import '/providers/font_size_provider.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 class StartrechteSuccessScreen extends StatefulWidget {
   const StartrechteSuccessScreen({
@@ -60,29 +61,20 @@ class _StartrechteSuccessScreenState extends State<StartrechteSuccessScreen> {
           ),
         ),
       ),
-      floatingActionButton: Semantics(
-        button: true,
-        label: 'Zurück zum Profil',
-        child: FloatingActionButton(
-          heroTag: 'startrechteSuccessFab',
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed(
-              '/home',
-              arguments: {
-                'userData': widget.userData,
-                'isLoggedIn': widget.isLoggedIn,
-              },
-            );
-          },
-          backgroundColor: UIConstants.defaultAppColor,
-          child: Semantics(
-            button: true,
-            child: const Tooltip(
-              message: 'Zur Startseite',
-              child: Icon(Icons.home, color: UIConstants.whiteColor),
-            ),
-          ),
-        ),
+      floatingActionButton: KeyboardFocusFAB(
+        heroTag: 'startrechteSuccessFab',
+        icon: Icons.home,
+        tooltip: 'Zur Startseite',
+        semanticLabel: 'Zurück zum Profil',
+        onPressed: () {
+          Navigator.of(context).pushReplacementNamed(
+            '/home',
+            arguments: {
+              'userData': widget.userData,
+              'isLoggedIn': widget.isLoggedIn,
+            },
+          );
+        },
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '/constants/ui_constants.dart';
@@ -12,6 +13,7 @@ import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 import '/screens/agb/agb_screen.dart';
 
@@ -493,20 +495,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        Semantics(
-                                                          label:
-                                                              'Checkbox zum Akzeptieren der AGB',
-                                                          child: Checkbox(
-                                                            value: agbChecked,
-                                                            onChanged: (val) {
-                                                              setState(
-                                                                () =>
-                                                                    agbChecked =
-                                                                        val ??
-                                                                        false,
-                                                              );
-                                                            },
-                                                          ),
+                                                        _KeyboardFocusCheckbox(
+                                                          label: 'Checkbox zum Akzeptieren der AGB',
+                                                          value: agbChecked,
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () =>
+                                                                  agbChecked =
+                                                                      val ??
+                                                                      false,
+                                                            );
+                                                          },
                                                         ),
                                                         const SizedBox(
                                                           width:
@@ -602,21 +601,17 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        Semantics(
-                                                          label:
-                                                              'Checkbox zur Bestätigung des Lastschrifteinzugs',
-                                                          child: Checkbox(
-                                                            value:
-                                                                lastschriftChecked,
-                                                            onChanged: (val) {
-                                                              setState(
-                                                                () =>
-                                                                    lastschriftChecked =
-                                                                        val ??
-                                                                        false,
-                                                              );
-                                                            },
-                                                          ),
+                                                        _KeyboardFocusCheckbox(
+                                                          label: 'Checkbox zur Bestätigung des Lastschrifteinzugs',
+                                                          value: lastschriftChecked,
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () =>
+                                                                  lastschriftChecked =
+                                                                      val ??
+                                                                      false,
+                                                            );
+                                                          },
                                                         ),
                                                         const SizedBox(
                                                           width:
@@ -682,118 +677,102 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 right: UIConstants.spacingM,
                                 child: DialogFABs(
                                   children: [
-                                    Semantics(
-                                      container: true,
-                                      button: true,
-                                      label: 'Buchung abbrechen',
-                                      child: FloatingActionButton(
-                                        heroTag: 'cancelBookingFab',
-                                        mini: true,
-                                        tooltip: 'Abbrechen',
-                                        backgroundColor:
-                                            UIConstants.defaultAppColor,
-                                        onPressed:
-                                            () => Navigator.of(context).pop(),
-                                        child: const Icon(
-                                          Icons.close,
-                                          color: UIConstants.whiteColor,
-                                        ),
-                                      ),
+                                    KeyboardFocusFAB(
+                                      heroTag: 'cancelBookingFab',
+                                      mini: true,
+                                      tooltip: 'Abbrechen',
+                                      icon: Icons.close,
+                                      semanticLabel: 'Buchung abbrechen',
+                                      onPressed:
+                                          () => Navigator.of(context).pop(),
                                     ),
-                                    Semantics(
-                                      container: true,
-                                      button: true,
-                                      label: 'Button zum Buchen der Buchung',
-                                      child: FloatingActionButton(
-                                        heroTag: 'submitBookingFab',
-                                        mini: true,
-                                        tooltip: 'Buchen',
-                                        backgroundColor:
-                                            (agbChecked &&
-                                                    lastschriftChecked &&
-                                                    kontoinhaberController.text
-                                                        .trim()
-                                                        .isNotEmpty &&
-                                                    ibanController.text
-                                                        .trim()
-                                                        .isNotEmpty &&
-                                                    (!isBicRequired(
-                                                          ibanController.text
-                                                              .trim(),
-                                                        ) ||
-                                                        bicController.text
-                                                            .trim()
-                                                            .isNotEmpty))
-                                                ? UIConstants.defaultAppColor
-                                                : UIConstants
-                                                    .cancelButtonBackground,
-                                        onPressed:
-                                            (agbChecked &&
-                                                    lastschriftChecked &&
-                                                    kontoinhaberController.text
-                                                        .trim()
-                                                        .isNotEmpty &&
-                                                    ibanController.text
-                                                        .trim()
-                                                        .isNotEmpty &&
-                                                    (!isBicRequired(
-                                                          ibanController.text
-                                                              .trim(),
-                                                        ) ||
-                                                        bicController.text
-                                                            .trim()
-                                                            .isNotEmpty))
-                                                ? () async {
-                                                  if (formKey.currentState !=
-                                                          null &&
-                                                      formKey.currentState!
-                                                          .validate()) {
-                                                    Navigator.of(context).pop();
-                                                    final apiService =
-                                                        Provider.of<ApiService>(
-                                                          context,
-                                                          listen: false,
-                                                        );
-                                                    final String email =
-                                                        await apiService
-                                                            .getCachedUsername() ??
-                                                        '';
-                                                    final BankData
-                                                    safeBankData =
-                                                        bankData ??
-                                                        BankData(
-                                                          id: 0,
-                                                          webloginId:
-                                                              user.webLoginId,
-                                                          kontoinhaber: '',
-                                                          iban: '',
-                                                          bic: '',
-                                                          mandatSeq: 2,
-                                                          bankName: '',
-                                                          mandatNr: '',
-                                                          mandatName: '',
-                                                        );
-                                                    await registerPersonAndShowDialog(
-                                                      schulungsTermin:
-                                                          schulungsTermin,
-                                                      registeredPersons:
-                                                          registeredPersons,
-                                                      bankData: safeBankData,
-                                                      prefillUser: user.copyWith(
-                                                        telefon:
-                                                            telefonController
-                                                                .text,
-                                                      ),
-                                                      prefillEmail: email,
-                                                    );
-                                                  }
+                                    KeyboardFocusFAB(
+                                      heroTag: 'submitBookingFab',
+                                      mini: true,
+                                      tooltip: 'Buchen',
+                                      icon: Icons.check,
+                                      semanticLabel: 'Button zum Buchen der Buchung',
+                                      backgroundColor:
+                                          (agbChecked &&
+                                                  lastschriftChecked &&
+                                                  kontoinhaberController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  ibanController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  (!isBicRequired(
+                                                        ibanController.text
+                                                            .trim(),
+                                                      ) ||
+                                                      bicController.text
+                                                          .trim()
+                                                          .isNotEmpty))
+                                              ? UIConstants.defaultAppColor
+                                              : UIConstants
+                                                  .cancelButtonBackground,
+                                      onPressed:
+                                          (agbChecked &&
+                                                  lastschriftChecked &&
+                                                  kontoinhaberController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  ibanController.text
+                                                      .trim()
+                                                      .isNotEmpty &&
+                                                  (!isBicRequired(
+                                                        ibanController.text
+                                                            .trim(),
+                                                      ) ||
+                                                      bicController.text
+                                                          .trim()
+                                                          .isNotEmpty))
+                                              ? () async {
+                                                if (formKey.currentState !=
+                                                        null &&
+                                                    formKey.currentState!
+                                                        .validate()) {
+                                                  Navigator.of(context).pop();
+                                                  final apiService =
+                                                      Provider.of<ApiService>(
+                                                        context,
+                                                        listen: false,
+                                                      );
+                                                  final String email =
+                                                      await apiService
+                                                          .getCachedUsername() ??
+                                                      '';
+                                                  final BankData
+                                                  safeBankData =
+                                                      bankData ??
+                                                      BankData(
+                                                        id: 0,
+                                                        webloginId:
+                                                            user.webLoginId,
+                                                        kontoinhaber: '',
+                                                        iban: '',
+                                                        bic: '',
+                                                        mandatSeq: 2,
+                                                        bankName: '',
+                                                        mandatNr: '',
+                                                        mandatName: '',
+                                                      );
+                                                  await registerPersonAndShowDialog(
+                                                    schulungsTermin:
+                                                        schulungsTermin,
+                                                    registeredPersons:
+                                                        registeredPersons,
+                                                    bankData: safeBankData,
+                                                    prefillUser: user.copyWith(
+                                                      telefon:
+                                                          telefonController
+                                                              .text,
+                                                    ),
+                                                    prefillEmail: email,
+                                                  );
                                                 }
-                                                : null,
-                                        child: const Icon(
-                                          Icons.check,
-                                          color: UIConstants.whiteColor,
-                                        ),
-                                      ),
+                                              }
+                                              : null,
                                     ),
                                   ],
                                 ),
@@ -1441,6 +1420,83 @@ class _LoginDialogState extends State<LoginDialog> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// Custom Checkbox widget with keyboard-only focus highlighting
+class _KeyboardFocusCheckbox extends StatefulWidget {
+  const _KeyboardFocusCheckbox({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool?> onChanged;
+
+  @override
+  State<_KeyboardFocusCheckbox> createState() => _KeyboardFocusCheckboxState();
+}
+
+class _KeyboardFocusCheckboxState extends State<_KeyboardFocusCheckbox> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Check if focus is from keyboard navigation
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      label: widget.label,
+      child: Focus(
+        focusNode: _focusNode,
+        onKey: (node, event) {
+          if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
+              event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
+            widget.onChanged(!widget.value);
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: Container(
+          decoration: hasKeyboardFocus
+              ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: Colors.yellow.shade700,
+                    width: 3.0,
+                  ),
+                )
+              : null,
+          child: Checkbox(
+            value: widget.value,
+            onChanged: widget.onChanged,
+          ),
+        ),
+      ),
     );
   }
 }

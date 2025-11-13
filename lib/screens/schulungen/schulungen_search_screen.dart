@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 
@@ -154,40 +155,32 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Semantics(
-              label: 'Formular zurücksetzen',
-              button: true,
-              hint: 'Alle Filter werden auf Standardwerte zurückgesetzt',
-              child: FloatingActionButton(
-                heroTag: 'resetFab',
-                onPressed: () {
-                  setState(() {
-                    selectedDate = DateTime.now();
-                    selectedWebGruppe = 0;
-                    selectedBezirkId = 0;
-                    _ortController.clear();
-                    _titelController.clear();
-                    fuerVerlaengerungen = false;
-                    fuerVuelVerlaengerungen = false;
-                  });
-                },
-                backgroundColor: UIConstants.defaultAppColor,
-                tooltip: 'Formular zurücksetzen',
-                child: const Icon(Icons.refresh),
-              ),
+            _KeyboardFocusFAB(
+              heroTag: 'resetFab',
+              icon: Icons.refresh,
+              tooltip: 'Formular zurücksetzen',
+              semanticLabel: 'Formular zurücksetzen',
+              semanticHint: 'Alle Filter werden auf Standardwerte zurückgesetzt',
+              onPressed: () {
+                setState(() {
+                  selectedDate = DateTime.now();
+                  selectedWebGruppe = 0;
+                  selectedBezirkId = 0;
+                  _ortController.clear();
+                  _titelController.clear();
+                  fuerVerlaengerungen = false;
+                  fuerVuelVerlaengerungen = false;
+                });
+              },
             ),
             const SizedBox(height: UIConstants.spacingS),
-            Semantics(
-              label: 'Suche starten',
-              button: true,
-              hint: 'Aktuelle Filter anwenden und Suchergebnisse anzeigen',
-              child: FloatingActionButton(
-                heroTag: 'searchFab',
-                onPressed: _navigateToResults,
-                backgroundColor: UIConstants.defaultAppColor,
-                tooltip: 'Suchen',
-                child: const Icon(Icons.search),
-              ),
+            _KeyboardFocusFAB(
+              heroTag: 'searchFab',
+              icon: Icons.search,
+              tooltip: 'Suchen',
+              semanticLabel: 'Suche starten',
+              semanticHint: 'Aktuelle Filter anwenden und Suchergebnisse anzeigen',
+              onPressed: _navigateToResults,
             ),
           ],
         ),
@@ -206,34 +199,30 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                   ),
                 ),
                 const SizedBox(height: UIConstants.spacingM),
-                Semantics(
-                  label: 'Fachbereich auswählen',
-                  hint: 'Doppelt tippen zum Auswählen',
-                  child: DropdownButtonFormField<int>(
-                    value: selectedWebGruppe,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Fachbereich',
+                _KeyboardFocusDropdown<int>(
+                  value: selectedWebGruppe,
+                  label: 'Fachbereich',
+                  semanticLabel: 'Fachbereich auswählen',
+                  semanticHint: 'Doppelt tippen zum Auswählen',
+                  items: [
+                    const DropdownMenuItem<int>(
+                      value: 0,
+                      child: Text('Alle'),
                     ),
-                    items: [
-                      const DropdownMenuItem<int>(
-                        value: 0,
-                        child: Text('Alle'),
-                      ),
-                      ...Schulungstermin.webGruppeMap.entries
-                          .where((entry) => entry.key != 0)
-                          .map(
-                            (entry) => DropdownMenuItem<int>(
-                              value: entry.key,
-                              child: Text(entry.value),
-                            ),
+                    ...Schulungstermin.webGruppeMap.entries
+                        .where((entry) => entry.key != 0)
+                        .map(
+                          (entry) => DropdownMenuItem<int>(
+                            value: entry.key,
+                            child: Text(entry.value),
                           ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedWebGruppe = value;
-                      });
-                    },
-                  ),
+                        ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedWebGruppe = value;
+                    });
+                  },
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 isLoadingBezirke
@@ -241,94 +230,43 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                       label: 'Regierungsbezirke werden geladen',
                       child: CircularProgressIndicator(),
                     )
-                    : Semantics(
-                      label: 'Regierungsbezirk auswählen',
-                      hint: 'Doppelt tippen zum Auswählen',
-                      child: DropdownButtonFormField<int>(
-                        value: selectedBezirkId,
-                        decoration: UIStyles.formInputDecoration.copyWith(
-                          labelText: 'Regierungsbezirk',
-                        ),
-                        items:
-                            _bezirke
-                                .map(
-                                  (bezirk) => DropdownMenuItem<int>(
-                                    value: bezirk.bezirkId,
-                                    child: Text(bezirk.bezirkName),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedBezirkId = value;
-                          });
-                        },
-                      ),
+                    : _KeyboardFocusDropdown<int>(
+                      value: selectedBezirkId,
+                      label: 'Regierungsbezirk',
+                      semanticLabel: 'Regierungsbezirk auswählen',
+                      semanticHint: 'Doppelt tippen zum Auswählen',
+                      items:
+                          _bezirke
+                              .map(
+                                (bezirk) => DropdownMenuItem<int>(
+                                  value: bezirk.bezirkId,
+                                  child: Text(bezirk.bezirkName),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedBezirkId = value;
+                        });
+                      },
                     ),
                 const SizedBox(height: UIConstants.spacingM),
-                Focus(
-                  canRequestFocus: true,
-                  child: Semantics(
-                    label: 'Ort eingeben',
-                    hint: 'Wohn- oder Veranstaltungsort als Text eingeben',
-                    textField: true,
-                    child: TextFormField(
-                      key: const Key('Ort'),
-                      controller: _ortController,
-                      style: UIStyles.formValueStyle.copyWith(
-                        fontSize:
-                            UIStyles.formValueStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
-                      ),
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'Ort',
-                        floatingLabelBehavior: FloatingLabelBehavior.auto,
-                        labelStyle: UIStyles.formLabelStyle.copyWith(
-                          fontSize:
-                              UIStyles.formLabelStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                        ),
-                        hintStyle: UIStyles.formInputDecoration.hintStyle
-                            ?.copyWith(
-                              fontSize: Provider.of<FontSizeProvider>(
-                                context,
-                              ).getScaledFontSize(UIConstants.bodyFontSize),
-                            ),
-                      ),
-                    ),
-                  ),
+                _KeyboardFocusTextField(
+                  key: const Key('Ort'),
+                  controller: _ortController,
+                  label: 'Ort',
+                  semanticLabel: 'Ort eingeben',
+                  semanticHint: 'Wohn- oder Veranstaltungsort als Text eingeben',
+                  fontSizeProvider: fontSizeProvider,
                 ),
                 const SizedBox(height: UIConstants.spacingM),
-                Focus(
-                  canRequestFocus: true,
-                  child: Semantics(
-                    label: 'Titel eingeben',
-                    hint: 'Titel der Schulung als Text eingeben',
-                    textField: true,
-                    child: TextFormField(
-                      key: const Key('Titel'),
-                      controller: _titelController,
-                      style: UIStyles.formValueStyle.copyWith(
-                        fontSize:
-                            UIStyles.formValueStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
-                      ),
-                      decoration: UIStyles.formInputDecoration.copyWith(
-                        labelText: 'Titel',
-                        labelStyle: UIStyles.formLabelStyle.copyWith(
-                          fontSize:
-                              UIStyles.formLabelStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                        ),
-                        hintStyle: UIStyles.formInputDecoration.hintStyle
-                            ?.copyWith(
-                              fontSize: Provider.of<FontSizeProvider>(
-                                context,
-                              ).getScaledFontSize(UIConstants.bodyFontSize),
-                            ),
-                      ),
-                    ),
-                  ),
+                _KeyboardFocusTextField(
+                  key: const Key('Titel'),
+                  controller: _titelController,
+                  label: 'Titel',
+                  semanticLabel: 'Titel eingeben',
+                  semanticHint: 'Titel der Schulung als Text eingeben',
+                  fontSizeProvider: fontSizeProvider,
                 ),
                 const SizedBox(height: UIConstants.spacingM),
                 Semantics(
@@ -366,6 +304,260 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Custom TextField with keyboard-only focus highlighting
+class _KeyboardFocusTextField extends StatefulWidget {
+  const _KeyboardFocusTextField({
+    super.key,
+    required this.controller,
+    required this.label,
+    required this.semanticLabel,
+    required this.semanticHint,
+    required this.fontSizeProvider,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final String semanticLabel;
+  final String semanticHint;
+  final FontSizeProvider fontSizeProvider;
+
+  @override
+  State<_KeyboardFocusTextField> createState() => _KeyboardFocusTextFieldState();
+}
+
+class _KeyboardFocusTextFieldState extends State<_KeyboardFocusTextField> {
+  final FocusNode _focusNode = FocusNode();
+  bool _hasKeyboardFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: widget.semanticLabel,
+      hint: widget.semanticHint,
+      textField: true,
+      child: TextFormField(
+        focusNode: _focusNode,
+        controller: widget.controller,
+        style: UIStyles.formValueStyle.copyWith(
+          fontSize: UIStyles.formValueStyle.fontSize! * widget.fontSizeProvider.scaleFactor,
+        ),
+        decoration: UIStyles.formInputDecoration.copyWith(
+          labelText: widget.label,
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          labelStyle: UIStyles.formLabelStyle.copyWith(
+            fontSize: UIStyles.formLabelStyle.fontSize! * widget.fontSizeProvider.scaleFactor,
+          ),
+          hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+            fontSize: widget.fontSizeProvider.getScaledFontSize(UIConstants.bodyFontSize),
+          ),
+          filled: true,
+          fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+          focusedBorder: _hasKeyboardFocus
+              ? OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.yellow.shade700,
+                    width: 2.0,
+                  ),
+                )
+              : null,
+        ),
+      ),
+    );
+  }
+}
+
+// Custom Dropdown with keyboard navigation (space to open, arrows to navigate, return to select)
+class _KeyboardFocusDropdown<T> extends StatefulWidget {
+  const _KeyboardFocusDropdown({
+    required this.value,
+    required this.label,
+    required this.semanticLabel,
+    required this.semanticHint,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final T? value;
+  final String label;
+  final String semanticLabel;
+  final String semanticHint;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+
+  @override
+  State<_KeyboardFocusDropdown<T>> createState() => _KeyboardFocusDropdownState<T>();
+}
+
+class _KeyboardFocusDropdownState<T> extends State<_KeyboardFocusDropdown<T>> {
+  final FocusNode _focusNode = FocusNode();
+  bool _hasKeyboardFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: widget.semanticLabel,
+      hint: widget.semanticHint,
+      child: Focus(
+        focusNode: _focusNode,
+        onKeyEvent: (node, event) {
+          // Handle space key to open dropdown - Flutter's dropdown already handles this
+          // but we ensure it's properly handled
+          if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+            // The DropdownButtonFormField will handle opening when space is pressed
+            return KeyEventResult.ignored; // Let the dropdown handle it
+          }
+          return KeyEventResult.ignored;
+        },
+        child: DropdownButtonFormField<T>(
+          value: widget.value,
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: widget.label,
+            filled: true,
+            fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
+            focusedBorder: _hasKeyboardFocus
+                ? OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.yellow.shade700,
+                      width: 2.0,
+                    ),
+                  )
+                : null,
+          ),
+          items: widget.items,
+          onChanged: widget.onChanged,
+          // DropdownButtonFormField already supports:
+          // - Space/Enter to open dropdown
+          // - Arrow keys to navigate
+          // - Enter to select
+        ),
+      ),
+    );
+  }
+}
+
+// Custom FloatingActionButton with keyboard focus highlighting
+class _KeyboardFocusFAB extends StatefulWidget {
+  const _KeyboardFocusFAB({
+    required this.heroTag,
+    required this.icon,
+    required this.tooltip,
+    required this.semanticLabel,
+    required this.semanticHint,
+    required this.onPressed,
+  });
+
+  final String heroTag;
+  final IconData icon;
+  final String tooltip;
+  final String semanticLabel;
+  final String semanticHint;
+  final VoidCallback onPressed;
+
+  @override
+  State<_KeyboardFocusFAB> createState() => _KeyboardFocusFABState();
+}
+
+class _KeyboardFocusFABState extends State<_KeyboardFocusFAB> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Semantics(
+      button: true,
+      label: widget.semanticLabel,
+      hint: widget.semanticHint,
+      child: Focus(
+        focusNode: _focusNode,
+        child: Tooltip(
+          message: widget.tooltip,
+          child: Padding(
+            padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+            child: Container(
+              decoration: hasKeyboardFocus
+                  ? BoxDecoration(
+                      border: Border.all(
+                        color: Colors.yellow.shade700,
+                        width: 3.0,
+                      ),
+                    )
+                  : null,
+              child: FloatingActionButton(
+                heroTag: widget.heroTag,
+                onPressed: widget.onPressed,
+                backgroundColor: UIConstants.defaultAppColor,
+                child: Icon(widget.icon),
+              ),
             ),
           ),
         ),

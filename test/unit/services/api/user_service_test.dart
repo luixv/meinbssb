@@ -1987,19 +1987,14 @@ void main() {
         );
 
         when(
-          mockHttpClient.put(any, any),
-        ).thenAnswer((_) async => {'result': true});
+          mockHttpClient.delete('Kontakt/${contact.personId}/${contact.id}'),
+        ).thenAnswer((_) async => {'result': 1});
 
         final result = await userService.deleteKontakt(contact);
 
         expect(result, isTrue);
         verify(
-          mockHttpClient.put('KontaktAendern', {
-            'PersonID': contact.personId,
-            'KontaktID': contact.id,
-            'KontaktTyp': contact.type,
-            'Kontakt': '', // Empty contact value to indicate deletion
-          }),
+          mockHttpClient.delete('Kontakt/${contact.personId}/${contact.id}'),
         ).called(1);
       });
 
@@ -2014,7 +2009,7 @@ void main() {
           );
 
           when(
-            mockHttpClient.put(any, any),
+            mockHttpClient.delete('Kontakt/${contact.personId}/${contact.id}'),
           ).thenAnswer((_) async => {'result': false});
 
           final result = await userService.deleteKontakt(contact);
@@ -2032,7 +2027,7 @@ void main() {
         );
 
         when(
-          mockHttpClient.put(any, any),
+          mockHttpClient.delete('Kontakt/${contact.personId}/${contact.id}'),
         ).thenThrow(Exception('Network error'));
 
         final result = await userService.deleteKontakt(contact);
@@ -2047,7 +2042,9 @@ void main() {
           type: 4,
           value: 'test@example.com',
         );
-        when(mockHttpClient.put(any, any)).thenAnswer((_) async => 'notamap');
+        when(
+          mockHttpClient.delete('Kontakt/${contact.personId}/${contact.id}'),
+        ).thenAnswer((_) async => 'notamap');
         final result = await userService.deleteKontakt(contact);
         expect(result, isFalse);
       });

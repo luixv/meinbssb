@@ -43,7 +43,7 @@
   "emailContent": {
     "schulungAnmeldungSubject": "Schulung Anmeldung",
     "schulungContent": "Sie sind für einen Schulung angemeldet",
-    "registrationSubject": "Bestätigung der E-Mail Adresse",
+    "registrationSubject": "MeinBSSB Account: Registrierung abschließen",
     "accountCreatedSubject": "MeinBSSB Account wurde erstellt",
     "passwordResetSubject": "Passwort zurücksetzen",
     "schulungAbmeldungSubject": "Bestätigung der Abmeldung"

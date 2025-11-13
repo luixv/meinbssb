@@ -28,6 +28,8 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String _errorMessage = '';
@@ -70,9 +72,17 @@ class LoginScreenState extends State<LoginScreen> {
     setState(() {
       if (savedEmail != null && savedEmail.isNotEmpty) {
         _emailController.text = savedEmail;
+        // Set cursor position to the end of the text
+        _emailController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _emailController.text.length),
+        );
       }
       if (savedPassword != null && savedPassword.isNotEmpty) {
         _passwordController.text = savedPassword;
+        // Set cursor position to the end of the text
+        _passwordController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _passwordController.text.length),
+        );
       }
     });
   }
@@ -81,6 +91,8 @@ class LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -243,7 +255,9 @@ class LoginScreenState extends State<LoginScreen> {
           child: TextField(
             key: const Key('usernameField'),
             controller: _emailController,
+            focusNode: _emailFocusNode,
             keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
             enableInteractiveSelection: true,
             enableSuggestions: true,
             autocorrect: false,
@@ -261,6 +275,10 @@ class LoginScreenState extends State<LoginScreen> {
                     fontSizeProvider.scaleFactor,
               ),
             ),
+            onSubmitted: (value) {
+              // Move focus to password field when Tab or Enter is pressed
+              _passwordFocusNode.requestFocus();
+            },
           ),
         );
       },
@@ -278,7 +296,9 @@ class LoginScreenState extends State<LoginScreen> {
           child: TextField(
             key: const Key('passwordField'),
             controller: _passwordController,
+            focusNode: _passwordFocusNode,
             obscureText: !_isPasswordVisible,
+            textInputAction: TextInputAction.done,
             style: UIStyles.formLabelStyle.copyWith(
               fontSize:
                   UIStyles.formLabelStyle.fontSize! *
@@ -291,18 +311,25 @@ class LoginScreenState extends State<LoginScreen> {
                     UIStyles.formLabelStyle.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              suffixIcon: Semantics(
+                label: _isPasswordVisible 
+                    ? 'Passwort verbergen' 
+                    : 'Passwort anzeigen',
+                hint: 'Tippen, um die Passwort-Sichtbarkeit zu ändern',
+                button: true,
+                child: IconButton(
+                  icon: Icon(
+                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  tooltip: 'Passwort anzeigen/verbergen',
+                  onPressed: () {
+                    if (mounted) {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    }
+                  },
                 ),
-                tooltip: 'Passwort anzeigen/verbergen',
-                onPressed: () {
-                  if (mounted) {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  }
-                },
               ),
             ),
             onSubmitted: (value) => _handleLogin(),
@@ -380,19 +407,25 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildRememberMeCheckbox() {
-    return Row(
-      children: [
-        Checkbox(
-          value: _rememberMe,
-          onChanged: (bool? value) {
-            setState(() {
-              _rememberMe = value ?? false;
-            });
-          },
-          activeColor: _appColor,
-        ),
-        const ScaledText('Angemeldet bleiben', style: UIStyles.bodyStyle),
-      ],
+    return Semantics(
+      label: 'Angemeldet bleiben',
+      hint: 'Aktivieren, um beim nächsten Start automatisch eingeloggt zu bleiben',
+      value: _rememberMe ? 'Aktiviert' : 'Nicht aktiviert',
+      toggled: _rememberMe,
+      child: Row(
+        children: [
+          Checkbox(
+            value: _rememberMe,
+            onChanged: (bool? value) {
+              setState(() {
+                _rememberMe = value ?? false;
+              });
+            },
+            activeColor: _appColor,
+          ),
+          const ScaledText('Angemeldet bleiben', style: UIStyles.bodyStyle),
+        ],
+      ),
     );
   }
 
@@ -414,7 +447,7 @@ class LoginScreenState extends State<LoginScreen> {
             child: Padding(
               padding: UIConstants.screenPadding,
               child: Semantics(
-                label: 'Login-Bereich',
+                label: 'Login-Bereich. Geben Sie Ihre Anmeldedaten ein, um sich anzumelden.',
                 child: Focus(
                   autofocus: true,
                   onKey: (node, event) {
@@ -433,10 +466,13 @@ class LoginScreenState extends State<LoginScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      widget.logoWidget ?? const LogoWidget(),
+                      ExcludeSemantics(
+                        child: widget.logoWidget ?? const LogoWidget(),
+                      ),
                       const SizedBox(height: UIConstants.spacingS),
                       Semantics(
-                        label: 'Login Titel',
+                        header: true,
+                        label: '${Messages.loginTitle}, Überschrift',
                         hint: 'Login-Bereich für registrierte Nutzer',
                         child: ScaledText(
                           Messages.loginTitle,
@@ -458,31 +494,11 @@ class LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       const SizedBox(height: UIConstants.spacingM),
-                      Focus(
-                        child: Semantics(
-                          label: 'E-Mail Eingabefeld',
-                          hint: 'Geben Sie Ihre E-Mail Adresse ein',
-                          child: _buildEmailField(),
-                        ),
-                      ),
+                      _buildEmailField(),
                       const SizedBox(height: UIConstants.spacingS),
-                      Focus(
-                        child: Semantics(
-                          label: 'Passwort Eingabefeld',
-                          hint:
-                              'Geben Sie Ihr Passwort ein. Sichtbarkeit kann mit dem Symbol geändert werden.',
-                          child: _buildPasswordField(),
-                        ),
-                      ),
+                      _buildPasswordField(),
                       const SizedBox(height: UIConstants.spacingS),
-                      Focus(
-                        child: Semantics(
-                          label: 'Angemeldet bleiben Checkbox',
-                          hint:
-                              'Aktivieren, um beim nächsten Start automatisch eingeloggt zu bleiben',
-                          child: _buildRememberMeCheckbox(),
-                        ),
-                      ),
+                      _buildRememberMeCheckbox(),
                       const SizedBox(height: UIConstants.spacingM),
                       Focus(
                         onKey: (node, event) {

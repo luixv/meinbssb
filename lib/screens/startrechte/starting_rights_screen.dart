@@ -16,6 +16,7 @@ import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/startrechte/starting_rights_header.dart';
 import 'package:meinbssb/screens/startrechte/starting_rights_zweitverein_table.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 class StartingRightsScreen extends StatefulWidget {
   const StartingRightsScreen({
@@ -391,33 +392,28 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
         onLogout: widget.onLogout,
         floatingActionButton:
             _hasUnsavedChanges
-                ? Semantics(
-                  button: true,
-                  label: 'Änderungen speichern',
-                  hint:
-                      'Tippen, um Änderungen an den Startrechten zu speichern',
-                  child: FloatingActionButton(
+                ? KeyboardFocusFAB(
                     heroTag: 'saveFab',
                     onPressed: _onSave,
-                    backgroundColor: UIConstants.defaultAppColor,
-                    child:
-                        _isLoading
-                            ? const SizedBox(
-                              width: UIConstants.fabIconSize,
-                              height: UIConstants.fabIconSize,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  UIConstants.whiteColor,
-                                ),
-                                strokeWidth: UIConstants.defaultStrokeWidth,
+                    tooltip: 'Speichern',
+                    semanticLabel: 'Änderungen speichern',
+                    semanticHint: 'Tippen, um Änderungen an den Startrechten zu speichern',
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: UIConstants.fabIconSize,
+                            height: UIConstants.fabIconSize,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.whiteColor,
                               ),
-                            )
-                            : const Icon(
-                              Icons.save,
-                              color: UIConstants.whiteColor,
+                              strokeWidth: UIConstants.defaultStrokeWidth,
                             ),
-                  ),
-                )
+                          )
+                        : const Icon(
+                            Icons.save,
+                            color: UIConstants.whiteColor,
+                          ),
+                  )
                 : null,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
