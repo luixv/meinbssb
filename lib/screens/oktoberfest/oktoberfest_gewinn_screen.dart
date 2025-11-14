@@ -171,7 +171,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const ScaledText(
-                        'Oktoberfestlandesschießen Gewinne abrufen',
+                        'Oktoberfestlandesschießen\nGewinne abrufen',
                         style: UIStyles.headerStyle,
                       ),
                       const SizedBox(height: UIConstants.spacingS),
@@ -305,15 +305,26 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                         ),
                       ],
                       const SizedBox(height: UIConstants.spacingL),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.3,
-                            minWidth: 280,
-                          ),
-                          child: _buildBankDataSection(),
-                        ),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final screenWidth = constraints.maxWidth;
+                          final bool isWide = screenWidth >= 900;
+                          final double targetWidth =
+                              screenWidth * (isWide ? 0.3 : 0.7);
+                          final double clampedWidth = targetWidth.clamp(
+                            280.0,
+                            double.infinity,
+                          );
+                          final double finalWidth =
+                              clampedWidth > screenWidth ? screenWidth : clampedWidth;
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                              width: finalWidth,
+                              child: _buildBankDataSection(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -353,23 +364,11 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       tooltip: 'Gewinne abrufen',
                       semanticLabel: 'Gewinne abrufen',
                       backgroundColor:
-                          (_bankDataResult != null &&
-                                  _bankDataResult!.kontoinhaber.isNotEmpty &&
-                                  _bankDataResult!.iban.isNotEmpty &&
-                                  (_bankDataResult!.iban
-                                          .toUpperCase()
-                                          .startsWith('DE') ||
-                                      _bankDataResult!.bic.isNotEmpty))
+                          _canSubmitGewinne
                               ? UIConstants.defaultAppColor
                               : UIConstants.cancelButtonBackground,
                       onPressed:
-                          (_bankDataResult != null &&
-                                  _bankDataResult!.kontoinhaber.isNotEmpty &&
-                                  _bankDataResult!.iban.isNotEmpty &&
-                                  (_bankDataResult!.iban
-                                          .toUpperCase()
-                                          .startsWith('DE') ||
-                                      _bankDataResult!.bic.isNotEmpty))
+                          _canSubmitGewinne
                               ? () async {
                                 setState(() {
                                   _loading = true;
@@ -399,6 +398,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                             UIConstants.successColor,
                                       ),
                                     );
+                                    _fetchGewinne();
                                   } else {
                                     if (!mounted) return;
                                     scaffoldMessenger.showSnackBar(
@@ -446,6 +446,17 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
       ],
     );
   }
+
+  bool get _hasPendingGewinne =>
+      _gewinne.any((g) => g.abgerufenAm.isEmpty);
+
+  bool get _canSubmitGewinne =>
+      _hasPendingGewinne &&
+      _bankDataResult != null &&
+      _bankDataResult!.kontoinhaber.isNotEmpty &&
+      _bankDataResult!.iban.isNotEmpty &&
+      (_bankDataResult!.iban.toUpperCase().startsWith('DE') ||
+          _bankDataResult!.bic.isNotEmpty);
 
   Widget _buildBankDataSection() {
     return Container(

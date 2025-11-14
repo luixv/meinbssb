@@ -240,7 +240,7 @@ class _PersonalAccountDeleteScreenState
                                 ),
                                 child: Center(
                                   child: Text(
-                                    'Benutzerkonto Löschen',
+                                    'Benutzerkonto löschen',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: fontSizeProvider
