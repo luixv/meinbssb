@@ -8,6 +8,7 @@ import '/screens/base_screen_layout.dart';
 import '/models/schulung_data.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
+import '/widgets/keyboard_focus_profile_button.dart';
 
 class AbsolvierteSchulungenScreen extends StatefulWidget {
   const AbsolvierteSchulungenScreen(
@@ -246,22 +247,15 @@ class AbsolvierteSchulungenScreenState
                   if (offlineSnapshot.hasData && offlineSnapshot.data == true) {
                     return const SizedBox.shrink();
                   }
-                  return FloatingActionButton(
+                  return KeyboardFocusProfileButton(
                     heroTag: 'absolvierteSchulungenFab',
+                    semanticLabel: 'Zum Profil wechseln',
                     onPressed: () {
                       Navigator.of(context).pushReplacementNamed(
                         '/profile',
                         arguments: {'isLoggedIn': true},
                       );
                     },
-                    backgroundColor: UIConstants.defaultAppColor,
-                    child: const Tooltip(
-                      message: 'Profil',
-                      child: Icon(
-                        Icons.person,
-                        color: UIConstants.whiteColor,
-                      ),
-                    ),
                   );
                 },
               ),

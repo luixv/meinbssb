@@ -1,162 +1,149 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/oktoberfest/oktoberfest_gewinn_screen.dart';
-import 'package:meinbssb/models/gewinn_data.dart';
-import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/services/api_service.dart';
-import 'package:provider/provider.dart';
-import 'package:meinbssb/providers/font_size_provider.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
-@GenerateMocks([ApiService])
-import 'oktoberfest_gewinn_screen_test.mocks.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
+
+import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/gewinn_data.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:meinbssb/screens/oktoberfest/oktoberfest_gewinn_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
+
+import 'oktoberfest_gewinn_screen_test.mocks.dart';
+
+@GenerateMocks([ApiService])
 void main() {
-  late UserData userData;
   late MockApiService mockApiService;
+  late UserData userData;
+  late String passnummer;
+  late int currentYear;
 
   setUp(() {
     mockApiService = MockApiService();
+    passnummer = 'PASS-1';
     userData = UserData(
       personId: 1,
-      webLoginId: 123,
-      passnummer: 'P123',
-      vereinNr: 456,
-      namen: 'Mustermann',
-      vorname: 'Max',
-      vereinName: 'Testverein',
-      passdatenId: 789,
-      mitgliedschaftId: 1011,
+      webLoginId: 999,
+      passnummer: passnummer,
+      vereinNr: 42,
+      namen: 'Doe',
+      vorname: 'Jane',
+      vereinName: 'Demo Verein',
+      passdatenId: 77,
+      mitgliedschaftId: 88,
+    );
+    currentYear = DateTime.now().year;
+
+    when(mockApiService.fetchGewinne(any, any)).thenAnswer((_) async => []);
+    when(mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
+      (_) async => [
+        BankData(
+          id: 1,
+          webloginId: userData.webLoginId,
+          kontoinhaber: 'Jane Doe',
+          iban: 'DE00123456780000000000',
+          bic: 'GENODEF1XXX',
+          mandatSeq: 1,
+        ),
+      ],
     );
   });
 
-  Widget buildTestWidget({bool isLoggedIn = true}) {
+  Widget buildTestWidget() {
     return MaterialApp(
-      home: ChangeNotifierProvider<FontSizeProvider>(
-        create: (_) => FontSizeProvider(),
+      home: MultiProvider(
+        providers: [
+          Provider<ApiService>.value(value: mockApiService),
+          ChangeNotifierProvider(create: (_) => FontSizeProvider()),
+        ],
         child: OktoberfestGewinnScreen(
-          userData: userData,
-          isLoggedIn: isLoggedIn,
-          passnummer: 'P123',
+          passnummer: passnummer,
           apiService: mockApiService,
+          userData: userData,
+          isLoggedIn: true,
           onLogout: () {},
         ),
       ),
     );
   }
 
-  testWidgets('renders basic UI structure', (tester) async {
+  testWidgets('fetches Gewinne for current year on init', (tester) async {
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
-    expect(find.text('Meine Gewinne für das Jahr:'), findsOneWidget);
-    expect(find.text('Oktoberfestlandesschießen'), findsOneWidget);
-    expect(find.byType(DropdownButtonFormField<int>), findsOneWidget);
-    expect(find.text('Gewinne abrufen'), findsOneWidget);
+
+    verify(mockApiService.fetchGewinne(currentYear, passnummer))
+        .called(1);
   });
 
-  testWidgets('dropdown preselects 2025', (tester) async {
+  testWidgets('prefills bank data form with stored values', (tester) async {
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
-    final dropdown = tester.widget<DropdownButtonFormField<int>>(
-      find.byType(DropdownButtonFormField<int>),
-    );
-    expect(dropdown.initialValue, equals(2025));
+
+    expect(find.text('Jane Doe'), findsOneWidget);
+    expect(find.text('DE00123456780000000000'), findsOneWidget);
+    expect(find.text('GENODEF1XXX'), findsOneWidget);
   });
 
-  testWidgets('shows loading indicator when fetching', (tester) async {
-    var fetchCompleter = Completer<List<Gewinn>>();
-    when(
-      mockApiService.fetchGewinne(2024, 'P123'),
-    ).thenAnswer((_) => fetchCompleter.future);
+  testWidgets('changing year triggers new fetch', (tester) async {
     await tester.pumpWidget(buildTestWidget());
+    await tester.pumpAndSettle();
+
+    when(mockApiService.fetchGewinne(currentYear - 1, passnummer))
+        .thenAnswer((_) async => [Gewinn(gewinnId: 1, jahr: currentYear - 1, tradition: true, isSachpreis: true, geldpreis: 0, sachpreis: 'Preis', wettbewerb: 'Test', abgerufenAm: '', platz: 1)]);
+
     await tester.tap(find.byType(DropdownButtonFormField<int>));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('2024').last);
-    await tester.pump(); // Start the fetch, loading should be true
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    // Complete the fetch
-    fetchCompleter.complete([]);
+    await tester.tap(find.text('${currentYear - 1}').last);
     await tester.pumpAndSettle();
+
+    verify(mockApiService.fetchGewinne(currentYear - 1, passnummer))
+        .called(1);
   });
 
-  testWidgets('shows list of gewinne when present', (tester) async {
+  testWidgets('renders list tiles when Gewinne returned', (tester) async {
     when(mockApiService.fetchGewinne(any, any)).thenAnswer(
       (_) async => [
         Gewinn(
-          gewinnId: 1,
-          jahr: 2025,
+          gewinnId: 7,
+          jahr: currentYear,
           tradition: true,
           isSachpreis: false,
-          geldpreis: 100,
+          geldpreis: 250,
           sachpreis: '',
-          wettbewerb: 'Wettbewerb 1',
+          wettbewerb: 'Schießen A',
           abgerufenAm: '',
-          platz: 1,
+          platz: 2,
         ),
       ],
     );
+
     await tester.pumpWidget(buildTestWidget());
-    // Simulate year change to trigger fetchGewinne
-    await tester.tap(find.byType(DropdownButtonFormField<int>));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('2024').last);
-    await tester.pumpAndSettle();
+
     expect(find.byType(ListTile), findsWidgets);
-    expect(find.textContaining('Wettbewerb 1'), findsOneWidget);
+    expect(find.textContaining('Schießen A'), findsOneWidget);
   });
 
-  testWidgets('shows Bankdaten button when gewinne need bank data', (
-    tester,
-  ) async {
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 1,
-          jahr: 2025,
-          tradition: true,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Wettbewerb 1',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-      ],
-    );
-    await tester.pumpWidget(buildTestWidget());
-    // Simulate year change to trigger fetchGewinne
-    await tester.tap(find.byType(DropdownButtonFormField<int>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('2024').last);
-    await tester.pumpAndSettle();
-    expect(find.widgetWithText(ElevatedButton, 'Bankdaten'), findsOneWidget);
-  });
+  testWidgets('shows loading indicator while fetching', (tester) async {
+    final completer = Completer<List<Gewinn>>();
+    when(mockApiService.fetchGewinne(currentYear - 1, passnummer))
+        .thenAnswer((_) => completer.future);
 
-  testWidgets('FABs are visible when gewinne need to be abgerufen', (
-    tester,
-  ) async {
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 1,
-          jahr: 2025,
-          tradition: true,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Wettbewerb 1',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-      ],
-    );
     await tester.pumpWidget(buildTestWidget());
-    // Simulate year change to trigger fetchGewinne
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byType(DropdownButtonFormField<int>));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('2024').last);
+    await tester.tap(find.text('${currentYear - 1}').last);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsWidgets);
+
+    completer.complete([]);
     await tester.pumpAndSettle();
-    expect(find.byType(FloatingActionButton), findsWidgets);
   });
 }

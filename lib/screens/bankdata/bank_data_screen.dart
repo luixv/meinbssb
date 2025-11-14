@@ -11,6 +11,7 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/bankdata/bank_data_success_screen.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 class BankDataScreen extends StatefulWidget {
   const BankDataScreen(
@@ -384,60 +385,41 @@ class BankDataScreenState extends State<BankDataScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Tooltip(
-            message: 'Bearbeitung abbrechen',
-            child: Semantics(
-              label: 'Abbrechen Button',
-              hint: 'Bearbeitung abbrechen und Änderungen verwerfen',
-              button: true,
-              child: Focus(
-                canRequestFocus: true,
-                child: FloatingActionButton(
-                  heroTag: 'bankDataCancelFab',
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = false;
-                      _kontoinhaberController.clear();
-                      _ibanController.clear();
-                      _bicController.clear();
-                      _loadInitialData();
-                    });
-                  },
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(Icons.close, color: UIConstants.whiteColor),
-                ),
-              ),
-            ),
+          KeyboardFocusFAB(
+            heroTag: 'bankDataCancelFab',
+            tooltip: 'Bearbeitung abbrechen',
+            semanticLabel: 'Abbrechen Button',
+            semanticHint: 'Bearbeitung abbrechen und Änderungen verwerfen',
+            icon: Icons.close,
+            onPressed: () {
+              setState(() {
+                _isEditing = false;
+                _kontoinhaberController.clear();
+                _ibanController.clear();
+                _bicController.clear();
+                _loadInitialData();
+              });
+            },
           ),
           const SizedBox(height: UIConstants.spacingM),
 
-          Tooltip(
-            message: 'Bankdaten speichern',
-            child: Semantics(
-              label: 'Speichern Button',
-              hint: 'Bankdaten speichern',
-              button: true,
-              child: Focus(
-                canRequestFocus: true,
-                child: FloatingActionButton(
-                  heroTag: 'bankDataSaveFab',
-                  onPressed: _isSaving ? null : _onSaveBankData,
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child:
-                      _isSaving
-                          ? const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              UIConstants.circularProgressIndicator,
-                            ),
-                            strokeWidth: UIConstants.defaultStrokeWidth,
-                          )
-                          : const Icon(
-                            Icons.save,
-                            color: UIConstants.whiteColor,
-                          ),
-                ),
-              ),
-            ),
+          KeyboardFocusFAB(
+            heroTag: 'bankDataSaveFab',
+            tooltip: 'Bankdaten speichern',
+            semanticLabel: 'Speichern Button',
+            semanticHint: 'Bankdaten speichern',
+            onPressed: _isSaving ? null : _onSaveBankData,
+            child: _isSaving
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      UIConstants.circularProgressIndicator,
+                    ),
+                    strokeWidth: UIConstants.defaultStrokeWidth,
+                  )
+                : const Icon(
+                    Icons.save,
+                    color: UIConstants.whiteColor,
+                  ),
           ),
         ],
       );
@@ -445,53 +427,34 @@ class BankDataScreenState extends State<BankDataScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Tooltip(
-            message: 'Bankdaten löschen',
-            child: Semantics(
-              hint: 'Bankdaten löschen',
-              button: true,
-              child: Focus(
-                canRequestFocus: true,
-                child: FloatingActionButton(
-                  heroTag: 'bankDataDeleteFab',
-                  onPressed: _isSaving ? null : _onDeleteBankData,
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child:
-                      _isSaving
-                          ? const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              UIConstants.whiteColor,
-                            ),
-                            strokeWidth: UIConstants.defaultStrokeWidth,
-                          )
-                          : const Icon(
-                            Icons.delete_outline,
-                            color: UIConstants.whiteColor,
-                          ),
-                ),
-              ),
-            ),
+          KeyboardFocusFAB(
+            heroTag: 'bankDataDeleteFab',
+            tooltip: 'Bankdaten löschen',
+            semanticLabel: 'Bankdaten löschen',
+            onPressed: _isSaving ? null : _onDeleteBankData,
+            child: _isSaving
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      UIConstants.whiteColor,
+                    ),
+                    strokeWidth: UIConstants.defaultStrokeWidth,
+                  )
+                : const Icon(
+                    Icons.delete_outline,
+                    color: UIConstants.whiteColor,
+                  ),
           ),
           const SizedBox(height: UIConstants.spacingM),
-          Tooltip(
-            message: 'Bankdaten bearbeiten',
-            child: Semantics(
-              hint: 'Bankdaten bearbeiten',
-              button: true,
-              child: Focus(
-                canRequestFocus: true,
-                child: FloatingActionButton(
-                  heroTag: 'bankDataEditFab',
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = true;
-                    });
-                  },
-                  backgroundColor: UIConstants.defaultAppColor,
-                  child: const Icon(Icons.edit, color: UIConstants.whiteColor),
-                ),
-              ),
-            ),
+          KeyboardFocusFAB(
+            heroTag: 'bankDataEditFab',
+            tooltip: 'Bankdaten bearbeiten',
+            semanticLabel: 'Bankdaten bearbeiten',
+            onPressed: () {
+              setState(() {
+                _isEditing = true;
+              });
+            },
+            icon: Icons.edit,
           ),
         ],
       );
@@ -645,7 +608,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                             ? 'Dieses Feld ist nicht bearbeitbar.'
                             : 'Bitte geben Sie den Kontoinhaber ein.',
                     textField: true,
-                    child: _buildTextField(
+                  child: _buildTextField(
                       label: 'Kontoinhaber',
                       controller: _kontoinhaberController,
                       isReadOnly: !_isEditing,
@@ -664,7 +627,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                             ? 'Dieses Feld ist nicht bearbeitbar.'
                             : 'Bitte geben Sie Ihre IBAN ein.',
                     textField: true,
-                    child: _buildTextField(
+                  child: _buildTextField(
                       label: 'IBAN',
                       controller: _ibanController,
                       isReadOnly: !_isEditing,
@@ -686,7 +649,7 @@ class BankDataScreenState extends State<BankDataScreen> {
                             ? 'Dieses Feld ist nicht bearbeitbar.'
                             : 'Bitte geben Sie Ihre BIC ein.',
                     textField: true,
-                    child: _buildTextField(
+                  child: _buildTextField(
                       label: 'BIC',
                       controller: _bicController,
                       isReadOnly: !_isEditing,
@@ -726,54 +689,125 @@ class BankDataScreenState extends State<BankDataScreen> {
   }) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
-          child: TextFormField(
-            controller: controller,
-            style:
-                isReadOnly
-                    ? UIStyles.formValueBoldStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueBoldStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    )
-                    : UIStyles.formValueStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueStyle.fontSize! *
-                          fontSizeProvider.scaleFactor,
-                    ),
-            decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: label,
-              labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.labelStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              floatingLabelStyle: UIStyles
-                  .formInputDecoration
-                  .floatingLabelStyle
-                  ?.copyWith(
-                    fontSize:
-                        UIStyles
-                            .formInputDecoration
-                            .floatingLabelStyle!
-                            .fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: isReadOnly ? null : label,
-              hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-                fontSize:
-                    UIStyles.formInputDecoration.hintStyle!.fontSize! *
-                    fontSizeProvider.scaleFactor,
-              ),
-              filled: true,
-            ),
-            validator: validator,
-            readOnly: isReadOnly,
-          ),
+        return _BankDataKeyboardTextField(
+          label: label,
+          controller: controller,
+          validator: validator,
+          isReadOnly: isReadOnly,
+          fontSizeProvider: fontSizeProvider,
         );
       },
+    );
+  }
+}
+
+class _BankDataKeyboardTextField extends StatefulWidget {
+  const _BankDataKeyboardTextField({
+    required this.label,
+    required this.controller,
+    this.validator,
+    this.isReadOnly = false,
+    required this.fontSizeProvider,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final String? Function(String?)? validator;
+  final bool isReadOnly;
+  final FontSizeProvider fontSizeProvider;
+
+  @override
+  State<_BankDataKeyboardTextField> createState() =>
+      _BankDataKeyboardTextFieldState();
+}
+
+class _BankDataKeyboardTextFieldState extends State<_BankDataKeyboardTextField> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  OutlineInputBorder _border(Color color, double width) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+      borderSide: BorderSide(color: color, width: width),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    final baseFillColor = widget.isReadOnly ? Colors.grey.shade100 : UIConstants.whiteColor;
+
+    final decoration = UIStyles.formInputDecoration.copyWith(
+      labelText: widget.label,
+      labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+        fontSize:
+            UIStyles.formInputDecoration.labelStyle!.fontSize! *
+            widget.fontSizeProvider.scaleFactor,
+      ),
+      floatingLabelStyle:
+          UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
+        fontSize:
+            UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+            widget.fontSizeProvider.scaleFactor,
+      ),
+      floatingLabelBehavior: FloatingLabelBehavior.always,
+      hintText: widget.isReadOnly ? null : widget.label,
+      hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+        fontSize:
+            UIStyles.formInputDecoration.hintStyle!.fontSize! *
+            widget.fontSizeProvider.scaleFactor,
+      ),
+      filled: true,
+      fillColor: hasKeyboardFocus ? Colors.yellow.shade50 : baseFillColor,
+      enabledBorder: _border(UIConstants.mydarkGreyColor, 1.0),
+      focusedBorder: _border(
+        hasKeyboardFocus ? Colors.yellow.shade700 : UIConstants.primaryColor,
+        hasKeyboardFocus ? 2.5 : 1.5,
+      ),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+      child: TextFormField(
+        focusNode: _focusNode,
+        controller: widget.controller,
+        style: widget.isReadOnly
+            ? UIStyles.formValueBoldStyle.copyWith(
+                fontSize:
+                    UIStyles.formValueBoldStyle.fontSize! *
+                    widget.fontSizeProvider.scaleFactor,
+              )
+            : UIStyles.formValueStyle.copyWith(
+                fontSize:
+                    UIStyles.formValueStyle.fontSize! *
+                    widget.fontSizeProvider.scaleFactor,
+              ),
+        decoration: decoration,
+        validator: widget.validator,
+        readOnly: widget.isReadOnly,
+      ),
     );
   }
 }

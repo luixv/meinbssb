@@ -1,96 +1,99 @@
-import 'package:mockito/mockito.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/screens/menu/oktoberfest_menu.dart';
-import 'package:meinbssb/models/user_data.dart';
+import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/providers/font_size_provider.dart';
-import '../../helpers/test_helper.dart';
 
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:meinbssb/screens/menu/oktoberfest_menu.dart';
+import 'package:meinbssb/screens/oktoberfest/oktoberfest_gewinn_screen.dart';
+import 'package:meinbssb/screens/oktoberfest/oktoberfest_results_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 
+import '../../helpers/test_helper.dart';
+
+class MockNavigatorObserver extends Mock implements NavigatorObserver {}
+
 void main() {
+  late MockNavigatorObserver navigatorObserver;
+
+  const userData = UserData(
+    personId: 1,
+    webLoginId: 1,
+    passnummer: '123456',
+    vereinNr: 1,
+    namen: 'Mustermann',
+    vorname: 'Max',
+    vereinName: 'Testverein',
+    passdatenId: 1,
+    mitgliedschaftId: 1,
+    land: '',
+    nationalitaet: '',
+    passStatus: 0,
+    telefon: '',
+    erstLandesverbandId: 0,
+    erstVereinId: 0,
+    digitalerPass: 0,
+    isOnline: false,
+  );
+
   setUp(() {
     TestHelper.setupMocks();
-  });
-  group('OktoberfestScreen', () {
-    final userData = const UserData(
-      personId: 1,
-      webLoginId: 1,
-      passnummer: '123456',
-      vereinNr: 1,
-      namen: 'Mustermann',
-      vorname: 'Max',
-      titel: null,
-      geburtsdatum: null,
-      geschlecht: null,
-      vereinName: 'Testverein',
-      strasse: null,
-      plz: null,
-      ort: null,
-      land: '',
-      nationalitaet: '',
-      passStatus: 0,
-      passdatenId: 1,
-      eintrittVerein: null,
-      austrittVerein: null,
-      mitgliedschaftId: 1,
-      telefon: '',
-      erstLandesverbandId: 0,
-      produktionsDatum: null,
-      erstVereinId: 0,
-      digitalerPass: 0,
-      isOnline: false,
-      disziplin: null,
+    navigatorObserver = MockNavigatorObserver();
+    when(TestHelper.mockApiService.fetchResults(any)).thenAnswer(
+      (_) async => [],
     );
+    when(TestHelper.mockApiService.fetchGewinne(any, any)).thenAnswer(
+      (_) async => [],
+    );
+    when(TestHelper.mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
+      (_) async => [],
+    );
+  });
 
-    Widget buildTestWidget() {
-      return MultiProvider(
-        providers: [
-          Provider<ApiService>.value(value: TestHelper.mockApiService),
-          ChangeNotifierProvider<FontSizeProvider>(
-            create: (_) => FontSizeProvider(),
-          ),
-        ],
-        child: MaterialApp(
-          home: OktoberfestScreen(
-            userData: userData,
-            isLoggedIn: true,
-            onLogout: () {},
-          ),
+  Widget buildTestWidget() {
+    return MultiProvider(
+      providers: [
+        Provider<ApiService>.value(value: TestHelper.mockApiService),
+        ChangeNotifierProvider<FontSizeProvider>(
+          create: (_) => FontSizeProvider(),
         ),
-      );
-    }
+      ],
+      child: MaterialApp(
+        navigatorObservers: [navigatorObserver],
+        home: OktoberfestScreen(
+          userData: userData,
+          isLoggedIn: true,
+          onLogout: () {},
+        ),
+      ),
+    );
+  }
 
-    testWidgets('shows menu items', (tester) async {
+
+  group('Oktoberfest menu', () {
+    testWidgets('renders heading and menu cards', (tester) async {
       await tester.pumpWidget(buildTestWidget());
-      expect(find.text('Oktoberfest'), findsWidgets); // Allow multiple
+      expect(find.text('Oktoberfest'), findsWidgets);
       expect(find.text('Meine Ergebnisse'), findsOneWidget);
       expect(find.text('Meine Gewinne'), findsOneWidget);
     });
 
-    testWidgets('tapping Meine Ergebnisse navigates', (tester) async {
-      // Stub fetchResults for navigation
-      when(
-        TestHelper.mockApiService.fetchResults(any),
-      ).thenAnswer((_) async => []);
+    testWidgets('navigates to results screen', (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.tap(find.text('Meine Ergebnisse'));
       await tester.pumpAndSettle();
-      // Should navigate to OktoberfestResultsScreen, but we just check navigation occurred
-      expect(find.byType(OktoberfestScreen), findsNothing);
+
+      expect(find.byType(OktoberfestResultsScreen), findsOneWidget);
     });
 
-    testWidgets('tapping Meine Gewinne navigates', (tester) async {
-      // Stub fetchGewinne for navigation
-      when(
-        TestHelper.mockApiService.fetchGewinne(any, any),
-      ).thenAnswer((_) async => []);
+    testWidgets('navigates to gewinn screen', (tester) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.tap(find.text('Meine Gewinne'));
       await tester.pumpAndSettle();
-      // Should navigate to OktoberfestGewinnScreen, but we just check navigation occurred
-      expect(find.byType(OktoberfestScreen), findsNothing);
+
+      expect(find.byType(OktoberfestGewinnScreen), findsOneWidget);
     });
   });
 }
+

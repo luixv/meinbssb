@@ -145,29 +145,28 @@ class _SettingsButtonState extends State<_SettingsButton> {
     return SizedBox(
       width: UIConstants.smallButtonSize,
       height: UIConstants.smallButtonSize,
-      child: Focus(
-        focusNode: _focusNode,
-          child: Container(
-            decoration: hasKeyboardFocus
-                ? BoxDecoration(
-                    border: Border.all(
-                      color: Colors.yellow.shade700,
-                      width: 3.0,
-                    ),
-                  )
-                : null,
-          child: FloatingActionButton(
-            heroTag: widget.heroTag,
-            onPressed: widget.onPressed,
-            backgroundColor: UIConstants.defaultAppColor,
-            disabledElevation: 0,
-            elevation: 2,
-            shape: const CircleBorder(),
-            child: Icon(
-              widget.icon,
-              color: Colors.white,
-              size: UIConstants.fabSmallIconSize,
-            ),
+      child: Container(
+        padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+        decoration: hasKeyboardFocus
+            ? BoxDecoration(
+                border: Border.all(
+                  color: Colors.yellow.shade700,
+                  width: 3.0,
+                ),
+              )
+            : null,
+        child: FloatingActionButton(
+          focusNode: _focusNode,
+          heroTag: widget.heroTag,
+          onPressed: widget.onPressed,
+          backgroundColor: UIConstants.defaultAppColor,
+          disabledElevation: 0,
+          elevation: 2,
+          shape: const CircleBorder(),
+          child: Icon(
+            widget.icon,
+            color: Colors.white,
+            size: UIConstants.fabSmallIconSize,
           ),
         ),
       ),

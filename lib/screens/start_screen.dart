@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 
-import 'dart:typed_data';
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
 
@@ -137,6 +137,41 @@ class StartScreenState extends State<StartScreen> {
     LoggerService.logInfo('Logging out user: ${widget.userData?.vorname}');
     widget.onLogout();
     // Navigation is handled by the app's logout handler
+  }
+
+  void _openPersonalPictUploadScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PersonalPictUploadScreen(
+          userData: widget.userData,
+          isLoggedIn: widget.isLoggedIn,
+          onLogout: widget.onLogout,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfilePictureButton(Widget child) {
+    return Focus(
+      canRequestFocus: true,
+      onKey: (node, event) {
+        if (event is KeyDownEvent &&
+            (event.logicalKey == LogicalKeyboardKey.enter ||
+                event.logicalKey == LogicalKeyboardKey.numpadEnter)) {
+          _openPersonalPictUploadScreen();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Semantics(
+        button: true,
+        label: 'Profilbild bearbeiten',
+        child: GestureDetector(
+          onTap: _openPersonalPictUploadScreen,
+          child: child,
+        ),
+      ),
+    );
   }
 
   Future<void> _handleDeleteSchulung(
@@ -313,66 +348,39 @@ class StartScreenState extends State<StartScreen> {
                     const LogoWidget(),
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
-                      child:
-                          _profilePictureBytes != null &&
-                                  _profilePictureBytes!.isNotEmpty
-                              ? GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => PersonalPictUploadScreen(
-                                            userData: userData,
-                                            isLoggedIn: widget.isLoggedIn,
-                                            onLogout: widget.onLogout,
-                                          ),
+                      child: _buildProfilePictureButton(
+                        _profilePictureBytes != null &&
+                                _profilePictureBytes!.isNotEmpty
+                            ? ClipOval(
+                              child: Image.memory(
+                                _profilePictureBytes!,
+                                width: UIConstants.profilePictureSize,
+                                height: UIConstants.profilePictureSize,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  LoggerService.logError(
+                                    'Error displaying profile picture: $error',
+                                  );
+                                  return const Tooltip(
+                                    message: 'Profil',
+                                    child: Icon(
+                                      Icons.person,
+                                      size: UIConstants.profilePictureSize,
+                                      color: UIConstants.defaultAppColor,
                                     ),
                                   );
                                 },
-                                child: ClipOval(
-                                  child: Image.memory(
-                                    _profilePictureBytes!,
-                                    width: UIConstants.profilePictureSize,
-                                    height: UIConstants.profilePictureSize,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      LoggerService.logError(
-                                        'Error displaying profile picture: $error',
-                                      );
-                                      return const Tooltip(
-                                        message: 'Profil',
-                                        child: Icon(
-                                          Icons.person,
-                                          size: UIConstants.profilePictureSize,
-                                          color: UIConstants.defaultAppColor,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                              : GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => PersonalPictUploadScreen(
-                                            userData: userData,
-                                            isLoggedIn: widget.isLoggedIn,
-                                            onLogout: widget.onLogout,
-                                          ),
-                                    ),
-                                  );
-                                },
-                                child: const Tooltip(
-                                  message: 'Profil',
-                                  child: Icon(
-                                    Icons.person,
-                                    size: UIConstants.profilePictureSize,
-                                    color: UIConstants.defaultAppColor,
-                                  ),
-                                ),
                               ),
+                            )
+                            : const Tooltip(
+                              message: 'Profil',
+                              child: Icon(
+                                Icons.person,
+                                size: UIConstants.profilePictureSize,
+                                color: UIConstants.defaultAppColor,
+                              ),
+                            ),
+                      ),
                     ),
                   ],
                 ),

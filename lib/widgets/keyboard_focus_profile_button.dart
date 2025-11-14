@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '/constants/ui_constants.dart';
 
 /// A FloatingActionButton with Icons.person that shows yellow highlighting when focused via keyboard
@@ -49,26 +50,51 @@ class _KeyboardFocusProfileButtonState extends State<KeyboardFocusProfileButton>
     return Semantics(
       button: true,
       label: widget.semanticLabel ?? 'Zurück zum Profil',
-      child: Focus(
-        focusNode: _focusNode,
-        child: Tooltip(
-          message: 'Profil',
-          child: Padding(
-            padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
-            child: Container(
-              decoration: hasKeyboardFocus
-                  ? BoxDecoration(
-                      border: Border.all(
-                        color: Colors.yellow.shade700,
-                        width: 3.0,
-                      ),
-                    )
-                  : null,
-              child: FloatingActionButton(
-                heroTag: widget.heroTag,
-                onPressed: widget.onPressed,
-                backgroundColor: UIConstants.defaultAppColor,
-                child: const Icon(Icons.person, color: UIConstants.whiteColor),
+      child: Shortcuts(
+        shortcuts: <ShortcutActivator, Intent>{
+          LogicalKeySet(LogicalKeyboardKey.enter): const ActivateIntent(),
+          LogicalKeySet(LogicalKeyboardKey.numpadEnter): const ActivateIntent(),
+        },
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            ActivateIntent: CallbackAction<ActivateIntent>(
+              onInvoke: (intent) {
+                widget.onPressed();
+                return null;
+              },
+            ),
+          },
+          child: Focus(
+            focusNode: _focusNode,
+            onKey: (node, event) {
+              if (event is KeyDownEvent &&
+                  (event.logicalKey == LogicalKeyboardKey.enter ||
+                      event.logicalKey == LogicalKeyboardKey.numpadEnter)) {
+                widget.onPressed();
+                return KeyEventResult.handled;
+              }
+              return KeyEventResult.ignored;
+            },
+            child: Tooltip(
+              message: 'Profil',
+              child: Padding(
+                padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                child: Container(
+                  decoration: hasKeyboardFocus
+                      ? BoxDecoration(
+                          border: Border.all(
+                            color: Colors.yellow.shade700,
+                            width: 3.0,
+                          ),
+                        )
+                      : null,
+                  child: FloatingActionButton(
+                    heroTag: widget.heroTag,
+                    onPressed: widget.onPressed,
+                    backgroundColor: UIConstants.defaultAppColor,
+                    child: const Icon(Icons.person, color: UIConstants.whiteColor),
+                  ),
+                ),
               ),
             ),
           ),

@@ -10,6 +10,7 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({
@@ -194,50 +195,44 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             ),
                           ),
                         ),
-                      Focus(
-                        canRequestFocus: true,
-                        child: Semantics(
-                          label: 'Eingabefeld für aktuelles Passwort',
-                          child: _buildPasswordField(
-                            controller: _currentPasswordController,
-                            label: 'Aktuelles Passwort',
-                            isVisible: _isCurrentPasswordVisible,
-                            onToggleVisibility: () {
-                              setState(() {
-                                _isCurrentPasswordVisible =
-                                    !_isCurrentPasswordVisible;
-                              });
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Bitte geben Sie Ihr aktuelles Passwort ein';
-                              }
-                              return null;
-                            },
-                            fontSizeProvider: fontSizeProvider,
-                            eyeIconColor: UIConstants.textColor,
-                          ),
+                      Semantics(
+                        label: 'Eingabefeld für aktuelles Passwort',
+                        child: _buildPasswordField(
+                          controller: _currentPasswordController,
+                          label: 'Aktuelles Passwort',
+                          isVisible: _isCurrentPasswordVisible,
+                          onToggleVisibility: () {
+                            setState(() {
+                              _isCurrentPasswordVisible =
+                                  !_isCurrentPasswordVisible;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Bitte geben Sie Ihr aktuelles Passwort ein';
+                            }
+                            return null;
+                          },
+                          fontSizeProvider: fontSizeProvider,
+                          eyeIconColor: UIConstants.textColor,
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingM),
-                      Focus(
-                        canRequestFocus: true,
-                        child: Semantics(
-                          label: 'Eingabefeld für neues Passwort',
-                          child: _buildPasswordField(
-                            controller: _newPasswordController,
-                            label: 'Neues Passwort',
-                            isVisible: _isNewPasswordVisible,
-                            onToggleVisibility: () {
-                              setState(() {
-                                _isNewPasswordVisible = !_isNewPasswordVisible;
-                              });
-                            },
-                            validator: _validatePassword,
-                            fontSizeProvider: fontSizeProvider,
-                            eyeIconColor: UIConstants.textColor,
-                            onChanged: _checkStrength,
-                          ),
+                      Semantics(
+                        label: 'Eingabefeld für neues Passwort',
+                        child: _buildPasswordField(
+                          controller: _newPasswordController,
+                          label: 'Neues Passwort',
+                          isVisible: _isNewPasswordVisible,
+                          onToggleVisibility: () {
+                            setState(() {
+                              _isNewPasswordVisible = !_isNewPasswordVisible;
+                            });
+                          },
+                          validator: _validatePassword,
+                          fontSizeProvider: fontSizeProvider,
+                          eyeIconColor: UIConstants.textColor,
+                          onChanged: _checkStrength,
                         ),
                       ),
                       const Padding(
@@ -273,32 +268,29 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         ],
                       ),
                       const SizedBox(height: UIConstants.spacingM),
-                      Focus(
-                        canRequestFocus: true,
-                        child: Semantics(
-                          label: 'Eingabefeld für Passwort-Wiederholung',
-                          child: _buildPasswordField(
-                            controller: _confirmPasswordController,
-                            label: 'Neues Passwort wiederholen',
-                            isVisible: _isConfirmPasswordVisible,
-                            onToggleVisibility: () {
-                              setState(() {
-                                _isConfirmPasswordVisible =
-                                    !_isConfirmPasswordVisible;
-                              });
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Bitte wiederholen Sie das neue Passwort';
-                              }
-                              if (value != _newPasswordController.text) {
-                                return 'Die Passwörter stimmen nicht überein';
-                              }
-                              return null;
-                            },
-                            fontSizeProvider: fontSizeProvider,
-                            eyeIconColor: UIConstants.textColor,
-                          ),
+                      Semantics(
+                        label: 'Eingabefeld für Passwort-Wiederholung',
+                        child: _buildPasswordField(
+                          controller: _confirmPasswordController,
+                          label: 'Neues Passwort wiederholen',
+                          isVisible: _isConfirmPasswordVisible,
+                          onToggleVisibility: () {
+                            setState(() {
+                              _isConfirmPasswordVisible =
+                                  !_isConfirmPasswordVisible;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Bitte wiederholen Sie das neue Passwort';
+                            }
+                            if (value != _newPasswordController.text) {
+                              return 'Die Passwörter stimmen nicht überein';
+                            }
+                            return null;
+                          },
+                          fontSizeProvider: fontSizeProvider,
+                          eyeIconColor: UIConstants.textColor,
                         ),
                       ),
                     ],
@@ -309,29 +301,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           ),
         ),
       ),
-      floatingActionButton: Tooltip(
-        message: 'Passwort speichern',
-        child: Focus(
-          canRequestFocus: true,
-          child: Semantics(
-            hint: 'Tippen, um das neue Passwort zu speichern',
-            button: true,
-            child: FloatingActionButton(
-              heroTag: 'save_password',
-              onPressed: _isLoading ? null : _handleSave,
-              backgroundColor: UIConstants.defaultAppColor,
-              child:
-                  _isLoading
-                      ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          UIConstants.whiteColor,
-                        ),
-                        strokeWidth: UIConstants.defaultStrokeWidth,
-                      )
-                      : const Icon(Icons.save, color: UIConstants.whiteColor),
-            ),
-          ),
-        ),
+      floatingActionButton: KeyboardFocusFAB(
+        heroTag: 'save_password',
+        tooltip: 'Passwort speichern',
+        semanticLabel: 'Passwort speichern',
+        semanticHint: 'Tippen, um das neue Passwort zu speichern',
+        onPressed: _isLoading ? null : _handleSave,
+        child: _isLoading
+            ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  UIConstants.whiteColor,
+                ),
+                strokeWidth: UIConstants.defaultStrokeWidth,
+              )
+            : const Icon(Icons.save, color: UIConstants.whiteColor),
       ),
     );
   }
@@ -346,43 +329,129 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     Color eyeIconColor = UIConstants.defaultAppColor,
     void Function(String)? onChanged,
   }) {
-    return TextFormField(
+    return _KeyboardFocusPasswordField(
       controller: controller,
-      obscureText: !isVisible,
+      label: label,
+      isVisible: isVisible,
+      onToggleVisibility: onToggleVisibility,
+      fontSizeProvider: fontSizeProvider,
+      validator: validator,
+      eyeIconColor: eyeIconColor,
+      onChanged: onChanged,
+    );
+  }
+}
+
+class _KeyboardFocusPasswordField extends StatefulWidget {
+  const _KeyboardFocusPasswordField({
+    required this.controller,
+    required this.label,
+    required this.isVisible,
+    required this.onToggleVisibility,
+    required this.fontSizeProvider,
+    this.validator,
+    this.eyeIconColor = UIConstants.defaultAppColor,
+    this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final bool isVisible;
+  final VoidCallback onToggleVisibility;
+  final FontSizeProvider fontSizeProvider;
+  final String? Function(String?)? validator;
+  final Color eyeIconColor;
+  final void Function(String)? onChanged;
+
+  @override
+  State<_KeyboardFocusPasswordField> createState() =>
+      _KeyboardFocusPasswordFieldState();
+}
+
+class _KeyboardFocusPasswordFieldState
+    extends State<_KeyboardFocusPasswordField> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  OutlineInputBorder _border(Color color, double width) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+      borderSide: BorderSide(color: color, width: width),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    final decoration = UIStyles.formInputDecoration.copyWith(
+      labelText: widget.label,
+      labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+        fontSize:
+            UIStyles.formInputDecoration.labelStyle!.fontSize! *
+            widget.fontSizeProvider.scaleFactor,
+      ),
+      floatingLabelStyle:
+          UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
+        fontSize:
+            UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+            widget.fontSizeProvider.scaleFactor,
+      ),
+      errorStyle: UIStyles.errorStyle.copyWith(
+        fontSize:
+            UIStyles.errorStyle.fontSize! * widget.fontSizeProvider.scaleFactor,
+      ),
+      filled: true,
+      fillColor: hasKeyboardFocus ? Colors.yellow.shade50 : UIConstants.whiteColor,
+      enabledBorder: _border(UIConstants.mydarkGreyColor, 1),
+      focusedBorder: _border(
+        hasKeyboardFocus ? Colors.yellow.shade700 : UIConstants.primaryColor,
+        hasKeyboardFocus ? 2.5 : 1.5,
+      ),
+      suffixIcon: IconButton(
+        icon: Icon(
+          widget.isVisible ? Icons.visibility_off : Icons.visibility,
+          semanticLabel:
+              widget.isVisible ? 'Passwort verbergen' : 'Passwort anzeigen',
+          color: widget.eyeIconColor,
+        ),
+        onPressed: widget.onToggleVisibility,
+      ),
+    );
+
+    return TextFormField(
+      focusNode: _focusNode,
+      controller: widget.controller,
+      obscureText: !widget.isVisible,
       style: UIStyles.formValueStyle.copyWith(
         fontSize:
-            UIStyles.formValueStyle.fontSize! * fontSizeProvider.scaleFactor,
+            UIStyles.formValueStyle.fontSize! *
+            widget.fontSizeProvider.scaleFactor,
       ),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
-          fontSize:
-              UIStyles.formInputDecoration.labelStyle!.fontSize! *
-              fontSizeProvider.scaleFactor,
-        ),
-        floatingLabelStyle: UIStyles.formInputDecoration.floatingLabelStyle
-            ?.copyWith(
-              fontSize:
-                  UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
-                  fontSizeProvider.scaleFactor,
-            ),
-        errorStyle: UIStyles.errorStyle.copyWith(
-          fontSize:
-              UIStyles.errorStyle.fontSize! * fontSizeProvider.scaleFactor,
-        ),
-        border: const OutlineInputBorder(),
-        suffixIcon: IconButton(
-          icon: Icon(
-            isVisible ? Icons.visibility_off : Icons.visibility,
-            semanticLabel:
-                isVisible ? 'Passwort verbergen' : 'Passwort anzeigen',
-            color: eyeIconColor,
-          ),
-          onPressed: onToggleVisibility,
-        ),
-      ),
-      validator: validator,
-      onChanged: onChanged,
+      decoration: decoration,
+      validator: widget.validator,
+      onChanged: widget.onChanged,
     );
   }
 }
