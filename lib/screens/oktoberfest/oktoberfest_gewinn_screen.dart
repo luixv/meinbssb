@@ -305,28 +305,14 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final screenWidth = constraints.maxWidth;
-                          if (screenWidth.isInfinite) {
-                            return Align(
-                              alignment: Alignment.centerLeft,
-                              child: SizedBox(
-                                width: 320,
-                                child: _buildBankDataSection(),
-                              ),
-                            );
-                          }
-                          final bool isWide = screenWidth >= 900;
-                          final double targetWidth =
-                              screenWidth * (isWide ? 0.3 : 0.7);
-                          final double clampedWidth = targetWidth.clamp(
-                            280.0,
-                            double.infinity,
-                          );
-                          final double finalWidth =
-                              clampedWidth > screenWidth ? screenWidth : clampedWidth;
+                          const double minWidth = 280;
+                          const double maxWidth = 480;
+                          double width = screenWidth * 0.5;
+                          width = width.clamp(minWidth, maxWidth);
                           return Align(
                             alignment: Alignment.centerLeft,
                             child: SizedBox(
-                              width: finalWidth,
+                              width: width,
                               child: _buildBankDataSection(),
                             ),
                           );
@@ -334,6 +320,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       ),
                       const SizedBox(height: UIConstants.spacingM),
                       _buildSubmitSection(),
+                      const SizedBox(height: UIConstants.spacingXL),
                     ],
                   ),
                 ),
@@ -409,37 +396,31 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(
+        Semantics(
+          button: true,
+          label: 'Gewinne abrufen',
+          enabled: canSubmit,
           child: SizedBox(
             width: 320,
-            child: Semantics(
-              button: true,
-              label: 'Gewinne abrufen',
-              enabled: canSubmit,
-              child: ElevatedButton(
-                onPressed: canSubmit ? _submitGewinne : null,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  backgroundColor: UIConstants.defaultAppColor,
-                  foregroundColor: UIConstants.whiteColor,
-                  textStyle: const TextStyle(
-                    fontSize: UIConstants.subtitleFontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
+            child: ElevatedButton(
+              onPressed: canSubmit ? _submitGewinne : null,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                backgroundColor: UIConstants.defaultAppColor,
+                foregroundColor: UIConstants.whiteColor,
+                textStyle: const TextStyle(
+                  fontSize: UIConstants.subtitleFontSize,
+                  fontWeight: FontWeight.bold,
                 ),
-                child: const Text('Gewinne abrufen'),
+              ),
+              child: Text(
+                canSubmit || _hasPendingGewinne
+                    ? 'Gewinne abrufen'
+                    : 'Gewinne wurden abgerufen.',
               ),
             ),
           ),
         ),
-        if (!canSubmit && !_hasPendingGewinne && _gewinne.isNotEmpty)
-          const Padding(
-            padding: EdgeInsets.only(top: UIConstants.spacingS),
-            child: ScaledText(
-              'Gewinne wurden abgerufen.',
-              style: UIStyles.bodyStyle,
-            ),
-          ),
       ],
     );
   }
