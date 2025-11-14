@@ -12,7 +12,6 @@ import '/helpers/utils.dart';
 
 // import 'agb_screen.dart';
 import '/widgets/scaled_text.dart';
-import '/widgets/keyboard_focus_fab.dart';
 
 class OktoberfestGewinnScreen extends StatefulWidget {
   const OktoberfestGewinnScreen({
@@ -306,6 +305,15 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final screenWidth = constraints.maxWidth;
+                          if (screenWidth.isInfinite) {
+                            return Align(
+                              alignment: Alignment.centerLeft,
+                              child: SizedBox(
+                                width: 320,
+                                child: _buildBankDataSection(),
+                              ),
+                            );
+                          }
                           final bool isWide = screenWidth >= 900;
                           final double targetWidth =
                               screenWidth * (isWide ? 0.3 : 0.7);
@@ -324,118 +332,11 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                           );
                         },
                       ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      _buildSubmitSection(),
                     ],
                   ),
                 ),
-              ),
-            ),
-          ),
-          floatingActionButton: Align(
-            alignment: Alignment.bottomRight,
-            child: SizedBox(
-              height: UIConstants.fabSize,
-              width: UIConstants.fabSize,
-              child: Stack(
-                children: [
-                  // FAB to fetch the last year's data
-                  Visibility(
-                    visible: _gewinne.any((g) => g.abgerufenAm.isEmpty),
-                    maintainState: true,
-                    child: KeyboardFocusFAB(
-                      heroTag: 'pickYear',
-                      tooltip: 'Gewinne für Jahr abrufen',
-                      semanticLabel: 'Gewinne für Jahr abrufen',
-                      icon: Icons.search,
-                      backgroundColor:
-                          _loading
-                              ? UIConstants.cancelButtonBackground
-                              : UIConstants.defaultAppColor,
-                      onPressed: _loading ? null : _fetchGewinne,
-                    ),
-                  ),
-                  // FAB to perform the Gewinn fetch/abfrage
-                  Visibility(
-                    visible: _gewinne.any((g) => g.abgerufenAm.isEmpty),
-                    maintainState: true,
-                    child: KeyboardFocusFAB(
-                      heroTag: 'abrufen',
-                      tooltip: 'Gewinne abrufen',
-                      semanticLabel: 'Gewinne abrufen',
-                      backgroundColor:
-                          _canSubmitGewinne
-                              ? UIConstants.defaultAppColor
-                              : UIConstants.cancelButtonBackground,
-                      onPressed:
-                          _canSubmitGewinne
-                              ? () async {
-                                setState(() {
-                                  _loading = true;
-                                });
-                                final scaffoldMessenger = ScaffoldMessenger.of(
-                                  context,
-                                );
-                                try {
-                                  final result = await widget.apiService
-                                      .gewinneAbrufen(
-                                        gewinnIDs:
-                                            _gewinne
-                                                .map((g) => g.gewinnId)
-                                                .toList(),
-                                        iban: _bankDataResult!.iban,
-                                        passnummer: widget.passnummer,
-                                      );
-                                  if (!mounted) return;
-                                  if (result) {
-                                    scaffoldMessenger.showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Gewinne wurden erfolgreich übertragen.',
-                                        ),
-                                        duration: UIConstants.snackbarDuration,
-                                        backgroundColor:
-                                            UIConstants.successColor,
-                                      ),
-                                    );
-                                    _fetchGewinne();
-                                  } else {
-                                    if (!mounted) return;
-                                    scaffoldMessenger.showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Fehler beim Abrufen der Gewinne.',
-                                        ),
-                                        duration: UIConstants.snackbarDuration,
-                                        backgroundColor: UIConstants.errorColor,
-                                      ),
-                                    );
-                                  }
-                                } catch (e) {
-                                  debugPrint(
-                                    'Fehler beim Abrufen der Gewinne: $e',
-                                  );
-                                  if (!mounted) return;
-                                  scaffoldMessenger.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Fehler beim Abrufen der Gewinne: $e',
-                                      ),
-                                      duration: UIConstants.snackbarDuration,
-                                      backgroundColor: UIConstants.errorColor,
-                                    ),
-                                  );
-                                } finally {
-                                  if (mounted) {
-                                    setState(() {
-                                      _loading = false;
-                                    });
-                                  }
-                                }
-                              }
-                              : null,
-                      icon: Icons.cloud_upload,
-                    ),
-                  ),
-                ],
               ),
             ),
           ),
@@ -502,6 +403,96 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
       ),
     );
   }
+
+  Widget _buildSubmitSection() {
+    final bool canSubmit = _canSubmitGewinne && !_loading;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: SizedBox(
+            width: 320,
+            child: Semantics(
+              button: true,
+              label: 'Gewinne abrufen',
+              enabled: canSubmit,
+              child: ElevatedButton(
+                onPressed: canSubmit ? _submitGewinne : null,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  backgroundColor: UIConstants.defaultAppColor,
+                  foregroundColor: UIConstants.whiteColor,
+                  textStyle: const TextStyle(
+                    fontSize: UIConstants.subtitleFontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text('Gewinne abrufen'),
+              ),
+            ),
+          ),
+        ),
+        if (!canSubmit && !_hasPendingGewinne && _gewinne.isNotEmpty)
+          const Padding(
+            padding: EdgeInsets.only(top: UIConstants.spacingS),
+            child: ScaledText(
+              'Gewinne wurden abgerufen.',
+              style: UIStyles.bodyStyle,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _submitGewinne() async {
+    setState(() {
+      _loading = true;
+    });
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    try {
+      final result = await widget.apiService.gewinneAbrufen(
+        gewinnIDs: _gewinne.map((g) => g.gewinnId).toList(),
+        iban: _bankDataResult!.iban,
+        passnummer: widget.passnummer,
+      );
+      if (!mounted) return;
+      if (result) {
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('Gewinne wurden erfolgreich übertragen.'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.successColor,
+          ),
+        );
+        _fetchGewinne();
+      } else {
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('Fehler beim Abrufen der Gewinne.'),
+            duration: UIConstants.snackbarDuration,
+            backgroundColor: UIConstants.errorColor,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Fehler beim Abrufen der Gewinne: $e');
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Fehler beim Abrufen der Gewinne: $e'),
+          duration: UIConstants.snackbarDuration,
+          backgroundColor: UIConstants.errorColor,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
+    }
+  }
+
 }
 
 class _BankDataResult {
