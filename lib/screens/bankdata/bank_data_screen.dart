@@ -742,6 +742,13 @@ class _BankDataKeyboardTextFieldState extends State<_BankDataKeyboardTextField> 
     setState(() {
       _isFocused = _focusNode.hasFocus;
     });
+
+    if (_focusNode.hasFocus && !widget.isReadOnly) {
+      final text = widget.controller.text;
+      widget.controller.selection = TextSelection.collapsed(
+        offset: text.length,
+      );
+    }
   }
 
   OutlineInputBorder _border(Color color, double width) {

@@ -12,6 +12,7 @@ import '/helpers/utils.dart';
 
 // import 'agb_screen.dart';
 import '/widgets/scaled_text.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 class OktoberfestGewinnScreen extends StatefulWidget {
   const OktoberfestGewinnScreen({
@@ -173,7 +174,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                         'Oktoberfestlandesschießen Gewinne abrufen',
                         style: UIStyles.headerStyle,
                       ),
-                      const SizedBox(height: UIConstants.spacingM),
+                      const SizedBox(height: UIConstants.spacingS),
                       const ScaledText(
                         'Meine Gewinne für das Jahr:',
                         style: UIStyles.titleStyle,
@@ -182,39 +183,33 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
-                          width: 320,
-                          child: DropdownButtonFormField<int>(
-                            decoration: UIStyles.formInputDecoration.copyWith(
-                              labelText: 'Jahr',
-                              labelStyle:
-                                  UIStyles.formInputDecoration.labelStyle,
-                              floatingLabelStyle:
-                                  UIStyles.formInputDecoration.floatingLabelStyle,
-                              floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            ),
-                            value: _selectedYear,
-                            isExpanded: true,
-                            items: _availableYears
-                                .map(
-                                  (year) => DropdownMenuItem<int>(
-                                    value: year,
-                                    child: Text(
-                                      '$year',
-                                      style: const TextStyle(
-                                        fontSize: UIConstants.subtitleFontSize,
+                          width: 220,
+                          child: Semantics(
+                            label: 'Jahr auswählen',
+                            child: _KeyboardFocusDropdown<int>(
+                              value: _selectedYear,
+                              items: _availableYears
+                                  .map(
+                                    (year) => DropdownMenuItem<int>(
+                                      value: year,
+                                      child: Text(
+                                        '$year',
+                                        style: const TextStyle(
+                                          fontSize: UIConstants.subtitleFontSize,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (int? year) {
-                              if (year != null && year != _selectedYear) {
-                                setState(() {
-                                  _selectedYear = year;
-                                });
-                                _fetchGewinne();
-                              }
-                            },
+                                  )
+                                  .toList(),
+                              onChanged: (year) {
+                                if (year != null && year != _selectedYear) {
+                                  setState(() {
+                                    _selectedYear = year;
+                                  });
+                                  _fetchGewinne();
+                                }
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -310,7 +305,16 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                         ),
                       ],
                       const SizedBox(height: UIConstants.spacingL),
-                      _buildBankDataSection(),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.3,
+                            minWidth: 280,
+                          ),
+                          child: _buildBankDataSection(),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -328,26 +332,36 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                   Visibility(
                     visible: _gewinne.any((g) => g.abgerufenAm.isEmpty),
                     maintainState: true,
-                    child: FloatingActionButton(
+                    child: KeyboardFocusFAB(
                       heroTag: 'pickYear',
-                      onPressed: _loading ? null : _fetchGewinne,
                       tooltip: 'Gewinne für Jahr abrufen',
+                      semanticLabel: 'Gewinne für Jahr abrufen',
+                      icon: Icons.search,
                       backgroundColor:
                           _loading
                               ? UIConstants.cancelButtonBackground
                               : UIConstants.defaultAppColor,
-                      child: const Icon(
-                        Icons.search,
-                        color: UIConstants.whiteColor,
-                      ),
+                      onPressed: _loading ? null : _fetchGewinne,
                     ),
                   ),
                   // FAB to perform the Gewinn fetch/abfrage
                   Visibility(
                     visible: _gewinne.any((g) => g.abgerufenAm.isEmpty),
                     maintainState: true,
-                    child: FloatingActionButton(
+                    child: KeyboardFocusFAB(
                       heroTag: 'abrufen',
+                      tooltip: 'Gewinne abrufen',
+                      semanticLabel: 'Gewinne abrufen',
+                      backgroundColor:
+                          (_bankDataResult != null &&
+                                  _bankDataResult!.kontoinhaber.isNotEmpty &&
+                                  _bankDataResult!.iban.isNotEmpty &&
+                                  (_bankDataResult!.iban
+                                          .toUpperCase()
+                                          .startsWith('DE') ||
+                                      _bankDataResult!.bic.isNotEmpty))
+                              ? UIConstants.defaultAppColor
+                              : UIConstants.cancelButtonBackground,
                       onPressed:
                           (_bankDataResult != null &&
                                   _bankDataResult!.kontoinhaber.isNotEmpty &&
@@ -420,21 +434,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                 }
                               }
                               : null,
-                      tooltip: 'Gewinne abrufen',
-                      backgroundColor:
-                          (_bankDataResult != null &&
-                                  _bankDataResult!.kontoinhaber.isNotEmpty &&
-                                  _bankDataResult!.iban.isNotEmpty &&
-                                  (_bankDataResult!.iban
-                                          .toUpperCase()
-                                          .startsWith('DE') ||
-                                      _bankDataResult!.bic.isNotEmpty))
-                              ? UIConstants.defaultAppColor
-                              : UIConstants.cancelButtonBackground,
-                      child: const Icon(
-                        Icons.cloud_upload,
-                        color: UIConstants.whiteColor,
-                      ),
+                      icon: Icons.cloud_upload,
                     ),
                   ),
                 ],
@@ -478,28 +478,16 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
             ),
           ),
           const SizedBox(height: UIConstants.spacingM),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _ibanController,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'IBAN',
-                  ),
-                ),
-              ),
-              const SizedBox(width: UIConstants.spacingM),
-              Expanded(
-                child: TextFormField(
-                  controller: _bicController,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: isBicRequired(_ibanController.text.trim())
-                        ? 'BIC *'
-                        : 'BIC (optional)',
-                  ),
-                ),
-              ),
-            ],
+          _KeyboardFocusTextField(
+            controller: _ibanController,
+            label: 'IBAN',
+          ),
+          const SizedBox(height: UIConstants.spacingM),
+          _KeyboardFocusTextField(
+            controller: _bicController,
+            label: isBicRequired(_ibanController.text.trim())
+                ? 'BIC *'
+                : 'BIC (optional)',
           ),
         ],
       ),
@@ -516,4 +504,146 @@ class _BankDataResult {
   final String kontoinhaber;
   final String iban;
   final String bic;
+}
+
+class _KeyboardFocusDropdown<T> extends StatefulWidget {
+  const _KeyboardFocusDropdown({
+    required this.value,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+
+  @override
+  State<_KeyboardFocusDropdown<T>> createState() =>
+      _KeyboardFocusDropdownState<T>();
+}
+
+class _KeyboardFocusDropdownState<T> extends State<_KeyboardFocusDropdown<T>> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_handleFocus);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_handleFocus);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleFocus() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return Focus(
+      focusNode: _focusNode,
+      child: Container(
+        padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+        decoration: hasKeyboardFocus
+            ? BoxDecoration(
+                border: Border.all(
+                  color: Colors.yellow.shade700,
+                  width: 2.5,
+                ),
+              )
+            : null,
+        child: DropdownButtonFormField<T>(
+          value: widget.value,
+          items: widget.items,
+          onChanged: widget.onChanged,
+          decoration: UIStyles.formInputDecoration.copyWith(
+            labelText: 'Jahr',
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _KeyboardFocusTextField extends StatefulWidget {
+  const _KeyboardFocusTextField({
+    required this.controller,
+    required this.label,
+  });
+
+  final TextEditingController controller;
+  final String label;
+
+  @override
+  State<_KeyboardFocusTextField> createState() => _KeyboardFocusTextFieldState();
+}
+
+class _KeyboardFocusTextFieldState extends State<_KeyboardFocusTextField> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_handleFocus);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_handleFocus);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleFocus() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+    if (_focusNode.hasFocus) {
+      final text = widget.controller.text;
+      widget.controller.selection = TextSelection.collapsed(
+        offset: text.length,
+      );
+    }
+  }
+
+  OutlineInputBorder _border(Color color, double width) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+      borderSide: BorderSide(color: color, width: width),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+
+    return TextFormField(
+      focusNode: _focusNode,
+      controller: widget.controller,
+      decoration: UIStyles.formInputDecoration.copyWith(
+        labelText: widget.label,
+        filled: true,
+        fillColor: hasKeyboardFocus ? Colors.yellow.shade50 : UIConstants.whiteColor,
+        enabledBorder: _border(UIConstants.mydarkGreyColor, 1),
+        focusedBorder: _border(
+          hasKeyboardFocus ? Colors.yellow.shade700 : UIConstants.primaryColor,
+          hasKeyboardFocus ? 2.5 : 1.5,
+        ),
+      ),
+    );
+  }
 }

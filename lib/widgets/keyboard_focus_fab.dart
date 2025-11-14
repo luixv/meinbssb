@@ -61,13 +61,15 @@ class _KeyboardFocusFABState extends State<KeyboardFocusFAB> {
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     Widget button = FloatingActionButton(
+      focusNode: _focusNode,
       heroTag: widget.heroTag,
       onPressed: widget.onPressed,
       backgroundColor: widget.backgroundColor ?? UIConstants.defaultAppColor,
       mini: widget.mini,
-      child: widget.child ?? (widget.icon != null 
-          ? Icon(widget.icon, color: widget.iconColor ?? UIConstants.whiteColor)
-          : null),
+      child: widget.child ??
+          (widget.icon != null
+              ? Icon(widget.icon, color: widget.iconColor ?? UIConstants.whiteColor)
+              : null),
     );
 
     if (widget.tooltip != null) {
@@ -77,21 +79,18 @@ class _KeyboardFocusFABState extends State<KeyboardFocusFAB> {
       );
     }
 
-    Widget result = Focus(
-      focusNode: _focusNode,
-      child: Padding(
-        padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
-        child: Container(
-          decoration: hasKeyboardFocus
-              ? BoxDecoration(
-                  border: Border.all(
-                    color: Colors.yellow.shade700,
-                    width: 3.0,
-                  ),
-                )
-              : null,
-          child: button,
-        ),
+    Widget result = Padding(
+      padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+      child: Container(
+        decoration: hasKeyboardFocus
+            ? BoxDecoration(
+                border: Border.all(
+                  color: Colors.yellow.shade700,
+                  width: 3.0,
+                ),
+              )
+            : null,
+        child: button,
       ),
     );
 
