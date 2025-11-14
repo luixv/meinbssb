@@ -188,10 +188,10 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       final apiPlz = passDaten['PLZ']?.toString().trim();
       final enteredPlz = _zipCodeController.text.trim();
       final apiGeburtsdatum = passDaten['GEBURTSDATUM']?.toString();
-      
+
       bool plzMatches = (apiPlz == enteredPlz);
       bool birthdateMatches = false;
-      
+
       // Validate GEBURTSDATUM
       if (apiGeburtsdatum != null && apiGeburtsdatum.isNotEmpty) {
         // Parse API date format: "1973-08-07T00:00:00.000+02:00"
@@ -205,12 +205,13 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
         );
         birthdateMatches = (apiDateOnly == selectedDateOnly);
       }
-      
+
       // Show generic error if either field doesn't match
       if (!plzMatches || !birthdateMatches) {
         setState(() {
           _loading = false;
-          _error = 'Postleitzahl oder Geburtsdatum stimmen nicht mit dem Eintrag in ZMI überein.';
+          _error =
+              'Postleitzahl oder Geburtsdatum stimmen nicht mit dem Eintrag in ZMI überein.';
         });
         return;
       }
@@ -479,6 +480,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: UIConstants.spacingXXL),
             ],
           ),
         ),

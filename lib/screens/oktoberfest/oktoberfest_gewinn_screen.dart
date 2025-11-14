@@ -320,7 +320,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                       ),
                       const SizedBox(height: UIConstants.spacingM),
                       _buildSubmitSection(),
-                      const SizedBox(height: UIConstants.spacingXL),
+                      const SizedBox(height: UIConstants.spacingXXL),
                     ],
                   ),
                 ),
@@ -345,48 +345,55 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
           _bankDataResult!.bic.isNotEmpty);
 
   Widget _buildBankDataSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: UIConstants.whiteColor,
-        border: Border.all(
-          color: UIConstants.mydarkGreyColor,
+    final bool isDisabled = !_hasPendingGewinne && _gewinne.isNotEmpty;
+    return Opacity(
+      opacity: isDisabled ? 0.6 : 1.0,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: UIConstants.whiteColor,
+          border: Border.all(
+            color: UIConstants.mydarkGreyColor,
+          ),
+          borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
         ),
-        borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-      ),
-      padding: UIConstants.defaultPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Bankdaten',
-            style: UIStyles.subtitleStyle,
-          ),
-          const SizedBox(height: UIConstants.spacingM),
-          if (_bankDataLoading)
-            const Padding(
-              padding: EdgeInsets.only(bottom: UIConstants.spacingM),
-              child: CircularProgressIndicator(),
+        padding: UIConstants.defaultPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Bankdaten',
+              style: UIStyles.subtitleStyle,
             ),
-          TextFormField(
-            controller: _kontoinhaberController,
-            decoration: UIStyles.formInputDecoration.copyWith(
-              labelText: 'Kontoinhaber',
+            const SizedBox(height: UIConstants.spacingM),
+            if (_bankDataLoading)
+              const Padding(
+                padding: EdgeInsets.only(bottom: UIConstants.spacingM),
+                child: CircularProgressIndicator(),
+              ),
+            TextFormField(
+              controller: _kontoinhaberController,
+              readOnly: isDisabled,
+              decoration: UIStyles.formInputDecoration.copyWith(
+                labelText: 'Kontoinhaber',
+              ),
             ),
-          ),
-          const SizedBox(height: UIConstants.spacingM),
-          _KeyboardFocusTextField(
-            controller: _ibanController,
-            label: 'IBAN',
-          ),
-          const SizedBox(height: UIConstants.spacingM),
-          _KeyboardFocusTextField(
-            controller: _bicController,
-            label: isBicRequired(_ibanController.text.trim())
-                ? 'BIC *'
-                : 'BIC (optional)',
-          ),
-        ],
+            const SizedBox(height: UIConstants.spacingM),
+            _KeyboardFocusTextField(
+              controller: _ibanController,
+              label: 'IBAN',
+              readOnly: isDisabled,
+            ),
+            const SizedBox(height: UIConstants.spacingM),
+            _KeyboardFocusTextField(
+              controller: _bicController,
+              label: isBicRequired(_ibanController.text.trim())
+                  ? 'BIC *'
+                  : 'BIC (optional)',
+              readOnly: isDisabled,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -562,10 +569,12 @@ class _KeyboardFocusTextField extends StatefulWidget {
   const _KeyboardFocusTextField({
     required this.controller,
     required this.label,
+    this.readOnly = false,
   });
 
   final TextEditingController controller;
   final String label;
+  final bool readOnly;
 
   @override
   State<_KeyboardFocusTextField> createState() => _KeyboardFocusTextFieldState();
@@ -616,6 +625,7 @@ class _KeyboardFocusTextFieldState extends State<_KeyboardFocusTextField> {
     return TextFormField(
       focusNode: _focusNode,
       controller: widget.controller,
+      readOnly: widget.readOnly,
       decoration: UIStyles.formInputDecoration.copyWith(
         labelText: widget.label,
         filled: true,
