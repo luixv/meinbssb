@@ -480,7 +480,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: UIConstants.spacingXXL),
+              const SizedBox(height: UIConstants.spacingXXXL2),
             ],
           ),
         ),
