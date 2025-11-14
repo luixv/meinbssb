@@ -184,32 +184,30 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
                           width: 220,
-                          child: Semantics(
-                            label: 'Jahr auswählen',
-                            child: _KeyboardFocusDropdown<int>(
-                              value: _selectedYear,
-                              items: _availableYears
-                                  .map(
-                                    (year) => DropdownMenuItem<int>(
-                                      value: year,
-                                      child: Text(
-                                        '$year',
-                                        style: const TextStyle(
-                                          fontSize: UIConstants.subtitleFontSize,
-                                        ),
+                          child: _KeyboardFocusDropdown<int>(
+                            label: 'Jahr',
+                            value: _selectedYear,
+                            items: _availableYears
+                                .map(
+                                  (year) => DropdownMenuItem<int>(
+                                    value: year,
+                                    child: Text(
+                                      '$year',
+                                      style: const TextStyle(
+                                        fontSize: UIConstants.subtitleFontSize,
                                       ),
                                     ),
-                                  )
-                                  .toList(),
-                              onChanged: (year) {
-                                if (year != null && year != _selectedYear) {
-                                  setState(() {
-                                    _selectedYear = year;
-                                  });
-                                  _fetchGewinne();
-                                }
-                              },
-                            ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (year) {
+                              if (year != null && year != _selectedYear) {
+                                setState(() {
+                                  _selectedYear = year;
+                                });
+                                _fetchGewinne();
+                              }
+                            },
                           ),
                         ),
                       ),
@@ -519,11 +517,13 @@ class _BankDataResult {
 
 class _KeyboardFocusDropdown<T> extends StatefulWidget {
   const _KeyboardFocusDropdown({
+    required this.label,
     required this.value,
     required this.items,
     required this.onChanged,
   });
 
+  final String label;
   final T? value;
   final List<DropdownMenuItem<T>> items;
   final ValueChanged<T?> onChanged;
@@ -562,25 +562,24 @@ class _KeyboardFocusDropdownState<T> extends State<_KeyboardFocusDropdown<T>> {
         FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
-    return Focus(
-      focusNode: _focusNode,
-      child: Container(
-        padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
-        decoration: hasKeyboardFocus
-            ? BoxDecoration(
-                border: Border.all(
-                  color: Colors.yellow.shade700,
-                  width: 2.5,
-                ),
-              )
-            : null,
-        child: DropdownButtonFormField<T>(
-          value: widget.value,
-          items: widget.items,
-          onChanged: widget.onChanged,
-          decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: 'Jahr',
-          ),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+      decoration: hasKeyboardFocus
+          ? BoxDecoration(
+              border: Border.all(
+                color: Colors.yellow.shade700,
+                width: 2.5,
+              ),
+            )
+          : null,
+      child: DropdownButtonFormField<T>(
+        focusNode: _focusNode,
+        value: widget.value,
+        items: widget.items,
+        onChanged: widget.onChanged,
+        decoration: UIStyles.formInputDecoration.copyWith(
+          labelText: widget.label,
         ),
       ),
     );
