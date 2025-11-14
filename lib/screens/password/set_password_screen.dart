@@ -274,214 +274,222 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       onLogout: () {},
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_error != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
-                  child: ScaledText(
-                    _error!,
-                    style: UIStyles.errorStyle.copyWith(
-                      color: UIConstants.errorColor,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_error != null)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: UIConstants.spacingM,
+                    ),
+                    child: ScaledText(
+                      _error!,
+                      style: UIStyles.errorStyle.copyWith(
+                        color: UIConstants.errorColor,
+                      ),
                     ),
                   ),
-                ),
-              if (_success != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: UIConstants.spacingM),
-                  child: ScaledText(
-                    _success!,
-                    style: UIStyles.successStyle.copyWith(
-                      color: UIConstants.successColor,
+                if (_success != null)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: UIConstants.spacingM,
+                    ),
+                    child: ScaledText(
+                      _success!,
+                      style: UIStyles.successStyle.copyWith(
+                        color: UIConstants.successColor,
+                      ),
                     ),
                   ),
+                const ScaledText(
+                  'Bitte geben Sie Ihre Postleitzahl und Ihr Geburtsdatum ein, um Ihre Identität zu bestätigen:',
+                  style: UIStyles.bodyStyle,
                 ),
-              const ScaledText(
-                'Bitte geben Sie Ihre Postleitzahl und Ihr Geburtsdatum ein, um Ihre Identität zu bestätigen:',
-                style: UIStyles.bodyStyle,
-              ),
-              const SizedBox(height: UIConstants.spacingS),
-              Semantics(
-                label: 'Eingabefeld für Postleitzahl',
-                textField: true,
-
-                child: TextFormField(
-                  controller: _zipCodeController,
-                  keyboardType: TextInputType.number,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'PLZ',
-                  ),
-                  style: UIStyles.formValueStyle.copyWith(
-                    fontSize:
-                        UIStyles.formValueStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-                  validator: _validateZipCode,
-                  maxLength: 5,
-                  onChanged: (_) {
-                    if (_error != null) {
-                      setState(() => _error = null);
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              Semantics(
-                label: 'Eingabefeld für Geburtsdatum',
-                textField: true,
-                child: InkWell(
-                  onTap: () => _selectDate(context),
-                  child: InputDecorator(
+                const SizedBox(height: UIConstants.spacingS),
+                Semantics(
+                  label: 'Eingabefeld für Postleitzahl',
+                  textField: true,
+                  child: TextFormField(
+                    controller: _zipCodeController,
+                    keyboardType: TextInputType.number,
                     decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Geburtsdatum',
-                      suffixIcon: const Icon(Icons.calendar_today),
+                      labelText: 'PLZ',
                     ),
-                    child: Text(
-                      _selectedDate == null
-                          ? 'Geburtsdatum auswählen'
-                          : DateFormat(
-                            'dd.MM.yyyy',
-                            'de',
-                          ).format(_selectedDate!),
-                      style: UIStyles.formValueStyle,
+                    style: UIStyles.formValueStyle.copyWith(
+                      fontSize:
+                          UIStyles.formValueStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                    validator: _validateZipCode,
+                    maxLength: 5,
+                    onChanged: (_) {
+                      if (_error != null) {
+                        setState(() => _error = null);
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: UIConstants.spacingM),
+                Semantics(
+                  label: 'Eingabefeld für Geburtsdatum',
+                  textField: true,
+                  child: InkWell(
+                    onTap: () => _selectDate(context),
+                    child: InputDecorator(
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Geburtsdatum',
+                        suffixIcon: const Icon(Icons.calendar_today),
+                      ),
+                      child: Text(
+                        _selectedDate == null
+                            ? 'Geburtsdatum auswählen'
+                            : DateFormat(
+                              'dd.MM.yyyy',
+                              'de',
+                            ).format(_selectedDate!),
+                        style: UIStyles.formValueStyle,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (_selectedDate == null)
-                Padding(
-                  padding: const EdgeInsets.only(
+                if (_selectedDate == null)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 4.0,
+                      bottom: UIConstants.spacingS,
+                    ),
+                    child: ScaledText(
+                      'Bitte Geburtsdatum auswählen',
+                      style: UIStyles.formLabelStyle.copyWith(
+                        color: UIConstants.errorColor,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: UIConstants.spacingM),
+                const ScaledText(
+                  'Bitte vergeben Sie ein sicheres Passwort:',
+                  style: UIStyles.bodyStyle,
+                ),
+                const SizedBox(height: UIConstants.spacingS),
+                Semantics(
+                  label: 'Eingabefeld für neues Passwort',
+                  textField: true,
+                  child: TextFormField(
+                    controller: _passwordController,
+                    obscureText: !_showPassword,
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: 'Neues Passwort',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _showPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        tooltip: 'Passwort anzeigen/verbergen',
+                        onPressed:
+                            () =>
+                                setState(() => _showPassword = !_showPassword),
+                      ),
+                    ),
+                    style: UIStyles.formValueStyle.copyWith(
+                      fontSize:
+                          UIStyles.formValueStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                    validator: _validatePassword,
+                    onChanged: _checkStrength,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(
                     top: 4.0,
                     bottom: UIConstants.spacingS,
                   ),
                   child: ScaledText(
-                    'Bitte Geburtsdatum auswählen',
-                    style: UIStyles.formLabelStyle.copyWith(
-                      color: UIConstants.errorColor,
-                    ),
+                    'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
+                    style: UIStyles.formLabelStyle,
                   ),
                 ),
-              const SizedBox(height: UIConstants.spacingM),
-              const ScaledText(
-                'Bitte vergeben Sie ein sicheres Passwort:',
-                style: UIStyles.bodyStyle,
-              ),
-              const SizedBox(height: UIConstants.spacingS),
-              Semantics(
-                label: 'Eingabefeld für neues Passwort',
-                textField: true,
-                child: TextFormField(
-                  controller: _passwordController,
-                  obscureText: !_showPassword,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Neues Passwort',
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _showPassword ? Icons.visibility_off : Icons.visibility,
-                      ),
-                      tooltip: 'Passwort anzeigen/verbergen',
-
-                      onPressed:
-                          () => setState(() => _showPassword = !_showPassword),
-                    ),
-                  ),
-
-                  style: UIStyles.formValueStyle.copyWith(
-                    fontSize:
-                        UIStyles.formValueStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-                  validator: _validatePassword,
-                  onChanged: _checkStrength,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(
-                  top: 4.0,
-                  bottom: UIConstants.spacingS,
-                ),
-                child: ScaledText(
-                  'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
-                  style: UIStyles.formLabelStyle,
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: LinearProgressIndicator(
-                      value: _strength,
-                      minHeight: 6,
-                      backgroundColor: UIConstants.greySubtitleTextColor,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        _strengthColor(_strength),
+                Row(
+                  children: [
+                    Expanded(
+                      child: LinearProgressIndicator(
+                        value: _strength,
+                        minHeight: 6,
+                        backgroundColor: UIConstants.greySubtitleTextColor,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          _strengthColor(_strength),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: UIConstants.spacingS),
-                  ScaledText(
-                    _strengthLabel(_strength),
-                    style: UIStyles.bodyStyle.copyWith(
-                      color: _strengthColor(_strength),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: UIConstants.spacingM),
-              Semantics(
-                label: 'Eingabefeld für Passwort-Wiederholung',
-                textField: true,
-                child: TextFormField(
-                  controller: _confirmController,
-                  obscureText: !_showConfirm,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Passwort wiederholen',
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _showConfirm ? Icons.visibility_off : Icons.visibility,
+                    const SizedBox(width: UIConstants.spacingS),
+                    ScaledText(
+                      _strengthLabel(_strength),
+                      style: UIStyles.bodyStyle.copyWith(
+                        color: _strengthColor(_strength),
                       ),
-                      tooltip: 'Passwort anzeigen/verbergen',
-
-                      onPressed:
-                          () => setState(() => _showConfirm = !_showConfirm),
                     ),
-                  ),
-                  style: UIStyles.formValueStyle.copyWith(
-                    fontSize:
-                        UIStyles.formValueStyle.fontSize! *
-                        fontSizeProvider.scaleFactor,
-                  ),
-
-                  validator:
-                      (v) =>
-                          v != _passwordController.text
-                              ? 'Passwörter stimmen nicht überein'
-                              : null,
+                  ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submit,
-                  style: UIStyles.defaultButtonStyle,
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.lock_open, color: Colors.white),
-                      SizedBox(width: UIConstants.spacingS),
-                      ScaledText(
-                        'Registrieren abschließen',
-                        style: UIStyles.buttonStyle,
+                const SizedBox(height: UIConstants.spacingM),
+                Semantics(
+                  label: 'Eingabefeld für Passwort-Wiederholung',
+                  textField: true,
+                  child: TextFormField(
+                    controller: _confirmController,
+                    obscureText: !_showConfirm,
+                    decoration: UIStyles.formInputDecoration.copyWith(
+                      labelText: 'Passwort wiederholen',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _showConfirm
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        tooltip: 'Passwort anzeigen/verbergen',
+                        onPressed:
+                            () => setState(() => _showConfirm = !_showConfirm),
                       ),
-                    ],
+                    ),
+                    style: UIStyles.formValueStyle.copyWith(
+                      fontSize:
+                          UIStyles.formValueStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                    validator:
+                        (v) =>
+                            v != _passwordController.text
+                                ? 'Passwörter stimmen nicht überein'
+                                : null,
                   ),
                 ),
-              ),
-              const SizedBox(height: UIConstants.spacingXXL),
-            ],
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _submit,
+                    style: UIStyles.defaultButtonStyle,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.lock_open, color: Colors.white),
+                        SizedBox(width: UIConstants.spacingS),
+                        ScaledText(
+                          'Registrieren abschließen',
+                          style: UIStyles.buttonStyle,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: UIConstants.spacingXXL),
+                // Extra space for mobile users to allow scrolling and button accessibility
+                const SizedBox(height: 120),
+              ],
+            ),
           ),
         ),
       ),
