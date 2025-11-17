@@ -15,8 +15,8 @@ class HttpClient {
     required ConfigService configService,
     required CacheService cacheService,
     http.Client? client,
-  })  : _client = client ?? http.Client(),
-        _tokenService = tokenService;
+  }) : _client = client ?? http.Client(),
+       _tokenService = tokenService;
 
   final String baseUrl;
   final int serverTimeout;
@@ -42,28 +42,18 @@ class HttpClient {
       http.Response response;
       if (method == 'POST') {
         response = await _client
-            .post(
-              Uri.parse(url),
-              headers: requestHeaders,
-              body: body,
-            )
+            .post(Uri.parse(url), headers: requestHeaders, body: body)
             .timeout(Duration(seconds: serverTimeout));
       } else if (method == 'PUT') {
         response = await _client
-            .put(
-              Uri.parse(url),
-              headers: requestHeaders,
-              body: body,
-            )
+            .put(Uri.parse(url), headers: requestHeaders, body: body)
             .timeout(Duration(seconds: serverTimeout));
       } else if (method == 'DELETE') {
+        // send DELETE request to our LOG server
         response = await _client
-            .delete(
-              Uri.parse(url),
-              headers: requestHeaders,
-              body: body,
-            )
+            .delete(Uri.parse(url), headers: requestHeaders, body: body)
             .timeout(Duration(seconds: serverTimeout));
+        // send response to our LOG server
       } else if (method == 'GET') {
         if (body == null) {
           response = await _client
@@ -83,13 +73,12 @@ class HttpClient {
           LoggerService.logInfo('HttpClient: Body: $body');
 
           final streamedResponse = await _client.send(request);
-          response = await http.Response.fromStream(streamedResponse).timeout(
-            Duration(
-              seconds: serverTimeout,
-            ),
-          );
+          response = await http.Response.fromStream(
+            streamedResponse,
+          ).timeout(Duration(seconds: serverTimeout));
         }
       } else {
+        // send Error to out LOG Server
         throw Exception('Unsupported HTTP method: $method');
       }
 
@@ -103,8 +92,9 @@ class HttpClient {
           );
           await _tokenService
               .clearToken(); // Tell TokenService to clear its cached token
-          final newToken = await _tokenService
-              .requestToken(); // Request a new token from TokenService
+          final newToken =
+              await _tokenService
+                  .requestToken(); // Request a new token from TokenService
 
           if (newToken.isEmpty) {
             // If token refresh failed
@@ -184,8 +174,9 @@ class HttpClient {
           );
           await _tokenService
               .clearToken(); // Tell TokenService to clear its cached token
-          final newToken = await _tokenService
-              .requestToken(); // Request a new token from TokenService
+          final newToken =
+              await _tokenService
+                  .requestToken(); // Request a new token from TokenService
 
           if (newToken.isEmpty) {
             // If token refresh failed
@@ -223,14 +214,9 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
-    return _makeRequest(
-      'POST',
-      apiUrl,
-      {
-        'Content-Type': 'application/json',
-      },
-      requestBody,
-    );
+    return _makeRequest('POST', apiUrl, {
+      'Content-Type': 'application/json',
+    }, requestBody);
   }
 
   Future<dynamic> put(
@@ -244,14 +230,9 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
-    return _makeRequest(
-      'PUT',
-      apiUrl,
-      {
-        'Content-Type': 'application/json',
-      },
-      requestBody,
-    );
+    return _makeRequest('PUT', apiUrl, {
+      'Content-Type': 'application/json',
+    }, requestBody);
   }
 
   Future<dynamic> delete(
@@ -267,23 +248,16 @@ class HttpClient {
       LoggerService.logInfo('HttpClient: Request body: $requestBody');
     }
 
-    return _makeRequest(
-      'DELETE',
-      apiUrl,
-      {
-        'Content-Type': 'application/json',
-      },
-      requestBody,
-    );
+    return _makeRequest('DELETE', apiUrl, {
+      'Content-Type': 'application/json',
+    }, requestBody);
   }
 
-  Future<dynamic> get(
-    String endpoint, {
-    String? overrideBaseUrl,
-  }) async {
-    final url = overrideBaseUrl != null
-        ? '$overrideBaseUrl/$endpoint'
-        : '$baseUrl/$endpoint';
+  Future<dynamic> get(String endpoint, {String? overrideBaseUrl}) async {
+    final url =
+        overrideBaseUrl != null
+            ? '$overrideBaseUrl/$endpoint'
+            : '$baseUrl/$endpoint';
     return _makeRequest('GET', url, null, null);
   }
 
