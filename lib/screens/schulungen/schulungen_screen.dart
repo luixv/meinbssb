@@ -532,7 +532,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                             );
                                                           },
                                                           child: Text(
-                                                            'AGB',
+                                                            'AGB-L',
                                                             style: UIStyles.linkStyle.copyWith(
                                                               color:
                                                                   UIConstants

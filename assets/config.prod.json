@@ -26,8 +26,11 @@
   "tokenServerURL": "https://webintern.bssb.bayern:50211/rest/zmi/token",
   "serverTimeout": 40,
   "cacheExpirationHours": "24",
-  "testEmails": true,
-  "testRecipient": "bssb@reile.net",
+  "testEmails": false,
+  "testRecipient": "",
+  "schulungenBccEmail": "lehrgang@bssb.bayern",
+  "startRechteBccEmail": "schuetzenausweis@bssb.bayern",
+  "registrationBccEmail": "webportal@bssb.bayern",
   "smtpSettings": {
     "emailProtocol": "",
     "host": "relay-cluster-eu01.hornetsecurity.com",

@@ -37,6 +37,9 @@
   "cacheExpirationHours": "24",
   "testEmails": true,
   "testRecipient": "bssb@reile.net",
+  "schulungenBccEmail": "",
+  "startRechteBccEmail": "",
+  "registrationBccEmail": "",
   "smtpSettings": {
     "emailProtocol": "",
     "host": "relay-cluster-eu01.hornetsecurity.com",

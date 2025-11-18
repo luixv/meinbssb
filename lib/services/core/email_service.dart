@@ -69,6 +69,8 @@ class EmailService {
     required String subject,
     String? htmlBody,
     int? emailId,
+    String? bcc,
+    List<String>? bccList,
   }) async {
     try {
       final appropriateRecipient = _getAppropriateRecipient(recipient);
@@ -78,14 +80,24 @@ class EmailService {
         name: 'email',
         protocolKey: 'webProtocol',
       );
+      
+      final requestBody = <String, dynamic>{
+        'to': appropriateRecipient,
+        'subject': subject,
+        'html': htmlBody,
+      };
+      
+      // Add BCC if provided (either as single string or list)
+      if (bcc != null && bcc.isNotEmpty) {
+        requestBody['bcc'] = bcc;
+      } else if (bccList != null && bccList.isNotEmpty) {
+        requestBody['bcc'] = bccList;
+      }
+      
       final response = await http.post(
         Uri.parse(emailUrl),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'to': appropriateRecipient,
-          'subject': subject,
-          'html': htmlBody,
-        }),
+        body: json.encode(requestBody),
       );
 
       if (response.statusCode == 200 || response.statusCode == 202) {
@@ -280,6 +292,9 @@ class EmailService {
         return;
       }
 
+      // Get BCC email from config if available
+      final registrationBccEmail = _configService.getString('registrationBccEmail');
+
       // Send notification to each email address
       for (final email in emailAddresses) {
         if (email.isNotEmpty && email != 'null') {
@@ -291,6 +306,9 @@ class EmailService {
             recipient: email,
             subject: subject,
             htmlBody: emailBody,
+            bcc: registrationBccEmail != null && registrationBccEmail.isNotEmpty
+                ? registrationBccEmail
+                : null,
           );
         }
       }
@@ -382,6 +400,9 @@ class EmailService {
           .replaceAll('{firstname}', firstName)
           .replaceAll('{lastname}', lastName);
 
+      // Get BCC email from config if available
+      final schulungenBccEmail = _configService.getString('schulungenBccEmail');
+
       // Send email to all addresses
       for (final emailAddress in emailAddresses) {
         try {
@@ -390,6 +411,9 @@ class EmailService {
             recipient: emailAddress,
             subject: subject,
             htmlBody: personalizedContent,
+            bcc: schulungenBccEmail != null && schulungenBccEmail.isNotEmpty
+                ? schulungenBccEmail
+                : null,
           );
           LoggerService.logInfo(
             'Sent training unregistration notification to: $emailAddress',
@@ -434,12 +458,18 @@ class EmailService {
           .replaceAll('{lastName}', lastName)
           .replaceAll('{verificationLink}', verificationLink);
 
+      // Get BCC email from config if available
+      final registrationBccEmail = _configService.getString('registrationBccEmail');
+
       // Send email
       await sendEmail(
         sender: fromEmail,
         recipient: email,
         subject: subject,
         htmlBody: emailBody,
+        bcc: registrationBccEmail != null && registrationBccEmail.isNotEmpty
+            ? registrationBccEmail
+            : null,
       );
 
       LoggerService.logInfo('Sent registration email to: $email');
@@ -504,6 +534,9 @@ class EmailService {
           .replaceAll('{schulung_total}', schulungTotal.toString())
           .replaceAll('{calendar_link}', calendarLink);
 
+      // Get BCC email from config if available
+      final schulungenBccEmail = _configService.getString('schulungenBccEmail');
+
       // Send email to the provided email address
       try {
         await sendEmail(
@@ -511,6 +544,9 @@ class EmailService {
           recipient: email,
           subject: subject,
           htmlBody: personalizedContent,
+          bcc: schulungenBccEmail != null && schulungenBccEmail.isNotEmpty
+              ? schulungenBccEmail
+              : null,
         );
         LoggerService.logInfo(
           'Sent training registration notification to: $email',
@@ -616,6 +652,9 @@ class EmailService {
       // Format Zweitvereine information
       final zweitvereine = _formatZweitvereine(zweitmitgliedschaften, zveData);
 
+      // Get BCC email from config if available
+      final startRechteBccEmail = _configService.getString('startRechteBccEmail');
+
       // Send emails to user's email addresses
       for (final email in userEmailAddresses) {
         if (email.isNotEmpty && email != 'null') {
@@ -636,6 +675,9 @@ class EmailService {
             recipient: email,
             subject: subject,
             htmlBody: personalizedContent,
+            bcc: startRechteBccEmail != null && startRechteBccEmail.isNotEmpty
+                ? startRechteBccEmail
+                : null,
           );
 
           LoggerService.logInfo(
@@ -664,6 +706,9 @@ class EmailService {
             recipient: email,
             subject: subject,
             htmlBody: personalizedContent,
+            bcc: startRechteBccEmail != null && startRechteBccEmail.isNotEmpty
+                ? startRechteBccEmail
+                : null,
           );
 
           LoggerService.logInfo(
