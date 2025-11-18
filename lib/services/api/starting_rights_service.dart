@@ -56,6 +56,7 @@ class StartingRightsService {
         final vereinId = membership.vereinId;
         vereinIds.add(vereinId);
       }
+      LoggerService.logInfo('VEREINDIS: $vereinIds');
 
       // 7. Get email addresses from all clubs
       final clubEmailAddresses = <String>[];
