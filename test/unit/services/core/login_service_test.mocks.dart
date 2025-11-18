@@ -1471,6 +1471,19 @@ class MockVereinService extends _i1.Mock implements _i31.VereinService {
             ),
           )
           as _i2.Future<List<_i33.FremdeVerband>>);
+
+  @override
+  _i2.Future<List<Map<String, dynamic>>> fetchVereinFunktionaer(
+    int? vereinId,
+    int? funktyp,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchVereinFunktionaer, [vereinId, funktyp]),
+            returnValue: _i2.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i2.Future<List<Map<String, dynamic>>>);
 }
 
 /// A class which mocks [PostgrestService].
@@ -1695,6 +1708,14 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
           as _i2.Future<bool>);
 
   @override
+  _i2.Future<bool> softDeleteUser(String? personId) =>
+      (super.noSuchMethod(
+            Invocation.method(#softDeleteUser, [personId]),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
+
+  @override
   _i2.Future<_i10.Uint8List?> getProfilePhoto(String? userId) =>
       (super.noSuchMethod(
             Invocation.method(#getProfilePhoto, [userId]),
@@ -1718,6 +1739,8 @@ class MockEmailService extends _i1.Mock implements _i34.EmailService {
     required String? subject,
     String? htmlBody,
     int? emailId,
+    String? bcc,
+    List<String>? bccList,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#sendEmail, [], {
@@ -1726,6 +1749,8 @@ class MockEmailService extends _i1.Mock implements _i34.EmailService {
               #subject: subject,
               #htmlBody: htmlBody,
               #emailId: emailId,
+              #bcc: bcc,
+              #bccList: bccList,
             }),
             returnValue: _i2.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},

@@ -315,11 +315,8 @@ class AppInitializer {
 
     vereinService = VereinService(httpClient: httpClient);
 
-    startingRightsService = StartingRightsService(
-      userService: userService,
-      vereinService: vereinService,
-      emailService: emailService,
-    );
+    // Create ApiService first (with temporary StartingRightsService to break circular dependency)
+    final tempStartingRightsService = StartingRightsService();
 
     apiService = ApiService(
       configService: configService,
@@ -337,8 +334,15 @@ class AppInitializer {
       oktoberfestService: oktoberfestService,
       calendarService: calendarService,
       bezirkService: bezirkService,
-      startingRightsService: startingRightsService,
+      startingRightsService: tempStartingRightsService,
     );
+
+    // Now set ApiService in the temporary StartingRightsService and use it as the real one
+    tempStartingRightsService.setApiService(apiService);
+    startingRightsService = tempStartingRightsService;
+
+    // Update ApiService to use the real StartingRightsService (which is the same instance)
+    apiService.setStartingRightsService(startingRightsService);
 
     _registerProviders();
   }

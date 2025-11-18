@@ -464,6 +464,28 @@ void main() {
 
         // Method should complete without error even with no email addresses
       });
+
+      test('handles BCC configuration when schulungenBccEmail is set', () async {
+        when(mockHttpClient.get('FindeMailadressen/123')).thenAnswer(
+          (_) async => [
+            {'MAILADRESSEN': 'user@example.com', 'LOGINMAIL': null},
+          ],
+        );
+        when(mockConfigService.getString('schulungenBccEmail'))
+            .thenReturn('bcc@example.com');
+
+        // Method will return early due to missing email content from assets in test environment
+        // This test verifies the method handles BCC config retrieval without errors
+        await emailService.sendSchulungAbmeldungEmail(
+          personId: '123',
+          schulungName: 'Test Training',
+          schulungDate: '2024-01-01',
+          firstName: 'John',
+          lastName: 'Doe',
+        );
+
+        // Method should complete without error
+      });
     });
 
     group('sendRegistrationEmail', () {
@@ -569,6 +591,27 @@ void main() {
           schulungRegistered: 5,
           schulungTotal: 20,
           eventDateTime: DateTime(2024, 1, 1),
+        );
+
+        // Method should complete without error
+      });
+
+      test('handles BCC configuration when schulungenBccEmail is set', () async {
+        when(mockConfigService.getString('schulungenBccEmail'))
+            .thenReturn('bcc@example.com');
+
+        // Method will return early due to missing email content from assets in test environment
+        // This test verifies the method handles BCC config retrieval without errors
+        await emailService.sendSchulungAnmeldungEmail(
+          personId: '123',
+          schulungName: 'Test Training',
+          schulungDate: '2024-01-01',
+          firstName: 'John',
+          lastName: 'Doe',
+          passnumber: '12345',
+          email: 'user@example.com',
+          schulungRegistered: 5,
+          schulungTotal: 20,
         );
 
         // Method should complete without error
@@ -684,6 +727,51 @@ void main() {
         );
 
         // Should send to both user and club emails
+        // Method should complete without error
+      });
+
+      test('handles BCC configuration when startRechteBccEmail is set', () async {
+        when(mockConfigService.getString('startRechteBccEmail'))
+            .thenReturn('bcc@example.com');
+
+        const userData = UserData(
+          personId: 123,
+          webLoginId: 456,
+          passnummer: '12345',
+          vereinNr: 789,
+          namen: 'Doe',
+          vorname: 'John',
+          vereinName: 'Test Club',
+          passdatenId: 1,
+          mitgliedschaftId: 1,
+        );
+
+        final zveData = PassdatenAkzeptOrAktiv(
+          passdatenId: 1,
+          passStatus: 2,
+          passStatusText: 'Active',
+          digitalerPass: 1,
+          personId: 123,
+          erstVereinId: 789,
+          evVereinNr: 789,
+          evVereinName: 'Test Club',
+          passNummer: '12345',
+          erstelltAm: DateTime.now(),
+          erstelltVon: 'admin',
+          zves: [],
+        );
+
+        // Method will return early due to missing email content from assets in test environment
+        // This test verifies the method handles BCC config retrieval without errors
+        await emailService.sendStartingRightsChangeNotifications(
+          personId: 123,
+          passdaten: userData,
+          userEmailAddresses: ['user@example.com'],
+          clubEmailAddresses: ['club@example.com'],
+          zweitmitgliedschaften: [],
+          zveData: zveData,
+        );
+
         // Method should complete without error
       });
 

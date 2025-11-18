@@ -665,6 +665,19 @@ class MockApiService extends _i1.Mock implements _i9.ApiService {
           as _i8.Future<List<_i23.Verein>>);
 
   @override
+  _i8.Future<List<Map<String, dynamic>>> fetchVereinFunktionaer(
+    int? vereinId,
+    int? funktyp,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchVereinFunktionaer, [vereinId, funktyp]),
+            returnValue: _i8.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i8.Future<List<Map<String, dynamic>>>);
+
+  @override
   _i8.Future<List<_i23.Verein>> fetchVerein(int? vereinsNr) =>
       (super.noSuchMethod(
             Invocation.method(#fetchVerein, [vereinsNr]),
@@ -754,6 +767,14 @@ class MockApiService extends _i1.Mock implements _i9.ApiService {
   _i8.Future<bool> deleteUserRegistration(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#deleteUserRegistration, [id]),
+            returnValue: _i8.Future<bool>.value(false),
+          )
+          as _i8.Future<bool>);
+
+  @override
+  _i8.Future<bool> softDeleteUser(String? personId) =>
+      (super.noSuchMethod(
+            Invocation.method(#softDeleteUser, [personId]),
             returnValue: _i8.Future<bool>.value(false),
           )
           as _i8.Future<bool>);
@@ -968,6 +989,37 @@ class MockApiService extends _i1.Mock implements _i9.ApiService {
           as _i8.Future<void>);
 
   @override
+  _i8.Future<List<String>> getEmailAddressesByPersonId(String? personId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getEmailAddressesByPersonId, [personId]),
+            returnValue: _i8.Future<List<String>>.value(<String>[]),
+          )
+          as _i8.Future<List<String>>);
+
+  @override
+  _i8.Future<void> sendStartingRightsChangeNotifications({
+    required int? personId,
+    required _i11.UserData? passdaten,
+    required List<String>? userEmailAddresses,
+    required List<String>? clubEmailAddresses,
+    required List<_i14.ZweitmitgliedschaftData>? zweitmitgliedschaften,
+    required _i12.PassdatenAkzeptOrAktiv? zveData,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#sendStartingRightsChangeNotifications, [], {
+              #personId: personId,
+              #passdaten: passdaten,
+              #userEmailAddresses: userEmailAddresses,
+              #clubEmailAddresses: clubEmailAddresses,
+              #zweitmitgliedschaften: zweitmitgliedschaften,
+              #zveData: zveData,
+            }),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
   _i8.Future<List<_i25.Result>> fetchResults(String? passnummer) =>
       (super.noSuchMethod(
             Invocation.method(#fetchResults, [passnummer]),
@@ -1026,13 +1078,15 @@ class MockApiService extends _i1.Mock implements _i9.ApiService {
           as _i8.Future<List<_i27.BezirkSearchTriple>>);
 
   @override
-  _i8.Future<void> sendStartingRightsChangeNotifications({
+  _i8.Future<void> sendStartingRightsChangeNotificationsForPerson({
     required int? personId,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#sendStartingRightsChangeNotifications, [], {
-              #personId: personId,
-            }),
+            Invocation.method(
+              #sendStartingRightsChangeNotificationsForPerson,
+              [],
+              {#personId: personId},
+            ),
             returnValue: _i8.Future<void>.value(),
             returnValueForMissingStub: _i8.Future<void>.value(),
           )

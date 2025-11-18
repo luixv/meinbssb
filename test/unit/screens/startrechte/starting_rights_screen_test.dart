@@ -35,7 +35,7 @@ class FakeApiService implements ApiService {
   }
 
   @override
-  Future<void> sendStartingRightsChangeNotifications({
+  Future<void> sendStartingRightsChangeNotificationsForPerson({
     required int personId,
   }) async {}
 

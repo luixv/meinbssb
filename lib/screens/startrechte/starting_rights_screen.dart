@@ -66,7 +66,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
 
     if (success) {
       try {
-        await apiService.sendStartingRightsChangeNotifications(
+        await apiService.sendStartingRightsChangeNotificationsForPerson(
           personId: personId!,
         );
         LoggerService.logInfo('Starting rights change notifications sent');

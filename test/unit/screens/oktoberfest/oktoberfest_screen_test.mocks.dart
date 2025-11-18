@@ -975,12 +975,37 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
 
   @override
   _i9.Future<void> sendStartingRightsChangeNotifications({
-    required int? personId,
+    required int personId,
+    required _i11.UserData passdaten,
+    required List<String> userEmailAddresses,
+    required List<String> clubEmailAddresses,
+    required List<_i14.ZweitmitgliedschaftData> zweitmitgliedschaften,
+    required _i12.PassdatenAkzeptOrAktiv zveData,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#sendStartingRightsChangeNotifications, [], {
               #personId: personId,
+              #passdaten: passdaten,
+              #userEmailAddresses: userEmailAddresses,
+              #clubEmailAddresses: clubEmailAddresses,
+              #zweitmitgliedschaften: zweitmitgliedschaften,
+              #zveData: zveData,
             }),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
+          )
+          as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> sendStartingRightsChangeNotificationsForPerson({
+    required int personId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #sendStartingRightsChangeNotificationsForPerson,
+              [],
+              {#personId: personId},
+            ),
             returnValue: _i9.Future<void>.value(),
             returnValueForMissingStub: _i9.Future<void>.value(),
           )

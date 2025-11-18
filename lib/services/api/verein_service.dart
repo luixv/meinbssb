@@ -140,4 +140,57 @@ class VereinService {
     );
     return [];
   }
+
+  /// Fetches a list of Vereinfunktionaer (club functionaries) for a specific Verein and function type.
+  /// This method retrieves data from the '/Vereinfunktionaer/{vereinId}/{funktyp}' endpoint.
+  /// 
+  /// Parameters:
+  /// - [vereinId]: The ID of the Verein
+  /// - [funktyp]: The function type identifier
+  /// 
+  /// Returns a list of maps containing the functionary data, or an empty list on error.
+  Future<List<Map<String, dynamic>>> fetchVereinFunktionaer(
+    int vereinId,
+    int funktyp,
+  ) async {
+    try {
+      final endpoint = 'Vereinfunktionaer/$vereinId/$funktyp';
+      final response = await _httpClient.get(endpoint);
+      return _mapVereinfunktionaerResponse(response);
+    } catch (e) {
+      LoggerService.logError(
+        'Error fetching Vereinfunktionaer for Verein $vereinId with function type $funktyp: $e',
+      );
+      return []; // Return an empty list on error
+    }
+  }
+
+  /// Maps the dynamic API response for Vereinfunktionaer into a list of maps.
+  List<Map<String, dynamic>> _mapVereinfunktionaerResponse(dynamic response) {
+    if (response is List) {
+      return response
+          .map((item) {
+            try {
+              if (item is Map<String, dynamic>) {
+                return item;
+              }
+              LoggerService.logWarning(
+                'Vereinfunktionaer item is not a Map: ${item.runtimeType}',
+              );
+              return null;
+            } catch (e) {
+              LoggerService.logWarning(
+                'Failed to parse Vereinfunktionaer: $e. Item: $item',
+              );
+              return null;
+            }
+          })
+          .whereType<Map<String, dynamic>>()
+          .toList();
+    }
+    LoggerService.logWarning(
+      'Vereinfunktionaer response is not a List: ${response.runtimeType}',
+    );
+    return [];
+  }
 }

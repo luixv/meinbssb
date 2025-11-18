@@ -282,6 +282,8 @@ class MockEmailService extends _i1.Mock implements _i6.EmailService {
     required String? subject,
     String? htmlBody,
     int? emailId,
+    String? bcc,
+    List<String>? bccList,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#sendEmail, [], {
@@ -290,6 +292,8 @@ class MockEmailService extends _i1.Mock implements _i6.EmailService {
               #subject: subject,
               #htmlBody: htmlBody,
               #emailId: emailId,
+              #bcc: bcc,
+              #bccList: bccList,
             }),
             returnValue: _i5.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},

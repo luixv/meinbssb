@@ -94,7 +94,13 @@ class ApiService {
   final EmailService _emailService;
   final OktoberfestService _oktoberfestService;
   final BezirkService _bezirkService;
-  final StartingRightsService _startingRightsService;
+  StartingRightsService _startingRightsService;
+
+  /// Sets the StartingRightsService instance.
+  /// This is used to break the circular dependency during initialization.
+  void setStartingRightsService(StartingRightsService service) {
+    _startingRightsService = service;
+  }
 
   Future<bool> hasInternet() => _networkService.hasInternet();
 
@@ -408,6 +414,10 @@ class ApiService {
     return await _vereinService.fetchVereine();
   }
 
+  Future<List<Map<String, dynamic>>> fetchVereinFunktionaer(int vereinId, int funktyp) async {
+    return await _vereinService.fetchVereinFunktionaer(vereinId, funktyp);
+  }
+
   /// Fetches detailed information for a specific Verein by its Vereinsnummer.
   /// Returns a list containing a single [Verein] object with complete club details.
   ///
@@ -616,6 +626,28 @@ class ApiService {
     return _emailService.sendAccountCreationNotifications(personId, email);
   }
 
+  Future<List<String>> getEmailAddressesByPersonId(String personId) async {
+    return _emailService.getEmailAddressesByPersonId(personId);
+  }
+
+  Future<void> sendStartingRightsChangeNotifications({
+    required int personId,
+    required UserData passdaten,
+    required List<String> userEmailAddresses,
+    required List<String> clubEmailAddresses,
+    required List<ZweitmitgliedschaftData> zweitmitgliedschaften,
+    required PassdatenAkzeptOrAktiv zveData,
+  }) async {
+    return _emailService.sendStartingRightsChangeNotifications(
+      personId: personId,
+      passdaten: passdaten,
+      userEmailAddresses: userEmailAddresses,
+      clubEmailAddresses: clubEmailAddresses,
+      zweitmitgliedschaften: zweitmitgliedschaften,
+      zveData: zveData,
+    );
+  }
+
   //
   // --- Oktoberfest Service Methods ---
   //
@@ -662,7 +694,7 @@ class ApiService {
     return _bezirkService.fetchBezirkeforSearch();
   }
 
-  Future<void> sendStartingRightsChangeNotifications({
+  Future<void> sendStartingRightsChangeNotificationsForPerson({
     required int personId,
   }) async {
     return _startingRightsService.sendStartingRightsChangeNotifications(

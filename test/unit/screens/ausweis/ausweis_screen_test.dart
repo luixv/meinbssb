@@ -330,6 +330,8 @@ class DummyEmailService extends EmailService {
     required String subject,
     String? htmlBody,
     int? emailId,
+    String? bcc,
+    List<String>? bccList,
   }) async {
     return {'ResultType': 1, 'ResultMessage': 'Email sent successfully'};
   }
@@ -378,17 +380,13 @@ class DummyBezirkService extends BezirkService {
 }
 
 class DummyStartingRightsService extends StartingRightsService {
-  DummyStartingRightsService()
-    : super(
-        userService: DummyUserService(),
-        vereinService: DummyVereinService(),
-        emailService: DummyEmailService(),
-      );
+  DummyStartingRightsService() : super();
 }
 
 class MockApiService extends ApiService {
   MockApiService({this.fetchResult, this.shouldThrow = false})
-    : super(
+    : _dummyStartingRightsService = DummyStartingRightsService(),
+      super(
         configService: ConfigService.instance,
         httpClient: DummyHttpClient(),
         imageService: DummyImageService(),
@@ -407,7 +405,13 @@ class MockApiService extends ApiService {
         calendarService: DummyCalendarService(),
         bezirkService: DummyBezirkService(),
         startingRightsService: DummyStartingRightsService(),
-      );
+      ) {
+    // Replace the instance in ApiService with our stored instance and set apiService
+    // This ensures we use the same instance and can set the apiService on it
+    setStartingRightsService(_dummyStartingRightsService);
+    _dummyStartingRightsService.setApiService(this);
+  }
+  final DummyStartingRightsService _dummyStartingRightsService;
   final Uint8List? fetchResult;
   final bool shouldThrow;
   @override

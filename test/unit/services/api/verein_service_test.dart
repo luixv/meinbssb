@@ -347,4 +347,135 @@ void main() {
       expect(result[0].vereinName, 'Badischer SB');
     });
   });
+
+  group('fetchVereinFunktionaer', () {
+    const testVereinId = 1963;
+    const testFunktyp = 1;
+
+    test('returns mapped vereinfunktionaer list from API', () async {
+      final testResponse = [
+        {
+          'VEREINFUNKTIONAERID': 1513000000065,
+          'VEREINFUNKTTYPID': 1,
+          'PERSONID': 133311,
+          'VEREINID': 1963,
+          'AMTSEMAIL': '1.schuetzenmeister@kk-harthausen-paar.de',
+          'AMTSTELEFON': '089',
+          'AMTSMOBIL': '017',
+          'AUFGABENBEREICH': '',
+          'VEREINFUNKTIONAER': '1. Schützenmeister',
+          'NAMEN': 'Späth',
+          'VORNAME': 'Hans Jürgen',
+          'TITEL': '',
+          'STRASSE': 'Alter Schulweg 5',
+          'PLZ': '86316',
+          'ORT': 'Friedberg',
+          'EMAILLIST': 'spaeth.hjm@t-online.de',
+          'VEREINNR': 412013,
+          'VEREINNAME': 'KK SG Harthausen-Paar e.V.',
+          'GAUID': 49,
+          'GAUNR': 412,
+          'GAUNAME': 'Friedberg',
+          'BEZIRKID': 4,
+          'BEZIRKNR': 4,
+          'BEZIRKNAME': 'Oberbayern',
+          'DOKUMENTEORDNER': '',
+          'PASSNUMMER': '41200166'
+        }
+      ];
+
+      when(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await vereinService.fetchVereinFunktionaer(testVereinId, testFunktyp);
+
+      expect(result, isA<List<Map<String, dynamic>>>());
+      expect(result.length, 1);
+      expect(result[0]['AMTSEMAIL'], '1.schuetzenmeister@kk-harthausen-paar.de');
+      expect(result[0]['EMAILLIST'], 'spaeth.hjm@t-online.de');
+      expect(result[0]['VEREINFUNKTIONAER'], '1. Schützenmeister');
+      expect(result[0]['NAMEN'], 'Späth');
+      expect(result[0]['VORNAME'], 'Hans Jürgen');
+      verify(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp')).called(1);
+    });
+
+    test('returns empty list when API returns empty response', () async {
+      when(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp'))
+          .thenAnswer((_) async => []);
+
+      final result = await vereinService.fetchVereinFunktionaer(testVereinId, testFunktyp);
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp')).called(1);
+    });
+
+    test('returns empty list when API returns non-list response', () async {
+      when(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp'))
+          .thenAnswer((_) async => {'error': 'Not found'});
+
+      final result = await vereinService.fetchVereinFunktionaer(testVereinId, testFunktyp);
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp')).called(1);
+    });
+
+    test('filters out invalid items in response', () async {
+      final testResponse = [
+        {
+          'VEREINFUNKTIONAERID': 1513000000065,
+          'VEREINID': 1963,
+          'AMTSEMAIL': 'valid@example.com',
+        },
+        'Invalid item', // Non-map item
+        {
+          'AMTSEMAIL': 'missing-id@example.com', // Missing required fields
+        },
+      ];
+
+      when(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await vereinService.fetchVereinFunktionaer(testVereinId, testFunktyp);
+
+      expect(result.length, 2); // Both map items should be included
+      expect(result[0]['AMTSEMAIL'], 'valid@example.com');
+      expect(result[1]['AMTSEMAIL'], 'missing-id@example.com');
+    });
+
+    test('returns empty list and logs error when exception occurs', () async {
+      when(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp'))
+          .thenThrow(Exception('Network error'));
+
+      final result = await vereinService.fetchVereinFunktionaer(testVereinId, testFunktyp);
+
+      expect(result, isEmpty);
+      verify(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp')).called(1);
+    });
+
+    test('handles multiple functionaries', () async {
+      final testResponse = [
+        {
+          'VEREINFUNKTIONAERID': 1513000000065,
+          'VEREINID': 1963,
+          'AMTSEMAIL': 'first@example.com',
+          'VEREINFUNKTIONAER': '1. Schützenmeister',
+        },
+        {
+          'VEREINFUNKTIONAERID': 1513000000066,
+          'VEREINID': 1963,
+          'AMTSEMAIL': 'second@example.com',
+          'VEREINFUNKTIONAER': '2. Schützenmeister',
+        },
+      ];
+
+      when(mockHttpClient.get('Vereinfunktionaer/$testVereinId/$testFunktyp'))
+          .thenAnswer((_) async => testResponse);
+
+      final result = await vereinService.fetchVereinFunktionaer(testVereinId, testFunktyp);
+
+      expect(result.length, 2);
+      expect(result[0]['AMTSEMAIL'], 'first@example.com');
+      expect(result[1]['AMTSEMAIL'], 'second@example.com');
+    });
+  });
 }

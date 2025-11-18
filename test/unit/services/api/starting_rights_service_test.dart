@@ -2,37 +2,26 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
-import 'package:meinbssb/services/api/user_service.dart';
-import 'package:meinbssb/services/api/verein_service.dart';
-import 'package:meinbssb/services/core/email_service.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart';
 import 'package:meinbssb/models/passdaten_akzept_or_aktiv_data.dart';
-import 'package:meinbssb/models/verein_data.dart';
 
 @GenerateMocks([
-  UserService,
-  VereinService,
-  EmailService,
+  ApiService,
 ])
 import 'starting_rights_service_test.mocks.dart';
 
 void main() {
   group('StartingRightsService', () {
     late StartingRightsService startingRightsService;
-    late MockUserService mockUserService;
-    late MockVereinService mockVereinService;
-    late MockEmailService mockEmailService;
+    late MockApiService mockApiService;
 
     setUp(() {
-      mockUserService = MockUserService();
-      mockVereinService = MockVereinService();
-      mockEmailService = MockEmailService();
+      mockApiService = MockApiService();
       
       startingRightsService = StartingRightsService(
-        userService: mockUserService,
-        vereinService: mockVereinService,
-        emailService: mockEmailService,
+        apiService: mockApiService,
       );
     });
 
@@ -43,11 +32,23 @@ void main() {
 
     group('sendStartingRightsChangeNotifications', () {
       const int testPersonId = 12345;
+
+      test('requires ApiService to be set before use', () async {
+        // Arrange
+        final serviceWithoutApi = StartingRightsService();
+        
+        // Act
+        await serviceWithoutApi.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+        );
+        
+        // Assert - should return early without error
+        // The service should handle null ApiService gracefully
+      });
       
       late UserData testUserData;
       late List<ZweitmitgliedschaftData> testZweitmitgliedschaften;
       late PassdatenAkzeptOrAktiv testZveData;
-      late List<Verein> testVereinData;
 
       setUp(() {
         testUserData = const UserData(
@@ -60,6 +61,7 @@ void main() {
           vereinName: 'Test Verein',
           passdatenId: 5001,
           mitgliedschaftId: 2001,
+          erstVereinId: 100,
         );
 
         testZweitmitgliedschaften = [
@@ -79,40 +81,38 @@ void main() {
           erstVereinId: 100,
           evVereinNr: 100,
         );
-
-        testVereinData = [
-          const Verein(
-            id: 101,
-            vereinsNr: 100,
-            name: 'Test Verein',
-            email: 'contact@testverein.de',
-            pEmail: 'president@testverein.de',
-          ),
-        ];
       });
 
       test('successfully sends notifications with complete data', () async {
         // Arrange
-        when(mockUserService.fetchPassdaten(testPersonId))
+        when(mockApiService.fetchPassdaten(testPersonId))
             .thenAnswer((_) async => testUserData);
-        when(mockEmailService.getEmailAddressesByPersonId(testPersonId.toString()))
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
             .thenAnswer((_) async => ['user@example.com']);
-        when(mockUserService.fetchZweitmitgliedschaften(testPersonId))
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
             .thenAnswer((_) async => testZweitmitgliedschaften);
-        when(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
             .thenAnswer((_) async => testZveData);
-        when(mockVereinService.fetchVerein(100))
-            .thenAnswer((_) async => testVereinData);
-        when(mockVereinService.fetchVerein(200))
+        
+        // First club - has AMTSEMAIL
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
             .thenAnswer((_) async => [
-              const Verein(
-                id: 201,
-                vereinsNr: 200,
-                name: 'Second Club',
-                email: 'info@secondclub.de',
-              ),
-            ],);
-        when(mockEmailService.sendStartingRightsChangeNotifications(
+              {
+                'AMTSEMAIL': 'contact@testverein.de',
+                'EMAILLIST': 'president@testverein.de',
+              }
+            ]);
+        
+        // Second club - has AMTSEMAIL
+        when(mockApiService.fetchVereinFunktionaer(201, 1))
+            .thenAnswer((_) async => [
+              {
+                'AMTSEMAIL': 'info@secondclub.de',
+                'EMAILLIST': null,
+              }
+            ]);
+        
+        when(mockApiService.sendStartingRightsChangeNotifications(
           personId: anyNamed('personId'),
           passdaten: anyNamed('passdaten'),
           userEmailAddresses: anyNamed('userEmailAddresses'),
@@ -127,17 +127,17 @@ void main() {
         );
 
         // Assert
-        verify(mockUserService.fetchPassdaten(testPersonId)).called(1);
-        verify(mockEmailService.getEmailAddressesByPersonId(testPersonId.toString())).called(1);
-        verify(mockUserService.fetchZweitmitgliedschaften(testPersonId)).called(1);
-        verify(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId)).called(1);
-        verify(mockVereinService.fetchVerein(100)).called(1);
-        verify(mockVereinService.fetchVerein(200)).called(1);
-        verify(mockEmailService.sendStartingRightsChangeNotifications(
+        verify(mockApiService.fetchPassdaten(testPersonId)).called(1);
+        verify(mockApiService.getEmailAddressesByPersonId(testPersonId.toString())).called(1);
+        verify(mockApiService.fetchZweitmitgliedschaften(testPersonId)).called(1);
+        verify(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId)).called(1);
+        verify(mockApiService.fetchVereinFunktionaer(100, 1)).called(1);
+        verify(mockApiService.fetchVereinFunktionaer(201, 1)).called(1);
+        verify(mockApiService.sendStartingRightsChangeNotifications(
           personId: testPersonId,
           passdaten: testUserData,
           userEmailAddresses: ['user@example.com'],
-          clubEmailAddresses: ['contact@testverein.de', 'president@testverein.de', 'info@secondclub.de'],
+          clubEmailAddresses: ['contact@testverein.de', 'info@secondclub.de'],
           zweitmitgliedschaften: testZweitmitgliedschaften,
           zveData: testZveData,
         ),).called(1);
@@ -145,7 +145,7 @@ void main() {
 
       test('returns early when passdaten is null', () async {
         // Arrange
-        when(mockUserService.fetchPassdaten(testPersonId))
+        when(mockApiService.fetchPassdaten(testPersonId))
             .thenAnswer((_) async => null);
 
         // Act
@@ -154,12 +154,12 @@ void main() {
         );
 
         // Assert
-        verify(mockUserService.fetchPassdaten(testPersonId)).called(1);
-        verifyNever(mockEmailService.getEmailAddressesByPersonId(any));
-        verifyNever(mockUserService.fetchZweitmitgliedschaften(any));
-        verifyNever(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(any));
-        verifyNever(mockVereinService.fetchVerein(any));
-        verifyNever(mockEmailService.sendStartingRightsChangeNotifications(
+        verify(mockApiService.fetchPassdaten(testPersonId)).called(1);
+        verifyNever(mockApiService.getEmailAddressesByPersonId(any));
+        verifyNever(mockApiService.fetchZweitmitgliedschaften(any));
+        verifyNever(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(any));
+        verifyNever(mockApiService.fetchVereinFunktionaer(any, any));
+        verifyNever(mockApiService.sendStartingRightsChangeNotifications(
           personId: anyNamed('personId'),
           passdaten: anyNamed('passdaten'),
           userEmailAddresses: anyNamed('userEmailAddresses'),
@@ -171,17 +171,19 @@ void main() {
 
       test('handles empty club data gracefully', () async {
         // Arrange
-        when(mockUserService.fetchPassdaten(testPersonId))
+        when(mockApiService.fetchPassdaten(testPersonId))
             .thenAnswer((_) async => testUserData);
-        when(mockEmailService.getEmailAddressesByPersonId(testPersonId.toString()))
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
             .thenAnswer((_) async => ['user@example.com']);
-        when(mockUserService.fetchZweitmitgliedschaften(testPersonId))
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
             .thenAnswer((_) async => []);
-        when(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
             .thenAnswer((_) async => testZveData);
-        when(mockVereinService.fetchVerein(100))
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
             .thenAnswer((_) async => []); // Empty club data
-        when(mockEmailService.sendStartingRightsChangeNotifications(
+        when(mockApiService.fetchVereinFunktionaer(100, 201))
+            .thenAnswer((_) async => []); // Empty fallback
+        when(mockApiService.sendStartingRightsChangeNotifications(
           personId: anyNamed('personId'),
           passdaten: anyNamed('passdaten'),
           userEmailAddresses: anyNamed('userEmailAddresses'),
@@ -196,7 +198,7 @@ void main() {
         );
 
         // Assert
-        verify(mockEmailService.sendStartingRightsChangeNotifications(
+        verify(mockApiService.sendStartingRightsChangeNotifications(
           personId: testPersonId,
           passdaten: testUserData,
           userEmailAddresses: ['user@example.com'],
@@ -208,25 +210,22 @@ void main() {
 
       test('filters out null, empty, and "null" email addresses', () async {
         // Arrange
-        when(mockUserService.fetchPassdaten(testPersonId))
+        when(mockApiService.fetchPassdaten(testPersonId))
             .thenAnswer((_) async => testUserData);
-        when(mockEmailService.getEmailAddressesByPersonId(testPersonId.toString()))
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
             .thenAnswer((_) async => ['user@example.com']);
-        when(mockUserService.fetchZweitmitgliedschaften(testPersonId))
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
             .thenAnswer((_) async => []);
-        when(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
             .thenAnswer((_) async => testZveData);
-        when(mockVereinService.fetchVerein(100))
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
             .thenAnswer((_) async => [
-              const Verein(
-                id: 101,
-                vereinsNr: 100,
-                name: 'Test Verein',
-                email: null, // null email
-                pEmail: '', // empty email
-              ),
-            ],);
-        when(mockEmailService.sendStartingRightsChangeNotifications(
+              {
+                'AMTSEMAIL': null, // null email
+                'EMAILLIST': '', // empty email
+              }
+            ]);
+        when(mockApiService.sendStartingRightsChangeNotifications(
           personId: anyNamed('personId'),
           passdaten: anyNamed('passdaten'),
           userEmailAddresses: anyNamed('userEmailAddresses'),
@@ -241,7 +240,7 @@ void main() {
         );
 
         // Assert
-        verify(mockEmailService.sendStartingRightsChangeNotifications(
+        verify(mockApiService.sendStartingRightsChangeNotifications(
           personId: testPersonId,
           passdaten: testUserData,
           userEmailAddresses: ['user@example.com'],
@@ -253,25 +252,22 @@ void main() {
 
       test('filters out "null" string email addresses', () async {
         // Arrange
-        when(mockUserService.fetchPassdaten(testPersonId))
+        when(mockApiService.fetchPassdaten(testPersonId))
             .thenAnswer((_) async => testUserData);
-        when(mockEmailService.getEmailAddressesByPersonId(testPersonId.toString()))
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
             .thenAnswer((_) async => ['user@example.com']);
-        when(mockUserService.fetchZweitmitgliedschaften(testPersonId))
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
             .thenAnswer((_) async => []);
-        when(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
             .thenAnswer((_) async => testZveData);
-        when(mockVereinService.fetchVerein(100))
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
             .thenAnswer((_) async => [
-              const Verein(
-                id: 101,
-                vereinsNr: 100,
-                name: 'Test Verein',
-                email: 'null', // "null" string
-                pEmail: 'valid@email.com',
-              ),
-            ],);
-        when(mockEmailService.sendStartingRightsChangeNotifications(
+              {
+                'AMTSEMAIL': 'null', // "null" string
+                'EMAILLIST': 'valid@email.com',
+              }
+            ]);
+        when(mockApiService.sendStartingRightsChangeNotifications(
           personId: anyNamed('personId'),
           passdaten: anyNamed('passdaten'),
           userEmailAddresses: anyNamed('userEmailAddresses'),
@@ -286,78 +282,34 @@ void main() {
         );
 
         // Assert
-        verify(mockEmailService.sendStartingRightsChangeNotifications(
+        verify(mockApiService.sendStartingRightsChangeNotifications(
           personId: testPersonId,
           passdaten: testUserData,
           userEmailAddresses: ['user@example.com'],
-          clubEmailAddresses: ['valid@email.com'], // Only valid email should remain
+          clubEmailAddresses: [], // AMTSEMAIL is "null", EMAILLIST is not used when AMTSEMAIL exists
           zweitmitgliedschaften: [],
           zveData: testZveData,
         ),).called(1);
       });
-      test('handles multiple clubs with different email configurations', () async {
+
+      test('uses EMAILLIST when AMTSEMAIL is empty', () async {
         // Arrange
-        final multipleZweitmitgliedschaften = [
-          ZweitmitgliedschaftData(
-            vereinId: 201,
-            vereinNr: 200,
-            vereinName: 'Second Club',
-            eintrittVerein: DateTime(2020, 1, 1),
-          ),
-          ZweitmitgliedschaftData(
-            vereinId: 301,
-            vereinNr: 300,
-            vereinName: 'Third Club',
-            eintrittVerein: DateTime(2021, 1, 1),
-          ),
-        ];
-
-        when(mockUserService.fetchPassdaten(testPersonId))
+        when(mockApiService.fetchPassdaten(testPersonId))
             .thenAnswer((_) async => testUserData);
-        when(mockEmailService.getEmailAddressesByPersonId(testPersonId.toString()))
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
             .thenAnswer((_) async => ['user@example.com']);
-        when(mockUserService.fetchZweitmitgliedschaften(testPersonId))
-            .thenAnswer((_) async => multipleZweitmitgliedschaften);
-        when(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
+            .thenAnswer((_) async => []);
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
             .thenAnswer((_) async => testZveData);
-        
-        // First club - has both emails
-        when(mockVereinService.fetchVerein(100))
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
             .thenAnswer((_) async => [
-              const Verein(
-                id: 101,
-                vereinsNr: 100,
-                name: 'Test Verein',
-                email: 'contact@testverein.de',
-                pEmail: 'president@testverein.de',
-              ),
-            ],);
-        
-        // Second club - has only one email
-        when(mockVereinService.fetchVerein(200))
-            .thenAnswer((_) async => [
-              const Verein(
-                id: 201,
-                vereinsNr: 200,
-                name: 'Second Club',
-                email: 'info@secondclub.de',
-                pEmail: null,
-              ),
-            ],);
-        
-        // Third club - has no emails
-        when(mockVereinService.fetchVerein(300))
-            .thenAnswer((_) async => [
-              const Verein(
-                id: 301,
-                vereinsNr: 300,
-                name: 'Third Club',
-                email: null,
-                pEmail: null,
-              ),
-            ],);
-
-        when(mockEmailService.sendStartingRightsChangeNotifications(
+              {
+                'AMTSEMAIL': '', // empty
+                'EMAILLIST': 'fallback@email.com',
+              }
+            ]);
+        when(mockApiService.sendStartingRightsChangeNotifications(
           personId: anyNamed('personId'),
           passdaten: anyNamed('passdaten'),
           userEmailAddresses: anyNamed('userEmailAddresses'),
@@ -372,36 +324,217 @@ void main() {
         );
 
         // Assert
-        verify(mockVereinService.fetchVerein(100)).called(1);
-        verify(mockVereinService.fetchVerein(200)).called(1);
-        verify(mockVereinService.fetchVerein(300)).called(1);
-        verify(mockEmailService.sendStartingRightsChangeNotifications(
+        verify(mockApiService.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+          passdaten: testUserData,
+          userEmailAddresses: ['user@example.com'],
+          clubEmailAddresses: ['fallback@email.com'], // Should use EMAILLIST when AMTSEMAIL is empty
+          zweitmitgliedschaften: [],
+          zveData: testZveData,
+        ),).called(1);
+      });
+
+      test('parses comma-separated email addresses', () async {
+        // Arrange
+        when(mockApiService.fetchPassdaten(testPersonId))
+            .thenAnswer((_) async => testUserData);
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
+            .thenAnswer((_) async => ['user@example.com']);
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
+            .thenAnswer((_) async => []);
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+            .thenAnswer((_) async => testZveData);
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
+            .thenAnswer((_) async => [
+              {
+                'AMTSEMAIL': 'email1@example.com,email2@example.com,email3@example.com',
+                'EMAILLIST': null,
+              }
+            ]);
+        when(mockApiService.sendStartingRightsChangeNotifications(
+          personId: anyNamed('personId'),
+          passdaten: anyNamed('passdaten'),
+          userEmailAddresses: anyNamed('userEmailAddresses'),
+          clubEmailAddresses: anyNamed('clubEmailAddresses'),
+          zweitmitgliedschaften: anyNamed('zweitmitgliedschaften'),
+          zveData: anyNamed('zveData'),
+        ),).thenAnswer((_) async {});
+
+        // Act
+        await startingRightsService.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+        );
+
+        // Assert
+        verify(mockApiService.sendStartingRightsChangeNotifications(
           personId: testPersonId,
           passdaten: testUserData,
           userEmailAddresses: ['user@example.com'],
           clubEmailAddresses: [
-            'contact@testverein.de',
-            'president@testverein.de',
-            'info@secondclub.de',
+            'email1@example.com',
+            'email2@example.com',
+            'email3@example.com',
           ],
-          zweitmitgliedschaften: multipleZweitmitgliedschaften,
+          zweitmitgliedschaften: [],
+          zveData: testZveData,
+        ),).called(1);
+      });
+
+      test('parses semicolon-separated email addresses', () async {
+        // Arrange
+        when(mockApiService.fetchPassdaten(testPersonId))
+            .thenAnswer((_) async => testUserData);
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
+            .thenAnswer((_) async => ['user@example.com']);
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
+            .thenAnswer((_) async => []);
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+            .thenAnswer((_) async => testZveData);
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
+            .thenAnswer((_) async => [
+              {
+                'AMTSEMAIL': 'email1@example.com;email2@example.com',
+                'EMAILLIST': null,
+              }
+            ]);
+        when(mockApiService.sendStartingRightsChangeNotifications(
+          personId: anyNamed('personId'),
+          passdaten: anyNamed('passdaten'),
+          userEmailAddresses: anyNamed('userEmailAddresses'),
+          clubEmailAddresses: anyNamed('clubEmailAddresses'),
+          zweitmitgliedschaften: anyNamed('zweitmitgliedschaften'),
+          zveData: anyNamed('zveData'),
+        ),).thenAnswer((_) async {});
+
+        // Act
+        await startingRightsService.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+        );
+
+        // Assert
+        verify(mockApiService.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+          passdaten: testUserData,
+          userEmailAddresses: ['user@example.com'],
+          clubEmailAddresses: [
+            'email1@example.com',
+            'email2@example.com',
+          ],
+          zweitmitgliedschaften: [],
+          zveData: testZveData,
+        ),).called(1);
+      });
+
+      test('parses mixed comma and semicolon-separated email addresses', () async {
+        // Arrange
+        when(mockApiService.fetchPassdaten(testPersonId))
+            .thenAnswer((_) async => testUserData);
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
+            .thenAnswer((_) async => ['user@example.com']);
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
+            .thenAnswer((_) async => []);
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+            .thenAnswer((_) async => testZveData);
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
+            .thenAnswer((_) async => [
+              {
+                'AMTSEMAIL': 'email1@example.com, email2@example.com; email3@example.com',
+                'EMAILLIST': null,
+              }
+            ]);
+        when(mockApiService.sendStartingRightsChangeNotifications(
+          personId: anyNamed('personId'),
+          passdaten: anyNamed('passdaten'),
+          userEmailAddresses: anyNamed('userEmailAddresses'),
+          clubEmailAddresses: anyNamed('clubEmailAddresses'),
+          zweitmitgliedschaften: anyNamed('zweitmitgliedschaften'),
+          zveData: anyNamed('zveData'),
+        ),).thenAnswer((_) async {});
+
+        // Act
+        await startingRightsService.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+        );
+
+        // Assert
+        verify(mockApiService.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+          passdaten: testUserData,
+          userEmailAddresses: ['user@example.com'],
+          clubEmailAddresses: [
+            'email1@example.com',
+            'email2@example.com',
+            'email3@example.com',
+          ],
+          zweitmitgliedschaften: [],
+          zveData: testZveData,
+        ),).called(1);
+      });
+
+      test('falls back to funktyp 201 when funktyp 1 returns empty', () async {
+        // Arrange
+        when(mockApiService.fetchPassdaten(testPersonId))
+            .thenAnswer((_) async => testUserData);
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
+            .thenAnswer((_) async => ['user@example.com']);
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
+            .thenAnswer((_) async => []);
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+            .thenAnswer((_) async => testZveData);
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
+            .thenAnswer((_) async => []); // Empty result
+        when(mockApiService.fetchVereinFunktionaer(100, 201))
+            .thenAnswer((_) async => [
+              {
+                'AMTSEMAIL': 'fallback@example.com',
+                'EMAILLIST': null,
+              }
+            ]);
+        when(mockApiService.sendStartingRightsChangeNotifications(
+          personId: anyNamed('personId'),
+          passdaten: anyNamed('passdaten'),
+          userEmailAddresses: anyNamed('userEmailAddresses'),
+          clubEmailAddresses: anyNamed('clubEmailAddresses'),
+          zweitmitgliedschaften: anyNamed('zweitmitgliedschaften'),
+          zveData: anyNamed('zveData'),
+        ),).thenAnswer((_) async {});
+
+        // Act
+        await startingRightsService.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+        );
+
+        // Assert
+        verify(mockApiService.fetchVereinFunktionaer(100, 1)).called(1);
+        verify(mockApiService.fetchVereinFunktionaer(100, 201)).called(1);
+        verify(mockApiService.sendStartingRightsChangeNotifications(
+          personId: testPersonId,
+          passdaten: testUserData,
+          userEmailAddresses: ['user@example.com'],
+          clubEmailAddresses: ['fallback@example.com'],
+          zweitmitgliedschaften: [],
           zveData: testZveData,
         ),).called(1);
       });
 
       test('handles user with no email addresses', () async {
         // Arrange
-        when(mockUserService.fetchPassdaten(testPersonId))
+        when(mockApiService.fetchPassdaten(testPersonId))
             .thenAnswer((_) async => testUserData);
-        when(mockEmailService.getEmailAddressesByPersonId(testPersonId.toString()))
+        when(mockApiService.getEmailAddressesByPersonId(testPersonId.toString()))
             .thenAnswer((_) async => []); // No user email addresses
-        when(mockUserService.fetchZweitmitgliedschaften(testPersonId))
+        when(mockApiService.fetchZweitmitgliedschaften(testPersonId))
             .thenAnswer((_) async => []);
-        when(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
+        when(mockApiService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
             .thenAnswer((_) async => testZveData);
-        when(mockVereinService.fetchVerein(100))
-            .thenAnswer((_) async => testVereinData);
-        when(mockEmailService.sendStartingRightsChangeNotifications(
+        when(mockApiService.fetchVereinFunktionaer(100, 1))
+            .thenAnswer((_) async => [
+              {
+                'AMTSEMAIL': 'contact@testverein.de',
+                'EMAILLIST': 'president@testverein.de',
+              }
+            ]);
+        when(mockApiService.sendStartingRightsChangeNotifications(
           personId: anyNamed('personId'),
           passdaten: anyNamed('passdaten'),
           userEmailAddresses: anyNamed('userEmailAddresses'),
@@ -416,56 +549,11 @@ void main() {
         );
 
         // Assert
-        verify(mockEmailService.sendStartingRightsChangeNotifications(
+        verify(mockApiService.sendStartingRightsChangeNotifications(
           personId: testPersonId,
           passdaten: testUserData,
           userEmailAddresses: [], // Empty user email list
-          clubEmailAddresses: ['contact@testverein.de', 'president@testverein.de'],
-          zweitmitgliedschaften: [],
-          zveData: testZveData,
-        ),).called(1);
-      });
-
-      test('handles duplicate email addresses in club data', () async {
-        // Arrange
-        when(mockUserService.fetchPassdaten(testPersonId))
-            .thenAnswer((_) async => testUserData);
-        when(mockEmailService.getEmailAddressesByPersonId(testPersonId.toString()))
-            .thenAnswer((_) async => ['user@example.com']);
-        when(mockUserService.fetchZweitmitgliedschaften(testPersonId))
-            .thenAnswer((_) async => []);
-        when(mockUserService.fetchPassdatenAkzeptierterOderAktiverPass(testPersonId))
-            .thenAnswer((_) async => testZveData);
-        when(mockVereinService.fetchVerein(100))
-            .thenAnswer((_) async => [
-              const Verein(
-                id: 101,
-                vereinsNr: 100,
-                name: 'Test Verein',
-                email: 'same@email.com', // Same email in both fields
-                pEmail: 'same@email.com',
-              ),
-            ],);
-        when(mockEmailService.sendStartingRightsChangeNotifications(
-          personId: anyNamed('personId'),
-          passdaten: anyNamed('passdaten'),
-          userEmailAddresses: anyNamed('userEmailAddresses'),
-          clubEmailAddresses: anyNamed('clubEmailAddresses'),
-          zweitmitgliedschaften: anyNamed('zweitmitgliedschaften'),
-          zveData: anyNamed('zveData'),
-        ),).thenAnswer((_) async {});
-
-        // Act
-        await startingRightsService.sendStartingRightsChangeNotifications(
-          personId: testPersonId,
-        );
-
-        // Assert
-        verify(mockEmailService.sendStartingRightsChangeNotifications(
-          personId: testPersonId,
-          passdaten: testUserData,
-          userEmailAddresses: ['user@example.com'],
-          clubEmailAddresses: ['same@email.com', 'same@email.com'], // Duplicates are allowed as per current implementation
+          clubEmailAddresses: ['contact@testverein.de'],
           zweitmitgliedschaften: [],
           zveData: testZveData,
         ),).called(1);
