@@ -4,9 +4,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 
 class StartingRightsService {
-  StartingRightsService({
-    ApiService? apiService,
-  }) : _apiService = apiService;
+  StartingRightsService({ApiService? apiService}) : _apiService = apiService;
 
   ApiService? _apiService;
 
@@ -28,22 +26,29 @@ class StartingRightsService {
       // 1. Get pass data from ZMI API
       final passdaten = await _apiService!.fetchPassdaten(personId);
       if (passdaten == null) {
-        LoggerService.logError('Could not fetch Passdaten from ZMI for person $personId');
+        LoggerService.logError(
+          'Could not fetch Passdaten from ZMI for person $personId',
+        );
         return;
       }
 
       // 2. Get user's email addresses
-      final userEmailAddresses = (await _apiService!.getEmailAddressesByPersonId(personId.toString())).toSet().toList();
+      final userEmailAddresses =
+          (await _apiService!.getEmailAddressesByPersonId(
+            personId.toString(),
+          )).toSet().toList();
 
       // 3. Get ERSTVEREINNR from pass data
       final erstVereinId = passdaten.erstVereinId;
-      
+
       // 4. Get secondary club memberships
-      final zweitmitgliedschaften = await _apiService!.fetchZweitmitgliedschaften(personId);
-      
+      final zweitmitgliedschaften = await _apiService!
+          .fetchZweitmitgliedschaften(personId);
+
       // 5. Get ZVE data (Zweitvereine with disciplines)
-      final zveData = await _apiService!.fetchPassdatenAkzeptierterOderAktiverPass(personId);
-      
+      final zveData = await _apiService!
+          .fetchPassdatenAkzeptierterOderAktiverPass(personId);
+
       // 6. Collect all club numbers (first club + secondary clubs)
       final vereinIds = <int>[];
       vereinIds.add(erstVereinId);
@@ -54,6 +59,7 @@ class StartingRightsService {
 
       // 7. Get email addresses from all clubs
       final clubEmailAddresses = <String>[];
+      LoggerService.logInfo('Calling VereinFunktionaer');
       for (final vereinId in vereinIds) {
         var vereinData = await _apiService!.fetchVereinFunktionaer(vereinId, 1);
         if (vereinData.isEmpty) {
@@ -64,15 +70,20 @@ class StartingRightsService {
         }
         final amtsEmail = vereinData[0]['AMTSEMAIL'] as String?;
         final emailList = vereinData[0]['EMAILLIST'] as String?;
-        
+
+        LoggerService.logInfo('AMTSEMAIL: $amtsEmail');
+        LoggerService.logInfo('EMAILLIST: $emailList');
         // Parse and add AMTSEMAIL addresses
         if (amtsEmail != null && amtsEmail.isNotEmpty && amtsEmail != 'null') {
           final parsedEmails = _parseEmailAddresses(amtsEmail);
           clubEmailAddresses.addAll(parsedEmails);
         }
-        
+
         // Parse and add EMAILLIST addresses only if AMTSEMAIL is not empty
-        if ((amtsEmail == null || amtsEmail.isEmpty) && emailList != null && emailList.isNotEmpty && emailList != 'null') {
+        if ((amtsEmail == null || amtsEmail.isEmpty) &&
+            emailList != null &&
+            emailList.isNotEmpty &&
+            emailList != 'null') {
           final parsedEmails = _parseEmailAddresses(emailList);
           clubEmailAddresses.addAll(parsedEmails);
         }
@@ -88,9 +99,13 @@ class StartingRightsService {
         zveData: zveData!,
       );
 
-      LoggerService.logInfo('Starting rights change notifications sent for person $personId');
+      LoggerService.logInfo(
+        'Starting rights change notifications sent for person $personId',
+      );
     } catch (e) {
-      LoggerService.logError('Error sending starting rights change notifications: $e');
+      LoggerService.logError(
+        'Error sending starting rights change notifications: $e',
+      );
     }
   }
 
@@ -99,7 +114,7 @@ class StartingRightsService {
   /// Returns a list of valid email addresses.
   List<String> _parseEmailAddresses(String emailString) {
     final emails = <String>[];
-    
+
     // Check if the string contains delimiters
     if (emailString.contains(',') || emailString.contains(';')) {
       // Split by both comma and semicolon
@@ -117,7 +132,7 @@ class StartingRightsService {
         emails.add(trimmedEmail);
       }
     }
-    
+
     return emails;
   }
 }
