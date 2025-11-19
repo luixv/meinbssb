@@ -13,17 +13,24 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post('/send-email', async (req, res) => {
-  const { to, subject, body, html } = req.body;
+  const { to, subject, body, html, bcc } = req.body;
   if (!to || !subject || (!body && !html)) {
     return res.status(400).json({ error: 'Missing to, subject, or content.' });
   }
   try {
-    await transporter.sendMail({
+    const mailOptions = {
       from: 'webportal@bssb.bayern',
       to,
       subject,
       html
-    });
+    };
+    
+    // Add BCC if provided (can be string or array)
+    if (bcc) {
+      mailOptions.bcc = bcc;
+    }
+    
+    await transporter.sendMail(mailOptions);
     res.status(200).json({ success: true });
   } catch (err) {
     console.error('Error sending email:', err);
