@@ -32,7 +32,7 @@ class LoggerService {
     }
 
     if (isProduction) {
-      Logger.root.level = Level.WARNING; // Only warnings and errors in production
+      Logger.root.level = Level.OFF; // No logs in production
     } else {
       Logger.root.level = Level.ALL; // All logs in non-production
     }

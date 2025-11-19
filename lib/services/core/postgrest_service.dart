@@ -24,12 +24,15 @@ class PostgrestService {
         protocolKey: 'postgrestProtocol',
       );
 
-  Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Prefer':
-            'return=representation', // This tells PostgREST to return the affected rows
-      };
+  Map<String, String> get _headers {
+    final apiKey = configService.getString('postgrestApiKey');
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Prefer': 'return=representation', // This tells PostgREST to return the affected rows
+      if (apiKey != null && apiKey.isNotEmpty) 'X-API-Key': apiKey,
+    };
+  }
 
   /// Create a new user registration
   Future<Map<String, dynamic>> createUser({
