@@ -226,8 +226,10 @@ class AppInitializer {
   }
 
   static Future<void> init({bool isWindows = false}) async {
-    LoggerService.init();
+    LoggerService.init(); // Initialize with default (will use kReleaseMode)
     configService = await ConfigService.load('assets/config.json');
+    // Re-initialize logger with config to check webServer
+    LoggerService.init(configService);
 
     final serverTimeout = configService.getInt('serverTimeout', 'theme') ?? 10;
     final apiBaseUrl = ConfigService.buildBaseUrlForServer(
