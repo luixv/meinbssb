@@ -1,5 +1,4 @@
 import 'package:logging/logging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'config_service.dart';
 
@@ -22,7 +21,7 @@ class LoggerService {
     // In production (webServer is meinprod.bssb.de), only show WARNING and above (hide INFO and DEBUG)
     // Otherwise, show all logs
     bool isProduction = false;
-    
+
     if (configService != null) {
       final webServer = configService.getString('webServer');
       isProduction = webServer != 'meintest.bssb.de';
@@ -32,7 +31,8 @@ class LoggerService {
     }
 
     if (isProduction) {
-      Logger.root.level = Level.WARNING; // Only warnings and errors in production
+      Logger.root.level =
+          Level.WARNING; // Only warnings and errors in production
     } else {
       Logger.root.level = Level.ALL; // All logs in non-production
     }
