@@ -45,32 +45,43 @@ app.post('/token', async (req, res) => {
 
   const tokenServerUrl = getTokenServerUrl();
   console.log(`Token request to ${tokenServerUrl} (using server-side credentials)`);
+  console.log(`Username: ${username}, Password: ${password ? '***' : 'NOT SET'}`);
 
   try {
     // Create form data with server-side credentials
+    // ZMI server expects multipart/form-data with username and password in body
     const FormData = require('form-data');
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
 
+    const formHeaders = formData.getHeaders();
+    console.log(`Sending request with Content-Type: ${formHeaders['content-type']}`);
+
     // Make request to actual token server
     const response = await axios.post(tokenServerUrl, formData, {
-      headers: formData.getHeaders(),
+      headers: formHeaders,
       // Allow self-signed certificates for internal server
       httpsAgent: new (require('https').Agent)({
         rejectUnauthorized: false
-      })
+      }),
+      timeout: 30000 // 30 second timeout
     });
 
-    console.log('Token request successful');
+    console.log(`Token request successful, status: ${response.status}`);
     // Forward the response from the token server
     res.status(response.status).json(response.data);
   } catch (err) {
     console.error('Error fetching token:', err.message);
     if (err.response) {
+      console.error(`ZMI server responded with status ${err.response.status}:`, err.response.data);
       // Forward error response from token server
       res.status(err.response.status).json(err.response.data);
+    } else if (err.code === 'ECONNABORTED') {
+      console.error('Request timeout - ZMI server did not respond in time');
+      res.status(504).json({ error: 'Gateway timeout', details: 'ZMI server did not respond in time' });
     } else {
+      console.error('Network error:', err.code, err.message);
       res.status(500).json({ error: 'Failed to fetch token', details: err.message });
     }
   }
@@ -97,11 +108,15 @@ app.post('/postgrest-token', async (req, res) => {
     formData.append('username', username);
     formData.append('password', password);
 
+    const formHeaders = formData.getHeaders();
+    console.log(`Sending ZMI request with Content-Type: ${formHeaders['content-type']}`);
+
     const response = await axios.post(tokenServerUrl, formData, {
-      headers: formData.getHeaders(),
+      headers: formHeaders,
       httpsAgent: new (require('https').Agent)({
         rejectUnauthorized: false
-      })
+      }),
+      timeout: 30000 // 30 second timeout
     });
 
     // If ZMI authentication succeeds, generate PostgREST JWT

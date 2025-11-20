@@ -8,13 +8,39 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meintest.bssb.de {
+  # CORS preflight for token endpoints
+  @token_cors_preflight {
+    path /token /postgrest-token
+    method OPTIONS
+  }
+  
+  handle @token_cors_preflight {
+    respond "" 204
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS, GET"
+      Access-Control-Allow-Headers "Authorization, Content-Type, Accept"
+      Access-Control-Max-Age "3600"
+    }
+  }
+  
   # Token service endpoints
   handle /token {
     reverse_proxy token-service:3002
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS, GET"
+      Access-Control-Allow-Headers "Authorization, Content-Type, Accept"
+    }
   }
   
   handle /postgrest-token {
     reverse_proxy token-service:3002
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS, GET"
+      Access-Control-Allow-Headers "Authorization, Content-Type, Accept"
+    }
   }
   
   # Flutter web app (catch-all for everything else)
@@ -49,15 +75,6 @@ https://meintest.bssb.de:8081 {
 }
 https://meintest.bssb.de:8080 {
     reverse_proxy email-service:3001
-    header {
-      Access-Control-Allow-Origin "*"
-      Access-Control-Allow-Methods "POST, OPTIONS"
-      Access-Control-Allow-Headers "Authorization, Content-Type"
-    }
-}
-
-https://meintest.bssb.de:8082 {
-    reverse_proxy token-service:3002
     header {
       Access-Control-Allow-Origin "*"
       Access-Control-Allow-Methods "POST, OPTIONS"

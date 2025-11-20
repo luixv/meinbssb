@@ -7,9 +7,11 @@ import 'package:http/http.dart' as http;
 
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/services/core/token_service.dart';
 
 @GenerateMocks([
   ConfigService,
+  TokenService,
   http.Client,
 ])
 import 'postgrest_service_test.mocks.dart';
@@ -17,24 +19,32 @@ void main() {
   group('PostgrestService', () {
     late MockClient mockClient;
     late MockConfigService mockConfig;
+    late MockTokenService mockTokenService;
     late PostgrestService service;
 
     setUp(() {
       mockClient = MockClient();
       mockConfig = MockConfigService();
+      mockTokenService = MockTokenService();
 
       // Reset all mocks to avoid verification conflicts
       reset(mockClient);
       reset(mockConfig);
+      reset(mockTokenService);
 
       // Setup basic config values
       when(mockConfig.getString('postgrestProtocol')).thenReturn('https');
       when(mockConfig.getString('postgrestServer')).thenReturn('api.test.com');
       when(mockConfig.getString('postgrestPort')).thenReturn('443');
       when(mockConfig.getString('postgrestPath')).thenReturn('/rest/v1');
+      
+      // Mock TokenService to return a test JWT token
+      when(mockTokenService.getPostgrestAuthToken())
+          .thenAnswer((_) async => 'test-jwt-token');
 
       service = PostgrestService(
         configService: mockConfig,
+        tokenService: mockTokenService,
         client: mockClient,
       );
     });
@@ -276,13 +286,19 @@ void main() {
       test('handles null config values gracefully', () {
         // Create a new mock for this test
         final nullConfigService = MockConfigService();
+        final nullTokenService = MockTokenService();
         when(nullConfigService.getString('postgrestProtocol')).thenReturn(null);
         when(nullConfigService.getString('postgrestServer')).thenReturn(null);
         when(nullConfigService.getString('postgrestPort')).thenReturn(null);
         when(nullConfigService.getString('postgrestPath')).thenReturn(null);
+        when(nullTokenService.getPostgrestAuthToken())
+            .thenAnswer((_) async => 'test-jwt-token');
 
         // The service should throw an error when trying to access _baseUrl
-        final service = PostgrestService(configService: nullConfigService);
+        final service = PostgrestService(
+          configService: nullConfigService,
+          tokenService: nullTokenService,
+        );
         expect(
           () => service.createUser(
             firstName: 'Test',

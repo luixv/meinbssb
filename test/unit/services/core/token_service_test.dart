@@ -35,18 +35,15 @@ void main() {
       // Arrange
       when(mockConfigService.getString('tokenServerURL'))
           .thenReturn('https://dummy.token.url');
-      when(mockConfigService.getString('usernameWebUser')).thenReturn('user1');
-      when(mockConfigService.getString('passwordWebUser')).thenReturn('pass1');
 
       final responseBody = jsonEncode({'Token': 'faketoken123'});
-      final streamedResponse = http.StreamedResponse(
-        Stream.value(utf8.encode(responseBody)),
-        200,
-      );
+      final response = http.Response(responseBody, 200);
 
-      // mockHttpClient.send expects BaseRequest, so use argThat(isA<http.BaseRequest>())
-      when(mockHttpClient.send(argThat(isA<http.BaseRequest>())))
-          .thenAnswer((_) async => streamedResponse);
+      // Credentials are now on server, so POST request has no body
+      when(mockHttpClient.post(
+        Uri.parse('https://dummy.token.url'),
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => response);
 
       when(mockCacheService.setString(any, any)).thenAnswer((_) async {});
 
@@ -56,26 +53,30 @@ void main() {
       // Assert
       expect(token, 'faketoken123');
       verify(mockCacheService.setString('authToken', 'faketoken123')).called(1);
-      verify(mockHttpClient.send(argThat(isA<http.BaseRequest>()))).called(1);
+      verify(mockHttpClient.post(
+        Uri.parse('https://dummy.token.url'),
+        headers: anyNamed('headers'),
+      )).called(1);
     });
 
     test('requestToken returns empty string on non-200 response', () async {
       when(mockConfigService.getString('tokenServerURL'))
           .thenReturn('https://dummy.token.url');
-      when(mockConfigService.getString('usernameWebUser')).thenReturn('user1');
-      when(mockConfigService.getString('passwordWebUser')).thenReturn('pass1');
 
-      final streamedResponse = http.StreamedResponse(
-        Stream.value(utf8.encode('Unauthorized')),
-        401,
-      );
+      final response = http.Response('Unauthorized', 401);
 
-      when(mockHttpClient.send(any)).thenAnswer((_) async => streamedResponse);
+      when(mockHttpClient.post(
+        Uri.parse('https://dummy.token.url'),
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => response);
 
       final token = await tokenService.requestToken();
 
       expect(token, '');
-      verify(mockHttpClient.send(any)).called(1);
+      verify(mockHttpClient.post(
+        Uri.parse('https://dummy.token.url'),
+        headers: anyNamed('headers'),
+      )).called(1);
       verifyNever(mockCacheService.setString(any, any));
     });
 
@@ -87,30 +88,31 @@ void main() {
 
       expect(token, 'cachedtoken');
       verify(mockCacheService.getString('authToken')).called(1);
-      verifyNever(mockHttpClient.send(any));
+      verifyNever(mockHttpClient.post(any, headers: anyNamed('headers')));
     });
 
     test('getAuthToken fetches token if cache is empty', () async {
       when(mockCacheService.getString('authToken')).thenAnswer((_) async => '');
       when(mockConfigService.getString('tokenServerURL'))
           .thenReturn('https://dummy.token.url');
-      when(mockConfigService.getString('usernameWebUser')).thenReturn('user1');
-      when(mockConfigService.getString('passwordWebUser')).thenReturn('pass1');
 
       final responseBody = jsonEncode({'Token': 'newtoken123'});
-      final streamedResponse = http.StreamedResponse(
-        Stream.value(utf8.encode(responseBody)),
-        200,
-      );
+      final response = http.Response(responseBody, 200);
 
-      when(mockHttpClient.send(any)).thenAnswer((_) async => streamedResponse);
+      when(mockHttpClient.post(
+        Uri.parse('https://dummy.token.url'),
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => response);
       when(mockCacheService.setString(any, any)).thenAnswer((_) async {});
 
       final token = await tokenService.getAuthToken();
 
       expect(token, 'newtoken123');
       verify(mockCacheService.getString('authToken')).called(1);
-      verify(mockHttpClient.send(any)).called(1);
+      verify(mockHttpClient.post(
+        Uri.parse('https://dummy.token.url'),
+        headers: anyNamed('headers'),
+      )).called(1);
       verify(mockCacheService.setString('authToken', 'newtoken123')).called(1);
     });
 
