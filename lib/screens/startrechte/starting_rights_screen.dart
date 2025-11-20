@@ -135,9 +135,13 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
             text: TextSpan(
               style: UIStyles.dialogContentStyle,
               children: <TextSpan>[
-                const TextSpan(
+                TextSpan(
                   text:
-                      'Sind Sie sicher, dass Sie die Startrechte ändern möchten?',
+                      'Die Änderung der Startrechte wird erst im Sportjahr $_seasonInt wirksam.',
+                  style: const TextStyle(
+                    color: UIConstants.errorColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -183,7 +187,7 @@ class _StartingRightsScreenState extends State<StartingRightsScreen> {
                         UIConstants.horizontalSpacingS,
                         Flexible(
                           child: ScaledText(
-                            'Ändern',
+                            'Startrechte ändern',
                             style: UIStyles.dialogButtonTextStyle.copyWith(
                               color: UIConstants.deleteButtonText,
                             ),
