@@ -5,12 +5,24 @@ http://meinprod.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meinprod.bssb.de {
-  root * /web
-  file_server
-  try_files {path} /index.html
+  # Token service endpoints
+  handle /token {
+    reverse_proxy token-service:3002
+  }
+  
+  handle /postgrest-token {
+    reverse_proxy token-service:3002
+  }
+  
+  # Flutter web app (catch-all for everything else)
+  handle {
+    root * /web
+    file_server
+    try_files {path} /index.html
+  }
 }
 
-# Serve PostgREST API (HTTPS) on port 8081 for any host
+# Serve PostgREST API (HTTPS) on port 8081 - uses JWT authentication
 https://meinprod.bssb.de:8081 {
   @cors_preflight {
     method OPTIONS
@@ -26,6 +38,7 @@ https://meinprod.bssb.de:8081 {
 
   handle {
     reverse_proxy postgrest:3000
+    header Access-Control-Allow-Origin "*"
     header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
     header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
     header Access-Control-Allow-Credentials "false"
@@ -34,6 +47,15 @@ https://meinprod.bssb.de:8081 {
 
 https://meinprod.bssb.de:8080 {
     reverse_proxy email-service:3001
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
+}
+
+https://meinprod.bssb.de:8082 {
+    reverse_proxy token-service:3002
     header {
       Access-Control-Allow-Origin "*"
       Access-Control-Allow-Methods "POST, OPTIONS"

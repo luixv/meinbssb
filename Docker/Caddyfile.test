@@ -8,43 +8,42 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meintest.bssb.de {
-  root * /web
-  file_server
-  try_files {path} /index.html
+  # Token service endpoints
+  handle /token {
+    reverse_proxy token-service:3002
+  }
+  
+  handle /postgrest-token {
+    reverse_proxy token-service:3002
+  }
+  
+  # Flutter web app (catch-all for everything else)
+  handle {
+    root * /web
+    file_server
+    try_files {path} /index.html
+  }
 }
 
-# Serve PostgREST API (HTTPS) on port 8081 - requires API key header
+# Serve PostgREST API (HTTPS) on port 8081 - uses JWT authentication
 https://meintest.bssb.de:8081 {
   @cors_preflight {
     method OPTIONS
-  }
-
-  @has_api_key {
-    header X-API-Key *
   }
 
   handle @cors_preflight {
     respond "" 204
     header Access-Control-Allow-Origin "*"
     header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer, X-API-Key"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
     header Access-Control-Allow-Credentials "false"
-  }
-
-  # Block requests without API key (browser direct access)
-  @blocked {
-    not method OPTIONS
-    not header X-API-Key *
-  }
-
-  handle @blocked {
-    respond "Access denied. API key required." 403
   }
 
   handle {
     reverse_proxy postgrest:3000
+    header Access-Control-Allow-Origin "*"
     header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer, X-API-Key"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
     header Access-Control-Allow-Credentials "false"
   }
 }

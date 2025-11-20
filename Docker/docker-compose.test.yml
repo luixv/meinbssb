@@ -11,12 +11,29 @@ services:
       PGRST_DB_URI: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}?sslmode=disable"
       PGRST_DB_ANON_ROLE: web_anon
       PGRST_DB_SCHEMA: public
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      PGRST_JWT_ROLE_CLAIM_KEY: .role
 
   email-service:
     build: ./email-service
     container_name: email-service
     depends_on:
       - postfix-relay
+
+  token-service:
+    build: ./token-service
+    container_name: token-service
+    restart: always
+    environment:
+      - TOKEN_SERVER_PROTOCOL=https
+      - TOKEN_SERVER_HOST=webintern.bssb.bayern
+      - TOKEN_SERVER_PORT=56400
+      - TOKEN_SERVER_PATH=rest/zmi/token
+      - PORT=3002
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRY=24h
+      - ZMI_USERNAME=${ZMI_USERNAME}
+      - ZMI_PASSWORD=${ZMI_PASSWORD}
 
   postfix-relay:
     image: boky/postfix
@@ -36,7 +53,9 @@ services:
       - "443:443" #Flutter Web HTTPS
       - "8081:8081" #Postgrest API
       - "8080:8080" #Email API
+      - "8082:8082" #Token API
       - "8083:8083" #ZMI Monitor
+    environment:
     volumes:
       - ./Caddyfile.test:/etc/caddy/Caddyfile
       - ../build/web:/web

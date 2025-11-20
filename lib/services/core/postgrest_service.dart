@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'logger_service.dart';
 import 'config_service.dart';
+import 'token_service.dart';
 import 'dart:typed_data'; // Import Uint8List
 
 class PostgrestService {
   PostgrestService({
     required this.configService,
+    required this.tokenService,
     http.Client? client,
   }) : _httpClient = client ?? http.Client();
   // Expose cache for testing
@@ -15,6 +17,7 @@ class PostgrestService {
   final Map<String, Uint8List> _profilePhotoCache = {};
 
   final ConfigService configService;
+  final TokenService tokenService;
 
   final http.Client _httpClient;
 
@@ -24,13 +27,14 @@ class PostgrestService {
         protocolKey: 'postgrestProtocol',
       );
 
-  Map<String, String> get _headers {
-    final apiKey = configService.getString('postgrestApiKey');
+  Future<Map<String, String>> _getHeaders() async {
+    // Get JWT token from TokenService for authentication
+    final token = await tokenService.getPostgrestAuthToken();
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Prefer': 'return=representation', // This tells PostgREST to return the affected rows
-      if (apiKey != null && apiKey.isNotEmpty) 'X-API-Key': apiKey,
+      if (token.isNotEmpty) 'Authorization': 'Bearer $token',
     };
   }
 
@@ -46,7 +50,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.post(
         Uri.parse('${_baseUrl}users'),
-        headers: _headers,
+        headers: await _getHeaders(),
         body: jsonEncode({
           'firstname': firstName ?? '',
           'lastname': lastName ?? '',
@@ -81,7 +85,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?email=eq.$email&is_deleted=eq.false'),
-        headers: _headers,
+        headers: await _getHeaders(),
       );
 
       if (response.statusCode == 200) {
@@ -104,7 +108,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?person_id=eq.$personId&is_deleted=eq.false'),
-        headers: _headers,
+        headers: await _getHeaders(),
       );
 
       if (response.statusCode == 200) {
@@ -128,7 +132,7 @@ class PostgrestService {
       
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?pass_number=eq.$passNumber&is_deleted=eq.false'),
-        headers: _headers,
+        headers: await _getHeaders(),
       );
       LoggerService.logInfo(
         'Searching DB ${_baseUrl}users?pass_number=eq.$passNumber&is_deleted=eq.false',
@@ -156,7 +160,7 @@ class PostgrestService {
         Uri.parse(
           '${_baseUrl}users?verification_token=eq.$verificationToken',
         ),
-        headers: _headers,
+        headers: await _getHeaders(),
         body: jsonEncode({
           'is_verified': true,
           'verified_at': DateTime.now().toIso8601String(),
@@ -183,7 +187,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.delete(
         Uri.parse('${_baseUrl}users?id=eq.$id'),
-        headers: _headers,
+        headers: await _getHeaders(),
       );
 
       if (response.statusCode == 204) {
@@ -205,7 +209,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?verification_token=eq.$token'),
-        headers: _headers,
+        headers: await _getHeaders(),
       );
       if (response.statusCode == 200) {
         final List<dynamic> users = jsonDecode(response.body);
@@ -229,7 +233,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}password_reset?verification_token=eq.$token'),
-        headers: _headers,
+        headers: await _getHeaders(),
       );
       LoggerService.logInfo('Got response: $response');
       if (response.statusCode == 200) {
@@ -258,7 +262,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.post(
         Uri.parse('${_baseUrl}password_reset'),
-        headers: _headers,
+        headers: await _getHeaders(),
         body: jsonEncode({
           'person_id': personId,
           'verification_token': verificationToken,
@@ -287,7 +291,7 @@ class PostgrestService {
         Uri.parse(
             // ignore: require_trailing_commas
             '${_baseUrl}password_reset?verification_token=eq.$verificationToken'),
-        headers: _headers,
+        headers: await _getHeaders(),
         body: jsonEncode({
           'is_used': true,
           'used_at': DateTime.now().toIso8601String(),
@@ -314,7 +318,7 @@ class PostgrestService {
       final uri = Uri.parse(
         '${_baseUrl}password_reset?person_id=eq.$personId&order=created_at.desc&limit=1',
       );
-      final response = await _httpClient.get(uri, headers: _headers);
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
       if (response.statusCode == 200) {
         final List<dynamic> entries = jsonDecode(response.body);
         return entries.isNotEmpty ? entries[0] as Map<String, dynamic> : null;
@@ -338,7 +342,7 @@ class PostgrestService {
   ) async {
     final response = await _httpClient.patch(
       Uri.parse('${_baseUrl}users?verification_token=eq.$token'),
-      headers: _headers,
+      headers: await _getHeaders(),
       body: jsonEncode(fields),
     );
     return response;
@@ -354,7 +358,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.post(
         Uri.parse('${_baseUrl}user_email_validation'),
-        headers: _headers,
+        headers: await _getHeaders(),
         body: jsonEncode({
           'person_id': personId,
           'email': email,
@@ -382,7 +386,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}user_email_validation?verification_token=eq.$token'),
-        headers: _headers,
+        headers: await _getHeaders(),
       );
 
       if (response.statusCode == 200) {
@@ -405,7 +409,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}user_email_validation?verification_token=eq.$verificationToken'),
-        headers: _headers,
+        headers: await _getHeaders(),
         body: jsonEncode({
           'validated': true,
           'validated_on': DateTime.now().toIso8601String(),
@@ -438,7 +442,7 @@ class PostgrestService {
         // User exists, do a PATCH update
         final response = await _httpClient.patch(
           Uri.parse('${_baseUrl}users?person_id=eq.$userId'),
-          headers: _headers,
+          headers: await _getHeaders(),
           body: jsonEncode({
             'profile_photo':
                 '\\x${photoBytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('')}',
@@ -458,7 +462,7 @@ class PostgrestService {
         // User doesn't exist, do an INSERT
         final response = await _httpClient.post(
           Uri.parse('${_baseUrl}users'),
-          headers: _headers,
+          headers: await _getHeaders(),
           body: jsonEncode({
             'person_id': userId,
             'profile_photo':
@@ -493,7 +497,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}users?person_id=eq.$userId'),
-        headers: _headers,
+        headers: await _getHeaders(),
         body: jsonEncode({
           'profile_photo': null,
         }),
@@ -520,7 +524,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}users?person_id=eq.$personId'),
-        headers: _headers,
+        headers: await _getHeaders(),
         body: jsonEncode({
           'is_deleted': true,
         }),
@@ -553,7 +557,7 @@ class PostgrestService {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}users?person_id=eq.$userId&select=profile_photo'),
-        headers: _headers,
+        headers: await _getHeaders(),
       );
       if (response.statusCode == 200) {
         final List<dynamic> users = jsonDecode(response.body);

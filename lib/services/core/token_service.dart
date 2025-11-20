@@ -23,37 +23,26 @@ class TokenService {
   final CacheService _cacheService;
 
   static const String _tokenCacheKey = 'authToken';
+  static const String _postgrestTokenCacheKey = 'postgrestAuthToken';
 
   /// Fetches a new authentication token from the server.
-  /// This method is responsible for making the actual HTTP request
-  /// to the token endpoint.
+  /// Credentials are stored on the server, so no body is sent with the request.
   Future<String> _fetchToken() async {
     final String tokenServerURL =
         _configService.getString('tokenServerURL') ?? '';
-
-    final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
-    final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
-
-    final Map<String, String> body = {
-      'username': usernameWebUser,
-      'password': passwordWebUser,
-    };
-
-    var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
-    body.forEach((key, value) {
-      request.fields[key] = value;
-    });
 
     LoggerService.logInfo(
       'TokenService: Fetching new token from: $tokenServerURL',
     );
 
     try {
-      // Use the injected _client to send the request
-      final http.StreamedResponse streamedResponse =
-          await _httpClient.send(request);
-      final http.Response response =
-          await http.Response.fromStream(streamedResponse);
+      // Simple POST request without body - credentials are on the server
+      final http.Response response = await _httpClient.post(
+        Uri.parse(tokenServerURL),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
 
       LoggerService.logInfo(
         'TokenService: Response Status Code: ${response.statusCode}',
@@ -109,5 +98,74 @@ class TokenService {
   /// for outgoing requests, handling refresh logic internally.
   Future<String> getAuthToken() async {
     return _getToken();
+  }
+
+  /// Fetches a new PostgREST JWT token from the token service.
+  /// Credentials are stored on the server, so no body is sent with the request.
+  Future<String> _fetchPostgrestToken() async {
+    final String tokenServerURL =
+        _configService.getString('tokenServerURL') ?? '';
+    
+    // Replace /token with /postgrest-token endpoint
+    final String postgrestTokenURL = tokenServerURL.replaceAll('/token', '/postgrest-token');
+
+    LoggerService.logInfo(
+      'TokenService: Fetching new PostgREST JWT token from: $postgrestTokenURL',
+    );
+
+    try {
+      // Simple POST request without body - credentials are on the server
+      final http.Response response = await _httpClient.post(
+        Uri.parse(postgrestTokenURL),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      LoggerService.logInfo(
+        'TokenService: Response Status Code: ${response.statusCode}',
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        final String token = jsonResponse['token'];
+        await _cacheService.setString(_postgrestTokenCacheKey, token);
+        LoggerService.logInfo(
+          'TokenService: Successfully fetched and cached new PostgREST JWT token',
+        );
+        return token;
+      }
+    } catch (e) {
+      LoggerService.logError('TokenService: Error fetching PostgREST token: $e');
+    }
+    return '';
+  }
+
+  /// Retrieves the PostgREST JWT token.
+  /// It first tries to get the token from the cache.
+  /// If not found or empty, it fetches a new one.
+  Future<String> _getPostgrestToken() async {
+    final cachedToken = await _cacheService.getString(_postgrestTokenCacheKey);
+    if (cachedToken != null && cachedToken.isNotEmpty) {
+      LoggerService.logInfo('TokenService: Using cached PostgREST JWT token');
+      return cachedToken;
+    } else {
+      LoggerService.logInfo(
+        'TokenService: No cached PostgREST JWT token found, fetching new one',
+      );
+      return await _fetchPostgrestToken();
+    }
+  }
+
+  /// Public method to get PostgREST JWT token.
+  /// This is used by PostgrestService to authenticate database requests.
+  Future<String> getPostgrestAuthToken() async {
+    return _getPostgrestToken();
+  }
+
+  /// Clears the cached PostgREST JWT token.
+  Future<void> clearPostgrestToken() async {
+    await _cacheService.remove(_postgrestTokenCacheKey);
+    LoggerService.logInfo('TokenService: PostgREST JWT token cleared from cache');
   }
 }

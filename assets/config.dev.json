@@ -31,7 +31,11 @@
   "api1BasePath": "rest/zmi/api1",
   "api1BasePort": "56400",
   
-  "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
+  "tokenProtocol": "https",
+  "tokenServer": "meintest.bssb.de",
+  "tokenPort": "443",
+  "tokenPath": "token",
+  "tokenServerURL": "https://meintest.bssb.de/token",
   
   "serverTimeout": 40,
   "cacheExpirationHours": "24",

@@ -204,6 +204,19 @@ class _MyAppState extends State<MyApp> {
     final fragment = Uri.base.fragment;
     final path = Uri.base.path;
 
+    // Check if this is an API endpoint request - don't intercept
+    if (kIsWeb && (path == '/token' || path == '/postgrest-token')) {
+      // These are API endpoints, not Flutter routes
+      // Return a minimal app and let the HTTP request proceed
+      return const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
     // Determine initial route based on fragment and remembered route
     String initialRoute;
     if (kIsWeb) {
@@ -326,6 +339,13 @@ class _MyAppState extends State<MyApp> {
           },
           // Only use onGenerateRoute, no static routes map
           onGenerateRoute: (settings) {
+            // Exclude API endpoints - let Caddy handle them
+            if (settings.name == '/token' || settings.name == '/postgrest-token') {
+              // Return null to let the browser handle this as a direct HTTP request
+              // These are API endpoints served by the backend, not Flutter routes
+              return null;
+            }
+            
             if (_loading) {
               return MaterialPageRoute(
                 builder:

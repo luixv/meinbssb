@@ -245,20 +245,21 @@ class AppInitializer {
     // Shared underlying HTTP client used across services
     baseHttpClient = http.Client();
 
-    // Initialize PostgrestService
-    postgrestService = PostgrestService(
-      configService: configService,
-      client: baseHttpClient,
-    );
-
-    // 1. Initialize TokenService FIRST
+    // 1. Initialize TokenService FIRST (needed by PostgrestService)
     tokenService = TokenService(
       configService: configService,
       cacheService: cacheService,
       client: baseHttpClient,
     );
 
-    // 2. Then, initialize HttpClient for main API
+    // Initialize PostgrestService (needs TokenService for JWT auth)
+    postgrestService = PostgrestService(
+      configService: configService,
+      tokenService: tokenService,
+      client: baseHttpClient,
+    );
+
+    // 2. Initialize HttpClient for main API
     httpClient = HttpClient(
       baseUrl: apiBaseUrl,
       serverTimeout: serverTimeout,
