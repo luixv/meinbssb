@@ -42,7 +42,7 @@ plugins {
 
 android {
     namespace = "de.bssb.meinbssb"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = "28.2.13676358"
 
     compileOptions {
@@ -74,7 +74,7 @@ android {
     defaultConfig {
         applicationId = "de.bssb.meinbssb"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -93,4 +93,12 @@ android {
 
 flutter {
     source = "../.."
+}
+
+subprojects {
+    afterEvaluate {
+        if (project.hasProperty("android")) {
+            project.android.compileSdkVersion = "36"
+        }
+    }
 }

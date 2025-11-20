@@ -1,7 +1,19 @@
+
+import com.android.build.gradle.BaseExtension
+extra.apply {
+    set("compileSdkVersion", 36)
+    set("minSdkVersion", 21)
+    set("targetSdkVersion", 36)
+    // set("kotlin_version", "1.9.22") 
+}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
+    }
+        afterEvaluate {
+      project.extensions.findByType(BaseExtension::class.java)?.apply { compileSdkVersion(36) }
     }
 }
 
@@ -17,7 +29,6 @@ subprojects {
     project.evaluationDependsOn(":app")
 
     // Force Java 17 compatibility and suppress obsolete warnings across all modules.
-    // This is the final override to fix the 'source value 8 is obsolete' warnings
     tasks.withType<org.gradle.api.tasks.compile.JavaCompile>().configureEach {
         sourceCompatibility = "17"
         targetCompatibility = "17"
