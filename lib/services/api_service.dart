@@ -666,12 +666,33 @@ class ApiService {
     );
   }
 
+  Future<List<Gewinn>> fetchGewinneEx(int jahr, String personId) async {
+    return _oktoberfestService.fetchGewinneEx(
+      jahr: jahr,
+      personId: personId,
+      configService: _configService,
+    );
+  }
+
   Future<bool> gewinneAbrufen({
     required List<int> gewinnIDs,
     required String iban,
     required String passnummer,
   }) async {
     return _oktoberfestService.gewinneAbrufen(
+      gewinnIDs: gewinnIDs,
+      iban: iban,
+      passnummer: passnummer,
+      configService: _configService,
+    );
+  }
+
+  Future<bool> gewinneAbrufenEx({
+    required List<int> gewinnIDs,
+    required String iban,
+    required String passnummer,
+  }) async {
+    return _oktoberfestService.gewinneAbrufenEx(
       gewinnIDs: gewinnIDs,
       iban: iban,
       passnummer: passnummer,

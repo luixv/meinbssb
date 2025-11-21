@@ -37,6 +37,7 @@ import 'package:meinbssb/services/api/starting_rights_service.dart' as _i41;
 import 'package:meinbssb/services/api/training_service.dart' as _i16;
 import 'package:meinbssb/services/api/user_service.dart' as _i24;
 import 'package:meinbssb/services/api/verein_service.dart' as _i31;
+import 'package:meinbssb/services/api_service.dart' as _i42;
 import 'package:meinbssb/services/core/cache_service.dart' as _i12;
 import 'package:meinbssb/services/core/calendar_service.dart' as _i38;
 import 'package:meinbssb/services/core/config_service.dart' as _i6;
@@ -2120,6 +2121,40 @@ class MockOktoberfestService extends _i1.Mock
             returnValue: _i2.Future<bool>.value(false),
           )
           as _i2.Future<bool>);
+
+  @override
+  _i2.Future<List<_i37.Gewinn>> fetchGewinneEx({
+    required int? jahr,
+    required String? personId,
+    required _i6.ConfigService? configService,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchGewinneEx, [], {
+              #jahr: jahr,
+              #personId: personId,
+              #configService: configService,
+            }),
+            returnValue: _i2.Future<List<_i37.Gewinn>>.value(<_i37.Gewinn>[]),
+          )
+          as _i2.Future<List<_i37.Gewinn>>);
+
+  @override
+  _i2.Future<bool> gewinneAbrufenEx({
+    required List<int>? gewinnIDs,
+    required String? iban,
+    required String? passnummer,
+    required _i6.ConfigService? configService,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#gewinneAbrufenEx, [], {
+              #gewinnIDs: gewinnIDs,
+              #iban: iban,
+              #passnummer: passnummer,
+              #configService: configService,
+            }),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
 }
 
 /// A class which mocks [CalendarService].
@@ -2313,6 +2348,12 @@ class MockStartingRightsService extends _i1.Mock
   MockStartingRightsService() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  void setApiService(_i42.ApiService? apiService) => super.noSuchMethod(
+    Invocation.method(#setApiService, [apiService]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i2.Future<void> sendStartingRightsChangeNotifications({

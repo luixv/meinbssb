@@ -83,7 +83,7 @@ Future<void> ensureVisible(WidgetTester tester, String label) async {
     'Profil': Key('drawer_profile'),
     'Aus- und Weiterbildung': Key('drawer_training'),
     'Schützenausweis': Key('drawer_schuetzenausweis'),
-    'Oktoberfest': Key('drawer_oktoberfest'),
+    'Preisschießen': Key('drawer_preisschiessen'),
     'Impressum': Key('drawer_impressum'),
     'Datenschutz': Key('drawer_datenschutz'),
     'Einstellungen': Key('drawer_settings'),
@@ -147,7 +147,7 @@ class FakeDrawerNavigator implements DrawerNavigator {
   bool profileCalled = false;
   bool trainingCalled = false;
   bool schutzAusweisCalled = false;
-  bool oktoberfestCalled = false;
+  bool preisschiessenCalled = false;
   bool impressumCalled = false;
   bool datenschutzCalled = false;
   bool settingsCalled = false;
@@ -183,8 +183,8 @@ class FakeDrawerNavigator implements DrawerNavigator {
   }
 
   @override
-  void oktoberfest(BuildContext context) {
-    oktoberfestCalled = true;
+  void preisschiessen(BuildContext context) {
+    preisschiessenCalled = true;
     _close(context);
   }
 
@@ -328,7 +328,7 @@ void main() {
       'drawer_profile',
       'drawer_training',
       'drawer_schuetzenausweis',
-      'drawer_oktoberfest',
+      'drawer_preisschiessen',
       'drawer_impressum',
       'drawer_datenschutz',
       'drawer_settings',
@@ -346,7 +346,7 @@ void main() {
           'drawer_profile': 'Profil',
           'drawer_training': 'Aus- und Weiterbildung',
           'drawer_schuetzenausweis': 'Schützenausweis',
-          'drawer_oktoberfest': 'Oktoberfest',
+          'drawer_preisschiessen': 'Preisschießen',
           'drawer_impressum': 'Impressum',
           'drawer_datenschutz': 'Datenschutz',
           'drawer_settings': 'Einstellungen',
@@ -476,12 +476,12 @@ void main() {
       expect(find.text('Schützenausweis'), findsWidgets);
     });
 
-    testWidgets('Oktoberfest triggers navigator.oktoberfest', (tester) async {
+    testWidgets('Preisschießen triggers navigator.preisschiessen', (tester) async {
       final nav = await pumpAndOpen(tester);
-      await ensureVisible(tester, 'Oktoberfest');
-      await tester.tap(find.text('Oktoberfest'));
+      await ensureVisible(tester, 'Preisschießen');
+      await tester.tap(find.text('Preisschießen'));
       await tester.pumpAndSettle();
-      expect(nav.oktoberfestCalled, isTrue);
+      expect(nav.preisschiessenCalled, isTrue);
     });
 
     testWidgets('Impressum triggers navigator.impressum', (tester) async {
@@ -553,7 +553,7 @@ void main() {
         schulungenBuilder: placeholder('SCHULUNGEN'),
         schuetzenausweisBuilder: placeholder('AUSWEIS'),
         startingRightsBuilder: placeholder('STARTRECHTE'),
-        oktoberfestBuilder: placeholder('OKTOBERFEST'),
+        preisschiessenBuilder: placeholder('PREISSCHIESSEN'),
         impressumBuilder: placeholder('IMPRESSUM'),
         datenschutzBuilder: placeholder('DATENSCHUTZ'),
         settingsBuilder: placeholder('SETTINGS'),
@@ -605,9 +605,9 @@ void main() {
       expect(find.text('AUSWEIS'), findsOneWidget);
     });
 
-    testWidgets('oktoberfest() pushes Oktoberfest placeholder', (tester) async {
-      await pumpAndInvoke(tester, (ctx, nav) => nav.oktoberfest(ctx));
-      expect(find.text('OKTOBERFEST'), findsOneWidget);
+    testWidgets('preisschiessen() pushes Preisschießen placeholder', (tester) async {
+      await pumpAndInvoke(tester, (ctx, nav) => nav.preisschiessen(ctx));
+      expect(find.text('PREISSCHIESSEN'), findsOneWidget);
     });
 
     testWidgets('impressum() pushes Impressum placeholder', (tester) async {

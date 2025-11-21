@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/screens/startrechte/starting_rights_screen.dart';
+import 'package:meinbssb/screens/startrechte/starting_rights_success.dart';
 
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/network_service.dart';
@@ -162,7 +163,7 @@ void main() {
     expect(find.textContaining('Startrechte'), findsWidgets);
   });
 
-  testWidgets('shows save FAB and success snackbar when saving', (
+  testWidgets('shows save FAB and navigates to success screen when saving', (
     tester,
   ) async {
     await tester.pumpWidget(createWidgetUnderTest());
@@ -174,7 +175,7 @@ void main() {
     await tester.tap(checkboxFinder);
     await tester.pumpAndSettle();
 
-    // Now the FAB should be visible
+    // Now the FAB should be visible (KeyboardFocusFAB is a FloatingActionButton)
     final fabFinder = find.byType(FloatingActionButton);
     expect(fabFinder, findsOneWidget);
 
@@ -183,15 +184,21 @@ void main() {
     await tester.pumpAndSettle();
 
     // The confirmation dialog should appear
-    // The confirmation dialog should appear (check for the 'Ändern' button)
-    expect(find.widgetWithText(ElevatedButton, 'Ändern'), findsOneWidget);
+    expect(find.byType(AlertDialog), findsOneWidget);
 
-    // Tap the 'Ändern' button in the dialog
-    final aendernButtonFinder = find.widgetWithText(ElevatedButton, 'Ändern');
-    expect(aendernButtonFinder, findsOneWidget);
-    await tester.tap(aendernButtonFinder);
+    // Find the 'Startrechte ändern' button in the dialog (the ElevatedButton, not the title)
+    // The button is inside the dialog actions
+    final dialogButtonFinder = find.descendant(
+      of: find.byType(AlertDialog),
+      matching: find.widgetWithText(ElevatedButton, 'Startrechte ändern'),
+    );
+    expect(dialogButtonFinder, findsOneWidget);
+
+    // Tap the 'Startrechte ändern' button in the dialog
+    await tester.tap(dialogButtonFinder);
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('erfolgreich gespeichert'), findsOneWidget);
+    // Should navigate to success screen
+    expect(find.byType(StartrechteSuccessScreen), findsOneWidget);
   });
 }

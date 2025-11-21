@@ -35,7 +35,6 @@ class SeventyFiveJahreBSSBGewinnScreen extends StatefulWidget {
 
 class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBGewinnScreen> {
   late final int _currentYear;
-  late final List<int> _availableYears;
   late int _selectedYear;
   bool _loading = false;
   final List<Gewinn> _gewinne = [];
@@ -49,7 +48,6 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
   void initState() {
     super.initState();
     _currentYear = DateTime.now().year;
-    _availableYears = [_currentYear, _currentYear - 1];
     _selectedYear = _currentYear;
     _kontoinhaberController.addListener(_updateBankDataResult);
     _ibanController.addListener(_updateBankDataResult);
@@ -119,9 +117,9 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
     });
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
-      final result = await widget.apiService.fetchGewinne(
+      final result = await widget.apiService.fetchGewinneEx(
         _selectedYear,
-        widget.passnummer,
+        widget.userData?.personId.toString() ?? '',
       );
       if (!mounted) return;
       setState(() {
@@ -131,7 +129,7 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
       if (result.isEmpty) {
         scaffoldMessenger.showSnackBar(
           const SnackBar(
-            content: Text('Keine Gewinne für das gewählte Jahr gefunden.'),
+            content: Text('Keine Gewinne.'),
             duration: Duration(seconds: 3),
             backgroundColor: UIConstants.errorColor,
           ),
@@ -153,7 +151,7 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
     return Stack(
       children: [
         BaseScreenLayout(
-          title: 'Meine Gewinne',
+          title: '75 Jahre BSSB',
           userData: widget.userData,
           isLoggedIn: widget.isLoggedIn,
           onLogout: widget.onLogout,
@@ -170,45 +168,13 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const ScaledText(
-                        '75 Jahre BSSB\nGewinne abrufen',
+                        'Gewinne abrufen',
                         style: UIStyles.headerStyle,
                       ),
                       const SizedBox(height: UIConstants.spacingS),
                       const ScaledText(
-                        'Meine Gewinne für das Jahr:',
+                        'Meine Gewinne:',
                         style: UIStyles.titleStyle,
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: SizedBox(
-                          width: 220,
-                          child: _KeyboardFocusDropdown<int>(
-                            label: 'Jahr',
-                            value: _selectedYear,
-                            items: _availableYears
-                                .map(
-                                  (year) => DropdownMenuItem<int>(
-                                    value: year,
-                                    child: Text(
-                                      '$year',
-                                      style: const TextStyle(
-                                        fontSize: UIConstants.subtitleFontSize,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (year) {
-                              if (year != null && year != _selectedYear) {
-                                setState(() {
-                                  _selectedYear = year;
-                                });
-                                _fetchGewinne();
-                              }
-                            },
-                          ),
-                        ),
                       ),
                       const SizedBox(height: UIConstants.spacingL),
                       if (_loading) ...[
@@ -438,7 +404,7 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
     });
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
-      final result = await widget.apiService.gewinneAbrufen(
+      final result = await widget.apiService.gewinneAbrufenEx(
         gewinnIDs: _gewinne.map((g) => g.gewinnId).toList(),
         iban: _bankDataResult!.iban,
         passnummer: widget.passnummer,

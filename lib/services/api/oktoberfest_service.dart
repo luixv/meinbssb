@@ -114,4 +114,76 @@ class OktoberfestService {
       return false;
     }
   }
+
+  Future<List<Gewinn>> fetchGewinneEx({
+    required int jahr,
+    required String personId,
+    required ConfigService configService,
+  }) async {
+    try {
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        configService,
+        name: 'oktoberFestBase',
+      );
+      final endpoint = 'GewinneEx/2025/$personId/3';
+      final response =
+          await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      if (response is List) {
+        return response
+            .map((json) => Gewinn.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } else if (response is Map<String, dynamic>) {
+        return [Gewinn.fromJson(response)];
+      } else {
+        LoggerService.logWarning(
+          'Unexpected response type for fetchGewinneEx: \\${response.runtimeType}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching GewinneEx: $e');
+      return [];
+    }
+  }
+
+  Future<bool> gewinneAbrufenEx({
+    required List<int> gewinnIDs,
+    required String iban,
+    required String passnummer,
+    required ConfigService configService,
+  }) async {
+    try {
+      final baseUrl = ConfigService.buildBaseUrlForServer(
+        configService,
+        name: 'oktoberFestBase',
+      );
+      const endpoint = 'GewinneAbrufenEx';
+      final body = {
+        'GewinnIDs': gewinnIDs,
+        'IBAN': iban,
+        'Passnummer': int.tryParse(passnummer) ?? passnummer,
+        'GewinnTyp': 3
+      };
+      final response =
+          await _httpClient.post(endpoint, body, overrideBaseUrl: baseUrl);
+      if (response is Map<String, dynamic>) {
+        if (response['result'] == true) {
+          return true;
+        } else if (response.containsKey('Error')) {
+          LoggerService.logError(
+            'GewinneAbrufen error: \\${response['Error']}',
+          );
+          return false;
+        }
+      }
+      LoggerService.logWarning(
+        'Unexpected response for GewinneAbrufenEx: \\${response.runtimeType}',
+      );
+      return false;
+    } catch (e) {
+      LoggerService.logError('Error in gewinneAbrufenEx: $e');
+      return false;
+    }
+  }
+
 }
