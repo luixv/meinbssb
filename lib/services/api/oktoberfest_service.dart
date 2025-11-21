@@ -128,6 +128,7 @@ class OktoberfestService {
       final endpoint = 'GewinneEx/2024/$passnummer/3';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      LoggerService.logWarning('fetchGewinneEx endpoint: $endpoint');
       if (response is List) {
         return response
             .map((json) => Gewinn.fromJson(json as Map<String, dynamic>))
