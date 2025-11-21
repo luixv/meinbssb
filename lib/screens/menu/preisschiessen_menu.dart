@@ -25,6 +25,11 @@ class PreisschiessenScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if current date is >= December 1st, 2025 at 0:00
+    final releaseDate = DateTime(2025, 12, 1, 0, 0);
+    final now = DateTime.now();
+    final isSeventyFiveJahreBSSBVisible = now.isAfter(releaseDate) || now.isAtSameMomentAs(releaseDate);
+
     return Semantics(
       label:
           'Preisschießen Bereich. Wählen Sie zwischen Oktoberfest und 75 Jahre BSSB.',
@@ -60,24 +65,25 @@ class PreisschiessenScreen extends StatelessWidget {
                   ),
                 );
               }),
-              _buildMenuItem(context, '75 Jahre BSSB', Icons.celebration_outlined, () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => SeventyFiveJahreBSSBGewinnScreen(
-                          passnummer: userData?.passnummer ?? '',
-                          apiService: Provider.of<ApiService>(
-                            context,
-                            listen: false,
+              if (isSeventyFiveJahreBSSBVisible)
+                _buildMenuItem(context, '75 Jahre BSSB', Icons.celebration_outlined, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => SeventyFiveJahreBSSBGewinnScreen(
+                            passnummer: userData?.passnummer ?? '',
+                            apiService: Provider.of<ApiService>(
+                              context,
+                              listen: false,
+                            ),
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
                           ),
-                          userData: userData,
-                          isLoggedIn: isLoggedIn,
-                          onLogout: onLogout,
-                        ),
-                  ),
-                );
-              }),
+                    ),
+                  );
+                }),
             ],
           ), // Column
         ), // SingleChildScrollView
