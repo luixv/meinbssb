@@ -168,7 +168,7 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const ScaledText(
-                        'Gewinne abrufen',
+                        '75 Jahre BSSB\nGewinne abrufen',
                         style: UIStyles.headerStyle,
                       ),
                       const SizedBox(height: UIConstants.spacingS),
