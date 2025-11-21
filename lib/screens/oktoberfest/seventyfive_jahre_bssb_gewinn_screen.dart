@@ -119,7 +119,7 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
     try {
       final result = await widget.apiService.fetchGewinneEx(
         _selectedYear,
-        widget.userData?.personId.toString() ?? '',
+        widget.passnummer,
       );
       if (!mounted) return;
       setState(() {

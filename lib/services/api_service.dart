@@ -666,10 +666,10 @@ class ApiService {
     );
   }
 
-  Future<List<Gewinn>> fetchGewinneEx(int jahr, String personId) async {
+  Future<List<Gewinn>> fetchGewinneEx(int jahr, String passnummer) async {
     return _oktoberfestService.fetchGewinneEx(
       jahr: jahr,
-      personId: personId,
+      passnummer: passnummer,
       configService: _configService,
     );
   }

@@ -117,7 +117,7 @@ class OktoberfestService {
 
   Future<List<Gewinn>> fetchGewinneEx({
     required int jahr,
-    required String personId,
+    required String passnummer,
     required ConfigService configService,
   }) async {
     try {
@@ -125,7 +125,7 @@ class OktoberfestService {
         configService,
         name: 'oktoberFestBase',
       );
-      final endpoint = 'GewinneEx/2025/$personId/3';
+      final endpoint = 'GewinneEx/2025/$passnummer/3';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
       if (response is List) {
