@@ -13,7 +13,7 @@ import '/screens/impressum_screen.dart';
 import '/screens/datenschutz_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/schulungen/schulungen_search_screen.dart';
-import 'oktoberfest_menu.dart';
+import 'preisschiessen_menu.dart';
 
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
@@ -24,7 +24,7 @@ abstract class DrawerNavigator {
   void profile(BuildContext context);
   void training(BuildContext context);
   void schuetzenausweis(BuildContext context);
-  void oktoberfest(BuildContext context);
+  void preisschiessen(BuildContext context);
   void impressum(BuildContext context);
   void datenschutz(BuildContext context);
   void settings(BuildContext context);
@@ -40,7 +40,7 @@ class RealDrawerNavigator implements DrawerNavigator {
     this.schulungenBuilder,
     this.schuetzenausweisBuilder,
     this.startingRightsBuilder,
-    this.oktoberfestBuilder,
+    this.preisschiessenBuilder,
     this.impressumBuilder,
     this.datenschutzBuilder,
     this.settingsBuilder,
@@ -53,7 +53,7 @@ class RealDrawerNavigator implements DrawerNavigator {
   final WidgetBuilder? schulungenBuilder;
   final WidgetBuilder? schuetzenausweisBuilder;
   final WidgetBuilder? startingRightsBuilder;
-  final WidgetBuilder? oktoberfestBuilder;
+  final WidgetBuilder? preisschiessenBuilder;
   final WidgetBuilder? impressumBuilder;
   final WidgetBuilder? datenschutzBuilder;
   final WidgetBuilder? settingsBuilder;
@@ -113,13 +113,13 @@ class RealDrawerNavigator implements DrawerNavigator {
   // startingRightsBuilder is injected for tests, but not used in production.
 
   @override
-  void oktoberfest(BuildContext context) {
+  void preisschiessen(BuildContext context) {
     _close(context);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
-            oktoberfestBuilder ??
-            (_) => OktoberfestScreen(
+            preisschiessenBuilder ??
+            (_) => PreisschiessenScreen(
               userData: userData,
               isLoggedIn: isLoggedIn,
               onLogout: onLogout,
@@ -256,7 +256,7 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       label:
-          'Navigationsmenü: Home, Profil, Aus- und Weiterbildung, Schützenausweis, Oktoberfest, Impressum, Datenschutz, Einstellungen, Hilfe, Abmelden, Anmelden, Registrieren, Passwort zurücksetzen.',
+          'Navigationsmenü: Home, Profil, Aus- und Weiterbildung, Schützenausweis, Preisschießen, Impressum, Datenschutz, Einstellungen, Hilfe, Abmelden, Anmelden, Registrieren, Passwort zurücksetzen.',
       child: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -346,16 +346,16 @@ class AppDrawer extends StatelessWidget {
               ),
               // Removed Startrechte ListTile
               ListTile(
-                key: const Key('drawer_oktoberfest'),
+                key: const Key('drawer_preisschiessen'),
                 leading: const Icon(
-                  Icons.sports_bar_outlined,
+                  Icons.emoji_events,
                   color: UIStyles.menuIconColor,
                 ),
                 title: const ScaledText(
-                  'Oktoberfest',
+                  'Preisschießen',
                   style: TextStyle(fontSize: UIConstants.menuItemFontSize),
                 ),
-                onTap: () => navigator.oktoberfest(context),
+                onTap: () => navigator.preisschiessen(context),
               ),
               const Divider(),
               ListTile(
