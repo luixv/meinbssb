@@ -516,7 +516,8 @@ void main() {
       await tester.tap(find.byIcon(Icons.delete_outline_outlined));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Abbrechen'));
+      // Tap the FloatingActionButton with tooltip 'Schließen' (cancel)
+      await tester.tap(find.byTooltip('Schließen'));
       await tester.pumpAndSettle();
 
       expect(find.text('Test Training'), findsOneWidget);
@@ -539,7 +540,8 @@ void main() {
       await tester.tap(find.byIcon(Icons.delete_outline_outlined));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Abmelden'));
+      // Tap the FloatingActionButton with tooltip 'Abmelden' (confirm)
+      await tester.tap(find.byTooltip('Abmelden'));
       await tester.pumpAndSettle();
 
       expect(
@@ -564,7 +566,8 @@ void main() {
       await tester.tap(find.byIcon(Icons.delete_outline_outlined));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Abmelden'));
+      // Tap the FloatingActionButton with tooltip 'Abmelden' (confirm)
+      await tester.tap(find.byTooltip('Abmelden'));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Error:'), findsOneWidget);
