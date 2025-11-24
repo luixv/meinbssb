@@ -26,7 +26,7 @@ class PreisschiessenScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Check if current date is >= December 1st, 2025 at 0:00
-    final releaseDate = DateTime(2025, 11, 24, 0, 0);
+    final releaseDate = DateTime(2025, 12, 1, 0, 0);
     final now = DateTime.now();
     final isSeventyFiveJahreBSSBVisible =
         now.isAfter(releaseDate) || now.isAtSameMomentAs(releaseDate);
