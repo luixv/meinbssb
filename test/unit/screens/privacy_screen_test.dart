@@ -44,7 +44,11 @@ void main() {
     return ChangeNotifierProvider<FontSizeProvider>(
       create: (_) => FontSizeProvider(),
       child: MaterialApp(
-        home: PrivacyScreen(userData: userData),
+        home: PrivacyScreen(
+          userData: userData,
+          isLoggedIn: true,
+          onLogout: () {},
+        ),
       ),
     );
   }
