@@ -53,7 +53,7 @@ class OktoberfestService {
         configService,
         name: 'oktoberFestBase',
       );
-      final endpoint = 'Gewinne/$jahr/$passnummer';
+      final endpoint = 'GewinneEx/$jahr/$passnummer/1';
       final response =
           await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
       if (response is List) {
