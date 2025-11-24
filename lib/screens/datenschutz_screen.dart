@@ -5,6 +5,8 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/screens/base_screen_layout.dart';
+import 'package:provider/provider.dart';
+import '/providers/font_size_provider.dart';
 
 class DatenschutzScreen extends StatefulWidget {
   const DatenschutzScreen({
@@ -32,72 +34,69 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final FontSizeProvider fontSizeProvider = Provider.of<FontSizeProvider>(
+      context,
+    );
+
     return BaseScreenLayout(
       title: 'Datenschutz',
       userData: widget.userData,
       isLoggedIn: widget.isLoggedIn,
       onLogout: widget.onLogout,
-      body: Center(
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: UIConstants.maxContentWidth,
-            ),
-            margin: const EdgeInsets.symmetric(
-              vertical: UIConstants.spacingL,
-              horizontal: UIConstants.spacingM,
-            ),
-            padding: UIConstants.defaultPadding,
-            decoration: BoxDecoration(
-              color: UIConstants.cardColor,
-              borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-              boxShadow: UIStyles.cardDecoration.boxShadow,
-            ),
-            child: Focus(
-              autofocus: true,
-              onKey: (node, event) {
-                if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-                  _scrollController.animateTo(
-                    _scrollController.offset + 100,
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.easeOut,
-                  );
-                  return KeyEventResult.handled;
-                } else if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-                  _scrollController.animateTo(
-                    _scrollController.offset - 100,
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.easeOut,
-                  );
-                  return KeyEventResult.handled;
-                }
-                return KeyEventResult.ignored;
-              },
-              child: Semantics(
-                container: true,
-                label: 'Datenschutzerklärung der MeinBSSB App',
+      body: Focus(
+        autofocus: true,
+        onKey: (node, event) {
+          if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+            _scrollController.animateTo(
+              _scrollController.offset + 100,
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+            return KeyEventResult.handled;
+          } else if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+            _scrollController.animateTo(
+              _scrollController.offset - 100,
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: Semantics(
+          label:
+              'Datenschutzbereich mit Informationen zur Datenverarbeitung, Cookies, Rechte und Sicherheit beim Bayerischen Sportschützenbund.',
+          child: Center(
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Container(
+                constraints: const BoxConstraints(
+                  maxWidth: UIConstants.maxContentWidth,
+                ),
+                margin: const EdgeInsets.symmetric(
+                  vertical: UIConstants.spacingL,
+                  horizontal: UIConstants.spacingM,
+                ),
+                padding: UIConstants.defaultPadding,
+                decoration: BoxDecoration(
+                  color: UIConstants.cardColor,
+                  borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+                  boxShadow: UIStyles.cardDecoration.boxShadow,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Semantics(
-                      header: true,
-                      label: 'Datenschutz, Hauptüberschrift',
-                      child: const ScaledText(
-                        'Datenschutz',
-                        style: UIStyles.headerStyle,
-                      ),
+                    _buildSectionHeader(
+                      'Datenschutz',
+                      isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingM,
                     ExcludeSemantics(child: const Divider()),
                     UIConstants.verticalSpacingM,
-                    Semantics(
-                      header: true,
-                      label: 'Allgemeine Hinweise, Abschnittsüberschrift',
-                      child: const ScaledText(
-                        'Allgemeine Hinweise',
-                        style: UIStyles.sectionTitleStyle,
-                      ),
+                    _buildSectionHeader(
+                      'Allgemeine Hinweise',
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -115,11 +114,13 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Datenerfassung auf unserer Website',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingM,
                     _buildSectionHeader(
                       'Wer ist verantwortlich für die Datenerfassung auf dieser Website?',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     Semantics(
@@ -131,21 +132,30 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                       ),
                     ),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Gesetzliche Vertretung'),
+                    _buildSectionHeader(
+                      'Gesetzliche Vertretung',
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
                       '1. Landesschützenmeister Christian Kühn\nstv. Landesschützenmeister Dieter Vierlbeck\nstv. Landesschützenmeister Hans Hainthaler\nstv. Landesschützenmeister Albert Euba\nstv. Landesschützenmeister Stefan Fersch',
                       style: UIStyles.bodyStyle,
                     ),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Geschäftsführer'),
+                    _buildSectionHeader(
+                      'Geschäftsführer',
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
                       'Alexander Heidel',
                       style: UIStyles.bodyStyle,
                     ),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Datenschutzbeauftragter'),
+                    _buildSectionHeader(
+                      'Datenschutzbeauftragter',
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     Semantics(
                       label:
@@ -175,7 +185,11 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     UIConstants.verticalSpacingM,
                     ExcludeSemantics(child: const Divider()),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Hosting', isMainSection: true),
+                    _buildSectionHeader(
+                      'Hosting',
+                      isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
                       'Unsere in Anspruch genommenen Hosting-Leistungen, um den Betrieb der Homepage sicherzustellen, umfassen folgende Leistungen: Plattformdienstleistungen, Webspace, Datenbank, technische Wartung.',
@@ -187,11 +201,13 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Welche Daten werden erfasst und wie?',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingM,
                     _buildSectionHeader(
                       'Server-Log-Dateien',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -206,7 +222,11 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     UIConstants.verticalSpacingM,
                     ExcludeSemantics(child: const Divider()),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Cookies', isMainSection: true),
+                    _buildSectionHeader(
+                      'Cookies',
+                      isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
                       'Die Internetseiten verwendet so genannte Cookies. Cookies richten auf Ihrem Rechner keinen Schaden an und enthalten keine Viren. Cookies dienen dazu, unser Angebot nutzerfreundlicher, effektiver und sicherer zu machen. Cookies sind kleine Textdateien, die auf Ihrem Rechner abgelegt werden und die Ihr Browser speichert.',
@@ -233,6 +253,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Cookie-Informationen',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -280,7 +301,11 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                       style: UIStyles.bodyStyle,
                     ),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Notwendig (3)', isMainSection: true),
+                    _buildSectionHeader(
+                      'Notwendig (3)',
+                      isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
                       'Notwendige Cookies helfen dabei, eine Webseite nutzbar zu machen, indem sie Grundfunktionen wie Seitennavigation und Zugriff auf sichere Bereiche der Webseite ermöglichen. Die Webseite kann ohne diese Cookies nicht richtig funktionieren.',
@@ -292,6 +317,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Lokal gespeicherte Daten (SharedPreferences)',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -345,6 +371,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Cache-Daten (mit Präfix "cache_")',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -400,7 +427,11 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     UIConstants.verticalSpacingM,
                     ExcludeSemantics(child: const Divider()),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Bilder-Cache', isMainSection: true),
+                    _buildSectionHeader(
+                      'Bilder-Cache',
+                      isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     _buildDataItem(
                       'schuetzenausweis_<personId>.jpg',
@@ -420,7 +451,11 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     UIConstants.verticalSpacingM,
                     ExcludeSemantics(child: const Divider()),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Datenlöschung', isMainSection: true),
+                    _buildSectionHeader(
+                      'Datenlöschung',
+                      isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
                       'Alle lokal gespeicherten Daten werden gelöscht, wenn Sie:',
@@ -455,7 +490,11 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     UIConstants.verticalSpacingM,
                     ExcludeSemantics(child: const Divider()),
                     UIConstants.verticalSpacingM,
-                    _buildSectionHeader('Sicherheit', isMainSection: true),
+                    _buildSectionHeader(
+                      'Sicherheit',
+                      isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
+                    ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
                       'Passwörter werden verschlüsselt im Flutter Secure Storage gespeichert. Unter Android wird encryptedSharedPreferences verwendet. Alle Daten bleiben auf Ihrem Gerät und werden nicht an Dritte weitergegeben.',
@@ -467,6 +506,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Wofür werden erhobene Daten genutzt?',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -477,6 +517,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Analyse-Tools und Tools von Drittanbietern',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -489,6 +530,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Kontaktformulare, des Deutschen Schützenbundes',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -501,11 +543,13 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Welche Rechte haben Sie bezüglich Ihrer Daten?',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingM,
                     _buildSectionHeader(
                       'Auskunft, Sperrung, Löschung',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -516,6 +560,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Widerruf Ihrer Einwilligung zur Datenverarbeitung',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -526,6 +571,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Veröffentlichung von Daten und Fotos auf der Homepage',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -546,6 +592,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Beschwerderecht bei der zuständigen Aufsichtsbehörde',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -556,6 +603,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'Recht auf Datenübertragbarkeit',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -566,6 +614,7 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     _buildSectionHeader(
                       'SSL- bzw. TLS-Verschlüsselung',
                       isMainSection: true,
+                      fontSizeProvider: fontSizeProvider,
                     ),
                     UIConstants.verticalSpacingS,
                     const ScaledText(
@@ -578,21 +627,40 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
               ),
             ),
           ),
-        ), // Close SingleChildScrollView
-      ), // Close Center - end of body parameter
-    ); // Close return BaseScreenLayout
+        ),
+      ),
+      floatingActionButton: Semantics(
+        label: 'Datenschutz schließen',
+        hint: 'Tippen, um den Datenschutzbereich zu schließen und zur vorherigen Seite zurückzukehren',
+        button: true,
+        child: FloatingActionButton(
+          onPressed: () => Navigator.of(context).pop(),
+          backgroundColor: UIConstants.defaultAppColor,
+          child: const Icon(Icons.close, color: Colors.white),
+        ),
+      ),
+    );
   }
 
-  Widget _buildSectionHeader(String title, {bool isMainSection = false}) {
+  Widget _buildSectionHeader(
+    String title, {
+    bool isMainSection = false,
+    required FontSizeProvider fontSizeProvider,
+  }) {
     return Semantics(
       header: true,
       label: '$title, ${isMainSection ? "Hauptabschnitt" : "Unterabschnitt"}',
       child: ScaledText(
         title,
-        style:
-            isMainSection
+        style: (isMainSection
                 ? UIStyles.sectionTitleStyle
-                : UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold),
+                : UIStyles.bodyStyle.copyWith(fontWeight: FontWeight.bold))
+            .copyWith(
+          fontSize: (isMainSection
+                  ? UIStyles.sectionTitleStyle.fontSize!
+                  : UIStyles.bodyStyle.fontSize!) *
+              fontSizeProvider.scaleFactor,
+        ),
       ),
     );
   }
@@ -605,7 +673,9 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Wrap(
+              spacing: UIConstants.spacingS,
+              runSpacing: UIConstants.spacingXS,
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -625,7 +695,6 @@ class _DatenschutzScreenState extends State<DatenschutzScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: UIConstants.spacingS),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: UIConstants.spacingS,
