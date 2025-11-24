@@ -1,49 +1,6 @@
 import 'package:meinbssb/helpers/utils.dart';
 
 class Schulungstermin {
-  Schulungstermin({
-    required this.schulungsterminId,
-    required this.schulungsartId,
-    required this.schulungsTeilnehmerId,
-    required this.datum,
-    required this.bemerkung,
-    required this.kosten,
-    required this.ort,
-    required this.lehrgangsleiter,
-    required this.verpflegungskosten,
-    required this.uebernachtungskosten,
-    required this.lehrmaterialkosten,
-    required this.lehrgangsinhalt,
-    required this.maxTeilnehmer,
-    required this.webVeroeffentlichenAm,
-    required this.anmeldungenGesperrt,
-    required this.status,
-    required this.datumBis,
-    required this.lehrgangsinhaltHtml,
-    required this.lehrgangsleiter2,
-    required this.lehrgangsleiter3,
-    required this.lehrgangsleiter4,
-    required this.lehrgangsleiterTel,
-    required this.lehrgangsleiter2Tel,
-    required this.lehrgangsleiter3Tel,
-    required this.lehrgangsleiter4Tel,
-    required this.lehrgangsleiterMail,
-    required this.lehrgangsleiter2Mail,
-    required this.lehrgangsleiter3Mail,
-    required this.lehrgangsleiter4Mail,
-    required this.anmeldeStopp,
-    required this.abmeldeStopp,
-    required this.geloescht,
-    required this.stornoGrund,
-    required this.webGruppe,
-    required this.veranstaltungsBezirk,
-    required this.fuerVerlaengerungen,
-    required this.fuerVuelVerlaengerungen,
-    required this.anmeldeErlaubt,
-    required this.verbandsInternPasswort,
-    required this.bezeichnung,
-    required this.angemeldeteTeilnehmer,
-  });
   factory Schulungstermin.fromJson(Map<String, dynamic> json) {
     try {
       return Schulungstermin(
@@ -97,6 +54,51 @@ class Schulungstermin {
       rethrow;
     }
   }
+  Schulungstermin({
+    required this.schulungsterminId,
+    required this.schulungsartId,
+    required this.schulungsTeilnehmerId,
+    required this.datum,
+    required this.bemerkung,
+    required this.kosten,
+    required this.ort,
+    required this.lehrgangsleiter,
+    required this.verpflegungskosten,
+    required this.uebernachtungskosten,
+    required this.lehrmaterialkosten,
+    required this.lehrgangsinhalt,
+    required this.maxTeilnehmer,
+    required this.webVeroeffentlichenAm,
+    required this.anmeldungenGesperrt,
+    required this.status,
+    required this.datumBis,
+    required this.lehrgangsinhaltHtml,
+    required this.lehrgangsleiter2,
+    required this.lehrgangsleiter3,
+    required this.lehrgangsleiter4,
+    required this.lehrgangsleiterTel,
+    required this.lehrgangsleiter2Tel,
+    required this.lehrgangsleiter3Tel,
+    required this.lehrgangsleiter4Tel,
+    required this.lehrgangsleiterMail,
+    required this.lehrgangsleiter2Mail,
+    required this.lehrgangsleiter3Mail,
+    required this.lehrgangsleiter4Mail,
+    required this.anmeldeStopp,
+    required this.abmeldeStopp,
+    required this.geloescht,
+    required this.stornoGrund,
+    required this.webGruppe,
+    required this.veranstaltungsBezirk,
+    required this.fuerVerlaengerungen,
+    required this.fuerVuelVerlaengerungen,
+    required this.anmeldeErlaubt,
+    required this.verbandsInternPasswort,
+    required this.bezeichnung,
+    required this.angemeldeteTeilnehmer,
+  });
+  String get gruppe => webGruppeLabel;
+  double get preis => kosten;
 
   final int schulungsterminId;
   final int schulungsartId;
