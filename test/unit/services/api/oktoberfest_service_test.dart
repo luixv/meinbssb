@@ -114,6 +114,7 @@ void main() {
       'GewinnIDs': gewinnIDs,
       'IBAN': iban,
       'Passnummer': int.parse(passnummer),
+      'GewinnTyp': 1
     };
 
     setUp(() {
@@ -213,7 +214,7 @@ void main() {
       );
       verify(
         mockHttpClient.post(
-          'GewinneAbrufen',
+          'GewinneAbrufenEx',
           requestBody,
           overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
@@ -228,6 +229,7 @@ void main() {
         'GewinnIDs': gewinnIDs,
         'IBAN': iban,
         'Passnummer': passnummer,
+        'GewinnTyp': 1
       };
       when(
         mockHttpClient.post(
@@ -244,7 +246,7 @@ void main() {
       );
       verify(
         mockHttpClient.post(
-          'GewinneAbrufen',
+          'GewinneAbrufenEx',
           requestBody,
           overrideBaseUrl: anyNamed('overrideBaseUrl'),
         ),
