@@ -87,11 +87,12 @@ class OktoberfestService {
         configService,
         name: 'oktoberFestBase',
       );
-      const endpoint = 'GewinneAbrufen';
+      const endpoint = 'GewinneAbrufenEx';
       final body = {
         'GewinnIDs': gewinnIDs,
         'IBAN': iban,
         'Passnummer': int.tryParse(passnummer) ?? passnummer,
+        'GewinnTyp': 1
       };
       final response =
           await _httpClient.post(endpoint, body, overrideBaseUrl: baseUrl);
