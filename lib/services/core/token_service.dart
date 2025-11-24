@@ -24,36 +24,27 @@ class TokenService {
 
   static const String _tokenCacheKey = 'authToken';
 
-  /// Fetches a new authentication token from the server.
+  /// Fetches a new authentication token from the token microservice.
   /// This method is responsible for making the actual HTTP request
-  /// to the token endpoint.
+  /// to the token-service endpoint.
   Future<String> _fetchToken() async {
-    final String tokenServerURL =
-        _configService.getString('tokenServerURL') ?? '';
-
-    final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
-    final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
-
-    final Map<String, String> body = {
-      'username': usernameWebUser,
-      'password': passwordWebUser,
-    };
-
-    var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
-    body.forEach((key, value) {
-      request.fields[key] = value;
-    });
-
-    LoggerService.logInfo(
-      'TokenService: Fetching new token from: $tokenServerURL',
-    );
-
     try {
-      // Use the injected _client to send the request
-      final http.StreamedResponse streamedResponse =
-          await _httpClient.send(request);
-      final http.Response response =
-          await http.Response.fromStream(streamedResponse);
+      // Build the token service URL using ConfigService
+      final String tokenServiceURL = ConfigService.buildBaseUrlForServer(
+        _configService,
+        name: 'token',
+        protocolKey: 'tokenProtocol',
+      );
+
+      LoggerService.logInfo(
+        'TokenService: Fetching new token from: $tokenServiceURL',
+      );
+
+      // Make a simple POST request to the token microservice
+      final http.Response response = await _httpClient.post(
+        Uri.parse(tokenServiceURL),
+        headers: {'Content-Type': 'application/json'},
+      );
 
       LoggerService.logInfo(
         'TokenService: Response Status Code: ${response.statusCode}',

@@ -5,9 +5,22 @@ http://meinprod.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meinprod.bssb.de {
-  root * /web
-  file_server
-  try_files {path} /index.html
+  # Token service API route - handled first, never reaches Flutter app
+  handle_path /zmi-token* {
+    reverse_proxy token-service:3002
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
+  }
+
+  # Flutter Web App (default handler) - only matches non-API routes
+  handle {
+    root * /web
+    file_server
+    try_files {path} /index.html
+  }
 }
 
 # Serve PostgREST API (HTTPS) on port 8081 for any host

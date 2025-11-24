@@ -18,6 +18,15 @@ services:
     depends_on:
       - postfix-relay
 
+  token-service:
+    build: ./token-service
+    container_name: token-service
+    restart: always
+    environment:
+      - TOKEN_SERVER_URL=${TOKEN_SERVER_URL}
+      - USERNAME_WEB_USER=${USERNAME_WEB_USER}
+      - PASSWORD_WEB_USER=${PASSWORD_WEB_USER}
+
   postfix-relay:
     image: boky/postfix
     container_name: postfix-relay

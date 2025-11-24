@@ -8,9 +8,22 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meintest.bssb.de {
-  root * /web
-  file_server
-  try_files {path} /index.html
+  # Token service API route - handled first, never reaches Flutter app
+  handle_path /zmi-token* {
+    reverse_proxy token-service:3002
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
+  }
+
+  # Flutter Web App (default handler) - only matches non-API routes
+  handle {
+    root * /web
+    file_server
+    try_files {path} /index.html
+  }
 }
 
 # Serve PostgREST API (HTTPS) on port 8081 - requires API key header
@@ -50,15 +63,6 @@ https://meintest.bssb.de:8081 {
 }
 https://meintest.bssb.de:8080 {
     reverse_proxy email-service:3001
-    header {
-      Access-Control-Allow-Origin "*"
-      Access-Control-Allow-Methods "POST, OPTIONS"
-      Access-Control-Allow-Headers "Authorization, Content-Type"
-    }
-}
-
-https://meintest.bssb.de:8082 {
-    reverse_proxy token-service:3002
     header {
       Access-Control-Allow-Origin "*"
       Access-Control-Allow-Methods "POST, OPTIONS"
