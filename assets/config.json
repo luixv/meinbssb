@@ -23,7 +23,7 @@
   "api1BasePort": "50211",
   "tokenProtocol": "https",
   "tokenServer": "meinprod.bssb.de",
-  "tokenPort": "443",
+  "tokenPort": "8080",
   "tokenPath": "zmi-token",
   "serverTimeout": 40,
   "cacheExpirationHours": "24",

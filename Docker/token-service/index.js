@@ -25,7 +25,7 @@ if (!TOKEN_SERVER_URL || !USERNAME_WEB_USER || !PASSWORD_WEB_USER) {
 
 console.log(`Token service configured to fetch from: ${TOKEN_SERVER_URL}`);
 
-app.post('/', async (req, res) => {
+app.post('/zmi-token', async (req, res) => {
   try {
     console.log('Received token request from Flutter app');
 
@@ -106,7 +106,7 @@ app.post('/', async (req, res) => {
 });
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/zmi-token/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     service: 'token-service',

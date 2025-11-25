@@ -5,32 +5,9 @@ http://meinprod.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meinprod.bssb.de {
-  # Token service API route - handled first, never reaches Flutter app
-  handle_path /zmi-token* {
-    @options method OPTIONS
-    handle @options {
-      respond 204
-      header {
-        Access-Control-Allow-Origin "*"
-        Access-Control-Allow-Methods "POST, OPTIONS"
-        Access-Control-Allow-Headers "Authorization, Content-Type"
-      }
-    }
-    
-    reverse_proxy token-service:3002
-    header {
-      Access-Control-Allow-Origin "*"
-      Access-Control-Allow-Methods "POST, OPTIONS"
-      Access-Control-Allow-Headers "Authorization, Content-Type"
-    }
-  }
-
-  # Flutter Web App (default handler) - only matches non-API routes
-  handle {
-    root * /web
-    file_server
-    try_files {path} /index.html
-  }
+  root * /web
+  file_server
+  try_files {path} /index.html
 }
 
 # Serve PostgREST API (HTTPS) on port 8081 for any host
@@ -56,7 +33,16 @@ https://meinprod.bssb.de:8081 {
 }
 
 https://meinprod.bssb.de:8080 {
-    reverse_proxy email-service:3001
+    # Handle both email-service and token-service on port 8080
+    handle_path /send-email* {
+        reverse_proxy email-service:3001
+    }
+    
+    handle_path /zmi-token* {
+        reverse_proxy token-service:3002
+    }
+    
+    # CORS headers for all routes on port 8080
     header {
       Access-Control-Allow-Origin "*"
       Access-Control-Allow-Methods "POST, OPTIONS"

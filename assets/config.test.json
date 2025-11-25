@@ -24,7 +24,7 @@
   "api1BasePort": "56400",
   "tokenProtocol": "https",
   "tokenServer": "meintest.bssb.de",
-  "tokenPort": "443",
+  "tokenPort": "8080",
   "tokenPath": "zmi-token",
   "serverTimeout": 40,
   "cacheExpirationHours": "24",

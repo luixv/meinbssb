@@ -30,7 +30,7 @@
   
   "tokenProtocol": "https",
   "tokenServer": "meintest.bssb.de",
-  "tokenPort": "443",
+  "tokenPort": "8080",
   "tokenPath": "zmi-token",
   
   "serverTimeout": 40,

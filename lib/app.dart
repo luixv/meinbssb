@@ -326,17 +326,6 @@ class _MyAppState extends State<MyApp> {
           },
           // Only use onGenerateRoute, no static routes map
           onGenerateRoute: (settings) {
-            // Block API routes from being handled by Flutter router
-            // These should be handled by Caddy reverse proxy
-            if (settings.name != null && 
-                (settings.name!.startsWith('/zmi-token') ||
-                 settings.name!.startsWith('/api/') ||
-                 settings.name!.startsWith('/send-email'))) {
-              // Return null to indicate this route is not handled by Flutter
-              // This prevents the app from trying to render these API endpoints
-              return null;
-            }
-            
             if (_loading) {
               return MaterialPageRoute(
                 builder:
