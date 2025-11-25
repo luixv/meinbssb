@@ -181,132 +181,83 @@ class StartScreenState extends State<StartScreen> {
     String bezeichnung,
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final FocusNode dialogFocusNode = FocusNode(
-      debugLabel: 'DeleteDialogFocus',
-    );
+
     final bool? confirmDelete = await showDialog<bool>(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext dialogContext) {
-        return Stack(
-          children: [
-            // The dialog itself
-            Center(
-              child: Semantics(
-                label:
-                    'Schulungsdetails Dialog. Enthält Informationen zur Schulung und Abmeldebestätigung.',
-                liveRegion: true,
-                child: AlertDialog(
-                  backgroundColor: UIConstants.backgroundColor,
-                  contentPadding: EdgeInsets.zero,
-                  actions: null,
-                  content: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: UIConstants.dialogMaxWidthWide,
-                      maxHeight: MediaQuery.of(context).size.height * 0.8,
-                      minWidth: UIConstants.dialogMinWidth,
-                    ),
-                    child: Focus(
-                      focusNode: dialogFocusNode,
-                      autofocus: true,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: UIConstants.spacingL,
-                                horizontal: UIConstants.spacingXS,
-                              ),
-                              decoration: BoxDecoration(
-                                color: UIConstants.whiteColor,
-                                borderRadius: BorderRadius.circular(
-                                  UIConstants.cornerRadius,
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Center(
-                                    child: ScaledText(
-                                      'Schulung abmelden',
-                                      style: UIStyles.dialogTitleStyle,
-                                    ),
-                                  ),
-                                  const SizedBox(height: UIConstants.spacingM),
-                                  RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                      style: UIStyles.dialogContentStyle,
-                                      children: <TextSpan>[
-                                        const TextSpan(
-                                          text:
-                                              'Sind Sie sicher, dass Sie die Schulung\n\n',
-                                        ),
-                                        TextSpan(
-                                          text: bezeichnung,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const TextSpan(
-                                          text: '\n\nabmelden möchten?',
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: UIConstants.spacingXL),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: ScaledText(
+              'Schulung abmelden',
+              style: UIStyles.dialogTitleStyle,
             ),
-            // FABs as siblings to the dialog, not inside AlertDialog
-            Positioned(
-              bottom:
-                  MediaQuery.of(context).size.height * 0.5 -
-                  120, // adjust as needed
-              right:
-                  MediaQuery.of(context).size.width * 0.5 -
-                  UIConstants.dialogMaxWidthWide / 2 +
-                  UIConstants.spacingM,
+          ),
+          content: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: UIStyles.dialogContentStyle,
+              children: <TextSpan>[
+                const TextSpan(
+                  text: 'Sind Sie sicher, dass Sie die Schulung\n\n',
+                ),
+                TextSpan(
+                  text: bezeichnung,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const TextSpan(text: '\n\nabmelden möchten?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Semantics(
-                    label: 'Dialog schließen',
-                    child: FloatingActionButton(
-                      heroTag: 'deleteDialogCloseFab',
-                      tooltip: 'Schließen',
-                      backgroundColor: UIConstants.defaultAppColor,
-                      onPressed: () => Navigator.of(dialogContext).pop(false),
-                      child: const Icon(
-                        Icons.close,
-                        color: UIConstants.whiteColor,
-                      ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(false);
+                    },
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingM,
+                        Flexible(
+                          child: ScaledText(
+                            'Abbrechen',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.cancelButtonText,
+                              fontSize: UIConstants.buttonFontSize,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: UIConstants.spacingM),
-                  Semantics(
-                    label: 'Schulung abmelden',
-                    child: FloatingActionButton(
-                      heroTag: 'deleteDialogAcceptFab',
-                      tooltip: 'Abmelden',
-                      backgroundColor: UIConstants.defaultAppColor,
-                      onPressed: () => Navigator.of(dialogContext).pop(true),
-                      child: const Icon(
-                        Icons.delete,
-                        color: UIConstants.whiteColor,
-                      ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(true);
+                    },
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: UIConstants.centerAlignment,
+                      children: [
+                        const Icon(Icons.check, color: UIConstants.checkIcon),
+                        UIConstants.horizontalSpacingS,
+                        Flexible(
+                          child: ScaledText(
+                            'Abmelden',
+                            style: UIStyles.dialogButtonTextStyle.copyWith(
+                              color: UIConstants.deleteButtonText,
+                              fontSize: UIConstants.buttonFontSize,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -316,6 +267,8 @@ class StartScreenState extends State<StartScreen> {
         );
       },
     );
+
+    if (!mounted) return;
 
     if (confirmDelete != true) return;
 
@@ -610,18 +563,18 @@ class StartScreenState extends State<StartScreen> {
                                         backgroundColor:
                                             UIConstants.backgroundColor,
                                         contentPadding: EdgeInsets.zero,
-                                        content: Stack(
-                                          children: [
-                                            ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxHeight:
-                                                    MediaQuery.of(
-                                                      context,
-                                                    ).size.height *
-                                                    0.8,
-                                                minWidth: 300,
-                                              ),
-                                              child: Focus(
+                                        content: ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxHeight:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.height *
+                                                0.8,
+                                            minWidth: 300,
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Focus(
                                                 focusNode: _dialogFocusNode,
                                                 autofocus: true,
                                                 child: SingleChildScrollView(
@@ -734,24 +687,16 @@ class StartScreenState extends State<StartScreen> {
                                                                                 Icons.calendar_today,
                                                                                 size:
                                                                                     UIConstants.defaultIconSize,
-                                                                                color:
-                                                                                    UIConstants.textColor,
                                                                               ),
                                                                               UIConstants.horizontalSpacingS,
-                                                                              Flexible(
-                                                                                child: Text(
-                                                                                  DateFormat(
-                                                                                    'dd.MM.yyyy',
-                                                                                  ).format(
-                                                                                    termin.datum,
-                                                                                  ),
-                                                                                  style:
-                                                                                      UIStyles.bodyStyle,
-                                                                                  overflow:
-                                                                                      TextOverflow.ellipsis,
-                                                                                  maxLines:
-                                                                                      1,
+                                                                              Text(
+                                                                                DateFormat(
+                                                                                  'dd.MM.yyyy',
+                                                                                ).format(
+                                                                                  termin.datum,
                                                                                 ),
+                                                                                style:
+                                                                                    UIStyles.bodyStyle,
                                                                               ),
                                                                             ],
                                                                           ),
@@ -767,20 +712,16 @@ class StartScreenState extends State<StartScreen> {
                                                                                 Icons.location_on,
                                                                                 size:
                                                                                     UIConstants.defaultIconSize,
-                                                                                color:
-                                                                                    UIConstants.textColor,
                                                                               ),
                                                                               UIConstants.horizontalSpacingS,
-                                                                              Flexible(
-                                                                                child: Text(
-                                                                                  termin.ort,
-                                                                                  style:
-                                                                                      UIStyles.bodyStyle,
-                                                                                  overflow:
-                                                                                      TextOverflow.ellipsis,
-                                                                                  maxLines:
-                                                                                      1,
-                                                                                ),
+                                                                              Text(
+                                                                                termin.ort,
+                                                                                style:
+                                                                                    UIStyles.bodyStyle,
+                                                                                overflow:
+                                                                                    TextOverflow.ellipsis,
+                                                                                maxLines:
+                                                                                    1,
                                                                               ),
                                                                             ],
                                                                           ),
@@ -799,20 +740,16 @@ class StartScreenState extends State<StartScreen> {
                                                                                 Icons.group,
                                                                                 size:
                                                                                     UIConstants.defaultIconSize,
-                                                                                color:
-                                                                                    UIConstants.textColor,
                                                                               ),
                                                                               UIConstants.horizontalSpacingS,
-                                                                              Flexible(
-                                                                                child: Text(
-                                                                                  termin.gruppe,
-                                                                                  style:
-                                                                                      UIStyles.bodyStyle,
-                                                                                  overflow:
-                                                                                      TextOverflow.ellipsis,
-                                                                                  maxLines:
-                                                                                      1,
-                                                                                ),
+                                                                              Text(
+                                                                                termin.webGruppeLabel,
+                                                                                style:
+                                                                                    UIStyles.bodyStyle,
+                                                                                overflow:
+                                                                                    TextOverflow.ellipsis,
+                                                                                maxLines:
+                                                                                    1,
                                                                               ),
                                                                             ],
                                                                           ),
@@ -825,28 +762,15 @@ class StartScreenState extends State<StartScreen> {
                                                                                 MainAxisSize.min,
                                                                             children: [
                                                                               const Icon(
-                                                                                Icons.euro,
+                                                                                Icons.request_quote,
                                                                                 size:
                                                                                     UIConstants.defaultIconSize,
-                                                                                color:
-                                                                                    UIConstants.textColor,
                                                                               ),
                                                                               UIConstants.horizontalSpacingS,
-                                                                              Flexible(
-                                                                                child: Text(
-                                                                                  NumberFormat.simpleCurrency(
-                                                                                    locale:
-                                                                                        'de_DE',
-                                                                                  ).format(
-                                                                                    termin.preis,
-                                                                                  ),
-                                                                                  style:
-                                                                                      UIStyles.bodyStyle,
-                                                                                  overflow:
-                                                                                      TextOverflow.ellipsis,
-                                                                                  maxLines:
-                                                                                      1,
-                                                                                ),
+                                                                              Text(
+                                                                                '${termin.kosten.toStringAsFixed(2)} €',
+                                                                                style:
+                                                                                    UIStyles.bodyStyle,
                                                                               ),
                                                                             ],
                                                                           ),
@@ -875,9 +799,12 @@ class StartScreenState extends State<StartScreen> {
                                                                 children: [
                                                                   Text(
                                                                     'Lehrgangsleiter:',
-                                                                    style:
-                                                                        UIStyles
-                                                                            .bodyStyle,
+                                                                    style: UIStyles
+                                                                        .bodyStyle
+                                                                        .copyWith(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
                                                                   ),
                                                                   const SizedBox(
                                                                     height:
@@ -894,29 +821,25 @@ class StartScreenState extends State<StartScreen> {
                                                                             .email,
                                                                         size:
                                                                             UIConstants.defaultIconSize,
-                                                                        color:
-                                                                            UIConstants.textColor,
                                                                       ),
                                                                       UIConstants
                                                                           .horizontalSpacingS,
-                                                                      Flexible(
-                                                                        child: Text(
-                                                                          termin
-                                                                              .lehrgangsleiterMail,
-                                                                          style:
-                                                                              UIStyles.bodyStyle,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                        ),
+                                                                      Text(
+                                                                        termin
+                                                                            .lehrgangsleiterMail,
+                                                                        style:
+                                                                            UIStyles.bodyStyle,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
                                                                       ),
                                                                     ],
                                                                   ),
                                                                   const SizedBox(
                                                                     height:
                                                                         UIConstants
-                                                                            .spacingXS,
+                                                                            .spacingXXS,
                                                                   ),
                                                                   Row(
                                                                     mainAxisSize:
@@ -928,22 +851,14 @@ class StartScreenState extends State<StartScreen> {
                                                                             .phone,
                                                                         size:
                                                                             UIConstants.defaultIconSize,
-                                                                        color:
-                                                                            UIConstants.textColor,
                                                                       ),
                                                                       UIConstants
                                                                           .horizontalSpacingS,
-                                                                      Flexible(
-                                                                        child: Text(
-                                                                          termin
-                                                                              .lehrgangsleiterTel,
-                                                                          style:
-                                                                              UIStyles.bodyStyle,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                        ),
+                                                                      Text(
+                                                                        termin
+                                                                            .lehrgangsleiterTel,
+                                                                        style:
+                                                                            UIStyles.bodyStyle,
                                                                       ),
                                                                     ],
                                                                   ),
@@ -972,6 +887,14 @@ class StartScreenState extends State<StartScreen> {
                                                                   data:
                                                                       termin
                                                                           .lehrgangsinhaltHtml,
+                                                                  style: {
+                                                                    'body': Style(
+                                                                      fontSize: FontSize(
+                                                                        UIConstants
+                                                                            .bodyFontSize,
+                                                                      ),
+                                                                    ),
+                                                                  },
                                                                 )
                                                                 : termin
                                                                     .lehrgangsinhalt
@@ -995,59 +918,61 @@ class StartScreenState extends State<StartScreen> {
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            Positioned(
-                                              bottom: UIConstants.spacingM,
-                                              right: UIConstants.spacingM,
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  KeyboardFocusFAB(
-                                                    heroTag:
-                                                        'descDialogDeleteFab$index',
-                                                    mini: false,
-                                                    tooltip: 'Löschen',
-                                                    icon:
-                                                        Icons
-                                                            .delete_outline_outlined,
-                                                    semanticLabel:
-                                                        'Schulung löschen',
-                                                    onPressed: () {
-                                                      Navigator.of(
-                                                        context,
-                                                      ).pop();
-                                                      _handleDeleteSchulung(
-                                                        schulung
-                                                            .schulungsTeilnehmerId,
-                                                        index,
-                                                        schulung.bezeichnung,
-                                                      );
-                                                    },
-                                                  ),
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingM,
-                                                  ),
-                                                  KeyboardFocusFAB(
-                                                    heroTag:
-                                                        'descDialogCloseFab$index',
-                                                    mini: false,
-                                                    tooltip: 'Schließen',
-                                                    icon: Icons.close,
-                                                    semanticLabel:
-                                                        'Dialog schließen',
-                                                    onPressed:
-                                                        () =>
-                                                            Navigator.of(
-                                                              context,
-                                                            ).pop(),
-                                                  ),
-                                                ],
+
+                                              Positioned(
+                                                bottom: UIConstants.spacingM,
+                                                right: UIConstants.spacingM,
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    KeyboardFocusFAB(
+                                                      heroTag:
+                                                          'descDialogDeleteFab$index',
+                                                      mini: true,
+                                                      tooltip: 'Löschen',
+                                                      icon:
+                                                          Icons
+                                                              .delete_outline_outlined,
+                                                      semanticLabel:
+                                                          'Schulung löschen',
+                                                      onPressed: () {
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop();
+                                                        _handleDeleteSchulung(
+                                                          schulung
+                                                              .schulungsTeilnehmerId,
+                                                          index,
+                                                          schulung.bezeichnung,
+                                                        );
+                                                      },
+                                                    ),
+                                                    const SizedBox(
+                                                      height:
+                                                          UIConstants.spacingM,
+                                                    ),
+                                                    KeyboardFocusFAB(
+                                                      heroTag:
+                                                          'descDialogCloseFab$index',
+                                                      mini: true,
+                                                      tooltip: 'Schließen',
+                                                      icon: Icons.close,
+                                                      semanticLabel:
+                                                          'Dialog schließen',
+                                                      onPressed:
+                                                          () =>
+                                                              Navigator.of(
+                                                                context,
+                                                              ).pop(),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       );
                                     },
