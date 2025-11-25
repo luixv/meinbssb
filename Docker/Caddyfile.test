@@ -49,6 +49,19 @@ https://meintest.bssb.de:8081 {
   }
 }
 https://meintest.bssb.de:8080 {
+    @options_api {
+        method OPTIONS
+    }
+
+    handle @options_api {
+        respond "" 204
+        header {
+          Access-Control-Allow-Origin "*"
+          Access-Control-Allow-Methods "POST, OPTIONS"
+          Access-Control-Allow-Headers "Authorization, Content-Type"
+        }
+    }
+
     # Handle both email-service and token-service on port 8080
     handle /send-email* {
         reverse_proxy email-service:3001
