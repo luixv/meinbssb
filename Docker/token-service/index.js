@@ -27,22 +27,34 @@ console.log(`Token service configured to fetch from: ${TOKEN_SERVER_URL}`);
 
 app.post('/', async (req, res) => {
   try {
-    console.log('Received token request');
+    console.log('Received token request from Flutter app');
 
-    // Create form data
+    // Create multipart form data with credentials from environment variables
+    // This replicates the Flutter implementation:
+    //   var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
+    //   request.fields['username'] = USERNAME_WEB_USER;
+    //   request.fields['password'] = PASSWORD_WEB_USER;
+    // 
+    // Both send: Content-Type: multipart/form-data with form fields
     const formData = new FormData();
-    formData.append('username', USERNAME_WEB_USER);
-    formData.append('password', PASSWORD_WEB_USER);
+    formData.append('username', USERNAME_WEB_USER);  // Same as request.fields['username']
+    formData.append('password', PASSWORD_WEB_USER);  // Same as request.fields['password']
 
     console.log(`Fetching token from: ${TOKEN_SERVER_URL}`);
+    console.log(`Sending credentials - Username: ${USERNAME_WEB_USER}`);
+    console.log(`Sending credentials - Password: ${PASSWORD_WEB_USER.substring(0, 10)}...`);
 
-    // Make request to external token server
+    // Make POST request to external token server
+    // FormData automatically sets Content-Type: multipart/form-data
+    // Body contains: username=<USERNAME_WEB_USER>&password=<PASSWORD_WEB_USER>
     const response = await axios.post(TOKEN_SERVER_URL, formData, {
       headers: {
-        ...formData.getHeaders()
+        ...formData.getHeaders(), // Includes proper Content-Type with boundary
       },
-      httpsAgent: httpsAgent,
-      timeout: 30000 // 30 second timeout
+      httpsAgent: httpsAgent, // Allow self-signed certificates
+      timeout: 60000, // 60 second timeout
+      maxRedirects: 5, // Follow redirects if needed
+      validateStatus: (status) => status >= 200 && status < 300, // Only 2xx is success
     });
 
     console.log(`Token server response status: ${response.status}`);
@@ -59,15 +71,37 @@ app.post('/', async (req, res) => {
       });
     }
   } catch (err) {
-    console.error('Error fetching token:', err.message);
+    console.error('=== Error fetching token ===');
+    console.error('Error message:', err.message);
+    
     if (err.response) {
-      console.error('Response status:', err.response.status);
-      console.error('Response data:', err.response.data);
+      // External server responded with error
+      console.error('External server response status:', err.response.status);
+      console.error('External server response data:', JSON.stringify(err.response.data));
+      
+      return res.status(err.response.status).json({
+        error: 'External token server error',
+        status: err.response.status,
+        details: err.response.data || err.message
+      });
+    } else if (err.request) {
+      // Request was sent but no response received
+      console.error('No response from external token server');
+      console.error('Possible network issue or server is down');
+      
+      return res.status(503).json({
+        error: 'Token server unreachable',
+        details: 'No response from external server'
+      });
+    } else {
+      // Error setting up the request
+      console.error('Request setup error:', err.message);
+      
+      return res.status(500).json({
+        error: 'Failed to fetch token',
+        details: err.message
+      });
     }
-    res.status(500).json({
-      error: 'Failed to fetch token',
-      details: err.message
-    });
   }
 });
 
