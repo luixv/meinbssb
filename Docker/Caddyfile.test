@@ -31,6 +31,9 @@ https://meintest.bssb.de {
 
 # Serve PostgREST API (HTTPS) on port 8081 - requires API key header
 :8081 {
+  # Enable HTTPS/TLS on port 8081
+  tls internal
+  
   @cors_preflight {
     method OPTIONS
   }
@@ -66,6 +69,9 @@ https://meintest.bssb.de {
 }
 
 :8080 {
+    # Enable HTTPS/TLS on port 8080
+    tls internal
+    
     # Handle both email-service and token-service on port 8080
     handle /send-email* {
         reverse_proxy email-service:3001
