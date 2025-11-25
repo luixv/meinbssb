@@ -8,8 +8,6 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meintest.bssb.de {
-
-  
   # CORS preflight for token endpoints
   @token_cors_preflight {
     path /zmi-token
@@ -24,6 +22,7 @@ https://meintest.bssb.de {
       Access-Control-Allow-Headers "Authorization, Content-Type, Accept"
       Access-Control-Max-Age "3600"
     }
+  }
 
   root * /web
   file_server
@@ -31,7 +30,7 @@ https://meintest.bssb.de {
 }
 
 # Serve PostgREST API (HTTPS) on port 8081 - requires API key header
-https://meintest.bssb.de:8081 {
+:8081 {
   @cors_preflight {
     method OPTIONS
   }
@@ -65,7 +64,8 @@ https://meintest.bssb.de:8081 {
     header Access-Control-Allow-Credentials "false"
   }
 }
-https://meintest.bssb.de:8080 {
+
+:8080 {
     # Handle both email-service and token-service on port 8080
     handle /send-email* {
         reverse_proxy email-service:3001
@@ -93,6 +93,6 @@ https://meintest.bssb.de:8080 {
     }
 }
 
-https://meintest.bssb.de:8083 {
+:8083 {
   reverse_proxy zmi-monitor:80
 }
