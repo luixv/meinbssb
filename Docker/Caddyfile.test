@@ -50,11 +50,11 @@ https://meintest.bssb.de:8081 {
 }
 https://meintest.bssb.de:8080 {
     # Handle both email-service and token-service on port 8080
-    handle_path /send-email* {
+    handle /send-email* {
         reverse_proxy email-service:3001
     }
     
-    handle_path /zmi-token* {
+    handle /zmi-token* {
         reverse_proxy token-service:3002
     }
     
