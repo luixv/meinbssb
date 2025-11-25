@@ -25,10 +25,10 @@ if (!TOKEN_SERVER_URL || !USERNAME_WEB_USER || !PASSWORD_WEB_USER) {
 
 console.log(`Token service configured to fetch from: ${TOKEN_SERVER_URL}`);
 
-app.post('/', async (req, res) => {
+app.post('/zmi-token', async (req, res) => {
   try {
     console.log('Received token request');
-    
+
     // Create form data
     const formData = new FormData();
     formData.append('username', USERNAME_WEB_USER);
@@ -49,13 +49,13 @@ app.post('/', async (req, res) => {
 
     if (response.status === 200 && response.data && response.data.Token) {
       console.log('Token fetched successfully');
-      res.status(200).json({ 
-        Token: response.data.Token 
+      res.status(200).json({
+        Token: response.data.Token
       });
     } else {
       console.error('Token not found in response');
-      res.status(500).json({ 
-        error: 'Token not found in response' 
+      res.status(500).json({
+        error: 'Token not found in response'
       });
     }
   } catch (err) {
@@ -64,16 +64,16 @@ app.post('/', async (req, res) => {
       console.error('Response status:', err.response.status);
       console.error('Response data:', err.response.data);
     }
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to fetch token',
-      details: err.message 
+      details: err.message
     });
   }
 });
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
+  res.status(200).json({
     status: 'ok',
     service: 'token-service',
     tokenServerConfigured: !!TOKEN_SERVER_URL

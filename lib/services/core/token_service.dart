@@ -8,14 +8,13 @@ import 'cache_service.dart';
 /// A service responsible for managing authentication tokens,
 /// including fetching, caching, and providing them.
 class TokenService {
-
   TokenService({
     required ConfigService configService,
     required CacheService cacheService,
     http.Client? client, // Optional HTTP client for token requests
-  })  : _configService = configService,
-        _cacheService = cacheService,
-        _httpClient = client ?? http.Client();
+  }) : _configService = configService,
+       _cacheService = cacheService,
+       _httpClient = client ?? http.Client();
   // Add _client field to hold the injected HTTP client
   final http.Client _httpClient; // Initialize _client here
 
@@ -29,6 +28,7 @@ class TokenService {
   /// to the token-service endpoint.
   Future<String> _fetchToken() async {
     try {
+      LoggerService.logInfo('TRYING TO GET A TOKEN!');
       // Build the token service URL using ConfigService
       final String tokenServiceURL = ConfigService.buildBaseUrlForServer(
         _configService,
