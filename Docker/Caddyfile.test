@@ -10,6 +10,16 @@ http://meintest.bssb.de {
 https://meintest.bssb.de {
   # Token service API route - handled first, never reaches Flutter app
   handle_path /zmi-token* {
+    @options method OPTIONS
+    handle @options {
+      respond 204
+      header {
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "POST, OPTIONS"
+        Access-Control-Allow-Headers "Authorization, Content-Type"
+      }
+    }
+    
     reverse_proxy token-service:3002
     header {
       Access-Control-Allow-Origin "*"

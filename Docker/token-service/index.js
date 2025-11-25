@@ -25,7 +25,7 @@ if (!TOKEN_SERVER_URL || !USERNAME_WEB_USER || !PASSWORD_WEB_USER) {
 
 console.log(`Token service configured to fetch from: ${TOKEN_SERVER_URL}`);
 
-app.post('/zmi-token', async (req, res) => {
+app.post('/', async (req, res) => {
   try {
     console.log('Received token request');
 

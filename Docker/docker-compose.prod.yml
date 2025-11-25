@@ -49,3 +49,5 @@ services:
       - ../build/web:/web
     depends_on:
       - postgrest
+      - token-service
+      - email-service
