@@ -142,11 +142,12 @@ class StartScreenState extends State<StartScreen> {
   void _openPersonalPictUploadScreen() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => PersonalPictUploadScreen(
-          userData: widget.userData,
-          isLoggedIn: widget.isLoggedIn,
-          onLogout: widget.onLogout,
-        ),
+        builder:
+            (context) => PersonalPictUploadScreen(
+              userData: widget.userData,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+            ),
       ),
     );
   }
@@ -932,8 +933,11 @@ class StartScreenState extends State<StartScreen> {
                                                           'descDialogDeleteFab$index',
                                                       mini: true,
                                                       tooltip: 'Löschen',
-                                                      icon: Icons.delete_outline_outlined,
-                                                      semanticLabel: 'Schulung löschen',
+                                                      icon:
+                                                          Icons
+                                                              .delete_outline_outlined,
+                                                      semanticLabel:
+                                                          'Schulung löschen',
                                                       onPressed: () {
                                                         Navigator.of(
                                                           context,
@@ -956,7 +960,8 @@ class StartScreenState extends State<StartScreen> {
                                                       mini: true,
                                                       tooltip: 'Schließen',
                                                       icon: Icons.close,
-                                                      semanticLabel: 'Dialog schließen',
+                                                      semanticLabel:
+                                                          'Dialog schließen',
                                                       onPressed:
                                                           () =>
                                                               Navigator.of(

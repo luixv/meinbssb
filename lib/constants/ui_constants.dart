@@ -51,7 +51,6 @@ class UIConstants {
   static const Color bluetoothConnected = Colors.grey;
   static const Color networkCheck = Colors.grey;
   static const Color circularProgressIndicator = defaultAppColor;
-
   static const Color wifiConnectedColor = Colors.green;
 
   // Card Colors
@@ -188,7 +187,6 @@ class UIConstants {
   static const double fabHeight = 16.0;
   static const double fabSize = 56.0; // Standard FAB size (height and width)
   static const double fabIconSize = 24.0; // Standard FAB icon size
-  static const double fabLargeIconSize = 32;
   static const double fabLargeTextSize = 18;
   static const double defaultStrokeWidth = 2.0;
   static const double defaultIconSize = 16.0;

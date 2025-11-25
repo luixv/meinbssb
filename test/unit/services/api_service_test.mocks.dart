@@ -1874,13 +1874,13 @@ class MockOktoberfestService extends _i1.Mock
   @override
   _i3.Future<List<_i36.Gewinn>> fetchGewinneEx({
     required int? jahr,
-    required String? personId,
+    required String? passnummer,
     required _i5.ConfigService? configService,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#fetchGewinneEx, [], {
               #jahr: jahr,
-              #personId: personId,
+              #passnummer: passnummer,
               #configService: configService,
             }),
             returnValue: _i3.Future<List<_i36.Gewinn>>.value(<_i36.Gewinn>[]),

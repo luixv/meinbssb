@@ -1043,9 +1043,12 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
           as _i10.Future<List<_i27.Gewinn>>);
 
   @override
-  _i10.Future<List<_i27.Gewinn>> fetchGewinneEx(int? jahr, String? personId) =>
+  _i10.Future<List<_i27.Gewinn>> fetchGewinneEx(
+    int? jahr,
+    String? passnummer,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchGewinneEx, [jahr, personId]),
+            Invocation.method(#fetchGewinneEx, [jahr, passnummer]),
             returnValue: _i10.Future<List<_i27.Gewinn>>.value(<_i27.Gewinn>[]),
           )
           as _i10.Future<List<_i27.Gewinn>>);

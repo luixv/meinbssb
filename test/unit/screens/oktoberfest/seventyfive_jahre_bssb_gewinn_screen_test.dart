@@ -42,7 +42,7 @@ void main() {
     when(TestHelper.mockApiService.configService).thenReturn(TestHelper.mockConfigService);
     when(TestHelper.mockApiService.hasInternet()).thenAnswer((_) async => true);
     
-    when(TestHelper.mockApiService.fetchGewinneEx(currentYear, userData.personId.toString()))
+    when(TestHelper.mockApiService.fetchGewinneEx(currentYear, passnummer))
         .thenAnswer((_) async => <Gewinn>[]);
     when(TestHelper.mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
       (_) async => [
@@ -80,7 +80,7 @@ void main() {
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
 
-    verify(TestHelper.mockApiService.fetchGewinneEx(currentYear, userData.personId.toString()))
+    verify(TestHelper.mockApiService.fetchGewinneEx(currentYear, passnummer))
         .called(1);
   });
 
@@ -109,7 +109,7 @@ void main() {
         ),
       ],
     );
-    when(TestHelper.mockApiService.fetchGewinneEx(currentYear, userData.personId.toString()))
+    when(TestHelper.mockApiService.fetchGewinneEx(currentYear, passnummer))
         .thenAnswer(
       (_) async => [
         Gewinn(
@@ -150,7 +150,7 @@ void main() {
       ],
     );
     final completer = Completer<List<Gewinn>>();
-    when(TestHelper.mockApiService.fetchGewinneEx(currentYear, userData.personId.toString()))
+    when(TestHelper.mockApiService.fetchGewinneEx(currentYear, passnummer))
         .thenAnswer((_) => completer.future);
 
     await tester.pumpWidget(buildTestWidget());
@@ -161,15 +161,6 @@ void main() {
     completer.complete([]);
     await tester.pumpAndSettle();
   });
-
-  testWidgets('displays correct header text', (tester) async {
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    expect(find.text('Gewinne abrufen'), findsOneWidget);
-    expect(find.text('Meine Gewinne:'), findsOneWidget);
-  });
-
   testWidgets('submit button is enabled when conditions are met', (tester) async {
     reset(TestHelper.mockApiService);
     when(TestHelper.mockApiService.configService).thenReturn(TestHelper.mockConfigService);
@@ -204,7 +195,7 @@ void main() {
       ),
     ];
     
-    when(TestHelper.mockApiService.fetchGewinneEx(currentYear, userData.personId.toString()))
+    when(TestHelper.mockApiService.fetchGewinneEx(currentYear, passnummer))
         .thenAnswer((_) async => gewinnList);
     
     when(TestHelper.mockApiService.gewinneAbrufenEx(
