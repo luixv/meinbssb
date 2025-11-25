@@ -1,7 +1,55 @@
-# Redirect HTTP to HTTPS
+# Redirect HTTP from old domain to new domain
 http://meinprod.bssb.de {
-  redir https://meinprod.bssb.de{uri}
+  redir https://meinprod.bssb.de{uri} permanent
 }
+
+# Redirect HTTP to HTTPS
+http://mein.bssb.de {
+  redir https://mein.bssb.de{uri} permanent
+}
+
+# Serve Flutter Web App (HTTPS)
+https://mein.bssb.de {
+  root * /web
+  file_server
+  try_files {path} /index.html
+}
+
+# Serve PostgREST API (HTTPS) on port 8081
+https://mein.bssb.de:8081 {
+  @cors_preflight {
+    method OPTIONS
+  }
+
+  handle @cors_preflight {
+    respond "" 204
+    header Access-Control-Allow-Origin "*"
+    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+    header Access-Control-Allow-Credentials "false"
+  }
+
+  handle {
+    reverse_proxy postgrest:3000
+    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+    header Access-Control-Allow-Credentials "false"
+  }
+}
+
+# Email service
+https://mein.bssb.de:8080 {
+    reverse_proxy email-service:3001
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
+}
+
+
+
+
 
 # Serve Flutter Web App (HTTPS)
 https://meinprod.bssb.de {
@@ -10,7 +58,7 @@ https://meinprod.bssb.de {
   try_files {path} /index.html
 }
 
-# Serve PostgREST API (HTTPS) on port 8081 for any host
+# Serve PostgREST API (HTTPS) on port 8081
 https://meinprod.bssb.de:8081 {
   @cors_preflight {
     method OPTIONS
@@ -32,6 +80,7 @@ https://meinprod.bssb.de:8081 {
   }
 }
 
+# Email service
 https://meinprod.bssb.de:8080 {
     reverse_proxy email-service:3001
     header {
@@ -40,3 +89,4 @@ https://meinprod.bssb.de:8080 {
       Access-Control-Allow-Headers "Authorization, Content-Type"
     }
 }
+
