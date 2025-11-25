@@ -1,6 +1,5 @@
 const express = require('express');
 const axios = require('axios');
-const FormData = require('form-data');
 const https = require('https');
 const app = express();
 
@@ -29,27 +28,21 @@ app.post('/zmi-token', async (req, res) => {
   try {
     console.log('Received token request from Flutter app');
 
-    // Create multipart form data with credentials from environment variables
-    // This replicates the Flutter implementation:
-    //   var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
-    //   request.fields['username'] = USERNAME_WEB_USER;
-    //   request.fields['password'] = PASSWORD_WEB_USER;
-    // 
-    // Both send: Content-Type: multipart/form-data with form fields
-    const formData = new FormData();
-    formData.append('username', USERNAME_WEB_USER);  // Same as request.fields['username']
-    formData.append('password', PASSWORD_WEB_USER);  // Same as request.fields['password']
+    // Use URLSearchParams for application/x-www-form-urlencoded format
+    // This is more compatible with standard REST APIs than multipart/form-data
+    const params = new URLSearchParams();
+    params.append('username', USERNAME_WEB_USER);
+    params.append('password', PASSWORD_WEB_USER);
 
     console.log(`Fetching token from: ${TOKEN_SERVER_URL}`);
     console.log(`Sending credentials - Username: ${USERNAME_WEB_USER}`);
     console.log(`Sending credentials - Password: ${PASSWORD_WEB_USER.substring(0, 10)}...`);
 
     // Make POST request to external token server
-    // FormData automatically sets Content-Type: multipart/form-data
-    // Body contains: username=<USERNAME_WEB_USER>&password=<PASSWORD_WEB_USER>
-    const response = await axios.post(TOKEN_SERVER_URL, formData, {
+    // URLSearchParams sends Content-Type: application/x-www-form-urlencoded
+    const response = await axios.post(TOKEN_SERVER_URL, params.toString(), {
       headers: {
-        ...formData.getHeaders(), // Includes proper Content-Type with boundary
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
       httpsAgent: httpsAgent, // Allow self-signed certificates
       timeout: 60000, // 60 second timeout
@@ -73,6 +66,7 @@ app.post('/zmi-token', async (req, res) => {
   } catch (err) {
     console.error('=== Error fetching token ===');
     console.error('Error message:', err.message);
+    console.error('Error code:', err.code);
     
     if (err.response) {
       // External server responded with error
@@ -87,11 +81,25 @@ app.post('/zmi-token', async (req, res) => {
     } else if (err.request) {
       // Request was sent but no response received
       console.error('No response from external token server');
-      console.error('Possible network issue or server is down');
+      console.error('Error code:', err.code);
+      console.error('Error cause:', err.cause);
+      
+      // Provide more specific error information
+      let errorDetail = 'No response from external server';
+      if (err.code === 'ECONNREFUSED') {
+        errorDetail = 'Connection refused - server may be down or port blocked';
+      } else if (err.code === 'ETIMEDOUT' || err.code === 'ECONNABORTED') {
+        errorDetail = 'Connection timed out - server may be unreachable';
+      } else if (err.code === 'ENOTFOUND') {
+        errorDetail = 'DNS lookup failed - hostname could not be resolved';
+      } else if (err.code === 'CERT_HAS_EXPIRED' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
+        errorDetail = 'SSL certificate error';
+      }
       
       return res.status(503).json({
         error: 'Token server unreachable',
-        details: 'No response from external server'
+        code: err.code,
+        details: errorDetail
       });
     } else {
       // Error setting up the request
