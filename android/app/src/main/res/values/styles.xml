@@ -7,16 +7,12 @@
         <!-- The following lines ensure the app goes edge-to-edge -->
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
     </style>
     
     <!-- Theme applied to the Android Window as soon as the Android process has started.
          This theme is merged into the activity's theme to affect start-up behavior.
          The theme is the one defined in the AndroidManifest.xml's <activity> element. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <!-- These two lines are often what fixes the deprecated API warning -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 </resources>
