@@ -50,7 +50,7 @@ void main() {
         abmeldeStopp: '',
         geloescht: false,
         stornoGrund: '',
-        webGruppe: 2, // 2 = Sport
+        webGruppe: 3, // 3 = Sport
         veranstaltungsBezirk: 0,
         fuerVerlaengerungen: false,
         fuerVuelVerlaengerungen: false,
@@ -137,7 +137,7 @@ void main() {
         abmeldeStopp: '',
         geloescht: false,
         stornoGrund: '',
-        webGruppe: 1, // 1 = Jugend
+        webGruppe: 2, // 2 = Jugend
         veranstaltungsBezirk: 0,
         fuerVerlaengerungen: false,
         fuerVuelVerlaengerungen: false,
@@ -238,7 +238,7 @@ void main() {
         abmeldeStopp: '',
         geloescht: false,
         stornoGrund: '',
-        webGruppe: 1,
+        webGruppe: 2, // Jugend
         veranstaltungsBezirk: 0,
         fuerVerlaengerungen: false,
         fuerVuelVerlaengerungen: false,
