@@ -304,9 +304,16 @@ jobs:
           mkdir -p "$RELEASE_DIR"
           VERSION="${{ steps.release_version.outputs.version }}"
 
+          echo "==== DEBUG: List artifacts root ===="
+          ls -l artifacts || true
+          echo "==== DEBUG: List all artifact subdirs ===="
+          find artifacts -type d || true
+          echo "==== DEBUG: List all files in artifacts recursively ===="
+          find artifacts -type f || true
+
           # Android - copy the versioned zip file
           if [ -d "artifacts/release-$VERSION-apk" ]; then
-            echo "cp artifacts/release-$VERSION-apk/release-$VERSION-apk.zip" "$RELEASE_DIR/"
+            echo "cp artifacts/release-$VERSION-apk/release-$VERSION-apk.zip $RELEASE_DIR/"
             cp "artifacts/release-$VERSION-apk/release-$VERSION-apk.zip" "$RELEASE_DIR/"
           else
             echo "::warning::No Android build artifacts found for version $VERSION"
