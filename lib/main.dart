@@ -265,6 +265,7 @@ class AppInitializer {
       tokenService: tokenService,
       configService: configService,
       cacheService: cacheService,
+      postgrestService: postgrestService,
       client: baseHttpClient,
     );
 
