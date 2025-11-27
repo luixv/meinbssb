@@ -415,7 +415,7 @@ class HttpClient {
       // Get personId from cache (async operation, fire-and-forget)
       _cacheService.getInt('personId').then((personId) {
         // Log the request asynchronously (don't await to avoid blocking)
-        _postgrestService!.logApiRequest(
+        _postgrestService.logApiRequest(
           personId: personId,
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
@@ -429,7 +429,7 @@ class HttpClient {
         });
       }).catchError((error) {
         // If personId retrieval fails, log without personId
-        _postgrestService!.logApiRequest(
+        _postgrestService.logApiRequest(
           personId: null,
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
