@@ -163,6 +163,7 @@ jobs:
       # --------------------------------------------------
       # Upload artifacts separately (APK and AAB)
       # --------------------------------------------------
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -173,7 +174,7 @@ jobs:
       - name: Upload APK ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: release-${{ steps.version.outputs.version }}-apk
+          name: release-${{ steps.version.outputs.version }}-apk-zip
           path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
           if-no-files-found: error
 
@@ -325,9 +326,9 @@ jobs:
           find artifacts -type f || true
 
           # Android - copy the versioned zip file
-          if [ -d "artifacts/release-$VERSION-apk" ]; then
-            echo "cp artifacts/release-$VERSION-apk/release-$VERSION-apk.zip $RELEASE_DIR/"
-            cp "artifacts/release-$VERSION-apk/release-$VERSION-apk.zip" "$RELEASE_DIR/"
+          if [ -d "artifacts/release-$VERSION-apk-zip" ]; then
+            echo "cp artifacts/release-$VERSION-apk-zip/release-$VERSION-apk.zip $RELEASE_DIR/"
+            cp "artifacts/release-$VERSION-apk-zip/release-$VERSION-apk.zip" "$RELEASE_DIR/"
           else
             echo "::warning::No Android build artifacts found for version $VERSION"
           fi
