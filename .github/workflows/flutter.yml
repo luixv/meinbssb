@@ -306,6 +306,7 @@ jobs:
 
           # Android - copy the versioned zip file
           if [ -d "artifacts/release-$VERSION-apk" ]; then
+            echo "cp artifacts/release-$VERSION-apk/release-$VERSION-apk.zip" "$RELEASE_DIR/"
             cp "artifacts/release-$VERSION-apk/release-$VERSION-apk.zip" "$RELEASE_DIR/"
           else
             echo "::warning::No Android build artifacts found for version $VERSION"
