@@ -47,6 +47,14 @@ CREATE TABLE IF NOT EXISTS user_email_validation (
     validated BOOLEAN DEFAULT FALSE
 );
 
+-- Create api_request_logs table
+CREATE TABLE IF NOT EXISTS api_request_logs (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER,
+    logs JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_pass_number ON users(pass_number);
@@ -60,6 +68,9 @@ CREATE INDEX IF NOT EXISTS idx_password_reset_verification_token ON password_res
 CREATE INDEX IF NOT EXISTS idx_user_email_validation_person_id ON user_email_validation(person_id);
 CREATE INDEX IF NOT EXISTS idx_user_email_validation_verification_token ON user_email_validation(verification_token);
 CREATE INDEX IF NOT EXISTS idx_user_email_validation_email ON user_email_validation(email);
+
+CREATE INDEX IF NOT EXISTS idx_api_request_logs_person_id ON api_request_logs(person_id);
+CREATE INDEX IF NOT EXISTS idx_api_request_logs_created_at ON api_request_logs(created_at);
 
 -- Grant privileges to main app user (replace bssbuser with your POSTGRES_USER)
 GRANT CONNECT ON DATABASE bssbdb TO bssbuser;

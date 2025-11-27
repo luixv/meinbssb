@@ -6,6 +6,7 @@ import 'logger_service.dart';
 import 'config_service.dart';
 import 'cache_service.dart';
 import 'token_service.dart';
+import 'postgrest_service.dart';
 
 class HttpClient {
   HttpClient({
@@ -14,14 +15,21 @@ class HttpClient {
     required TokenService tokenService,
     required ConfigService configService,
     required CacheService cacheService,
+    PostgrestService? postgrestService,
     http.Client? client,
   })  : _client = client ?? http.Client(),
-        _tokenService = tokenService;
+        _tokenService = tokenService,
+        _configService = configService,
+        _cacheService = cacheService,
+        _postgrestService = postgrestService;
 
   final String baseUrl;
   final int serverTimeout;
   final http.Client _client;
   final TokenService _tokenService;
+  final ConfigService _configService;
+  final CacheService _cacheService;
+  final PostgrestService? _postgrestService;
 
   // Method to make HTTP requests with token handling and retry logic
   Future<dynamic> _makeRequest(
@@ -223,6 +231,9 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Sending POST request to: $apiUrl');
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
+    // Log API request if it's to apiBaseServer
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
+
     return _makeRequest(
       'POST',
       apiUrl,
@@ -243,6 +254,9 @@ class HttpClient {
 
     LoggerService.logInfo('HttpClient: Sending PUT request to: $apiUrl');
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
+
+    // Log API request if it's to apiBaseServer
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
 
     return _makeRequest(
       'PUT',
@@ -267,6 +281,9 @@ class HttpClient {
       LoggerService.logInfo('HttpClient: Request body: $requestBody');
     }
 
+    // Log API request if it's to apiBaseServer
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
+
     return _makeRequest(
       'DELETE',
       apiUrl,
@@ -284,6 +301,10 @@ class HttpClient {
     final url = overrideBaseUrl != null
         ? '$overrideBaseUrl/$endpoint'
         : '$baseUrl/$endpoint';
+    
+    // Log API request if it's to apiBaseServer
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
+    
     return _makeRequest('GET', url, null, null);
   }
 
@@ -292,5 +313,137 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Sending GET bytes request to: $apiUrl');
     // Using _makeBytesRequest specifically for byte responses, maintaining its unique behavior
     return _makeBytesRequest('GET', apiUrl, null);
+  }
+
+  /// Helper method to log API requests to oktoberFestBaseServer, apiBaseServer, and api1BaseServer
+  void _logApiRequest(String requestBaseUrl, String endpoint) {
+    // Only log if PostgrestService is available
+    if (_postgrestService == null) {
+      return;
+    }
+
+    try {
+      // Define the server configurations to check
+      final serverConfigs = [
+        {
+          'name': 'oktoberFestBase',
+          'serverKey': 'oktoberFestBaseServer',
+          'pathKey': 'oktoberFestBasePath',
+          'portKey': 'oktoberFestBasePort',
+        },
+        {
+          'name': 'apiBase',
+          'serverKey': 'apiBaseServer',
+          'pathKey': 'apiBasePath',
+          'portKey': 'apiBasePort',
+        },
+        {
+          'name': 'api1Base',
+          'serverKey': 'api1BaseServer',
+          'pathKey': 'api1BasePath',
+          'portKey': 'api1BasePort',
+        },
+      ];
+
+      // Try to find a matching server configuration
+      Map<String, String>? matchedConfig;
+      try {
+        final requestUri = Uri.parse(requestBaseUrl);
+        final requestHost = requestUri.host;
+        final requestPort = requestUri.port.toString();
+        final requestPath = requestUri.path.replaceAll(RegExp(r'^/|/$'), ''); // Remove leading/trailing slashes
+
+        for (final config in serverConfigs) {
+          final server = _configService.getString(config['serverKey']!);
+          final path = _configService.getString(config['pathKey']!);
+          final port = _configService.getString(config['portKey']!);
+
+          if (server == null || path == null || port == null) {
+            continue;
+          }
+
+          final configPath = path.replaceAll(RegExp(r'^/|/$'), ''); // Normalize path
+
+          // Check if this request matches the server configuration
+          if (requestHost == server &&
+              requestPort == port &&
+              requestPath == configPath) {
+            matchedConfig = {
+              'name': config['name']!,
+              'server': server,
+              'path': path,
+              'port': port,
+            };
+            break;
+          }
+        }
+      } catch (e) {
+        // If URL parsing fails, try simple string comparison as fallback
+        for (final config in serverConfigs) {
+          try {
+            final expectedUrl = ConfigService.buildBaseUrlForServer(
+              _configService,
+              name: config['name']!,
+            );
+            if (requestBaseUrl == expectedUrl) {
+              final server = _configService.getString(config['serverKey']!);
+              final path = _configService.getString(config['pathKey']!);
+              final port = _configService.getString(config['portKey']!);
+
+              if (server != null && path != null && port != null) {
+                matchedConfig = {
+                  'name': config['name']!,
+                  'server': server,
+                  'path': path,
+                  'port': port,
+                };
+                break;
+              }
+            }
+          } catch (_) {
+            // Continue to next config if this one fails
+            continue;
+          }
+        }
+      }
+
+      // If no matching server found, skip logging
+      if (matchedConfig == null) {
+        return;
+      }
+
+      // Get personId from cache (async operation, fire-and-forget)
+      _cacheService.getInt('personId').then((personId) {
+        // Log the request asynchronously (don't await to avoid blocking)
+        _postgrestService.logApiRequest(
+          personId: personId,
+          apiBaseServer: matchedConfig!['server']!,
+          apiBasePath: matchedConfig['path']!,
+          apiBasePort: matchedConfig['port']!,
+          endpoint: endpoint,
+        ).catchError((error) {
+          // Silently handle errors - logging failures shouldn't break the app
+          LoggerService.logError(
+            'HttpClient: Failed to log API request: $error',
+          );
+        });
+      }).catchError((error) {
+        // If personId retrieval fails, log without personId
+        _postgrestService.logApiRequest(
+          personId: null,
+          apiBaseServer: matchedConfig!['server']!,
+          apiBasePath: matchedConfig['path']!,
+          apiBasePort: matchedConfig['port']!,
+          endpoint: endpoint,
+        ).catchError((logError) {
+          LoggerService.logError(
+            'HttpClient: Failed to log API request: $logError',
+          );
+        });
+      });
+    } catch (e) {
+      // Silently handle errors - logging failures shouldn't break API calls
+      LoggerService.logError('HttpClient: Error in _logApiRequest: $e');
+    }
   }
 }
