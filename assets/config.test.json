@@ -49,12 +49,12 @@
     "logoName": "assets/images/myBSSB-logo.png"
   },
   "emailContent": {
-    "schulungAnmeldungSubject": "Schulung Anmeldung",
+    "schulungAnmeldungSubject": "Schulung Anmeldung: {schulung_name}",
     "schulungContent": "Sie sind für einen Schulung angemeldet",
     "registrationSubject": "MeinBSSB Account: Registrierung abschließen",
     "accountCreatedSubject": "MeinBSSB Account wurde erstellt",
     "passwordResetSubject": "Passwort zurücksetzen",
-    "schulungAbmeldungSubject": "Bestätigung der Abmeldung"
+    "schulungAbmeldungSubject": "Bestätigung der Abmeldung: {schulung_name}"
   },
   "profilePhoto": {
     "maxSizeMB": 2,
