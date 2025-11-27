@@ -311,13 +311,6 @@ jobs:
             echo "::warning::No Android build artifacts found for version $VERSION"
           fi
 
-          # iOS - copy the versioned zip file
-          if [ -d "artifacts/release-$VERSION-ios" ]; then
-            cp "artifacts/release-$VERSION-ios/release-$VERSION-ios.zip" "$RELEASE_DIR/"
-          else
-            echo "::warning::No iOS build artifacts found for version $VERSION"
-          fi
-
           # Web - copy the versioned zip file
           if [ -d "artifacts/release-$VERSION-web" ]; then
             cp "artifacts/release-$VERSION-web/release-$VERSION-web.zip" "$RELEASE_DIR/"
