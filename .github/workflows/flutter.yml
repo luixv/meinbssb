@@ -154,6 +154,12 @@ jobs:
             echo "::warning::AAB not found at $AAB_PATH"
           fi
 
+          # Ensure zipped APK is uploaded as artifact for release step
+          mkdir -p release_zip_artifacts
+          if [ -f "release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip" ]; then
+            cp "release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip" release_zip_artifacts/
+          fi
+
       # --------------------------------------------------
       # Upload artifacts separately (APK and AAB)
       # --------------------------------------------------
