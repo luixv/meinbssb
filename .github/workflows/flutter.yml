@@ -170,6 +170,13 @@ jobs:
           path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
           if-no-files-found: error
 
+      - name: Upload APK ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ steps.version.outputs.version }}-apk
+          path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
+          if-no-files-found: error
+
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
