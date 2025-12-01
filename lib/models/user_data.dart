@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:meinbssb/helpers/utils.dart';
 
 /// Represents the complete user data for a BSSB member.
 /// This model encapsulates all user-related information including personal data,
@@ -13,9 +14,8 @@ class UserData {
       namen: json['NAMEN']?.toString() ?? '',
       vorname: json['VORNAME']?.toString() ?? '',
       titel: json['TITEL']?.toString(),
-      geburtsdatum: json['GEBURTSDATUM'] != null
-          ? DateTime.parse(json['GEBURTSDATUM'])
-          : null,
+      geburtsdatum:
+          json['GEBURTSDATUM'] != null ? parseDate(json['GEBURTSDATUM']) : null,
       geschlecht: json['GESCHLECHT'] as int?,
       vereinName: json['VEREINNAME']?.toString() ?? '',
       passdatenId: json['PASSDATENID'] as int? ?? 0,
