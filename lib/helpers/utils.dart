@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:meinbssb/services/core/logger_service.dart';
 
 /// Checks if BIC is required based on IBAN country code
 /// Returns true if IBAN is not from Germany (DE)
@@ -36,6 +35,13 @@ String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
   return phoneContact['value'] as String;
 }
 
+/// Formats a DateTime to German date format (dd.MM.yyyy)
+String formatDate(DateTime date) {
+  return DateFormat('dd.MM.yyyy').format(date);
+}
+
+/// Parses dates like "1997-03-06T00:00:00.000+01:00"
+/// Ignores time and timezone completely and returns a pure date (UTC).
 /// Formats a DateTime to German date format (dd.MM.yyyy)
 DateTime parseDate(dynamic value) {
   if (value is String && value.isNotEmpty) {
