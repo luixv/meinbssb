@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:meinbssb/helpers/utils.dart';
 
 @immutable
 class Person {
@@ -7,12 +8,12 @@ class Person {
       personId: json['PERSONID'] as int,
       namen: json['NAMEN'] as String,
       vorname: json['VORNAME'] as String,
-      geschlecht: json['GESCHLECHT'] is bool
-          ? json['GESCHLECHT'] as bool
-          : (json['GESCHLECHT'] == 1),
-      geburtsdatum: json['GEBURTSDATUM'] != null
-          ? DateTime.tryParse(json['GEBURTSDATUM'])
-          : null,
+      geschlecht:
+          json['GESCHLECHT'] is bool
+              ? json['GESCHLECHT'] as bool
+              : (json['GESCHLECHT'] == 1),
+      geburtsdatum:
+          json['GEBURTSDATUM'] != null ? parseDate(json['GEBURTSDATUM']) : null,
       passnummer: json['PASSNUMMER'] as String,
       strasse: json['STRASSE'] as String,
       plz: json['PLZ'] as String,
