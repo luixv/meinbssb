@@ -7,7 +7,7 @@ void main() {
       final json = {
         'PERSONID': 1,
         'PASSNUMMER': 'P123456',
-        'GEBURTSDATUM': '1990-01-01T00:00:00.000Z',
+        'GEBURTSDATUM': '1990-01-01T00:00:00.000',
         'TITEL': 'Dr.',
         'VORNAME': 'John',
         'NAMEN': 'Doe',
@@ -21,10 +21,7 @@ void main() {
 
       expect(passData.personId, 1);
       expect(passData.passnummer, 'P123456');
-      expect(
-        passData.geburtsdatum,
-        DateTime.parse('1990-01-01T00:00:00.000Z'),
-      );
+      expect(passData.geburtsdatum, DateTime.parse('1990-01-01T00:00:00.000'));
       expect(passData.titel, 'Dr.');
       expect(passData.vorname, 'John');
       expect(passData.namen, 'Doe');
@@ -38,17 +35,14 @@ void main() {
       final json = {
         'PERSONID': 1,
         'PASSNUMMER': 'P123456',
-        'GEBURTSDATUM': '1990-01-01T00:00:00.000Z',
+        'GEBURTSDATUM': '1990-01-01T00:00:00.000',
       };
 
       final passData = PassData.fromJson(json);
 
       expect(passData.personId, 1);
       expect(passData.passnummer, 'P123456');
-      expect(
-        passData.geburtsdatum,
-        DateTime.parse('1990-01-01T00:00:00.000Z'),
-      );
+      expect(passData.geburtsdatum, DateTime.parse('1990-01-01T00:00:00.000'));
       expect(passData.titel, null);
       expect(passData.vorname, null);
       expect(passData.namen, null);

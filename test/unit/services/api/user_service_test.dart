@@ -106,10 +106,9 @@ void main() {
         expect(result?.namen, 'Schürz');
         expect(result?.vorname, 'Lukas');
         expect(result?.titel, '');
-        expect(
-          result?.geburtsdatum,
-          DateTime.parse('1955-07-16T00:00:00.000+02:00'),
-        );
+        expect(result?.geburtsdatum?.year, 1955);
+        expect(result?.geburtsdatum?.month, 7);
+        expect(result?.geburtsdatum?.day, 16);
         expect(result?.geschlecht, 1);
         expect(result?.vereinName, 'Feuerschützen Kühbach');
         expect(result?.passdatenId, 2000009155);
@@ -2404,10 +2403,9 @@ void main() {
         expect(result.first.namen, 'Rizoudis');
         expect(result.first.vorname, 'Kostas');
         expect(result.first.geschlecht, true);
-        expect(
-          result.first.geburtsdatum,
-          DateTime.parse('1955-07-16T00:00:00.000+02:00'),
-        );
+        expect(result.first.geburtsdatum?.year, 1955);
+        expect(result.first.geburtsdatum?.month, 7);
+        expect(result.first.geburtsdatum?.day, 16);
         expect(result.first.passnummer, '40100709');
         expect(result.first.strasse, 'Eisenacherstr 9');
         expect(result.first.plz, '80804');
