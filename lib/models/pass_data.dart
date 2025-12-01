@@ -1,3 +1,5 @@
+import 'package:meinbssb/helpers/utils.dart';
+
 class PassData {
   factory PassData.fromJson(Map<String, dynamic> json) {
     return PassData(
@@ -8,9 +10,7 @@ class PassData {
       passdatenId: json['PASSDATENID'] as int?,
       mitgliedschaftId: json['MITGLIEDSCHAFTID'] as int?,
       geburtsdatum:
-          json['GEBURTSDATUM'] != null
-              ? DateTime.parse(json['GEBURTSDATUM'])
-              : null,
+          json['GEBURTSDATUM'] != null ? parseDate(json['GEBURTSDATUM']) : null,
       titel: json['TITEL'] as String?,
       vorname: json['VORNAME'] as String?,
       namen: json['NAMEN'] as String?,

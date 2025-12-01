@@ -17,7 +17,7 @@ class UserData {
       geburtsdatum:
           json['GEBURTSDATUM'] != null ? parseDate(json['GEBURTSDATUM']) : null,
       geschlecht: json['GESCHLECHT'] as int?,
-      vereinName: json['VEREINNAME']?.toString() ?? '',
+      vereinName: json['VEREINNAME']?.toString() ?? '',   
       passdatenId: json['PASSDATENID'] as int? ?? 0,
       mitgliedschaftId: json['MITGLIEDSCHAFTID'] as int? ?? 0,
       personId: json['PERSONID'] as int? ?? 0,

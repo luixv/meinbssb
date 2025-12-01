@@ -96,7 +96,6 @@ class UserService {
           // This is the fetchData function that CacheService will call if data is not in cache.
           final endpoint = 'Passdaten/$personId';
           final response = await _httpClient.get(endpoint);
-          LoggerService.logInfo('RAW RESPONSE: $response');
           return _mapPassdatenResponse(response);
         },
         (dynamic rawResponse) {

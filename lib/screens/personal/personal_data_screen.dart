@@ -107,7 +107,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final response = await apiService.fetchPassdaten(personId);
-      LoggerService.logInfo('Response passdaten: $response');
       if (mounted) {
         setState(() {
           _currentPassData = response?.toJson();
@@ -142,7 +141,6 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     if (data['GEBURTSDATUM'] != null &&
         data['GEBURTSDATUM'].toString().isNotEmpty) {
       try {
-        LoggerService.logInfo('Got the date: $data');
         final parsedDate = parseDate(data['GEBURTSDATUM'].toString());
         _geburtsdatumController.text = DateFormat(
           'dd.MM.yyyy',
