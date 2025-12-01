@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meinbssb/helpers/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -141,7 +142,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     if (data['GEBURTSDATUM'] != null &&
         data['GEBURTSDATUM'].toString().isNotEmpty) {
       try {
-        final parsedDate = DateTime.parse(data['GEBURTSDATUM'].toString());
+        final parsedDate = parseDate(data['GEBURTSDATUM'].toString());
         _geburtsdatumController.text = DateFormat(
           'dd.MM.yyyy',
         ).format(parsedDate);
@@ -515,10 +516,12 @@ class _TextFieldWithKeyboardFocus extends StatefulWidget {
   final Widget? suffixIcon;
 
   @override
-  State<_TextFieldWithKeyboardFocus> createState() => _TextFieldWithKeyboardFocusState();
+  State<_TextFieldWithKeyboardFocus> createState() =>
+      _TextFieldWithKeyboardFocusState();
 }
 
-class _TextFieldWithKeyboardFocusState extends State<_TextFieldWithKeyboardFocus> {
+class _TextFieldWithKeyboardFocusState
+    extends State<_TextFieldWithKeyboardFocus> {
   final FocusNode _focusNode = FocusNode();
   bool _hasKeyboardFocus = false;
 
@@ -537,11 +540,12 @@ class _TextFieldWithKeyboardFocusState extends State<_TextFieldWithKeyboardFocus
 
   void _onFocusChange() {
     // Check if focus highlight mode is traditional (keyboard navigation)
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     setState(() {
       _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
     });
-    
+
     // When field gains focus, position cursor at the end to prevent overwriting
     if (_focusNode.hasFocus && widget.controller.text.isNotEmpty) {
       // Use a post-frame callback to ensure the selection is set after the focus change
@@ -581,15 +585,10 @@ class _TextFieldWithKeyboardFocusState extends State<_TextFieldWithKeyboardFocus
                 UIStyles.formInputDecoration.labelStyle!.fontSize! *
                 widget.fontSizeProvider.scaleFactor,
           ),
-          floatingLabelStyle: UIStyles
-              .formInputDecoration
-              .floatingLabelStyle
+          floatingLabelStyle: UIStyles.formInputDecoration.floatingLabelStyle
               ?.copyWith(
                 fontSize:
-                    UIStyles
-                        .formInputDecoration
-                        .floatingLabelStyle!
-                        .fontSize! *
+                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
                     widget.fontSizeProvider.scaleFactor,
               ),
           floatingLabelBehavior: widget.floatingLabelBehavior,
@@ -601,14 +600,15 @@ class _TextFieldWithKeyboardFocusState extends State<_TextFieldWithKeyboardFocus
           ),
           filled: true,
           fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
-          focusedBorder: _hasKeyboardFocus
-              ? OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.yellow.shade700,
-                  width: 2.0,
-                ),
-              )
-              : null,
+          focusedBorder:
+              _hasKeyboardFocus
+                  ? OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.yellow.shade700,
+                      width: 2.0,
+                    ),
+                  )
+                  : null,
           suffixIcon: widget.suffixIcon,
         ),
         validator: widget.validator,
@@ -635,10 +635,12 @@ class _DropdownWithKeyboardFocus extends StatefulWidget {
   final void Function(String?) onChanged;
 
   @override
-  State<_DropdownWithKeyboardFocus> createState() => _DropdownWithKeyboardFocusState();
+  State<_DropdownWithKeyboardFocus> createState() =>
+      _DropdownWithKeyboardFocusState();
 }
 
-class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> {
+class _DropdownWithKeyboardFocusState
+    extends State<_DropdownWithKeyboardFocus> {
   final FocusNode _focusNode = FocusNode();
   bool _hasKeyboardFocus = false;
 
@@ -657,7 +659,8 @@ class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> 
 
   void _onFocusChange() {
     // Check if focus highlight mode is traditional (keyboard navigation)
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     setState(() {
       _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
     });
@@ -680,28 +683,24 @@ class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> 
                 UIStyles.formInputDecoration.labelStyle!.fontSize! *
                 widget.fontSizeProvider.scaleFactor,
           ),
-          floatingLabelStyle: UIStyles
-              .formInputDecoration
-              .floatingLabelStyle
+          floatingLabelStyle: UIStyles.formInputDecoration.floatingLabelStyle
               ?.copyWith(
                 fontSize:
-                    UIStyles
-                        .formInputDecoration
-                        .floatingLabelStyle!
-                        .fontSize! *
+                    UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
                     widget.fontSizeProvider.scaleFactor,
               ),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           filled: true,
           fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
-          focusedBorder: _hasKeyboardFocus
-              ? OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.yellow.shade700,
-                  width: 2.0,
-                ),
-              )
-              : null,
+          focusedBorder:
+              _hasKeyboardFocus
+                  ? OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.yellow.shade700,
+                      width: 2.0,
+                    ),
+                  )
+                  : null,
         ),
         items:
             widget.titelOptions
@@ -709,9 +708,7 @@ class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> 
                   (titel) => DropdownMenuItem<String>(
                     value: titel,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 0.0,
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 0.0),
                       child: Text(
                         titel.isEmpty ? '(Kein Titel)' : titel,
                         style:
@@ -723,9 +720,7 @@ class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> 
                                 )
                                 : UIStyles.formValueBoldStyle.copyWith(
                                   fontSize:
-                                      UIStyles
-                                          .formValueBoldStyle
-                                          .fontSize! *
+                                      UIStyles.formValueBoldStyle.fontSize! *
                                       widget.fontSizeProvider.scaleFactor,
                                 ),
                       ),
@@ -743,7 +738,7 @@ class _DropdownWithKeyboardFocusState extends State<_DropdownWithKeyboardFocus> 
 // Custom Save Button widget with hover and focus support
 class _SaveButton extends StatefulWidget {
   const _SaveButton({required this.onPressed});
-  
+
   final VoidCallback onPressed;
 
   @override
@@ -776,12 +771,12 @@ class _SaveButtonState extends State<_SaveButton> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = (_isHovered || _isFocused) 
-        ? Colors.black 
-        : UIConstants.defaultAppColor;
-    
+    final backgroundColor =
+        (_isHovered || _isFocused) ? Colors.black : UIConstants.defaultAppColor;
+
     // Check if focus is from keyboard navigation
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -790,7 +785,8 @@ class _SaveButtonState extends State<_SaveButton> {
       button: true,
       child: Shortcuts(
         shortcuts: {
-          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.enter):
+              const _ButtonActivateIntent(),
         },
         child: Actions(
           actions: {
@@ -819,16 +815,20 @@ class _SaveButtonState extends State<_SaveButton> {
               child: Tooltip(
                 message: 'Speichern',
                 child: Padding(
-                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  padding:
+                      hasKeyboardFocus
+                          ? const EdgeInsets.all(4.0)
+                          : EdgeInsets.zero,
                   child: Container(
-                    decoration: hasKeyboardFocus
-                        ? BoxDecoration(
-                            border: Border.all(
-                              color: Colors.yellow.shade700,
-                              width: 3.0,
-                            ),
-                          )
-                        : null,
+                    decoration:
+                        hasKeyboardFocus
+                            ? BoxDecoration(
+                              border: Border.all(
+                                color: Colors.yellow.shade700,
+                                width: 3.0,
+                              ),
+                            )
+                            : null,
                     child: FloatingActionButton(
                       heroTag: 'personalDataSaveFab',
                       onPressed: widget.onPressed,
@@ -849,7 +849,7 @@ class _SaveButtonState extends State<_SaveButton> {
 // Custom Edit Button widget with hover and focus support
 class _EditButton extends StatefulWidget {
   const _EditButton({required this.onPressed});
-  
+
   final VoidCallback onPressed;
 
   @override
@@ -882,12 +882,12 @@ class _EditButtonState extends State<_EditButton> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = (_isHovered || _isFocused) 
-        ? Colors.black 
-        : UIConstants.defaultAppColor;
-    
+    final backgroundColor =
+        (_isHovered || _isFocused) ? Colors.black : UIConstants.defaultAppColor;
+
     // Check if focus is from keyboard navigation
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -896,7 +896,8 @@ class _EditButtonState extends State<_EditButton> {
       button: true,
       child: Shortcuts(
         shortcuts: {
-          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.enter):
+              const _ButtonActivateIntent(),
         },
         child: Actions(
           actions: {
@@ -925,16 +926,20 @@ class _EditButtonState extends State<_EditButton> {
               child: Tooltip(
                 message: 'Bearbeiten',
                 child: Padding(
-                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  padding:
+                      hasKeyboardFocus
+                          ? const EdgeInsets.all(4.0)
+                          : EdgeInsets.zero,
                   child: Container(
-                    decoration: hasKeyboardFocus
-                        ? BoxDecoration(
-                            border: Border.all(
-                              color: Colors.yellow.shade700,
-                              width: 3.0,
-                            ),
-                          )
-                        : null,
+                    decoration:
+                        hasKeyboardFocus
+                            ? BoxDecoration(
+                              border: Border.all(
+                                color: Colors.yellow.shade700,
+                                width: 3.0,
+                              ),
+                            )
+                            : null,
                     child: FloatingActionButton(
                       heroTag: 'personalDataEditFab',
                       onPressed: widget.onPressed,
@@ -955,7 +960,7 @@ class _EditButtonState extends State<_EditButton> {
 // Custom Cancel Button widget with hover and focus support
 class _CancelButton extends StatefulWidget {
   const _CancelButton({required this.onPressed});
-  
+
   final VoidCallback onPressed;
 
   @override
@@ -988,12 +993,12 @@ class _CancelButtonState extends State<_CancelButton> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = (_isHovered || _isFocused) 
-        ? Colors.black 
-        : UIConstants.defaultAppColor;
-    
+    final backgroundColor =
+        (_isHovered || _isFocused) ? Colors.black : UIConstants.defaultAppColor;
+
     // Check if focus is from keyboard navigation
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -1002,7 +1007,8 @@ class _CancelButtonState extends State<_CancelButton> {
       button: true,
       child: Shortcuts(
         shortcuts: {
-          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.enter):
+              const _ButtonActivateIntent(),
         },
         child: Actions(
           actions: {
@@ -1031,16 +1037,20 @@ class _CancelButtonState extends State<_CancelButton> {
               child: Tooltip(
                 message: 'Abbrechen',
                 child: Padding(
-                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  padding:
+                      hasKeyboardFocus
+                          ? const EdgeInsets.all(4.0)
+                          : EdgeInsets.zero,
                   child: Container(
-                    decoration: hasKeyboardFocus
-                        ? BoxDecoration(
-                            border: Border.all(
-                              color: Colors.yellow.shade700,
-                              width: 3.0,
-                            ),
-                          )
-                        : null,
+                    decoration:
+                        hasKeyboardFocus
+                            ? BoxDecoration(
+                              border: Border.all(
+                                color: Colors.yellow.shade700,
+                                width: 3.0,
+                              ),
+                            )
+                            : null,
                     child: FloatingActionButton(
                       heroTag: 'personalDataCancelFab',
                       onPressed: widget.onPressed,
