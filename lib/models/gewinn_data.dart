@@ -2,11 +2,9 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class Gewinn {
-
   const Gewinn({
     required this.gewinnId,
     required this.jahr,
-    required this.tradition,
     required this.isSachpreis,
     required this.geldpreis,
     required this.sachpreis,
@@ -19,11 +17,11 @@ class Gewinn {
     return Gewinn(
       gewinnId: json['GEWINNID'] as int,
       jahr: json['JAHR'] as int,
-      tradition: json['TRADITION'] as bool,
       isSachpreis: json['ISSACHPREIS'] as bool,
-      geldpreis: json['GELDPREIS'] is int
-          ? json['GELDPREIS'] as int
-          : (json['GELDPREIS'] as num),
+      geldpreis:
+          json['GELDPREIS'] is int
+              ? json['GELDPREIS'] as int
+              : (json['GELDPREIS'] as num),
       sachpreis: json['SACHPREIS'] as String,
       wettbewerb: json['WETTBEWERB'] as String,
       abgerufenAm: json['ABGERUFENAM'] as String,
@@ -32,7 +30,6 @@ class Gewinn {
   }
   final int gewinnId;
   final int jahr;
-  final bool tradition;
   final bool isSachpreis;
   final num geldpreis;
   final String sachpreis;
@@ -44,7 +41,6 @@ class Gewinn {
     return {
       'GEWINNID': gewinnId,
       'JAHR': jahr,
-      'TRADITION': tradition,
       'ISSACHPREIS': isSachpreis,
       'GELDPREIS': geldpreis,
       'SACHPREIS': sachpreis,

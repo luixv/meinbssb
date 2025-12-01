@@ -2193,7 +2193,6 @@ void main() {
             const Gewinn(
               gewinnId: 1,
               jahr: 2024,
-              tradition: true,
               isSachpreis: false,
               geldpreis: 50,
               sachpreis: 'Sachpreis A',

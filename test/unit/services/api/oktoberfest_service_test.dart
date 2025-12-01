@@ -27,7 +27,6 @@ void main() {
     final testGewinnJson = {
       'GEWINNID': 1,
       'JAHR': 2024,
-      'TRADITION': true,
       'ISSACHPREIS': false,
       'GELDPREIS': 10,
       'SACHPREIS': 'Medaille',

@@ -7,7 +7,6 @@ void main() {
       final json = {
         'GEWINNID': 50,
         'JAHR': 2024,
-        'TRADITION': false,
         'ISSACHPREIS': false,
         'GELDPREIS': 15,
         'SACHPREIS': '',
@@ -18,7 +17,6 @@ void main() {
       final gewinn = Gewinn.fromJson(json);
       expect(gewinn.gewinnId, 50);
       expect(gewinn.jahr, 2024);
-      expect(gewinn.tradition, false);
       expect(gewinn.isSachpreis, false);
       expect(gewinn.geldpreis, 15);
       expect(gewinn.sachpreis, '');
@@ -32,7 +30,6 @@ void main() {
       const gewinn = Gewinn(
         gewinnId: 51,
         jahr: 2023,
-        tradition: true,
         isSachpreis: true,
         geldpreis: 0,
         sachpreis: 'Pokale',
@@ -43,7 +40,6 @@ void main() {
       final json = gewinn.toJson();
       expect(json['GEWINNID'], 51);
       expect(json['JAHR'], 2023);
-      expect(json['TRADITION'], true);
       expect(json['ISSACHPREIS'], true);
       expect(json['GELDPREIS'], 0);
       expect(json['SACHPREIS'], 'Pokale');
@@ -56,7 +52,6 @@ void main() {
       final json = {
         'GEWINNID': 52,
         'JAHR': 2022,
-        'TRADITION': true,
         'ISSACHPREIS': false,
         'GELDPREIS': 12.5,
         'SACHPREIS': 'Medaille',

@@ -115,7 +115,6 @@ void main() {
         Gewinn(
           gewinnId: 7,
           jahr: currentYear,
-          tradition: true,
           isSachpreis: false,
           geldpreis: 250,
           sachpreis: '',
@@ -185,7 +184,6 @@ void main() {
       Gewinn(
         gewinnId: 1,
         jahr: currentYear,
-        tradition: true,
         isSachpreis: false,
         geldpreis: 100,
         sachpreis: '',
