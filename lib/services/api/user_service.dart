@@ -228,7 +228,7 @@ class UserService {
       'NAMEN': dataToProcess['NAMEN']?.toString() ?? '',
       'VORNAME': dataToProcess['VORNAME']?.toString() ?? '',
       'TITEL': dataToProcess['TITEL']?.toString() ?? '',
-      'GEBURTSDATUM': dataToProcess['GEBURTSDATUM']?.toString() ?? '',
+      'GEBURTSDATUM': dataToProcess['GEBURTSDATUM'] ?? '',
       'GESCHLECHT': parseInt(dataToProcess['GESCHLECHT']),
       'VEREINNAME': dataToProcess['VEREINNAME']?.toString() ?? '',
       'PASSDATENID': parseInt(dataToProcess['PASSDATENID']),
