@@ -40,41 +40,23 @@ String formatDate(DateTime date) {
   return DateFormat('dd.MM.yyyy').format(date);
 }
 
-/// Parses date from API format like "1973-08-07T00:00:00.000+02:00"
-/// Returns the parsed DateTime or a default date (1970-01-01) if parsing fails
 DateTime parseDate(dynamic value) {
-  if (value is String && value.isNotEmpty) {
-    // Match: yyyy-MM-ddTHH:mm:ss.SSS (ignore offset)
-    final match = RegExp(
-      r'^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3})',
-    ).firstMatch(value);
-    if (match != null) {
-      return DateTime(
-        int.parse(match.group(1)!),
-        int.parse(match.group(2)!),
-        int.parse(match.group(3)!),
-        int.parse(match.group(4)!),
-        int.parse(match.group(5)!),
-        int.parse(match.group(6)!),
-        int.parse(match.group(7)!),
-      );
-    }
-    // Fallback: just the date part
+  if (value is! String || value.isEmpty) {
+    return DateTime(1970, 1, 1);
+  }
+
+  // Remove timezone offset like +01:00 or -02:00 or Z
+  final cleaned = value.replaceAll(RegExp(r'(Z|[+-]\d{2}:\d{2})$'), '');
+
+  try {
+    return DateTime.parse(cleaned);
+  } catch (_) {
+    // Fallback: parse only yyyy-MM-dd
     try {
-      final dateOnly = value.split('T').first;
-      final parts = dateOnly.split('-');
-      if (parts.length == 3) {
-        return DateTime(
-          int.parse(parts[0]),
-          int.parse(parts[1]),
-          int.parse(parts[2]),
-        );
-      }
-    } catch (e) {
-      // If parsing fails, return default date
+      final dateOnly = cleaned.split('T').first;
+      return DateTime.parse(dateOnly);
+    } catch (_) {
       return DateTime(1970, 1, 1);
     }
   }
-  return DateTime(1970, 1, 1);
 }
-
