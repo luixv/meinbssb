@@ -142,6 +142,7 @@ class PersonDataScreenState extends State<PersonDataScreen> {
     if (data['GEBURTSDATUM'] != null &&
         data['GEBURTSDATUM'].toString().isNotEmpty) {
       try {
+        LoggerService.logInfo('Got the date: $data["GEBURTSDATUM"].toString()');
         final parsedDate = parseDate(data['GEBURTSDATUM'].toString());
         _geburtsdatumController.text = DateFormat(
           'dd.MM.yyyy',
