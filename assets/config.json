@@ -26,11 +26,11 @@
   "tokenServerURL": "https://webintern.bssb.bayern:50211/rest/zmi/token",
   "serverTimeout": 40,
   "cacheExpirationHours": "24",
-  "testEmails": true,
-  "testRecipient": "bssb@reile.net",
-  "schulungenBccEmail": "",
-  "startRechteBccEmail": "",
-  "registrationBccEmail": "",
+  "testEmails": false,
+  "testRecipient": "",
+  "schulungenBccEmail": "lehrgang@bssb.bayern",
+  "startRechteBccEmail": "schuetzenausweis@bssb.bayern",
+  "registrationBccEmail": "webportal@bssb.bayern",
   "smtpSettings": {
     "emailProtocol": "",
     "host": "relay-cluster-eu01.hornetsecurity.com",
@@ -44,12 +44,12 @@
     "logoName": "assets/images/myBSSB-logo.png"
   },
   "emailContent": {
-    "schulungAnmeldungSubject": "Schulung Anmeldung",
+    "schulungAnmeldungSubject": "Schulung Anmeldung: {schulung_name}",
     "schulungContent": "Sie sind für einen Schulung angemeldet",
     "registrationSubject": "MeinBSSB Account: Registrierung abschließen",
     "accountCreatedSubject": "MeinBSSB Account wurde erstellt",
     "passwordResetSubject": "Passwort zurücksetzen",
-    "schulungAbmeldungSubject": "Bestätigung der Abmeldung"
+    "schulungAbmeldungSubject": "Bestätigung der Abmeldung: {schulung_name}"
   },
   "profilePhoto": {
     "maxSizeMB": 2,
