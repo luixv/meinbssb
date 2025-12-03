@@ -170,8 +170,7 @@ class AuthService {
 
         // Check if this is an authentication error from server
         if (e.message.contains('Benutzername oder Passwort') ||
-            e.message.contains('ist falsch') ||
-            e.message.contains('bssb.bayern')) {
+            e.message.contains('ist falsch')) {
           LoggerService.logError(
             'Server returned authentication error: ${e.message}',
           );
@@ -180,10 +179,15 @@ class AuthService {
             'ResultMessage': 'Benutzername oder Passwort ist falsch',
           };
         }
-
+        // if offline the error must be "Failed host lookup: 'webintern.bssb.bayern'"
+        // Or a timeout from SocketException
         // Check if we have cached data before trying offline login for actual network errors
+        // Check also if the email (current login == saved username)
         final cachedUsername = await _cacheService.getString('username');
-        if (cachedUsername != null && cachedUsername.isNotEmpty) {
+        bool cachedUserSameAsCurrentUser = cachedUsername == email;
+        if (cachedUsername != null &&
+            cachedUsername.isNotEmpty &&
+            cachedUserSameAsCurrentUser) {
           LoggerService.logInfo('Cached data found, attempting offline login');
           return await _handleOfflineLogin(email, password);
         } else {
@@ -373,19 +377,6 @@ class AuthService {
 
   Future<void> logout() async {
     try {
-      // Clear all cached data
-      await _cacheService.remove('username');
-      await _cacheService.remove('personId');
-      await _cacheService.remove('webLoginId');
-      await _cacheService.remove('password_fallback');
-
-      // Clear secure storage
-      try {
-        await _secureStorage.delete(key: 'password');
-      } catch (e) {
-        LoggerService.logError('Failed to clear secure storage: $e');
-      }
-
       LoggerService.logInfo('User logged out successfully.');
     } catch (e) {
       LoggerService.logError('Logout error: $e');
@@ -656,8 +647,8 @@ class AuthService {
       LoggerService.logInfo('Got token: $token');
       LoggerService.logInfo('Got personId: $personId');
       LoggerService.logInfo('Calling MyBSSBPasswortAendern...');
-      // Step 2: Call the API endpoint
 
+      // Step 2: Call the API endpoint
       const endpoint = 'MyBSSBPasswortAendern';
       final response = await _httpClient.put(endpoint, {
         'PersonID': int.parse(personId),

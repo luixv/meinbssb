@@ -43,13 +43,20 @@ import 'dart:io';
 import 'package:flutter/rendering.dart';
 
 Future<void> main() async {
+  debugPrint('Starting main() - before any initialization');
   bool isWindows = false;
   try {
     isWindows = Platform.isWindows;
   } catch (_) {}
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase init failed (offline?): $e');
+  }
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -63,32 +70,44 @@ Future<void> main() async {
 
     FirebaseRemoteConfig? remoteConfig;
     CompulsoryUpdateProvider? compulsoryUpdateProvider;
+    bool remoteConfigSet = true;
     if (!isWindows) {
-      // Fetch Remote Config only once
-      remoteConfig = FirebaseRemoteConfig.instance;
-      await remoteConfig.setDefaults(<String, dynamic>{
-        'minimum_required_version': '',
-        'update_message':
-            'Es ist eine neue Version von MeinBSSB verfügbar. Bitte installieren Sie die neue Version. Ihr MeinBSSB Support.',
-        'kill_switch_enabled': false,
-        'kill_switch_message': '',
-      });
-      await remoteConfig.setConfigSettings(
-        RemoteConfigSettings(
-          fetchTimeout: const Duration(seconds: 30),
-          minimumFetchInterval: const Duration(seconds: 10),
-        ),
-      );
-      await remoteConfig.fetchAndActivate();
+      // Only perform Remote Config if online
+      try {
+        // You can use a simple connectivity check, e.g. via NetworkService or similar
+        // For demonstration, assume always online. Replace with your own check if needed.
+        remoteConfig = FirebaseRemoteConfig.instance;
+        await remoteConfig.setDefaults(<String, dynamic>{
+          'minimum_required_version': '',
+          'update_message':
+              'Es ist eine neue Version von MeinBSSB verfügbar. Bitte installieren Sie die neue Version. Ihr MeinBSSB Support.',
+          'kill_switch_enabled': false,
+          'kill_switch_message': '',
+        });
+        await remoteConfig.setConfigSettings(
+          RemoteConfigSettings(
+            fetchTimeout: const Duration(seconds: 30),
+            minimumFetchInterval: const Duration(seconds: 10),
+          ),
+        );
+        await remoteConfig.fetchAndActivate();
 
-      compulsoryUpdateProvider = CompulsoryUpdateProvider(
-        remoteConfig: remoteConfig,
-      );
-      await compulsoryUpdateProvider.processRemoteConfig();
+        compulsoryUpdateProvider = CompulsoryUpdateProvider(
+          remoteConfig: remoteConfig,
+        );
+        await compulsoryUpdateProvider.processRemoteConfig();
 
-      // Also call KillSwitchProvider.fetchRemoteConfig() to ensure debug output
-      final killSwitchProvider = KillSwitchProvider(remoteConfig: remoteConfig);
-      await killSwitchProvider.fetchRemoteConfig();
+        // Also call KillSwitchProvider.fetchRemoteConfig() to ensure debug output
+        final killSwitchProvider = KillSwitchProvider(
+          remoteConfig: remoteConfig,
+        );
+        await killSwitchProvider.fetchRemoteConfig();
+      } catch (e) {
+        remoteConfigSet = false;
+        debugPrint('Remote Config not set. Error: $e');
+
+        // Continue without remote config
+      }
     }
 
     final fragment = Uri.base.fragment;
@@ -102,7 +121,7 @@ Future<void> main() async {
 
     // Declare killSwitchProvider in outer scope so it is available for providers
     ChangeNotifierProvider<KillSwitchProvider>? killSwitchProviderInstance;
-    if (!isWindows && remoteConfig != null) {
+    if (!isWindows && remoteConfig != null && remoteConfigSet) {
       final killSwitchProvider = KillSwitchProvider(remoteConfig: remoteConfig);
       await killSwitchProvider.fetchRemoteConfig();
       killSwitchProviderInstance = ChangeNotifierProvider(
@@ -126,7 +145,8 @@ Future<void> main() async {
       if (!isWindows &&
           remoteConfig != null &&
           compulsoryUpdateProvider != null &&
-          killSwitchProviderInstance != null) ...[
+          killSwitchProviderInstance != null &&
+          remoteConfigSet) ...[
         killSwitchProviderInstance,
         ChangeNotifierProvider(create: (_) => compulsoryUpdateProvider!),
       ],
@@ -154,24 +174,16 @@ Future<void> main() async {
     );
 
     Widget wrappedApp;
-    if (!isWindows) {
+    if (!isWindows && remoteConfigSet) {
       wrappedApp = KillSwitchGate(
         child: CompulsoryUpdateGate(child: appWidget),
       );
     } else {
       wrappedApp = appWidget;
     }
-    /*
-    runApp(
-      MultiProvider(
-        providers: providers,
-        child: MaterialApp(theme: theme, home: wrappedApp),
-      ),
-    );
-  */
 
     runApp(
-      MultiProvider(    
+      MultiProvider(
         providers: providers,
         child:
             kDebugMode && kIsWeb
