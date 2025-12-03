@@ -27,7 +27,7 @@
   "tokenProtocol": "https",
   "tokenServer": "meintest.bssb.de",
   "tokenPort": "8080",
-  "tokenPath": "token",
+  "tokenPath": "zmi-token",
   "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
   "serverTimeout": 40,
   "cacheExpirationHours": "24",
