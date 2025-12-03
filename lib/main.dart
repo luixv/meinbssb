@@ -41,15 +41,24 @@ import 'widgets/compulsory_update_gate.dart';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
+import 'dart:developer';
 
 Future<void> main() async {
+  debugger(); // Early breakpoint for debugging startup
+  debugPrint('Starting main() - before any initialization');
   bool isWindows = false;
   try {
     isWindows = Platform.isWindows;
   } catch (_) {}
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase init failed (offline?): $e');
+  }
 
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -171,7 +180,7 @@ Future<void> main() async {
   */
 
     runApp(
-      MultiProvider(    
+      MultiProvider(
         providers: providers,
         child:
             kDebugMode && kIsWeb

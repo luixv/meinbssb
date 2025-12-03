@@ -170,8 +170,7 @@ class AuthService {
 
         // Check if this is an authentication error from server
         if (e.message.contains('Benutzername oder Passwort') ||
-            e.message.contains('ist falsch') ||
-            e.message.contains('bssb.bayern')) {
+            e.message.contains('ist falsch')) {
           LoggerService.logError(
             'Server returned authentication error: ${e.message}',
           );
@@ -180,6 +179,7 @@ class AuthService {
             'ResultMessage': 'Benutzername oder Passwort ist falsch',
           };
         }
+        // if offline the error must be "Failed host lookup: 'webintern.bssb.bayern'"
 
         // Check if we have cached data before trying offline login for actual network errors
         final cachedUsername = await _cacheService.getString('username');
@@ -374,17 +374,17 @@ class AuthService {
   Future<void> logout() async {
     try {
       // Clear all cached data
-      await _cacheService.remove('username');
-      await _cacheService.remove('personId');
-      await _cacheService.remove('webLoginId');
-      await _cacheService.remove('password_fallback');
+      // await _cacheService.remove('username');
+      // await _cacheService.remove('personId');
+      // await _cacheService.remove('webLoginId');
+      // await _cacheService.remove('password_fallback');
 
       // Clear secure storage
-      try {
-        await _secureStorage.delete(key: 'password');
-      } catch (e) {
-        LoggerService.logError('Failed to clear secure storage: $e');
-      }
+      // try {
+      //    await _secureStorage.delete(key: 'password');
+      //  } catch (e) {
+      //    LoggerService.logError('Failed to clear secure storage: $e');
+      //  }
 
       LoggerService.logInfo('User logged out successfully.');
     } catch (e) {
@@ -411,14 +411,21 @@ class AuthService {
     }
   }
 
-  Future<int> findePersonIDSimple(String name, String nachname, String passnummer) async {
+  Future<int> findePersonIDSimple(
+    String name,
+    String nachname,
+    String passnummer,
+  ) async {
     try {
       final endpoint = 'FindePersonID/$nachname/$name/$passnummer';
       final baseUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'api1Base',
       );
-      final response = await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
       if (response is List && response.isNotEmpty) {
         final person = response[0];
         if (person is Map<String, dynamic> && person['PERSONID'] != null) {
