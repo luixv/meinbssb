@@ -957,14 +957,14 @@ void main() {
 
       test('returns LOGINMAIL when present in response', () async {
         const passnummer = '40101205';
-        const expectedEmail = 'kostas@rizoudis1.de';
+        const expectedEmail = '';
         final expectedBaseUrl = ConfigService.buildBaseUrlForServer(
           mockConfigService,
           name: 'api1Base',
         );
         when(
           mockHttpClient.get(
-            'FindeLoginMail/$passnummer',
+            'LoginEmail/$passnummer',
             overrideBaseUrl: expectedBaseUrl,
           ),
         ).thenAnswer(
