@@ -41,10 +41,8 @@ import 'widgets/compulsory_update_gate.dart';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
-import 'dart:developer';
 
 Future<void> main() async {
-  //debugger(); // Early breakpoint for debugging startup
   debugPrint('Starting main() - before any initialization');
   bool isWindows = false;
   try {
