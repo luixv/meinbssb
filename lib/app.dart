@@ -171,7 +171,6 @@ class _MyAppState extends State<MyApp> {
       // Clear SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('isLoggedIn');
-      await prefs.remove('userData');
 
       // Call AuthService logout to clear cached data
       await apiService.authService.logout();

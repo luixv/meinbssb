@@ -180,10 +180,14 @@ class AuthService {
           };
         }
         // if offline the error must be "Failed host lookup: 'webintern.bssb.bayern'"
-
+        // Or a timeout from SocketException
         // Check if we have cached data before trying offline login for actual network errors
+        // Check also if the email (current login == saved username)
         final cachedUsername = await _cacheService.getString('username');
-        if (cachedUsername != null && cachedUsername.isNotEmpty) {
+        bool cachedUserSameAsCurrentUser = cachedUsername == email;
+        if (cachedUsername != null &&
+            cachedUsername.isNotEmpty &&
+            cachedUserSameAsCurrentUser) {
           LoggerService.logInfo('Cached data found, attempting offline login');
           return await _handleOfflineLogin(email, password);
         } else {

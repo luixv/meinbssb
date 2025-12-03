@@ -44,7 +44,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:developer';
 
 Future<void> main() async {
-  debugger(); // Early breakpoint for debugging startup
+  //debugger(); // Early breakpoint for debugging startup
   debugPrint('Starting main() - before any initialization');
   bool isWindows = false;
   try {
