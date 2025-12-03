@@ -446,7 +446,7 @@ class AuthService {
         _configService,
         name: 'api1Base',
       );
-      final endpoint = 'LoginMail/$passnummer';
+      final endpoint = 'LoginEmail/$passnummer';
       final response = await _httpClient.get(
         endpoint,
         overrideBaseUrl: baseUrl,
