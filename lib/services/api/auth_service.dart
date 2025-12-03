@@ -411,14 +411,21 @@ class AuthService {
     }
   }
 
-  Future<int> findePersonIDSimple(String name, String nachname, String passnummer) async {
+  Future<int> findePersonIDSimple(
+    String name,
+    String nachname,
+    String passnummer,
+  ) async {
     try {
       final endpoint = 'FindePersonID/$nachname/$name/$passnummer';
       final baseUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'api1Base',
       );
-      final response = await _httpClient.get(endpoint, overrideBaseUrl: baseUrl);
+      final response = await _httpClient.get(
+        endpoint,
+        overrideBaseUrl: baseUrl,
+      );
       if (response is List && response.isNotEmpty) {
         final person = response[0];
         if (person is Map<String, dynamic> && person['PERSONID'] != null) {
@@ -439,7 +446,7 @@ class AuthService {
         _configService,
         name: 'api1Base',
       );
-      final endpoint = 'FindeLoginMail/$passnummer';
+      final endpoint = 'LoginMail/$passnummer';
       final response = await _httpClient.get(
         endpoint,
         overrideBaseUrl: baseUrl,
