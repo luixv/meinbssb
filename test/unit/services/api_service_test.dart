@@ -282,9 +282,54 @@ void main() {
           mockAuthService.findePersonIDSimple(any, any, any),
         ).thenAnswer((_) async => 439287);
 
-        final result = await apiService.findePersonIDSimple('Max', 'Mustermann', '12345678');
+        final result = await apiService.findePersonIDSimple(
+          'Max',
+          'Mustermann',
+          '12345678',
+        );
         expect(result, equals(439287));
-        verify(mockAuthService.findePersonIDSimple('Max', 'Mustermann', '12345678')).called(1);
+        verify(
+          mockAuthService.findePersonIDSimple('Max', 'Mustermann', '12345678'),
+        ).called(1);
+      });
+
+      test('findeLoginMail returns email when account exists', () async {
+        const passNumber = '12345678';
+        const expectedEmail = 'test@example.com';
+
+        when(
+          mockAuthService.fetchLoginEmail(any),
+        ).thenAnswer((_) async => expectedEmail);
+
+        final result = await apiService.findeLoginMail(passNumber);
+        expect(result, equals(expectedEmail));
+        verify(mockAuthService.fetchLoginEmail(passNumber)).called(1);
+      });
+
+      test(
+        'findeLoginMail returns empty string when no account exists',
+        () async {
+          const passNumber = '87654321';
+
+          when(
+            mockAuthService.fetchLoginEmail(any),
+          ).thenAnswer((_) async => '');
+
+          final result = await apiService.findeLoginMail(passNumber);
+          expect(result, equals(''));
+          verify(mockAuthService.fetchLoginEmail(passNumber)).called(1);
+        },
+      );
+
+      test('findeLoginMail handles errors gracefully', () async {
+        const passNumber = '99999999';
+
+        when(
+          mockAuthService.fetchLoginEmail(any),
+        ).thenThrow(Exception('API error'));
+
+        expect(() => apiService.findeLoginMail(passNumber), throwsException);
+        verify(mockAuthService.fetchLoginEmail(passNumber)).called(1);
       });
     });
 
