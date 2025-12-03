@@ -39,8 +39,6 @@ class LoginScreenState extends State<LoginScreen> {
   UserData? _userData;
   bool _isLoggedIn = false;
   bool _rememberMe = false;
-  bool _hasEmailKeyboardFocus = false;
-  bool _hasPasswordKeyboardFocus = false;
   bool _hasLoginButtonKeyboardFocus = false;
   bool _hasCheckboxKeyboardFocus = false;
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
@@ -54,8 +52,6 @@ class LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _initRememberMe();
-    _emailFocusNode.addListener(_onEmailFocusChange);
-    _passwordFocusNode.addListener(_onPasswordFocusChange);
     _loginButtonFocusNode.addListener(_onLoginButtonFocusChange);
     _checkboxFocusNode.addListener(_onCheckboxFocusChange);
   }
@@ -101,8 +97,6 @@ class LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _emailFocusNode.removeListener(_onEmailFocusChange);
-    _passwordFocusNode.removeListener(_onPasswordFocusChange);
     _loginButtonFocusNode.removeListener(_onLoginButtonFocusChange);
     _checkboxFocusNode.removeListener(_onCheckboxFocusChange);
     _emailFocusNode.dispose();
@@ -110,22 +104,6 @@ class LoginScreenState extends State<LoginScreen> {
     _loginButtonFocusNode.dispose();
     _checkboxFocusNode.dispose();
     super.dispose();
-  }
-
-  void _onEmailFocusChange() {
-    final isKeyboardMode =
-        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
-    setState(() {
-      _hasEmailKeyboardFocus = _emailFocusNode.hasFocus && isKeyboardMode;
-    });
-  }
-
-  void _onPasswordFocusChange() {
-    final isKeyboardMode =
-        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
-    setState(() {
-      _hasPasswordKeyboardFocus = _passwordFocusNode.hasFocus && isKeyboardMode;
-    });
   }
 
   void _onLoginButtonFocusChange() {
@@ -323,17 +301,6 @@ class LoginScreenState extends State<LoginScreen> {
                     UIStyles.formLabelStyle.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
-              fillColor: _hasEmailKeyboardFocus ? Colors.yellow.shade100 : null,
-              filled: _hasEmailKeyboardFocus,
-              focusedBorder:
-                  _hasEmailKeyboardFocus
-                      ? OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.yellow.shade700,
-                          width: 2.0,
-                        ),
-                      )
-                      : UIStyles.formInputDecoration.focusedBorder,
             ),
             onEditingComplete: () {
               // Move focus to password field when Tab is pressed
@@ -375,18 +342,6 @@ class LoginScreenState extends State<LoginScreen> {
                     UIStyles.formLabelStyle.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
-              fillColor:
-                  _hasPasswordKeyboardFocus ? Colors.yellow.shade100 : null,
-              filled: _hasPasswordKeyboardFocus,
-              focusedBorder:
-                  _hasPasswordKeyboardFocus
-                      ? OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.yellow.shade700,
-                          width: 2.0,
-                        ),
-                      )
-                      : UIStyles.formInputDecoration.focusedBorder,
               suffixIcon: Semantics(
                 label:
                     _isPasswordVisible
