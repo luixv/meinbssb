@@ -377,19 +377,6 @@ class AuthService {
 
   Future<void> logout() async {
     try {
-      // Clear all cached data
-      // await _cacheService.remove('username');
-      // await _cacheService.remove('personId');
-      // await _cacheService.remove('webLoginId');
-      // await _cacheService.remove('password_fallback');
-
-      // Clear secure storage
-      // try {
-      //    await _secureStorage.delete(key: 'password');
-      //  } catch (e) {
-      //    LoggerService.logError('Failed to clear secure storage: $e');
-      //  }
-
       LoggerService.logInfo('User logged out successfully.');
     } catch (e) {
       LoggerService.logError('Logout error: $e');
@@ -660,8 +647,8 @@ class AuthService {
       LoggerService.logInfo('Got token: $token');
       LoggerService.logInfo('Got personId: $personId');
       LoggerService.logInfo('Calling MyBSSBPasswortAendern...');
-      // Step 2: Call the API endpoint
 
+      // Step 2: Call the API endpoint
       const endpoint = 'MyBSSBPasswortAendern';
       final response = await _httpClient.put(endpoint, {
         'PersonID': int.parse(personId),
