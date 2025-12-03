@@ -24,6 +24,16 @@ https://meintest.bssb.de {
     }
   }
 
+  # Handle token service requests
+  handle /zmi-token* {
+    reverse_proxy token-service:3002
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS, GET"
+      Access-Control-Allow-Headers "Authorization, Content-Type, Accept"
+    }
+  }
+
   root * /web
   file_server
   try_files {path} /index.html
@@ -71,6 +81,21 @@ https://meintest.bssb.de {
 :8080 {
     # Enable HTTPS/TLS on port 8080
     tls internal
+    
+    # Handle CORS preflight requests
+    @cors_preflight {
+        method OPTIONS
+    }
+    
+    handle @cors_preflight {
+        respond "" 204
+        header {
+            Access-Control-Allow-Origin "*"
+            Access-Control-Allow-Methods "POST, OPTIONS, GET"
+            Access-Control-Allow-Headers "Authorization, Content-Type, Accept"
+            Access-Control-Max-Age "3600"
+        }
+    }
     
     # Handle both email-service and token-service on port 8080
     handle /send-email* {
