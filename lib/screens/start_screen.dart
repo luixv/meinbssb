@@ -931,7 +931,6 @@ class StartScreenState extends State<StartScreen> {
                                                     KeyboardFocusFAB(
                                                       heroTag:
                                                           'descDialogDeleteFab$index',
-                                                      mini: true,
                                                       tooltip: 'Löschen',
                                                       icon:
                                                           Icons
@@ -957,7 +956,6 @@ class StartScreenState extends State<StartScreen> {
                                                     KeyboardFocusFAB(
                                                       heroTag:
                                                           'descDialogCloseFab$index',
-                                                      mini: true,
                                                       tooltip: 'Schließen',
                                                       icon: Icons.close,
                                                       semanticLabel:

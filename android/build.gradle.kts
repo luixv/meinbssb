@@ -28,10 +28,10 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(":app")
 
-    // Force Java 17 compatibility and suppress obsolete warnings across all modules.
+    // Force Java 21 compatibility and suppress obsolete warnings across all modules.
     tasks.withType<org.gradle.api.tasks.compile.JavaCompile>().configureEach {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
         // This argument directly suppresses the exact warning the console suggests.
         options.compilerArgs.add("-Xlint:-options")
     }

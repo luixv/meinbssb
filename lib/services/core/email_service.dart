@@ -409,7 +409,7 @@ class EmailService {
           await sendEmail(
             sender: fromEmail,
             recipient: emailAddress,
-            subject: subject,
+            subject: subject.replaceAll('{schulung_name}', schulungName),
             htmlBody: personalizedContent,
             bcc: schulungenBccEmail != null && schulungenBccEmail.isNotEmpty
                 ? schulungenBccEmail
@@ -542,7 +542,7 @@ class EmailService {
         await sendEmail(
           sender: fromEmail,
           recipient: email,
-          subject: subject,
+          subject: subject.replaceAll('{schulung_name}', schulungName),
           htmlBody: personalizedContent,
           bcc: schulungenBccEmail != null && schulungenBccEmail.isNotEmpty
               ? schulungenBccEmail

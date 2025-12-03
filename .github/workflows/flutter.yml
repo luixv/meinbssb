@@ -50,12 +50,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.5'
           channel: 'stable'
           cache: true
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
       # --------------------------------------------------
       # Decode the Base64 Keystore Secret into a file
@@ -154,14 +161,28 @@ jobs:
             echo "::warning::AAB not found at $AAB_PATH"
           fi
 
+          # Ensure zipped APK is uploaded as artifact for release step
+          mkdir -p release_zip_artifacts
+          if [ -f "release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip" ]; then
+            cp "release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip" release_zip_artifacts/
+          fi
+
       # --------------------------------------------------
       # Upload artifacts separately (APK and AAB)
       # --------------------------------------------------
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ steps.version.outputs.version }}-apk
           path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
+          if-no-files-found: error
+
+      - name: Upload APK ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ steps.version.outputs.version }}-apk-zip
+          path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
           if-no-files-found: error
 
       - name: Upload AAB
@@ -304,18 +325,19 @@ jobs:
           mkdir -p "$RELEASE_DIR"
           VERSION="${{ steps.release_version.outputs.version }}"
 
+          echo "==== DEBUG: List artifacts root ===="
+          ls -l artifacts || true
+          echo "==== DEBUG: List all artifact subdirs ===="
+          find artifacts -type d || true
+          echo "==== DEBUG: List all files in artifacts recursively ===="
+          find artifacts -type f || true
+
           # Android - copy the versioned zip file
-          if [ -d "artifacts/release-$VERSION-apk" ]; then
-            cp "artifacts/release-$VERSION-apk/release-$VERSION-apk.zip" "$RELEASE_DIR/"
+          if [ -d "artifacts/release-$VERSION-apk-zip" ]; then
+            echo "cp artifacts/release-$VERSION-apk-zip/release-$VERSION-apk.zip $RELEASE_DIR/"
+            cp "artifacts/release-$VERSION-apk-zip/release-$VERSION-apk.zip" "$RELEASE_DIR/"
           else
             echo "::warning::No Android build artifacts found for version $VERSION"
-          fi
-
-          # iOS - copy the versioned zip file
-          if [ -d "artifacts/release-$VERSION-ios" ]; then
-            cp "artifacts/release-$VERSION-ios/release-$VERSION-ios.zip" "$RELEASE_DIR/"
-          else
-            echo "::warning::No iOS build artifacts found for version $VERSION"
           fi
 
           # Web - copy the versioned zip file

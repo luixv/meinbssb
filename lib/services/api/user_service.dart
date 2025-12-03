@@ -227,7 +227,7 @@ class UserService {
       'NAMEN': dataToProcess['NAMEN']?.toString() ?? '',
       'VORNAME': dataToProcess['VORNAME']?.toString() ?? '',
       'TITEL': dataToProcess['TITEL']?.toString() ?? '',
-      'GEBURTSDATUM': dataToProcess['GEBURTSDATUM']?.toString() ?? '',
+      'GEBURTSDATUM': dataToProcess['GEBURTSDATUM'] ?? '',
       'GESCHLECHT': parseInt(dataToProcess['GESCHLECHT']),
       'VEREINNAME': dataToProcess['VEREINNAME']?.toString() ?? '',
       'PASSDATENID': parseInt(dataToProcess['PASSDATENID']),
@@ -534,7 +534,7 @@ class UserService {
 
   Future<bool> deleteKontakt(Contact contact) async {
     try {
-      String personId = contact.personId.toString();	
+      String personId = contact.personId.toString();
       String id = contact.id.toString();
       final endpoint = 'Kontakt/$personId/$id';
       final response = await _httpClient.delete(endpoint);

@@ -40,8 +40,9 @@ String formatDate(DateTime date) {
   return DateFormat('dd.MM.yyyy').format(date);
 }
 
-/// Parses date from API format like "1973-08-07T00:00:00.000+02:00"
-/// Returns the parsed DateTime or a default date (1970-01-01) if parsing fails
+/// Parses dates like "1997-03-06T00:00:00.000+01:00"
+/// Ignores time and timezone completely and returns a pure date (UTC).
+/// Formats a DateTime to German date format (dd.MM.yyyy)
 DateTime parseDate(dynamic value) {
   if (value is String && value.isNotEmpty) {
     // Match: yyyy-MM-ddTHH:mm:ss.SSS (ignore offset)
@@ -59,7 +60,6 @@ DateTime parseDate(dynamic value) {
         int.parse(match.group(7)!),
       );
     }
-    // Fallback: just the date part
     try {
       final dateOnly = value.split('T').first;
       final parts = dateOnly.split('-');
@@ -77,4 +77,3 @@ DateTime parseDate(dynamic value) {
   }
   return DateTime(1970, 1, 1);
 }
-

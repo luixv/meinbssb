@@ -1,7 +1,3 @@
-// Project: Mein BSSB
-// Filename: cache_service.dart
-// Author: Luis Mandel / NTT DATA
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'config_service.dart';
@@ -12,8 +8,8 @@ class CacheService {
   CacheService({
     required SharedPreferences prefs,
     required ConfigService configService,
-  })  : _prefs = prefs,
-        _configService = configService;
+  }) : _prefs = prefs,
+       _configService = configService;
   static const String _cacheKeyPrefix = 'cache_';
   final SharedPreferences _prefs;
   final ConfigService _configService;
@@ -141,15 +137,18 @@ class CacheService {
     if (cachedJson != null) {
       final dynamic cachedRawData = jsonDecode(cachedJson);
 
-      final keyTimestamp =
-          await getCacheTimestampForKey(_cacheKeyPrefix + cacheKey);
+      final keyTimestamp = await getCacheTimestampForKey(
+        _cacheKeyPrefix + cacheKey,
+      );
 
       // Use ConfigService to get cache duration, fallback to validityDuration if config is not available
-      final cacheExpirationHours =
-          _configService.getInt('cacheExpirationHours');
-      final effectiveValidityDuration = cacheExpirationHours != null
-          ? Duration(hours: cacheExpirationHours)
-          : validityDuration;
+      final cacheExpirationHours = _configService.getInt(
+        'cacheExpirationHours',
+      );
+      final effectiveValidityDuration =
+          cacheExpirationHours != null
+              ? Duration(hours: cacheExpirationHours)
+              : validityDuration;
 
       if (keyTimestamp != null) {
         final expirationTime = DateTime.fromMillisecondsSinceEpoch(
@@ -167,8 +166,9 @@ class CacheService {
             final List<Map<String, dynamic>> typedList = [];
             for (var item in processedData) {
               if (item is Map<dynamic, dynamic>) {
-                typedList
-                    .add(Map<String, dynamic>.from(item)..['ONLINE'] = false);
+                typedList.add(
+                  Map<String, dynamic>.from(item)..['ONLINE'] = false,
+                );
               } else {
                 LoggerService.logWarning(
                   'Unexpected item type in cached list for key $cacheKey: ${item.runtimeType}',
@@ -225,7 +225,8 @@ class CacheService {
     if (cachedData != null) {
       stopwatch.stop();
       LoggerService.logInfo(
-          'Using cached data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',);
+        'Using cached data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',
+      );
       return cachedData;
     }
 
@@ -246,10 +247,12 @@ class CacheService {
           // Ensure all elements are maps and convert them safely
           if (processedData.every((item) => item is Map<dynamic, dynamic>)) {
             // Explicitly convert each map to Map<String, dynamic>
-            dataToCache = processedData.map((item) {
-              return Map<String, dynamic>.from(item as Map<dynamic, dynamic>)
-                ..['ONLINE'] = true;
-            }).toList();
+            dataToCache =
+                processedData.map((item) {
+                  return Map<String, dynamic>.from(
+                    item as Map<dynamic, dynamic>,
+                  )..['ONLINE'] = true;
+                }).toList();
           } else {
             LoggerService.logError(
               'Unsupported list item type for caching with ONLINE flag: ${processedData.first.runtimeType} in list $cacheKey',
@@ -275,15 +278,14 @@ class CacheService {
           await setCacheTimestampForKey(_cacheKeyPrefix + cacheKey);
           stopwatch.stop();
           LoggerService.logInfo(
-              'Successfully cached fresh data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',);
+            'Successfully cached fresh data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',
+          );
           // Direct cast of dataToCache to T
           return dataToCache as T;
         }
       }
       LoggerService.logInfo('Network request returned null data for $cacheKey');
-      throw Exception(
-        'Network request returned no data.',
-      );
+      throw Exception('Network request returned no data.');
     } on Exception catch (e) {
       LoggerService.logError('Network request failed for $cacheKey: $e');
 
@@ -300,13 +302,12 @@ class CacheService {
       if (fallbackCachedData != null) {
         stopwatch.stop();
         LoggerService.logInfo(
-            'Using fallback cached data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',);
+          'Using fallback cached data for $cacheKey (took ${stopwatch.elapsedMilliseconds}ms)',
+        );
         return fallbackCachedData;
       }
       LoggerService.logWarning('No network and no valid cache for $cacheKey');
-      throw Exception(
-        'No network data and no valid cached data available.',
-      );
+      throw Exception('No network data and no valid cached data available.');
     } catch (e) {
       LoggerService.logError('An unexpected error occurred for $cacheKey: $e');
       rethrow;

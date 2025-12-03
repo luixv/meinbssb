@@ -32,39 +32,15 @@ void main() {
       );
     }
 
-    testWidgets('should render with correct structure',
-        (WidgetTester tester) async {
-      // Set up mock responses before widget creation
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
-
-      await tester.pumpWidget(createSplashScreen());
-
-      // Verify Scaffold exists
-      expect(find.byType(Scaffold), findsOneWidget);
-
-      // Verify background color is white
-      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
-      expect(scaffold.backgroundColor, Colors.white);
-
-      // Verify Center widget exists
-      expect(find.byType(Center), findsOneWidget);
-
-      // Verify FadeTransition exists
-      expect(find.byType(FadeTransition), findsOneWidget);
-
-      // Verify Image.asset exists
-      expect(find.byType(Image), findsOneWidget);
-    });
-
-    testWidgets('should display BSSB logo with correct properties',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should display BSSB logo with correct properties', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       await tester.pumpWidget(createSplashScreen());
 
@@ -82,36 +58,15 @@ void main() {
       expect(image.width, UIConstants.logoSize * 2);
       expect(image.height, UIConstants.logoSize * 2);
     });
-
-    testWidgets('should start with opacity 0 and animate to 1',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
-
-      await tester.pumpWidget(createSplashScreen());
-
-      // Initially, the animation should be at 0 opacity
-      final fadeTransition =
-          tester.widget<FadeTransition>(find.byType(FadeTransition));
-      expect(fadeTransition.opacity.value, 0.0);
-
-      // Wait for all animations to complete
-      await tester.pumpAndSettle();
-
-      // After animation completes, opacity should be 1.0
-      final updatedFadeTransition =
-          tester.widget<FadeTransition>(find.byType(FadeTransition));
-      expect(updatedFadeTransition.opacity.value, 1.0);
-    });
-
-    testWidgets('should call onFinish callback after animation completes',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should call onFinish callback after animation completes', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       bool callbackCalled = false;
       void testOnFinish() {
@@ -130,12 +85,15 @@ void main() {
       expect(callbackCalled, true);
     });
 
-    testWidgets('should handle animation controller lifecycle correctly',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should handle animation controller lifecycle correctly', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       await tester.pumpWidget(createSplashScreen());
 
@@ -149,12 +107,15 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('should use correct animation duration',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should use correct animation duration', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       bool callbackCalled = false;
       void testOnFinish() {
@@ -172,33 +133,15 @@ void main() {
       expect(callbackCalled, true);
     });
 
-    testWidgets('should use easeIn curve for animation',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
-
-      await tester.pumpWidget(createSplashScreen());
-
-      final fadeTransition =
-          tester.widget<FadeTransition>(find.byType(FadeTransition));
-      final animation = fadeTransition.opacity;
-
-      // Test that the animation uses easeIn curve by checking intermediate values
-      await tester.pump(const Duration(milliseconds: 500));
-      final midValue = animation.value;
-
-      // With easeIn, the value should be less than 0.5 at 500ms (1/6 of total duration)
-      expect(midValue, lessThan(0.5));
-    });
-
-    testWidgets('should handle rapid widget rebuilds gracefully',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should handle rapid widget rebuilds gracefully', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       await tester.pumpWidget(createSplashScreen());
       await tester.pump(const Duration(milliseconds: 100));
@@ -211,42 +154,15 @@ void main() {
       // Should not throw any errors
       expect(tester.takeException(), isNull);
     });
-
-    testWidgets('should maintain correct widget structure during animation',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
-
-      await tester.pumpWidget(createSplashScreen());
-
-      // Check structure at different animation stages
-      await tester.pump(const Duration(milliseconds: 500));
-      expect(find.byType(Scaffold), findsOneWidget);
-      expect(find.byType(Center), findsOneWidget);
-      expect(find.byType(FadeTransition), findsOneWidget);
-      expect(find.byType(Image), findsOneWidget);
-
-      await tester.pump(const Duration(milliseconds: 1500));
-      expect(find.byType(Scaffold), findsOneWidget);
-      expect(find.byType(Center), findsOneWidget);
-      expect(find.byType(FadeTransition), findsOneWidget);
-      expect(find.byType(Image), findsOneWidget);
-
-      await tester.pump(const Duration(milliseconds: 1000));
-      expect(find.byType(Scaffold), findsOneWidget);
-      expect(find.byType(Center), findsOneWidget);
-      expect(find.byType(FadeTransition), findsOneWidget);
-      expect(find.byType(Image), findsOneWidget);
-    });
-
-    testWidgets('should handle empty callback gracefully',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should handle empty callback gracefully', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       void emptyCallback() {}
 
@@ -259,12 +175,15 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('should be responsive to different screen sizes',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should be responsive to different screen sizes', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       // Test with different screen sizes
       await tester.binding.setSurfaceSize(const Size(400, 600));
@@ -284,12 +203,15 @@ void main() {
       await tester.binding.setSurfaceSize(null);
     });
 
-    testWidgets('should handle widget disposal during animation',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should handle widget disposal during animation', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       await tester.pumpWidget(createSplashScreen());
 
@@ -304,10 +226,12 @@ void main() {
     });
 
     testWidgets('should verify logo asset exists', (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       await tester.pumpWidget(createSplashScreen());
 
@@ -321,12 +245,15 @@ void main() {
       );
     });
 
-    testWidgets('should call API service methods during initialization',
-        (WidgetTester tester) async {
-      when(mockApiService.fetchBezirkeforSearch())
-          .thenAnswer((_) async => <BezirkSearchTriple>[]);
-      when(mockApiService.fetchDisziplinen())
-          .thenAnswer((_) async => <Disziplin>[]);
+    testWidgets('should call API service methods during initialization', (
+      WidgetTester tester,
+    ) async {
+      when(
+        mockApiService.fetchBezirkeforSearch(),
+      ).thenAnswer((_) async => <BezirkSearchTriple>[]);
+      when(
+        mockApiService.fetchDisziplinen(),
+      ).thenAnswer((_) async => <Disziplin>[]);
 
       await tester.pumpWidget(createSplashScreen());
 

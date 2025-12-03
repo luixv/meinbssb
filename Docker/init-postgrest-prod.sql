@@ -70,6 +70,14 @@ CREATE TABLE IF NOT EXISTS user_email_validation (
     validated BOOLEAN DEFAULT FALSE
 );
 
+-- Create api_request_logs table
+CREATE TABLE IF NOT EXISTS api_request_logs (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER,
+    logs JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
 -- ========== Indexes ==========
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_pass_number ON users(pass_number);
@@ -82,6 +90,9 @@ CREATE INDEX IF NOT EXISTS idx_user_email_validation_person_id ON user_email_val
 CREATE INDEX IF NOT EXISTS idx_user_email_validation_verification_token ON user_email_validation(verification_token);
 CREATE INDEX IF NOT EXISTS idx_user_email_validation_email ON user_email_validation(email);
 
+CREATE INDEX IF NOT EXISTS idx_api_request_logs_person_id ON api_request_logs(person_id);
+CREATE INDEX IF NOT EXISTS idx_api_request_logs_created_at ON api_request_logs(created_at);
+
 -- ========== Grants ==========
 GRANT CONNECT ON DATABASE bssbdb TO bssbuser;
 
@@ -90,6 +101,7 @@ GRANT USAGE ON SCHEMA public TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE users TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE password_reset TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE user_email_validation TO bssbuser;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE api_request_logs TO bssbuser;
 
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO bssbuser;
 

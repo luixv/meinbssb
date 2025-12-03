@@ -52,4 +52,84 @@ void main() {
       expect(find.text('Test'), findsOneWidget);
     });
   });
+
+  group('Email Validation', () {
+    testWidgets('accepts .bayern TLD', (WidgetTester tester) async {
+      await tester.pumpWidget(createRegistrationScreen());
+      await tester.pumpAndSettle();
+
+      // Find the email field (4th TextField)
+      final emailFields = find.byType(TextField);
+      await tester.enterText(emailFields.at(2), 'test@example.bayern');
+      await tester.pumpAndSettle();
+
+      // Should not show email error for .bayern domain
+      expect(
+        find.text('Bitte geben Sie eine gültige E-Mail Adresse ein.'),
+        findsNothing,
+      );
+    });
+
+    testWidgets('accepts standard TLDs like .com and .de',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createRegistrationScreen());
+      await tester.pumpAndSettle();
+
+      final emailFields = find.byType(TextField);
+
+      // Test .com
+      await tester.enterText(emailFields.at(2), 'test@example.com');
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Bitte geben Sie eine gültige E-Mail Adresse ein.'),
+        findsNothing,
+      );
+
+      // Test .de
+      await tester.enterText(emailFields.at(2), 'test@example.de');
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Bitte geben Sie eine gültige E-Mail Adresse ein.'),
+        findsNothing,
+      );
+    });
+
+    testWidgets('accepts long TLDs like .photography',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createRegistrationScreen());
+      await tester.pumpAndSettle();
+
+      final emailFields = find.byType(TextField);
+      await tester.enterText(emailFields.at(2), 'test@example.photography');
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Bitte geben Sie eine gültige E-Mail Adresse ein.'),
+        findsNothing,
+      );
+    });
+  });
+
+  group('Existing Account Check', () {
+    testWidgets(
+        'does not show existing account warning on form when entering pass number',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createRegistrationScreen());
+      await tester.pumpAndSettle();
+
+      // Enter pass number
+      final passNumberField = find.byType(TextField).at(3);
+      await tester.enterText(passNumberField, '12345678');
+      await tester.pumpAndSettle();
+
+      // The existing account warning should not be displayed on the form
+      // (it was removed - now shown via RegistrationFailScreen during registration)
+      expect(
+        find.text(
+          'Sie haben bereits einen MeinBSSB Account.\nBitte verwenden Sie ihre bekannten Zugangsdaten.',
+        ),
+        findsNothing,
+      );
+    });
+  });
 }

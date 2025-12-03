@@ -93,7 +93,7 @@ void main() {
     await tester.pumpAndSettle();
 
     when(mockApiService.fetchGewinne(currentYear - 1, passnummer))
-        .thenAnswer((_) async => [Gewinn(gewinnId: 1, jahr: currentYear - 1, tradition: true, isSachpreis: true, geldpreis: 0, sachpreis: 'Preis', wettbewerb: 'Test', abgerufenAm: '', platz: 1)]);
+        .thenAnswer((_) async => [Gewinn(gewinnId: 1, jahr: currentYear - 1, isSachpreis: true, geldpreis: 0, sachpreis: 'Preis', wettbewerb: 'Test', abgerufenAm: '', platz: 1)]);
 
     await tester.tap(find.byType(DropdownButtonFormField<int>));
     await tester.pumpAndSettle();
@@ -110,7 +110,6 @@ void main() {
         Gewinn(
           gewinnId: 7,
           jahr: currentYear,
-          tradition: true,
           isSachpreis: false,
           geldpreis: 250,
           sachpreis: '',

@@ -543,6 +543,45 @@ class PostgrestService {
     }
   }
 
+  /// Log an API request to the database
+  Future<void> logApiRequest({
+    required int? personId,
+    required String apiBaseServer,
+    required String apiBasePath,
+    required String apiBasePort,
+    required String endpoint,
+  }) async {
+    try {
+      final logData = {
+        'apiBaseServer': apiBaseServer,
+        'apiBasePath': apiBasePath,
+        'apiBasePort': apiBasePort,
+        'endpoint': endpoint,
+      };
+
+      final response = await _httpClient.post(
+        Uri.parse('${_baseUrl}api_request_logs'),
+        headers: _headers,
+        body: jsonEncode({
+          'person_id': personId,
+          'logs': logData,
+          'created_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        LoggerService.logInfo('API request logged successfully');
+      } else {
+        LoggerService.logError(
+          'Failed to log API request. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+      }
+    } catch (e) {
+      // Log error but don't throw - logging failures shouldn't break API calls
+      LoggerService.logError('Error logging API request: $e');
+    }
+  }
+
   /// Fetch the profile photo for a user
   Future<Uint8List?> getProfilePhoto(String userId) async {
     // Check cache first

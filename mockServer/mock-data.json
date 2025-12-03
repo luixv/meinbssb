@@ -253,7 +253,6 @@
 			{
 			"GEWINNID": 50,
 			"JAHR": 2024,
-			"TRADITION": false,
 			"ISSACHPREIS": false,
 			"GELDPREIS": 15,
 			"SACHPREIS": "",
@@ -264,7 +263,6 @@
 			{
 			"GEWINNID": 185,
 			"JAHR": 2024,
-			"TRADITION": false,
 			"ISSACHPREIS": false,
 			"GELDPREIS": 50,
 			"SACHPREIS": "",

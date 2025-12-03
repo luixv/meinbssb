@@ -39,6 +39,14 @@ CREATE TABLE IF NOT EXISTS user_email_validation (
     validated BOOLEAN DEFAULT FALSE
 );
 
+-- Create api_request_logs table
+CREATE TABLE IF NOT EXISTS api_request_logs (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER,
+    logs JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for faster lookups (users)
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_pass_number ON users(pass_number);
@@ -53,6 +61,10 @@ CREATE INDEX IF NOT EXISTS idx_user_email_validation_person_id ON user_email_val
 CREATE INDEX IF NOT EXISTS idx_user_email_validation_verification_token ON user_email_validation(verification_token);
 CREATE INDEX IF NOT EXISTS idx_user_email_validation_email ON user_email_validation(email);
 
+-- Create indexes for api_request_logs
+CREATE INDEX IF NOT EXISTS idx_api_request_logs_person_id ON api_request_logs(person_id);
+CREATE INDEX IF NOT EXISTS idx_api_request_logs_created_at ON api_request_logs(created_at);
+
 -- Grant permissions for PostgREST (users)
 GRANT SELECT, INSERT, UPDATE, DELETE ON users TO devuser;
 GRANT USAGE ON SEQUENCE users_id_seq TO devuser;
@@ -64,6 +76,10 @@ GRANT USAGE ON SEQUENCE password_reset_id_seq TO devuser;
 -- Grant permissions for PostgREST (user_email_validation)
 GRANT SELECT, INSERT, UPDATE, DELETE ON user_email_validation TO devuser;
 GRANT USAGE ON SEQUENCE user_email_validation_id_seq TO devuser;
+
+-- Grant permissions for PostgREST (api_request_logs)
+GRANT SELECT, INSERT, UPDATE ON api_request_logs TO devuser;
+GRANT USAGE ON SEQUENCE api_request_logs_id_seq TO devuser;
 
 -- Grant anonymous role access
 GRANT USAGE ON SCHEMA public TO web_anon;
