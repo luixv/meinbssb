@@ -1,7 +1,16 @@
 const express = require('express');
 const axios = require('axios');
 const https = require('https');
+const cors = require('cors');
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: false
+}));
 
 app.use(express.json());
 
@@ -67,12 +76,12 @@ app.post('/zmi-token', async (req, res) => {
     console.error('=== Error fetching token ===');
     console.error('Error message:', err.message);
     console.error('Error code:', err.code);
-    
+
     if (err.response) {
       // External server responded with error
       console.error('External server response status:', err.response.status);
       console.error('External server response data:', JSON.stringify(err.response.data));
-      
+
       return res.status(err.response.status).json({
         error: 'External token server error',
         status: err.response.status,
@@ -83,7 +92,7 @@ app.post('/zmi-token', async (req, res) => {
       console.error('No response from external token server');
       console.error('Error code:', err.code);
       console.error('Error cause:', err.cause);
-      
+
       // Provide more specific error information
       let errorDetail = 'No response from external server';
       if (err.code === 'ECONNREFUSED') {
@@ -95,7 +104,7 @@ app.post('/zmi-token', async (req, res) => {
       } else if (err.code === 'CERT_HAS_EXPIRED' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
         errorDetail = 'SSL certificate error';
       }
-      
+
       return res.status(503).json({
         error: 'Token server unreachable',
         code: err.code,
@@ -104,7 +113,7 @@ app.post('/zmi-token', async (req, res) => {
     } else {
       // Error setting up the request
       console.error('Request setup error:', err.message);
-      
+
       return res.status(500).json({
         error: 'Failed to fetch token',
         details: err.message
