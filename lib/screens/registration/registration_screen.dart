@@ -94,8 +94,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
       final loginMail = await widget.apiService.findeLoginMail(passNumber);
       if (loginMail.isNotEmpty) {
         setState(() {
-          _existingAccountMessage =
-              'Sie haben bereits einen MeinBSSB Account.\nBitte verwenden Sie ihre bekannten Zugangsdaten.';
+          _existingAccountMessage = Messages.existingAccountFound;
         });
       } else {
         setState(() {
@@ -160,6 +159,24 @@ class RegistrationScreenState extends State<RegistrationScreen> {
     }
 
     try {
+      // Check for existing MeinBSSB account
+      await _checkExistingAccount(_passNumberController.text);
+      if (_existingAccountMessage != null) {
+        setState(() {
+          _isRegistering = false;
+        });
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder:
+                (_) => RegistrationFailScreen(
+                  message: _existingAccountMessage!,
+                  userData: null,
+                ),
+          ),
+        );
+        return;
+      }
       // First find PersonID
       final personIdInt = await widget.apiService.authService
           .findePersonIDSimple(
@@ -182,15 +199,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                 ),
           ),
         );
-        return;
-      }
-
-      // Check for existing MeinBSSB account
-      await _checkExistingAccount(_passNumberController.text);
-      if (_existingAccountMessage != null) {
-        setState(() {
-          _isRegistering = false;
-        });
         return;
       }
 
@@ -339,118 +347,118 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                   Semantics(
-                  label: 'Vorname Eingabefeld',
-                  child: TextField(
-                    controller: _firstNameController,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: Messages.firstNameLabel,
-                      labelStyle: UIStyles.formLabelStyle.copyWith(
+                    label: 'Vorname Eingabefeld',
+                    child: TextField(
+                      controller: _firstNameController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: Messages.firstNameLabel,
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize:
+                              UIStyles.formLabelStyle.fontSize != null
+                                  ? UIStyles.formLabelStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor
+                                  : null,
+                        ),
+                      ),
+                      style: UIStyles.formValueStyle.copyWith(
                         fontSize:
-                            UIStyles.formLabelStyle.fontSize != null
-                                ? UIStyles.formLabelStyle.fontSize! *
+                            UIStyles.formValueStyle.fontSize != null
+                                ? UIStyles.formValueStyle.fontSize! *
                                     fontSizeProvider.scaleFactor
                                 : null,
                       ),
                     ),
-                    style: UIStyles.formValueStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueStyle.fontSize != null
-                              ? UIStyles.formValueStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor
-                              : null,
-                    ),
                   ),
-                ),
                   const SizedBox(height: UIConstants.spacingS),
                   Semantics(
-                  label: 'Nachname Eingabefeld',
-                  child: TextField(
-                    controller: _lastNameController,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: Messages.lastNameLabel,
-                      labelStyle: UIStyles.formLabelStyle.copyWith(
+                    label: 'Nachname Eingabefeld',
+                    child: TextField(
+                      controller: _lastNameController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: Messages.lastNameLabel,
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize:
+                              UIStyles.formLabelStyle.fontSize != null
+                                  ? UIStyles.formLabelStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor
+                                  : null,
+                        ),
+                      ),
+                      style: UIStyles.formValueStyle.copyWith(
                         fontSize:
-                            UIStyles.formLabelStyle.fontSize != null
-                                ? UIStyles.formLabelStyle.fontSize! *
+                            UIStyles.formValueStyle.fontSize != null
+                                ? UIStyles.formValueStyle.fontSize! *
                                     fontSizeProvider.scaleFactor
                                 : null,
                       ),
                     ),
-                    style: UIStyles.formValueStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueStyle.fontSize != null
-                              ? UIStyles.formValueStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor
-                              : null,
-                    ),
                   ),
-                ),
                   const SizedBox(height: UIConstants.spacingS),
                   Semantics(
-                  label: 'E-Mail Eingabefeld',
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'E-Mail',
-                      errorText: emailError,
-                      labelStyle: UIStyles.formLabelStyle.copyWith(
+                    label: 'E-Mail Eingabefeld',
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'E-Mail',
+                        errorText: emailError,
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize:
+                              UIStyles.formLabelStyle.fontSize != null
+                                  ? UIStyles.formLabelStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor
+                                  : null,
+                        ),
+                      ),
+                      style: UIStyles.formValueStyle.copyWith(
                         fontSize:
-                            UIStyles.formLabelStyle.fontSize != null
-                                ? UIStyles.formLabelStyle.fontSize! *
+                            UIStyles.formValueStyle.fontSize != null
+                                ? UIStyles.formValueStyle.fontSize! *
                                     fontSizeProvider.scaleFactor
                                 : null,
                       ),
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      enableInteractiveSelection: true,
+                      enableSuggestions: true,
+                      autocorrect: false,
+                      onChanged: (value) {
+                        setState(() {
+                          validateEmail(value);
+                        });
+                      },
                     ),
-                    style: UIStyles.formValueStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueStyle.fontSize != null
-                              ? UIStyles.formValueStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor
-                              : null,
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    enableInteractiveSelection: true,
-                    enableSuggestions: true,
-                    autocorrect: false,
-                    onChanged: (value) {
-                      setState(() {
-                        validateEmail(value);
-                      });
-                    },
                   ),
-                ),
                   const SizedBox(height: UIConstants.spacingS),
                   Semantics(
-                  label: 'Schützenausweisnummer Eingabefeld',
-                  child: TextField(
-                    controller: _passNumberController,
-                    decoration: UIStyles.formInputDecoration.copyWith(
-                      labelText: 'Schützenausweisnummer',
-                      errorText: passNumberError,
-                      labelStyle: UIStyles.formLabelStyle.copyWith(
+                    label: 'Schützenausweisnummer Eingabefeld',
+                    child: TextField(
+                      controller: _passNumberController,
+                      decoration: UIStyles.formInputDecoration.copyWith(
+                        labelText: 'Schützenausweisnummer',
+                        errorText: passNumberError,
+                        labelStyle: UIStyles.formLabelStyle.copyWith(
+                          fontSize:
+                              UIStyles.formLabelStyle.fontSize != null
+                                  ? UIStyles.formLabelStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor
+                                  : null,
+                        ),
+                      ),
+                      style: UIStyles.formValueStyle.copyWith(
                         fontSize:
-                            UIStyles.formLabelStyle.fontSize != null
-                                ? UIStyles.formLabelStyle.fontSize! *
+                            UIStyles.formValueStyle.fontSize != null
+                                ? UIStyles.formValueStyle.fontSize! *
                                     fontSizeProvider.scaleFactor
                                 : null,
                       ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        setState(() {
+                          validatePassNumber(value);
+                        });
+                      },
                     ),
-                    style: UIStyles.formValueStyle.copyWith(
-                      fontSize:
-                          UIStyles.formValueStyle.fontSize != null
-                              ? UIStyles.formValueStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor
-                              : null,
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        validatePassNumber(value);
-                      });
-                    },
                   ),
-                ),
                   if (passNumberError != null)
                     Semantics(
                       label: 'Fehlermeldung: $passNumberError',
@@ -459,43 +467,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                         child: Text(
                           passNumberError!,
                           style: UIStyles.errorStyle,
-                        ),
-                      ),
-                    ),
-                  if (_existingAccountMessage != null)
-                    Semantics(
-                      label: 'Warnung: $_existingAccountMessage',
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: Container(
-                          padding: const EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(
-                            color: UIConstants.errorColor.withOpacity(0.1),
-                            border: Border.all(
-                              color: UIConstants.errorColor,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: UIConstants.errorColor,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  _existingAccountMessage!,
-                                  style: UIStyles.bodyStyle.copyWith(
-                                    color: UIConstants.errorColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     ),
