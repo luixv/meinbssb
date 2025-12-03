@@ -459,17 +459,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       },
                     ),
                   ),
-                  if (passNumberError != null)
-                    Semantics(
-                      label: 'Fehlermeldung: $passNumberError',
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text(
-                          passNumberError!,
-                          style: UIStyles.errorStyle,
-                        ),
-                      ),
-                    ),
                   const SizedBox(height: UIConstants.spacingM),
                   Semantics(
                     label: 'Datenschutzbestimmungen akzeptieren Checkbox',
