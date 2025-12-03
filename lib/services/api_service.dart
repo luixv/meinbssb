@@ -168,7 +168,7 @@ class ApiService {
     return _authService.resetPasswordStep1(passNumber);
   }
 
- Future<Map<String, dynamic>> finalizeResetPassword(
+  Future<Map<String, dynamic>> finalizeResetPassword(
     String token,
     String personId,
     String newPassword,
@@ -176,7 +176,7 @@ class ApiService {
     return _authService.resetPasswordStep2(token, personId, newPassword);
   }
 
- Future<Map<String, dynamic>> myBSSBPasswortAendern(
+  Future<Map<String, dynamic>> myBSSBPasswortAendern(
     int personId,
     String newPassword,
   ) async {
@@ -186,17 +186,22 @@ class ApiService {
   //
   // --- User Service Methods ---
   //
- Future<UserData?> fetchPassdaten(int personId) async {
+
+  Future<String> findeLoginMail(String passNumber) async {
+    return _authService.fetchLoginEmail(passNumber);
+  }
+
+  Future<UserData?> fetchPassdaten(int personId) async {
     return _userService.fetchPassdaten(personId);
   }
 
- Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
+  Future<PassdatenAkzeptOrAktiv?> fetchPassdatenAkzeptierterOderAktiverPass(
     int? personId,
   ) async {
     return _userService.fetchPassdatenAkzeptierterOderAktiverPass(personId);
   }
 
- Future<bool> bssbAppPassantrag(
+  Future<bool> bssbAppPassantrag(
     List<Map<String, dynamic>> zves,
     int? passdatenId,
     int? personId,
@@ -214,14 +219,14 @@ class ApiService {
     );
   }
 
- Future<List<PassDataZVE>> fetchPassdatenZVE(
+  Future<List<PassDataZVE>> fetchPassdatenZVE(
     int passdatenId,
     int personId,
   ) async {
     return _userService.fetchPassdatenZVE(passdatenId, personId);
   }
 
- Future<bool> deleteMeinBSSBLogin(int webloginId) async {
+  Future<bool> deleteMeinBSSBLogin(int webloginId) async {
     final email = await getCachedUsername();
     if (email == null) {
       throw ArgumentError('Cached username (email) must not be null');
@@ -308,11 +313,15 @@ class ApiService {
     );
   }
 
-    Future<int> findePersonID2(String name, String passnummer) async {
+  Future<int> findePersonID2(String name, String passnummer) async {
     return _authService.findePersonID2(name, passnummer);
   }
 
-  Future<int> findePersonIDSimple(String name, String nachname, String passnummer) async {
+  Future<int> findePersonIDSimple(
+    String name,
+    String nachname,
+    String passnummer,
+  ) async {
     return _authService.findePersonIDSimple(name, nachname, passnummer);
   }
 
@@ -414,7 +423,10 @@ class ApiService {
     return await _vereinService.fetchVereine();
   }
 
-  Future<List<Map<String, dynamic>>> fetchVereinFunktionaer(int vereinId, int funktyp) async {
+  Future<List<Map<String, dynamic>>> fetchVereinFunktionaer(
+    int vereinId,
+    int funktyp,
+  ) async {
     return await _vereinService.fetchVereinFunktionaer(vereinId, funktyp);
   }
 

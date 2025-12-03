@@ -30,6 +30,8 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _loginButtonFocusNode = FocusNode();
+  final FocusNode _checkboxFocusNode = FocusNode();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String _errorMessage = '';
@@ -37,6 +39,10 @@ class LoginScreenState extends State<LoginScreen> {
   UserData? _userData;
   bool _isLoggedIn = false;
   bool _rememberMe = false;
+  bool _hasEmailKeyboardFocus = false;
+  bool _hasPasswordKeyboardFocus = false;
+  bool _hasLoginButtonKeyboardFocus = false;
+  bool _hasCheckboxKeyboardFocus = false;
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
@@ -48,6 +54,10 @@ class LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _initRememberMe();
+    _emailFocusNode.addListener(_onEmailFocusChange);
+    _passwordFocusNode.addListener(_onPasswordFocusChange);
+    _loginButtonFocusNode.addListener(_onLoginButtonFocusChange);
+    _checkboxFocusNode.addListener(_onCheckboxFocusChange);
   }
 
   Future<void> _initRememberMe() async {
@@ -91,9 +101,48 @@ class LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.removeListener(_onEmailFocusChange);
+    _passwordFocusNode.removeListener(_onPasswordFocusChange);
+    _loginButtonFocusNode.removeListener(_onLoginButtonFocusChange);
+    _checkboxFocusNode.removeListener(_onCheckboxFocusChange);
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
+    _loginButtonFocusNode.dispose();
+    _checkboxFocusNode.dispose();
     super.dispose();
+  }
+
+  void _onEmailFocusChange() {
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasEmailKeyboardFocus = _emailFocusNode.hasFocus && isKeyboardMode;
+    });
+  }
+
+  void _onPasswordFocusChange() {
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasPasswordKeyboardFocus = _passwordFocusNode.hasFocus && isKeyboardMode;
+    });
+  }
+
+  void _onLoginButtonFocusChange() {
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasLoginButtonKeyboardFocus =
+          _loginButtonFocusNode.hasFocus && isKeyboardMode;
+    });
+  }
+
+  void _onCheckboxFocusChange() {
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    setState(() {
+      _hasCheckboxKeyboardFocus = _checkboxFocusNode.hasFocus && isKeyboardMode;
+    });
   }
 
   Future<void> _handleLogin() async {
@@ -274,9 +323,24 @@ class LoginScreenState extends State<LoginScreen> {
                     UIStyles.formLabelStyle.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
+              fillColor: _hasEmailKeyboardFocus ? Colors.yellow.shade100 : null,
+              filled: _hasEmailKeyboardFocus,
+              focusedBorder:
+                  _hasEmailKeyboardFocus
+                      ? OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.yellow.shade700,
+                          width: 2.0,
+                        ),
+                      )
+                      : UIStyles.formInputDecoration.focusedBorder,
             ),
+            onEditingComplete: () {
+              // Move focus to password field when Tab is pressed
+              _passwordFocusNode.requestFocus();
+            },
             onSubmitted: (value) {
-              // Move focus to password field when Tab or Enter is pressed
+              // Move focus to password field when Enter is pressed
               _passwordFocusNode.requestFocus();
             },
           ),
@@ -311,15 +375,30 @@ class LoginScreenState extends State<LoginScreen> {
                     UIStyles.formLabelStyle.fontSize! *
                     fontSizeProvider.scaleFactor,
               ),
+              fillColor:
+                  _hasPasswordKeyboardFocus ? Colors.yellow.shade100 : null,
+              filled: _hasPasswordKeyboardFocus,
+              focusedBorder:
+                  _hasPasswordKeyboardFocus
+                      ? OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.yellow.shade700,
+                          width: 2.0,
+                        ),
+                      )
+                      : UIStyles.formInputDecoration.focusedBorder,
               suffixIcon: Semantics(
-                label: _isPasswordVisible 
-                    ? 'Passwort verbergen' 
-                    : 'Passwort anzeigen',
+                label:
+                    _isPasswordVisible
+                        ? 'Passwort verbergen'
+                        : 'Passwort anzeigen',
                 hint: 'Tippen, um die Passwort-Sichtbarkeit zu ändern',
                 button: true,
                 child: IconButton(
                   icon: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                   ),
                   tooltip: 'Passwort anzeigen/verbergen',
                   onPressed: () {
@@ -407,24 +486,51 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildRememberMeCheckbox() {
-    return Semantics(
-      label: 'Angemeldet bleiben',
-      hint: 'Aktivieren, um beim nächsten Start automatisch eingeloggt zu bleiben',
-      value: _rememberMe ? 'Aktiviert' : 'Nicht aktiviert',
-      toggled: _rememberMe,
-      child: Row(
-        children: [
-          Checkbox(
-            value: _rememberMe,
-            onChanged: (bool? value) {
+    return Focus(
+      focusNode: _checkboxFocusNode,
+      child: Semantics(
+        label: 'Angemeldet bleiben',
+        hint:
+            'Aktivieren, um beim nächsten Start automatisch eingeloggt zu bleiben',
+        value: _rememberMe ? 'Aktiviert' : 'Nicht aktiviert',
+        toggled: _rememberMe,
+        child: Container(
+          decoration:
+              _hasCheckboxKeyboardFocus
+                  ? BoxDecoration(
+                    border: Border.all(
+                      color: Colors.yellow.shade700,
+                      width: 3.0,
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                  )
+                  : null,
+          child: InkWell(
+            onTap: () {
               setState(() {
-                _rememberMe = value ?? false;
+                _rememberMe = !_rememberMe;
               });
             },
-            activeColor: _appColor,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  value: _rememberMe,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _rememberMe = value ?? false;
+                    });
+                  },
+                  activeColor: _appColor,
+                ),
+                const ScaledText(
+                  'Angemeldet bleiben',
+                  style: UIStyles.bodyStyle,
+                ),
+              ],
+            ),
           ),
-          const ScaledText('Angemeldet bleiben', style: UIStyles.bodyStyle),
-        ],
+        ),
       ),
     );
   }
@@ -447,112 +553,109 @@ class LoginScreenState extends State<LoginScreen> {
             child: Padding(
               padding: UIConstants.screenPadding,
               child: Semantics(
-                label: 'Login-Bereich. Geben Sie Ihre Anmeldedaten ein, um sich anzumelden.',
-                child: Focus(
-                  autofocus: true,
-                  onKey: (node, event) {
-                    // Only handle Enter key for Windows and Web
-                    if ((event.isKeyPressed(LogicalKeyboardKey.enter) ||
-                            event.isKeyPressed(
-                              LogicalKeyboardKey.numpadEnter,
-                            )) &&
-                        !_isLoading) {
-                      _handleLogin();
-                      return KeyEventResult.handled;
-                    }
-                    return KeyEventResult.ignored;
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ExcludeSemantics(
-                        child: widget.logoWidget ?? const LogoWidget(),
+                label:
+                    'Login-Bereich. Geben Sie Ihre Anmeldedaten ein, um sich anzumelden.',
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExcludeSemantics(
+                      child: widget.logoWidget ?? const LogoWidget(),
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    Semantics(
+                      header: true,
+                      label: '${Messages.loginTitle}, Überschrift',
+                      hint: 'Login-Bereich für registrierte Nutzer',
+                      child: ScaledText(
+                        Messages.loginTitle,
+                        style: UIStyles.headerStyle.copyWith(color: _appColor),
                       ),
-                      const SizedBox(height: UIConstants.spacingS),
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    if (_errorMessage.isNotEmpty)
                       Semantics(
-                        header: true,
-                        label: '${Messages.loginTitle}, Überschrift',
-                        hint: 'Login-Bereich für registrierte Nutzer',
+                        label: 'Fehlermeldung: $_errorMessage',
+                        hint:
+                            'Fehler beim Login. Bitte überprüfen Sie Ihre Eingaben.',
+                        liveRegion: true,
                         child: ScaledText(
-                          Messages.loginTitle,
-                          style: UIStyles.headerStyle.copyWith(
-                            color: _appColor,
-                          ),
+                          _errorMessage,
+                          style: UIStyles.errorStyle,
                         ),
                       ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      if (_errorMessage.isNotEmpty)
-                        Semantics(
-                          label: 'Fehlermeldung: $_errorMessage',
-                          hint:
-                              'Fehler beim Login. Bitte überprüfen Sie Ihre Eingaben.',
-                          liveRegion: true,
-                          child: ScaledText(
-                            _errorMessage,
-                            style: UIStyles.errorStyle,
-                          ),
-                        ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      _buildEmailField(),
-                      const SizedBox(height: UIConstants.spacingS),
-                      _buildPasswordField(),
-                      const SizedBox(height: UIConstants.spacingS),
-                      _buildRememberMeCheckbox(),
-                      const SizedBox(height: UIConstants.spacingM),
-                      Focus(
-                        onKey: (node, event) {
-                          if ((event.isKeyPressed(LogicalKeyboardKey.enter) ||
-                                  event.isKeyPressed(
-                                    LogicalKeyboardKey.numpadEnter,
-                                  )) &&
-                              !_isLoading) {
-                            _handleLogin();
-                            return KeyEventResult.handled;
-                          }
-                          return KeyEventResult.ignored;
-                        },
-                        child: Semantics(
-                          label: 'Login Button',
-                          hint: 'Tippen, um sich einzuloggen',
-                          button: true,
+                    const SizedBox(height: UIConstants.spacingM),
+                    _buildEmailField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildPasswordField(),
+                    const SizedBox(height: UIConstants.spacingS),
+                    _buildRememberMeCheckbox(),
+                    const SizedBox(height: UIConstants.spacingM),
+                    Focus(
+                      focusNode: _loginButtonFocusNode,
+                      onKey: (node, event) {
+                        if ((event.isKeyPressed(LogicalKeyboardKey.enter) ||
+                                event.isKeyPressed(
+                                  LogicalKeyboardKey.numpadEnter,
+                                )) &&
+                            !_isLoading) {
+                          _handleLogin();
+                          return KeyEventResult.handled;
+                        }
+                        return KeyEventResult.ignored;
+                      },
+                      child: Semantics(
+                        label: 'Login Button',
+                        hint: 'Tippen, um sich einzuloggen',
+                        button: true,
+                        child: Container(
+                          decoration:
+                              _hasLoginButtonKeyboardFocus
+                                  ? BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.yellow.shade700,
+                                      width: 3.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  )
+                                  : null,
                           child: _buildLoginButton(),
                         ),
                       ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Focus(
-                            child: Semantics(
-                              label: 'Passwort vergessen Button',
-                              hint: 'Tippen, um das Passwort zurückzusetzen',
-                              child: _buildForgotPasswordButton(),
-                            ),
-                          ),
-                          Focus(
-                            child: Semantics(
-                              label: 'Hilfe Button',
-                              hint:
-                                  'Tippen, um Hilfe und Informationen zu erhalten',
-                              child: _buildHelpButton(),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      Center(
-                        child: Focus(
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Focus(
                           child: Semantics(
-                            label: 'Registrieren Button',
-                            hint:
-                                'Tippen, um ein neues Benutzerkonto zu erstellen',
-                            child: _buildRegisterButton(),
+                            label: 'Passwort vergessen Button',
+                            hint: 'Tippen, um das Passwort zurückzusetzen',
+                            child: _buildForgotPasswordButton(),
                           ),
                         ),
+                        Focus(
+                          child: Semantics(
+                            label: 'Hilfe Button',
+                            hint:
+                                'Tippen, um Hilfe und Informationen zu erhalten',
+                            child: _buildHelpButton(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: UIConstants.spacingS),
+                    Center(
+                      child: Focus(
+                        child: Semantics(
+                          label: 'Registrieren Button',
+                          hint:
+                              'Tippen, um ein neues Benutzerkonto zu erstellen',
+                          child: _buildRegisterButton(),
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
