@@ -185,6 +185,15 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         return;
       }
 
+      // Check for existing MeinBSSB account
+      await _checkExistingAccount(_passNumberController.text);
+      if (_existingAccountMessage != null) {
+        setState(() {
+          _isRegistering = false;
+        });
+        return;
+      }
+
       // Check if user already exists in PostgreSQL
       final existingUser = await widget.apiService.authService.postgrestService
           .getUserByPassNumber(_passNumberController.text);
@@ -439,8 +448,6 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                       setState(() {
                         validatePassNumber(value);
                       });
-                      // Check for existing account
-                      _checkExistingAccount(value);
                     },
                   ),
                 ),
