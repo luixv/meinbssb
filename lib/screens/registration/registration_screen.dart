@@ -416,7 +416,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
                                     fontSizeProvider.scaleFactor
                                 : null,
                       ),
-                      keyboardType: TextInputType.emailAddress,
+                      keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       enableInteractiveSelection: true,
                       enableSuggestions: true,

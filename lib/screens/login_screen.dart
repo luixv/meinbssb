@@ -283,7 +283,7 @@ class LoginScreenState extends State<LoginScreen> {
             key: const Key('usernameField'),
             controller: _emailController,
             focusNode: _emailFocusNode,
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.text,
             textInputAction: TextInputAction.next,
             enableInteractiveSelection: true,
             enableSuggestions: true,
