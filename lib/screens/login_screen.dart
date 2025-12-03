@@ -448,21 +448,7 @@ class LoginScreenState extends State<LoginScreen> {
               padding: UIConstants.screenPadding,
               child: Semantics(
                 label: 'Login-Bereich. Geben Sie Ihre Anmeldedaten ein, um sich anzumelden.',
-                child: Focus(
-                  autofocus: true,
-                  onKey: (node, event) {
-                    // Only handle Enter key for Windows and Web
-                    if ((event.isKeyPressed(LogicalKeyboardKey.enter) ||
-                            event.isKeyPressed(
-                              LogicalKeyboardKey.numpadEnter,
-                            )) &&
-                        !_isLoading) {
-                      _handleLogin();
-                      return KeyEventResult.handled;
-                    }
-                    return KeyEventResult.ignored;
-                  },
-                  child: Column(
+                child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -553,7 +539,6 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                ),
               ),
             ),
           ),
