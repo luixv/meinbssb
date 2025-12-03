@@ -435,7 +435,6 @@ class AuthService {
   /// Fetches the login email for a given passnummer using a special base URL from config.json.
   Future<String> fetchLoginEmail(String passnummer) async {
     try {
-      // Build base URL (e.g., https://webintern.bssb.bayern:56400/rest/zmi/api1)
       final baseUrl = ConfigService.buildBaseUrlForServer(
         _configService,
         name: 'api1Base',
@@ -445,7 +444,9 @@ class AuthService {
         endpoint,
         overrideBaseUrl: baseUrl,
       );
+      LoggerService.logInfo('Response is: $response');
       if (response is List && response.isNotEmpty) {
+        LoggerService.logInfo('$response');
         final loginMail = response[0]['LOGINMAIL'];
         if (loginMail is String) {
           return loginMail;

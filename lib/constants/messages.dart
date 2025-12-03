@@ -23,6 +23,8 @@ class Messages {
   static const String privacyPolicyLinkText = 'Datenschutzbestimmungen';
 
   // Registration Process Messages
+  static const String existingAccountFound =
+      'Sie haben bereits einen MeinBSSB Account.\nBitte verwenden Sie ihre bekannten Zugangsdaten.';
   static const String noPersonIdFound =
       'Die eingegebenen Daten stimmen nicht mit den Daten in ZMI überein.';
   static const String configError =
