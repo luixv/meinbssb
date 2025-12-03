@@ -552,7 +552,7 @@ void main() {
           expect(result, {
             'ResultType': 0,
             'ResultMessage':
-                'Offline-Anmeldung fehlgeschlagen: Kein Cache oder falsches Passwort.',
+                'Netzwerkfehler: Network error during online login. Bitte überprüfen Sie Ihre Internetverbindung.',
           });
         },
       );
@@ -673,9 +673,7 @@ void main() {
       });
 
       test('returns PERSONID if person is found', () async {
-        when(
-          mockHttpClient.get('FindePersonID2/John/40101205'),
-        ).thenAnswer(
+        when(mockHttpClient.get('FindePersonID2/John/40101205')).thenAnswer(
           (_) async => [
             {
               'NAMEN': 'Doe',
@@ -702,15 +700,9 @@ void main() {
       });
 
       test('returns 0 if PERSONID is null', () async {
-        when(
-          mockHttpClient.get('FindePersonID2/John/40101205'),
-        ).thenAnswer(
+        when(mockHttpClient.get('FindePersonID2/John/40101205')).thenAnswer(
           (_) async => [
-            {
-              'NAMEN': 'Doe',
-              'VORNAME': 'John',
-              'PERSONID': null,
-            },
+            {'NAMEN': 'Doe', 'VORNAME': 'John', 'PERSONID': null},
           ],
         );
         final result = await authService.findePersonID2('John', '40101205');
@@ -718,15 +710,9 @@ void main() {
       });
 
       test('returns 0 if PERSONID is 0', () async {
-        when(
-          mockHttpClient.get('FindePersonID2/John/40101205'),
-        ).thenAnswer(
+        when(mockHttpClient.get('FindePersonID2/John/40101205')).thenAnswer(
           (_) async => [
-            {
-              'NAMEN': 'Doe',
-              'VORNAME': 'John',
-              'PERSONID': 0,
-            },
+            {'NAMEN': 'Doe', 'VORNAME': 'John', 'PERSONID': 0},
           ],
         );
         final result = await authService.findePersonID2('John', '40101205');
@@ -806,7 +792,11 @@ void main() {
             },
           ],
         );
-        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        final result = await authService.findePersonIDSimple(
+          'Max',
+          'Mustermann',
+          '40101205',
+        );
         expect(result, 439287);
       });
 
@@ -821,7 +811,11 @@ void main() {
             overrideBaseUrl: expectedBaseUrl,
           ),
         ).thenAnswer((_) async => []);
-        final result = await authService.findePersonIDSimple('NoFirst', 'NoName', '00000000');
+        final result = await authService.findePersonIDSimple(
+          'NoFirst',
+          'NoName',
+          '00000000',
+        );
         expect(result, 0);
       });
 
@@ -837,14 +831,14 @@ void main() {
           ),
         ).thenAnswer(
           (_) async => [
-            {
-              'NAMEN': 'Mustermann',
-              'VORNAME': 'Max',
-              'PERSONID': null,
-            },
+            {'NAMEN': 'Mustermann', 'VORNAME': 'Max', 'PERSONID': null},
           ],
         );
-        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        final result = await authService.findePersonIDSimple(
+          'Max',
+          'Mustermann',
+          '40101205',
+        );
         expect(result, 0);
       });
 
@@ -860,14 +854,14 @@ void main() {
           ),
         ).thenAnswer(
           (_) async => [
-            {
-              'NAMEN': 'Mustermann',
-              'VORNAME': 'Max',
-              'PERSONID': 0,
-            },
+            {'NAMEN': 'Mustermann', 'VORNAME': 'Max', 'PERSONID': 0},
           ],
         );
-        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        final result = await authService.findePersonIDSimple(
+          'Max',
+          'Mustermann',
+          '40101205',
+        );
         expect(result, 0);
       });
 
@@ -882,7 +876,11 @@ void main() {
             overrideBaseUrl: expectedBaseUrl,
           ),
         ).thenAnswer((_) async => {'PERSONID': 439287});
-        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        final result = await authService.findePersonIDSimple(
+          'Max',
+          'Mustermann',
+          '40101205',
+        );
         expect(result, 0);
       });
 
@@ -897,7 +895,11 @@ void main() {
             overrideBaseUrl: expectedBaseUrl,
           ),
         ).thenAnswer((_) async => ['invalid']);
-        final result = await authService.findePersonIDSimple('Max', 'Mustermann', '40101205');
+        final result = await authService.findePersonIDSimple(
+          'Max',
+          'Mustermann',
+          '40101205',
+        );
         expect(result, 0);
       });
 
@@ -912,7 +914,11 @@ void main() {
             overrideBaseUrl: expectedBaseUrl,
           ),
         ).thenThrow(Exception('fail'));
-        final result = await authService.findePersonIDSimple('Error', 'Error', '99999999');
+        final result = await authService.findePersonIDSimple(
+          'Error',
+          'Error',
+          '99999999',
+        );
         expect(result, 0);
       });
 
