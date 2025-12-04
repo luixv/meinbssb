@@ -1,22 +1,12 @@
 {
-  // --- Existing project settings ---
   "cmake.ignoreCMakeListsMissing": true,
   "java.configuration.updateBuildConfiguration": "interactive",
-  
-
   "github-actions.workflows.validate": true,
-
-  // --- YAML / GitHub Actions fixes ---
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "/.github/workflows/*.yml"
   },
-
-  // Suppress false GitHub Actions context warnings like CODECOV_TOKEN
   "github-actions.workflows.ignoreContextErrors": true,
-
-  // Optional: improves YAML IntelliSense and disables overly strict validation
   "yaml.validate": true,
-
   "yaml.customTags": [
     "!Ref",
     "!Sub",
@@ -27,14 +17,11 @@
     "!Join",
     "!Select"
   ],
-
-"yaml.format.enable": true,
-"yaml.trace.server": "off",
-"files.eol": "\n",
-"editor.insertSpaces": true,
-"editor.tabSize": 2,
-
-  // --- Dart/Flutter settings for Go to Definition ---
+  "yaml.format.enable": true,
+  "yaml.trace.server": "off",
+  "files.eol": "\n",
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
   "dart.enableSdkFormatter": true,
   "dart.enableSnippets": true,
   "dart.analysisExcludedFolders": [],
@@ -48,11 +35,10 @@
   "dart.allowAnalytics": false,
   "dart.analysisServerFolding": true,
   "dart.closingLabels": true,
-  "dart.flutterSdkPath": null,
+  "dart.flutterSdkPath": ".fvm/versions/3.38.3",
   "dart.flutterSdkPaths": [],
   "dart.onlyAnalyzeProjectsWithOpenFiles": false,
   "dart.allowTestsOutsideTestFolder": false,
   "dart.previewLsp": true,
   "dart.useLegacyAnalyzerProtocol": false
-
 }

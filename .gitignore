@@ -60,3 +60,6 @@ windows/flutter/generated_plugins.cmake
 *.h
 *.cc
 
+# FVM Version Cache
+.fvm/
+.fvmrc

@@ -1,10 +1,15 @@
+
+env:
+  FLUTTER_VERSION: '3.35.5'
+  FLUTTER_CHANNEL: 'stable'
+
 name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main,pipeline]
+    branches: [ main, pipeline]
   pull_request:
-    branches: [ main,pipeline]
+    branches: [ main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,8 +30,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.5'
-          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
       - name: Install dependencies
         run: flutter pub get
@@ -42,8 +47,10 @@ jobs:
           files: ./coverage/lcov.info
           fail_ci_if_error: true
           
+
+          
   build-android:
-    name: Build Android (APK / AAB)
+    name: Build Android PROD (APK / AAB)
     needs: test
     runs-on: ubuntu-latest
     timeout-minutes: 40
@@ -54,8 +61,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.5'
-          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
       - name: Set up JDK 21
@@ -202,8 +209,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.5'
-          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
       - name: Extract version from pubspec.yaml
         id: version
@@ -232,59 +239,11 @@ jobs:
           name: release-${{ steps.version.outputs.version }}-web
           path: release_artifacts/release-${{ steps.version.outputs.version }}-web.zip
           if-no-files-found: ignore
-
-  build-windows:
-    name: Build Windows
-    needs: test
-    runs-on: windows-latest
-    timeout-minutes: 35
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.35.5'
-          channel: 'stable'
-          cache: true
-      - name: Extract version from pubspec.yaml
-        id: version
-        run: |
-          $VERSION = (Get-Content pubspec.yaml | Select-String '^version:').ToString().Split(':')[1].Trim() -replace '\+', '-'
-          echo "version=$VERSION" >> $env:GITHUB_OUTPUT
-          echo "Extracted version: $VERSION"
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Replace config for deployment
-        run: |
-          echo "Copying config.prod.json to config.json for deployment"
-          copy assets\config.prod.json assets\config.json
-          echo "Config file replaced successfully"
-      - name: Build Windows
-        run: flutter build windows
-      - name: Create versioned Windows archive
-        run: |
-          mkdir release_artifacts
-          # Copy and rename main executable
-          copy "build\windows\x64\runner\Release\meinbssb.exe" "release_artifacts\meinbssb-${{ steps.version.outputs.version }}.exe"
-          # Copy other necessary files
-          copy "build\windows\x64\runner\Release\*.dll" "release_artifacts\"
-          if (Test-Path "build\windows\x64\runner\Release\data") {
-            xcopy "build\windows\x64\runner\Release\data" "release_artifacts\data" /E /I
-          }
-          # Create ZIP
-          Compress-Archive -Path "release_artifacts\*" -DestinationPath "release_artifacts\release-${{ steps.version.outputs.version }}-windows.zip"
-      - name: Upload Windows Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-${{ steps.version.outputs.version }}-windows
-          path: release_artifacts/release-${{ steps.version.outputs.version }}-windows.zip
-          if-no-files-found: error
   
-          
           
   release:
     name: Create Release
-    needs: [build-android, build-web, build-windows]
+    needs: [build-android, build-web]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.ref == 'refs/heads/main'
