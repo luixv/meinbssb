@@ -2,7 +2,7 @@
 env:
   FLUTTER_VERSION: '3.38.3'
   FLUTTER_CHANNEL: 'stable'
-  INCREMENT_BUILD_NUMBER: 'false'
+  INCREMENT_BUILD_NUMBER: 'true'
 
 name: Flutter CI/CD
 
@@ -135,7 +135,7 @@ jobs:
       # --------------------------------------------------
       # Build APK / AAB with signing + validate AAB
       # --------------------------------------------------
-      - name: Build APK and AAB + Validate
+      - name: Build PROD APK and AAB + Validate
         run: |
           export FLUTTER_WEB=false
           export KEY_STORE_FILE=$GITHUB_WORKSPACE/android/app/upload-keystore.jks
