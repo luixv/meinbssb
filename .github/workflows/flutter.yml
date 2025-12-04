@@ -131,11 +131,18 @@ jobs:
           fi
           echo "🔐 Keystore found at $KEY_STORE_FILE"
 
-          echo "🏗️ Building APK..."
-          flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
 
-          echo "🏗️ Building AAB..."
-          flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
+          # echo "🏗️ Building APK..."
+          # flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
+          echo "Generating dummy APK file for testing..."
+          mkdir -p build/app/outputs/flutter-apk
+          echo "This is a dummy APK file" > build/app/outputs/flutter-apk/app-release.apk
+
+          # echo "🏗️ Building AAB..."
+          # flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
+          echo "Generating dummy AAB file for testing..."
+          mkdir -p build/app/outputs/bundle/release
+          echo "This is a dummy AAB file" > build/app/outputs/bundle/release/app-release.aab
 
           echo "🧪 Validating AAB..."
           curl -L -o bundletool.jar https://github.com/google/bundletool/releases/download/1.14.1/bundletool-all-1.14.1.jar
