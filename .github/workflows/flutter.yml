@@ -404,10 +404,9 @@ jobs:
       - name: Extract version for release
         id: release_version
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version for release: $VERSION"
-      
       - name: Prepare Release Assets
         run: |
           RELEASE_DIR="$GITHUB_WORKSPACE/release_assets"
@@ -421,25 +420,39 @@ jobs:
           echo "==== DEBUG: List all files in artifacts recursively ===="
           find artifacts -type f || true
 
-            # Android - copy the APK and AAB files
-            if [ -d "artifacts/release-${VERSION}-apk" ]; then
-              echo "cp artifacts/release-${VERSION}-apk/meinbssb-PROD-${VERSION}.apk $RELEASE_DIR/"
-              cp "artifacts/release-${VERSION}-apk/meinbssb-PROD-${VERSION}.apk" "$RELEASE_DIR/"
-            else
-              echo "::warning::No Android APK artifact found for version $VERSION"
-            fi
+          # Android - copy the APK and AAB files
+          if [ -d "artifacts/release-${VERSION}-apk-PROD" ]; then
+            echo "cp artifacts/release-${VERSION}-apk-PROD/meinbssb-PROD-${VERSION}.apk $RELEASE_DIR/"
+            cp "artifacts/release-${VERSION}-apk-PROD/meinbssb-PROD-${VERSION}.apk" "$RELEASE_DIR/"
+          else
+            echo "::warning::No Android APK artifact found for version $VERSION"
+          fi
 
-            if [ -d "artifacts/release-${VERSION}-aab" ]; then
-              echo "cp artifacts/release-${VERSION}-aab/meinbssb-PROD-${VERSION}.aab $RELEASE_DIR/"
-              cp "artifacts/release-${VERSION}-aab/meinbssb-PROD-${VERSION}.aab" "$RELEASE_DIR/"
-            else
-              echo "::warning::No Android AAB artifact found for version $VERSION"
-            fi
+          if [ -d "artifacts/release-${VERSION}-aab-PROD" ]; then
+            echo "cp artifacts/release-${VERSION}-aab-PROD/meinbssb-PROD-${VERSION}.aab $RELEASE_DIR/"
+            cp "artifacts/release-${VERSION}-aab-PROD/meinbssb-PROD-${VERSION}.aab" "$RELEASE_DIR/"
+          else
+            echo "::warning::No Android AAB artifact found for version $VERSION"
+          fi
+
+          if [ -d "artifacts/release-${VERSION}-apk-TEST" ]; then
+            echo "cp artifacts/release-${VERSION}-apk-TEST/meinbssb-TEST-${VERSION}.apk $RELEASE_DIR/"
+            cp "artifacts/release-${VERSION}-apk-TEST/meinbssb-TEST-${VERSION}.apk" "$RELEASE_DIR/"
+          else
+            echo "::warning::No Android APK TEST artifact found for version $VERSION"
+          fi
+
+          if [ -d "artifacts/release-${VERSION}-aab-TEST" ]; then
+            echo "cp artifacts/release-${VERSION}-aab-TEST/meinbssb-TEST-${VERSION}.aab $RELEASE_DIR/"
+            cp "artifacts/release-${VERSION}-aab-TEST/meinbssb-TEST-${VERSION}.aab" "$RELEASE_DIR/"
+          else
+            echo "::warning::No Android AAB TEST artifact found for version $VERSION"
+          fi
 
           # Web - copy the entire build directory
-          if [ -d "artifacts/release-$VERSION-web" ]; then
-            echo "cp -r artifacts/release-$VERSION-web $RELEASE_DIR/web-$VERSION"
-            cp -r "artifacts/release-$VERSION-web" "$RELEASE_DIR/web-$VERSION"
+          if [ -d "artifacts/release-${VERSION}-web" ]; then
+            echo "cp -r artifacts/release-${VERSION}-web $RELEASE_DIR/web-${VERSION}"
+            cp -r "artifacts/release-${VERSION}-web" "$RELEASE_DIR/web-${VERSION}"
           else
             echo "::warning::No Web build artifacts found for version $VERSION"
           fi
