@@ -1,6 +1,6 @@
 
 env:
-  FLUTTER_VERSION: '3.35.5'
+  FLUTTER_VERSION: '3.38.3'
   FLUTTER_CHANNEL: 'stable'
 
 name: Flutter CI/CD
@@ -47,9 +47,8 @@ jobs:
           files: ./coverage/lcov.info
           fail_ci_if_error: true
           
-
-          
-  build-android:
+      
+  build-android-prod:
     name: Build Android PROD (APK / AAB)
     needs: test
     runs-on: ubuntu-latest
@@ -154,7 +153,7 @@ jobs:
 
           if [ -f "$APK_PATH" ]; then
             cp "$APK_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
-            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
+            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip release_artifacts/meinbssb-prod-${{ steps.version.outputs.version }}.apk
             echo "✅ APK packaged successfully"
           else
             echo "::warning::APK not found at $APK_PATH"
@@ -162,16 +161,10 @@ jobs:
 
           if [ -f "$AAB_PATH" ]; then
             cp "$AAB_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
-            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-prod-${{ steps.version.outputs.version }}.aab
             echo "✅ AAB packaged successfully"
           else
             echo "::warning::AAB not found at $AAB_PATH"
-          fi
-
-          # Ensure zipped APK is uploaded as artifact for release step
-          mkdir -p release_zip_artifacts
-          if [ -f "release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip" ]; then
-            cp "release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip" release_zip_artifacts/
           fi
 
       # --------------------------------------------------
@@ -185,13 +178,6 @@ jobs:
           path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
           if-no-files-found: error
 
-      - name: Upload APK ZIP
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-${{ steps.version.outputs.version }}-apk-zip
-          path: release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip
-          if-no-files-found: error
-
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
@@ -199,6 +185,9 @@ jobs:
           path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
           if-no-files-found: error
 
+
+
+          
   build-web:
     name: Build Web
     needs: test
@@ -239,11 +228,10 @@ jobs:
           name: release-${{ steps.version.outputs.version }}-web
           path: release_artifacts/release-${{ steps.version.outputs.version }}-web.zip
           if-no-files-found: ignore
-  
-          
+         
   release:
     name: Create Release
-    needs: [build-android, build-web]
+    needs: [build-android-prod, build-web]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.ref == 'refs/heads/main'
