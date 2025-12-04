@@ -160,32 +160,21 @@ class ImageService {
   ) async {
     final endpoint = 'Schuetzenausweis/JPG/$personId';
 
-    final online = await isDeviceOnline();
-    if (online) {
-      try {
-        final fetchedImage = await _httpClient.getBytes(endpoint);
+    try {
+      final fetchedImage = await _httpClient.getBytes(endpoint);
 
-        await cacheSchuetzenausweis(
-          personId,
-          fetchedImage,
-          DateTime.now().millisecondsSinceEpoch,
-        );
-        return fetchedImage;
-      } catch (e) {
-        // If download fails, use any cached image (regardless of age)
-        final fallback = await getCachedSchuetzenausweis(
-          personId,
-          const Duration(days: 365 * 100),
-        );
-        if (fallback != null) return fallback;
-        throw Exception('Failed to fetch and no cache available');
-      }
-    } else {
-      // Offline: use any cached image, regardless of age
+      await cacheSchuetzenausweis(
+        personId,
+        fetchedImage,
+        DateTime.now().millisecondsSinceEpoch,
+      );
+      return fetchedImage;
+    } catch (e) {
       final cachedImage = await getCachedSchuetzenausweis(
         personId,
         const Duration(days: 365 * 100),
       );
+      // If download fails, use any cached image (regardless of age)
       if (cachedImage != null) return cachedImage;
       throw Exception('Offline and no cache available');
     }
