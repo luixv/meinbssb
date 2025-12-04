@@ -374,7 +374,7 @@ jobs:
          
   release:
     name: Create Release
-    needs: [build-android-prod, build-web]
+    needs: [build-android-prod, build-android-test, build-web]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
