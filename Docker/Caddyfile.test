@@ -1,5 +1,5 @@
 {
-  local_certs
+  #local_certs
 }
 # Redirect HTTP to HTTPS
 http://meintest.bssb.de {
