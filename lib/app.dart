@@ -260,8 +260,8 @@ class _MyAppState extends State<MyApp> {
           }
         }
       } else if (fragment.isEmpty) {
-        // Empty fragment but not root - default to Schulungen-only system
-        initialRoute = '/schulungen_search';
+        // Empty fragment but not root - default to login
+        initialRoute = '/login';
       } else {
         // Any other route (like /home, /help, etc.) - use normal login system
         initialRoute = '/splash';
