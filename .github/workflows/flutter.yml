@@ -182,9 +182,6 @@ jobs:
           name: release-${{ steps.version.outputs.version }}-aab
           path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
           if-no-files-found: error
-
-
-
           
   build-web:
     name: Build Web
@@ -232,7 +229,7 @@ jobs:
     needs: [build-android-prod, build-web]
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'  # Disabled for testing; runs on all branches
     steps:
       - uses: actions/checkout@v4
         with:
