@@ -111,9 +111,8 @@ class RegistrationScreenState extends State<RegistrationScreen> {
 
   bool isFormValid() {
     final isPassValid =
-        _passNumberController.text.isNotEmpty
-            ? validatePassNumber(_passNumberController.text)
-            : true;
+        _passNumberController.text.isNotEmpty &&
+        validatePassNumber(_passNumberController.text);
     final isEmailValid = validateEmail(_emailController.text);
 
     return _firstNameController.text.isNotEmpty &&
