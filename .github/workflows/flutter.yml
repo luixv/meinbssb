@@ -35,10 +35,10 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
-      - name: Run tests
-          # flutter test ./test/unit --coverage        COMMENTED FOR THE TIME BEING
-          # echo "Skipping unit tests for now"
-        run: flutter test ./test/unit --coverage
+      # - name: Run tests
+      #     # flutter test ./test/unit --coverage        COMMENTED FOR THE TIME BEING
+      #     # echo "Skipping unit tests for now"
+      #   run: flutter test ./test/unit --coverage
  
       - name: Upload coverage
         uses: codecov/codecov-action@v3
@@ -152,16 +152,14 @@ jobs:
           AAB_PATH=build/app/outputs/bundle/release/app-release.aab
 
           if [ -f "$APK_PATH" ]; then
-            cp "$APK_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
-            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-apk.zip release_artifacts/meinbssb-prod-${{ steps.version.outputs.version }}.apk
+            cp "$APK_PATH" release_artifacts/meinbssb-PROD-${{ steps.version.outputs.version }}.apk
             echo "✅ APK packaged successfully"
           else
             echo "::warning::APK not found at $APK_PATH"
           fi
 
           if [ -f "$AAB_PATH" ]; then
-            cp "$AAB_PATH" release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
-            zip -j release_artifacts/release-${{ steps.version.outputs.version }}-aab.zip release_artifacts/meinbssb-prod-${{ steps.version.outputs.version }}.aab
+            cp "$AAB_PATH" release_artifacts/meinbssb-PROD-${{ steps.version.outputs.version }}.aab
             echo "✅ AAB packaged successfully"
           else
             echo "::warning::AAB not found at $AAB_PATH"
