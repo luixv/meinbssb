@@ -173,14 +173,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ steps.version.outputs.version }}-apk
-          path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.apk
+          path: release_artifacts/meinbssb-prod-${{ steps.version.outputs.version }}.apk
           if-no-files-found: error
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ steps.version.outputs.version }}-aab
-          path: release_artifacts/meinbssb-${{ steps.version.outputs.version }}.aab
+          path: release_artifacts/meinbssb-prod-${{ steps.version.outputs.version }}.aab
           if-no-files-found: error
           
   build-web:
