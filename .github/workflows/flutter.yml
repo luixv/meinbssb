@@ -135,7 +135,7 @@ jobs:
       # --------------------------------------------------
       # Build APK / AAB with signing + validate AAB
       # --------------------------------------------------
-      - name: Build PROD APK and AAB + Validate
+      - name: Build PROD APK and AAB  versions + Validate
         run: |
           export FLUTTER_WEB=false
           export KEY_STORE_FILE=$GITHUB_WORKSPACE/android/app/upload-keystore.jks
