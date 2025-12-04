@@ -473,12 +473,12 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
           as _i9.Future<String?>);
 
   @override
-  _i9.Future<_i15.Uint8List> fetchSchuetzenausweis(int? personId) =>
+  _i9.Future<_i15.Uint8List?> fetchSchuetzenausweis(int? personId) =>
       (super.noSuchMethod(
             Invocation.method(#fetchSchuetzenausweis, [personId]),
-            returnValue: _i9.Future<_i15.Uint8List>.value(_i15.Uint8List(0)),
+            returnValue: _i9.Future<_i15.Uint8List?>.value(),
           )
-          as _i9.Future<_i15.Uint8List>);
+          as _i9.Future<_i15.Uint8List?>);
 
   @override
   _i9.Future<Map<String, dynamic>> register({
@@ -552,6 +552,19 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
             ),
           )
           as _i9.Future<Map<String, dynamic>>);
+
+  @override
+  _i9.Future<String> findeLoginMail(String? passNumber) =>
+      (super.noSuchMethod(
+            Invocation.method(#findeLoginMail, [passNumber]),
+            returnValue: _i9.Future<String>.value(
+              _i12.dummyValue<String>(
+                this,
+                Invocation.method(#findeLoginMail, [passNumber]),
+              ),
+            ),
+          )
+          as _i9.Future<String>);
 
   @override
   _i9.Future<_i16.UserData?> fetchPassdaten(int? personId) =>
@@ -2578,6 +2591,27 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
             returnValue: _i9.Future<bool>.value(false),
           )
           as _i9.Future<bool>);
+
+  @override
+  _i9.Future<void> logApiRequest({
+    required int? personId,
+    required String? apiBaseServer,
+    required String? apiBasePath,
+    required String? apiBasePort,
+    required String? endpoint,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#logApiRequest, [], {
+              #personId: personId,
+              #apiBaseServer: apiBaseServer,
+              #apiBasePath: apiBasePath,
+              #apiBasePort: apiBasePort,
+              #endpoint: endpoint,
+            }),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
+          )
+          as _i9.Future<void>);
 
   @override
   _i9.Future<_i15.Uint8List?> getProfilePhoto(String? userId) =>
