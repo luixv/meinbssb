@@ -2,6 +2,7 @@
 env:
   FLUTTER_VERSION: '3.38.3'
   FLUTTER_CHANNEL: 'stable'
+  INCREMENT_BUILD_NUMBER: 'false'
 
 name: Flutter CI/CD
 
@@ -86,7 +87,24 @@ jobs:
       - name: Extract version from pubspec.yaml
         id: version
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
+          VERSION_LINE=$(grep '^version:' pubspec.yaml)
+          VERSION=$(echo "$VERSION_LINE" | sed 's/version: *//' | tr -d ' ')
+          BASE_VERSION=$(echo "$VERSION" | cut -d'+' -f1)
+          BUILD_NUMBER=$(echo "$VERSION" | cut -d'+' -f2)
+          if [ "$INCREMENT_BUILD_NUMBER" = "true" ] && [ -n "$BUILD_NUMBER" ]; then
+            NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
+            NEW_VERSION="$BASE_VERSION+$NEW_BUILD_NUMBER"
+            # Update pubspec.yaml
+            sed -i "s/^version: .*/version: $NEW_VERSION/" pubspec.yaml
+            echo "Updated version in pubspec.yaml: $NEW_VERSION"
+            # Commit the change to git
+            git config --local user.name "GitHub Actions Bot"
+            git config --local user.email "actions@github.com"
+            git add pubspec.yaml
+            git commit -m "CI: Incremented build number to $NEW_BUILD_NUMBER"
+            git push
+            VERSION="$NEW_VERSION"
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "📦 Extracted version: $VERSION"
 
@@ -132,17 +150,12 @@ jobs:
           echo "🔐 Keystore found at $KEY_STORE_FILE"
 
 
-          # echo "🏗️ Building APK..."
-          # flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
-          echo "Generating dummy APK file for testing..."
-          mkdir -p build/app/outputs/flutter-apk
-          echo "This is a dummy APK file" > build/app/outputs/flutter-apk/app-release.apk
+          echo "🏗️ Building APK..."
+          flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
+     
 
-          # echo "🏗️ Building AAB..."
-          # flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
-          echo "Generating dummy AAB file for testing..."
-          mkdir -p build/app/outputs/bundle/release
-          echo "This is a dummy AAB file" > build/app/outputs/bundle/release/app-release.aab
+          echo "🏗️ Building AAB..."
+          flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
 
           echo "🧪 Validating AAB..."
           curl -L -o bundletool.jar https://github.com/google/bundletool/releases/download/1.14.1/bundletool-all-1.14.1.jar
