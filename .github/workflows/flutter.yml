@@ -214,14 +214,12 @@ jobs:
       - name: Create versioned Web archive
         run: |
           mkdir -p release_artifacts
-          cd build/web
-          zip -r ../../release_artifacts/release-${{ steps.version.outputs.version }}-web.zip .
-          cd -
+          cp -r build/web release_artifacts/web-${{ steps.version.outputs.version }}
       - name: Upload Web Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ steps.version.outputs.version }}-web
-          path: release_artifacts/release-${{ steps.version.outputs.version }}-web.zip
+          path: release_artifacts/web-${{ steps.version.outputs.version }}
           if-no-files-found: ignore
          
   release:
@@ -274,27 +272,21 @@ jobs:
           echo "==== DEBUG: List all files in artifacts recursively ===="
           find artifacts -type f || true
 
-          # Android - copy the versioned zip file
-          if [ -d "artifacts/release-$VERSION-apk-zip" ]; then
-            echo "cp artifacts/release-$VERSION-apk-zip/release-$VERSION-apk.zip $RELEASE_DIR/"
-            cp "artifacts/release-$VERSION-apk-zip/release-$VERSION-apk.zip" "$RELEASE_DIR/"
+          # Android - copy the versioned file
+          if [ -d "artifacts/release-$VERSION-apk" ]; then
+            echo "cp artifacts/release-$VERSION-apk/release-$VERSION-apk $RELEASE_DIR/"
+            cp "artifacts/release-$VERSION-apk/release-$VERSION-apk" "$RELEASE_DIR/"
           else
             echo "::warning::No Android build artifacts found for version $VERSION"
           fi
 
-          # Web - copy the versioned zip file
+          # Web - copy the versioned file
           if [ -d "artifacts/release-$VERSION-web" ]; then
-            cp "artifacts/release-$VERSION-web/release-$VERSION-web.zip" "$RELEASE_DIR/"
+            cp "artifacts/release-$VERSION-web/release-$VERSION-web" "$RELEASE_DIR/"
           else
             echo "::warning::No Web build artifacts found for version $VERSION"
           fi
 
-          # Windows - copy the versioned zip file
-          if [ -d "artifacts/release-$VERSION-windows" ]; then
-            cp "artifacts/release-$VERSION-windows/release-$VERSION-windows.zip" "$RELEASE_DIR/"
-          else
-            echo "::warning::No Windows build artifacts found for version $VERSION"
-          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
