@@ -10,7 +10,7 @@
   "postgrestServer": "meintest.bssb.de",
   "postgrestPort": "8081",
   "postgrestPath": "",
-  "postgrestApiKey": "meinbssb-secure-api-key-2024-test",
+  "postgrestApiKey": "",
   "webProtocol": "https",
   "webServer": "meintest.bssb.de",
   "webPort": "443",
