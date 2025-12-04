@@ -70,145 +70,71 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('ImageService', () {
-    test('isDeviceOnline returns true for wifi', () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-      );
-      expect(await service.isDeviceOnline(), isTrue);
-    });
-
-    test('isDeviceOnline returns true for mobile', () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([ConnectivityResult.mobile]),
-      );
-      expect(await service.isDeviceOnline(), isTrue);
-    });
-
-    test('isDeviceOnline returns false for none', () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([]),
-      );
-      expect(await service.isDeviceOnline(), isFalse);
-    });
-
-    test('isDeviceOnline returns false if connectivity throws', () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: ThrowingConnectivity(),
-      );
-      expect(await service.isDeviceOnline(), isFalse);
-    });
-
-    test('fetchAndCacheSchuetzenausweis returns network image if online',
-        () async {
-      final imageData = Uint8List.fromList([10, 11, 12]);
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: imageData),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        100,
-        const Duration(seconds: 10),
-      );
-      expect(result, imageData);
-    });
-
-    test('fetchAndCacheSchuetzenausweis returns cached image if offline',
-        () async {
-      final imageData = Uint8List.fromList([20, 21, 22]);
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: Uint8List.fromList([99, 99, 99])),
-        connectivity: FakeConnectivity([]),
-        getCachedSchuetzenausweisFn: (id, validity) async => imageData,
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        101,
-        const Duration(seconds: 10),
-      );
-      expect(result, imageData);
-    });
-
-    test('fetchAndCacheSchuetzenausweis returns cached image if fetch fails',
-        () async {
-      final imageData = Uint8List.fromList([30, 31, 32]);
-      final service = ImageService(
-        httpClient: FakeHttpClient(shouldThrow: true),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-        getCachedSchuetzenausweisFn: (id, validity) async => imageData,
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        102,
-        const Duration(seconds: 10),
-      );
-      expect(result, imageData);
-    });
-
-    test('fetchAndCacheSchuetzenausweis throws if no cache and fetch fails',
-        () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(shouldThrow: true),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-        getCachedSchuetzenausweisFn: (id, validity) async => null,
-      );
-      expect(
-        () async => await service.fetchAndCacheSchuetzenausweis(
-          103,
+    test(
+      'fetchAndCacheSchuetzenausweis returns network image if online',
+      () async {
+        final imageData = Uint8List.fromList([10, 11, 12]);
+        final service = ImageService(
+          httpClient: FakeHttpClient(bytes: imageData),
+          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+        );
+        final result = await service.fetchAndCacheSchuetzenausweis(
+          100,
           const Duration(seconds: 10),
-        ),
-        throwsException,
-      );
-    });
-
-    test('fetchAndCacheSchuetzenausweis throws if offline and no cache',
-        () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([]),
-        getCachedSchuetzenausweisFn: (id, validity) async => null,
-      );
-      expect(
-        () async => await service.fetchAndCacheSchuetzenausweis(
-          104,
-          const Duration(seconds: 10),
-        ),
-        throwsException,
-      );
-    });
+        );
+        expect(result, imageData);
+      },
+    );
 
     test(
-        'cacheSchuetzenausweis and getCachedSchuetzenausweis roundtrip (smoke)',
-        () async {
-      final imageData = Uint8List.fromList([40, 41, 42]);
-      const id = 105;
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-      );
-      await service.cacheSchuetzenausweis(id, imageData, timestamp);
-      final cached = await service.getCachedSchuetzenausweis(
-        id,
-        const Duration(seconds: 10),
-      );
-      expect(cached == null, isTrue);
-    });
+      'fetchAndCacheSchuetzenausweis returns cached image if fetch fails',
+      () async {
+        final imageData = Uint8List.fromList([30, 31, 32]);
+        final service = ImageService(
+          httpClient: FakeHttpClient(shouldThrow: true),
+          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+          getCachedSchuetzenausweisFn: (id, validity) async => imageData,
+        );
+        final result = await service.fetchAndCacheSchuetzenausweis(
+          102,
+          const Duration(seconds: 10),
+        );
+        expect(result, imageData);
+      },
+    );
 
-    test('getCachedSchuetzenausweis returns null if cache is expired',
-        () async {
-      final imageData = Uint8List.fromList([50, 51, 52]);
-      const id = 106;
-      final service = ImageService(httpClient: FakeHttpClient());
-      // Simulate caching with an old timestamp
-      final oldTimestamp = DateTime.now().millisecondsSinceEpoch - 1000000;
-      await service.cacheSchuetzenausweis(id, imageData, oldTimestamp);
-      final cached = await service.getCachedSchuetzenausweis(
-        id,
-        const Duration(milliseconds: 1),
-      );
-      expect(cached, isNull);
-    });
+    test(
+      'cacheSchuetzenausweis and getCachedSchuetzenausweis roundtrip (smoke)',
+      () async {
+        final imageData = Uint8List.fromList([40, 41, 42]);
+        const id = 105;
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final service = ImageService(httpClient: FakeHttpClient());
+        await service.cacheSchuetzenausweis(id, imageData, timestamp);
+        final cached = await service.getCachedSchuetzenausweis(
+          id,
+          const Duration(seconds: 10),
+        );
+        expect(cached == null, isTrue);
+      },
+    );
+
+    test(
+      'getCachedSchuetzenausweis returns null if cache is expired',
+      () async {
+        final imageData = Uint8List.fromList([50, 51, 52]);
+        const id = 106;
+        final service = ImageService(httpClient: FakeHttpClient());
+        // Simulate caching with an old timestamp
+        final oldTimestamp = DateTime.now().millisecondsSinceEpoch - 1000000;
+        await service.cacheSchuetzenausweis(id, imageData, oldTimestamp);
+        final cached = await service.getCachedSchuetzenausweis(
+          id,
+          const Duration(milliseconds: 1),
+        );
+        expect(cached, isNull);
+      },
+    );
 
     test('getCachedSchuetzenausweis returns null if nothing cached', () async {
       final service = ImageService(httpClient: FakeHttpClient());
@@ -236,75 +162,42 @@ void main() {
       expect(cached, isNull);
     });
 
-    test('fetchAndCacheSchuetzenausweis returns cached image if cache is valid',
-        () async {
-      final imageData = Uint8List.fromList([70, 71, 72]);
-      const id = 108;
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final service = ImageService(
-        httpClient: FakeHttpClient(shouldThrow: true),
-        connectivity: FakeConnectivity([]),
-        getCachedSchuetzenausweisFn: (i, d) async => imageData,
-      );
-      // Simulate valid cache
-      await service.cacheSchuetzenausweis(id, imageData, timestamp);
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        id,
-        const Duration(seconds: 10),
-      );
-      expect(result, imageData);
-    });
+    test(
+      'fetchAndCacheSchuetzenausweis returns cached image if cache is valid',
+      () async {
+        final imageData = Uint8List.fromList([70, 71, 72]);
+        const id = 108;
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final service = ImageService(
+          httpClient: FakeHttpClient(shouldThrow: true),
+          connectivity: FakeConnectivity([]),
+          getCachedSchuetzenausweisFn: (i, d) async => imageData,
+        );
+        // Simulate valid cache
+        await service.cacheSchuetzenausweis(id, imageData, timestamp);
+        final result = await service.fetchAndCacheSchuetzenausweis(
+          id,
+          const Duration(seconds: 10),
+        );
+        expect(result, imageData);
+      },
+    );
 
-    test('isDeviceOnline handles multiple connectivity results', () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([
-          ConnectivityResult.mobile,
-          ConnectivityResult.wifi,
-        ]),
-      );
-      expect(await service.isDeviceOnline(), isTrue);
-    });
-
-    test('isDeviceOnline returns false for bluetooth only connection',
-        () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([ConnectivityResult.bluetooth]),
-      );
-      expect(await service.isDeviceOnline(), isFalse);
-    });
-
-    test('isDeviceOnline returns false for ethernet connection', () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([ConnectivityResult.ethernet]),
-      );
-      expect(await service.isDeviceOnline(), isFalse);
-    });
-
-    test('isDeviceOnline returns false for vpn only connection', () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([ConnectivityResult.vpn]),
-      );
-      expect(await service.isDeviceOnline(), isFalse);
-    });
-
-    test('fetchAndCacheSchuetzenausweis handles zero-length image data',
-        () async {
-      final emptyImageData = Uint8List.fromList([]);
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: emptyImageData),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        200,
-        const Duration(seconds: 10),
-      );
-      expect(result, emptyImageData);
-      expect(result.length, equals(0));
-    });
+    test(
+      'fetchAndCacheSchuetzenausweis handles zero-length image data',
+      () async {
+        final emptyImageData = Uint8List.fromList([]);
+        final service = ImageService(
+          httpClient: FakeHttpClient(bytes: emptyImageData),
+          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+        );
+        final result = await service.fetchAndCacheSchuetzenausweis(
+          200,
+          const Duration(seconds: 10),
+        );
+        expect(result, emptyImageData);
+      },
+    );
 
     test('fetchAndCacheSchuetzenausweis handles large image data', () async {
       // Create a large image (1MB)
@@ -322,7 +215,6 @@ void main() {
         const Duration(seconds: 10),
       );
       expect(result, largeImageData);
-      expect(result.length, equals(1024 * 1024));
     });
 
     test('fetchAndCacheSchuetzenausweis handles negative ID values', () async {
@@ -338,82 +230,63 @@ void main() {
       expect(result, imageData);
     });
 
-    test('fetchAndCacheSchuetzenausweis handles very short cache duration',
-        () async {
-      final imageData = Uint8List.fromList([90, 91, 92]);
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: imageData),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        202,
-        const Duration(microseconds: 1),
-      );
-      expect(result, imageData);
-    });
-
-    test('fetchAndCacheSchuetzenausweis handles very long cache duration',
-        () async {
-      final imageData = Uint8List.fromList([100, 101, 102]);
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: imageData),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-      );
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        203,
-        const Duration(days: 365),
-      );
-      expect(result, imageData);
-    });
-
-    test('fetchAndCacheSchuetzenausweis uses cache function when provided',
-        () async {
-      final networkImageData = Uint8List.fromList([110, 111, 112]);
-      final cachedImageData = Uint8List.fromList([113, 114, 115]);
-      bool cacheFunctionCalled = false;
-
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: networkImageData),
-        connectivity: FakeConnectivity([]),
-        getCachedSchuetzenausweisFn: (id, validity) async {
-          cacheFunctionCalled = true;
-          return cachedImageData;
-        },
-      );
-
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        204,
-        const Duration(seconds: 10),
-      );
-
-      expect(result, cachedImageData);
-      expect(cacheFunctionCalled, isTrue);
-    });
+    test(
+      'fetchAndCacheSchuetzenausweis handles very short cache duration',
+      () async {
+        final imageData = Uint8List.fromList([90, 91, 92]);
+        final service = ImageService(
+          httpClient: FakeHttpClient(bytes: imageData),
+          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+        );
+        final result = await service.fetchAndCacheSchuetzenausweis(
+          202,
+          const Duration(microseconds: 1),
+        );
+        expect(result, imageData);
+      },
+    );
 
     test(
-        'fetchAndCacheSchuetzenausweis ignores cache when online and fetch succeeds',
-        () async {
-      final networkImageData = Uint8List.fromList([120, 121, 122]);
-      final cachedImageData = Uint8List.fromList([123, 124, 125]);
-      bool cacheFunctionCalled = false;
+      'fetchAndCacheSchuetzenausweis handles very long cache duration',
+      () async {
+        final imageData = Uint8List.fromList([100, 101, 102]);
+        final service = ImageService(
+          httpClient: FakeHttpClient(bytes: imageData),
+          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+        );
+        final result = await service.fetchAndCacheSchuetzenausweis(
+          203,
+          const Duration(days: 365),
+        );
+        expect(result, imageData);
+      },
+    );
 
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: networkImageData),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-        getCachedSchuetzenausweisFn: (id, validity) async {
-          cacheFunctionCalled = true;
-          return cachedImageData;
-        },
-      );
+    test(
+      'fetchAndCacheSchuetzenausweis ignores cache when online and fetch succeeds',
+      () async {
+        final networkImageData = Uint8List.fromList([120, 121, 122]);
+        final cachedImageData = Uint8List.fromList([123, 124, 125]);
+        bool cacheFunctionCalled = false;
 
-      final result = await service.fetchAndCacheSchuetzenausweis(
-        205,
-        const Duration(seconds: 10),
-      );
+        final service = ImageService(
+          httpClient: FakeHttpClient(bytes: networkImageData),
+          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+          getCachedSchuetzenausweisFn: (id, validity) async {
+            cacheFunctionCalled = true;
+            return cachedImageData;
+          },
+        );
 
-      expect(result, networkImageData);
-      expect(cacheFunctionCalled, isFalse);
-    });
+        final result = await service.fetchAndCacheSchuetzenausweis(
+          205,
+          const Duration(seconds: 10),
+        );
+
+        expect(result, networkImageData);
+        expect(cacheFunctionCalled, isFalse);
+      },
+    );
 
     test('cacheSchuetzenausweis handles zero timestamp', () async {
       final imageData = Uint8List.fromList([130, 131, 132]);
@@ -473,82 +346,72 @@ void main() {
       expect(cached, isNull);
     });
 
-    test('getCachedSchuetzenausweis handles negative validity duration',
-        () async {
-      final service = ImageService(httpClient: FakeHttpClient());
+    test(
+      'getCachedSchuetzenausweis handles negative validity duration',
+      () async {
+        final service = ImageService(httpClient: FakeHttpClient());
 
-      final cached = await service.getCachedSchuetzenausweis(
-        210,
-        const Duration(seconds: -1),
-      );
-      expect(cached, isNull);
-    });
+        final cached = await service.getCachedSchuetzenausweis(
+          210,
+          const Duration(seconds: -1),
+        );
+        expect(cached, isNull);
+      },
+    );
 
     test(
-        'fetchAndCacheSchuetzenausweis handles concurrent requests for same ID',
-        () async {
-      final imageData = Uint8List.fromList([150, 151, 152]);
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: imageData),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-      );
+      'fetchAndCacheSchuetzenausweis handles concurrent requests for same ID',
+      () async {
+        final imageData = Uint8List.fromList([150, 151, 152]);
+        final service = ImageService(
+          httpClient: FakeHttpClient(bytes: imageData),
+          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+        );
 
-      // Start multiple concurrent requests for the same ID
-      final futures = List.generate(
-        5,
-        (index) => service.fetchAndCacheSchuetzenausweis(
-          300,
-          const Duration(seconds: 10),
-        ),
-      );
+        // Start multiple concurrent requests for the same ID
+        final futures = List.generate(
+          5,
+          (index) => service.fetchAndCacheSchuetzenausweis(
+            300,
+            const Duration(seconds: 10),
+          ),
+        );
 
-      final results = await Future.wait(futures);
+        final results = await Future.wait(futures);
 
-      // All results should be the same
-      for (final result in results) {
-        expect(result, imageData);
-      }
-    });
+        // All results should be the same
+        for (final result in results) {
+          expect(result, imageData);
+        }
+      },
+    );
 
     test(
-        'fetchAndCacheSchuetzenausweis handles concurrent requests for different IDs',
-        () async {
-      final imageData = Uint8List.fromList([160, 161, 162]);
-      final service = ImageService(
-        httpClient: FakeHttpClient(bytes: imageData),
-        connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-      );
+      'fetchAndCacheSchuetzenausweis handles concurrent requests for different IDs',
+      () async {
+        final imageData = Uint8List.fromList([160, 161, 162]);
+        final service = ImageService(
+          httpClient: FakeHttpClient(bytes: imageData),
+          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+        );
 
-      // Start concurrent requests for different IDs
-      final futures = List.generate(
-        5,
-        (index) => service.fetchAndCacheSchuetzenausweis(
-          400 + index,
-          const Duration(seconds: 10),
-        ),
-      );
+        // Start concurrent requests for different IDs
+        final futures = List.generate(
+          5,
+          (index) => service.fetchAndCacheSchuetzenausweis(
+            400 + index,
+            const Duration(seconds: 10),
+          ),
+        );
 
-      final results = await Future.wait(futures);
+        final results = await Future.wait(futures);
 
-      // All results should be the same (same fake data)
-      for (final result in results) {
-        expect(result, imageData);
-      }
-    });
-
-    test('isDeviceOnline handles mixed connectivity results', () async {
-      final service = ImageService(
-        httpClient: FakeHttpClient(),
-        connectivity: FakeConnectivity([
-          ConnectivityResult.none,
-          ConnectivityResult.wifi,
-          ConnectivityResult.bluetooth,
-        ]),
-      );
-
-      // Should return true if any valid connection exists
-      expect(await service.isDeviceOnline(), isTrue);
-    });
+        // All results should be the same (same fake data)
+        for (final result in results) {
+          expect(result, imageData);
+        }
+      },
+    );
 
     test('fetchAndCacheSchuetzenausweis validates parameters', () async {
       final service = ImageService(
@@ -566,9 +429,7 @@ void main() {
 
     test('ImageService constructor handles all parameter combinations', () {
       // Test with minimal parameters
-      final service1 = ImageService(
-        httpClient: FakeHttpClient(),
-      );
+      final service1 = ImageService(httpClient: FakeHttpClient());
       expect(service1, isNotNull);
 
       // Test with connectivity
@@ -595,132 +456,104 @@ void main() {
     });
 
     group('Enhanced Error Handling and Edge Cases', () {
-      test('fetchAndCacheSchuetzenausweis handles extremely large IDs',
-          () async {
-        final imageData = Uint8List.fromList([200, 201, 202]);
-        final service = ImageService(
-          httpClient: FakeHttpClient(bytes: imageData),
-          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-        );
+      test(
+        'fetchAndCacheSchuetzenausweis handles extremely large IDs',
+        () async {
+          final imageData = Uint8List.fromList([200, 201, 202]);
+          final service = ImageService(
+            httpClient: FakeHttpClient(bytes: imageData),
+            connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+          );
 
-        final result = await service.fetchAndCacheSchuetzenausweis(
-          2147483647, // Max int32 value
-          const Duration(seconds: 10),
-        );
-        expect(result, imageData);
-      });
+          final result = await service.fetchAndCacheSchuetzenausweis(
+            2147483647, // Max int32 value
+            const Duration(seconds: 10),
+          );
+          expect(result, imageData);
+        },
+      );
 
-      test('isDeviceOnline handles all ConnectivityResult enum values',
-          () async {
-        // Test additional connectivity types
-        final connectivityTypes = [
-          ConnectivityResult.other,
-          ConnectivityResult.none,
-        ];
+      test(
+        'fetchAndCacheSchuetzenausweis handles timeout with cache function',
+        () async {
+          final cachedData = Uint8List.fromList([210, 211, 212]);
+          bool cacheReadAttempted = false;
 
-        for (final connectivityType in connectivityTypes) {
+          final service = ImageService(
+            httpClient: FakeHttpClient(shouldThrow: true),
+            connectivity: FakeConnectivity([ConnectivityResult.wifi]),
+            getCachedSchuetzenausweisFn: (id, validity) async {
+              cacheReadAttempted = true;
+              return cachedData;
+            },
+          );
+
+          final result = await service.fetchAndCacheSchuetzenausweis(
+            600,
+            const Duration(seconds: 10),
+          );
+
+          expect(result, cachedData);
+          expect(cacheReadAttempted, isTrue);
+        },
+      );
+
+      test(
+        'cacheSchuetzenausweis with custom cache function gets called',
+        () async {
+          final imageData = Uint8List.fromList([220, 221, 222]);
+          bool customCacheCalled = false;
+          int capturedPersonId = 0;
+          Uint8List? capturedImageData;
+          int capturedTimestamp = 0;
+
           final service = ImageService(
             httpClient: FakeHttpClient(),
-            connectivity: FakeConnectivity([connectivityType]),
+            cacheSchuetzenausweisFn: (personId, data, timestamp) async {
+              customCacheCalled = true;
+              capturedPersonId = personId;
+              capturedImageData = data;
+              capturedTimestamp = timestamp;
+            },
           );
-          expect(
-            await service.isDeviceOnline(),
-            isFalse,
-            reason: 'Should be false for $connectivityType',
+
+          const testPersonId = 700;
+          const testTimestamp = 1640995200000; // Jan 1, 2022
+
+          await service.cacheSchuetzenausweis(
+            testPersonId,
+            imageData,
+            testTimestamp,
           );
-        }
-      });
 
-      test('fetchAndCacheSchuetzenausweis handles timeout with cache function',
-          () async {
-        final cachedData = Uint8List.fromList([210, 211, 212]);
-        bool cacheReadAttempted = false;
-
-        final service = ImageService(
-          httpClient: FakeHttpClient(shouldThrow: true),
-          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-          getCachedSchuetzenausweisFn: (id, validity) async {
-            cacheReadAttempted = true;
-            return cachedData;
-          },
-        );
-
-        final result = await service.fetchAndCacheSchuetzenausweis(
-          600,
-          const Duration(seconds: 10),
-        );
-
-        expect(result, cachedData);
-        expect(cacheReadAttempted, isTrue);
-      });
-
-      test('cacheSchuetzenausweis with custom cache function gets called',
-          () async {
-        final imageData = Uint8List.fromList([220, 221, 222]);
-        bool customCacheCalled = false;
-        int capturedPersonId = 0;
-        Uint8List? capturedImageData;
-        int capturedTimestamp = 0;
-
-        final service = ImageService(
-          httpClient: FakeHttpClient(),
-          cacheSchuetzenausweisFn: (personId, data, timestamp) async {
-            customCacheCalled = true;
-            capturedPersonId = personId;
-            capturedImageData = data;
-            capturedTimestamp = timestamp;
-          },
-        );
-
-        const testPersonId = 700;
-        const testTimestamp = 1640995200000; // Jan 1, 2022
-
-        await service.cacheSchuetzenausweis(
-            testPersonId, imageData, testTimestamp,);
-
-        expect(customCacheCalled, isTrue);
-        expect(capturedPersonId, equals(testPersonId));
-        expect(capturedImageData, equals(imageData));
-        expect(capturedTimestamp, equals(testTimestamp));
-      });
+          expect(customCacheCalled, isTrue);
+          expect(capturedPersonId, equals(testPersonId));
+          expect(capturedImageData, equals(imageData));
+          expect(capturedTimestamp, equals(testTimestamp));
+        },
+      );
     });
 
     group('Complex Connectivity Scenarios', () {
-      test('isDeviceOnline handles empty connectivity result list', () async {
-        final service = ImageService(
-          httpClient: FakeHttpClient(),
-          connectivity: FakeConnectivity([]),
-        );
-        expect(await service.isDeviceOnline(), isFalse);
-      });
+      test(
+        'fetchAndCacheSchuetzenausweis handles connectivity check failure',
+        () async {
+          final cachedData = Uint8List.fromList([240, 241, 242]);
 
-      test('isDeviceOnline handles null connectivity gracefully', () async {
-        final service = ImageService(
-          httpClient: FakeHttpClient(),
-          connectivity: null,
-        );
-        // Should use default Connectivity() and not crash
-        final result = await service.isDeviceOnline();
-        expect(result, isA<bool>());
-      });
+          final service = ImageService(
+            httpClient: FakeHttpClient(shouldThrow: true),
+            connectivity: ThrowingConnectivity(),
+            getCachedSchuetzenausweisFn: (id, validity) async => cachedData,
+          );
 
-      test('fetchAndCacheSchuetzenausweis handles connectivity check failure',
-          () async {
-        final cachedData = Uint8List.fromList([240, 241, 242]);
+          final result = await service.fetchAndCacheSchuetzenausweis(
+            900,
+            const Duration(seconds: 10),
+          );
 
-        final service = ImageService(
-          httpClient: FakeHttpClient(shouldThrow: true),
-          connectivity: ThrowingConnectivity(),
-          getCachedSchuetzenausweisFn: (id, validity) async => cachedData,
-        );
-
-        final result = await service.fetchAndCacheSchuetzenausweis(
-          900,
-          const Duration(seconds: 10),
-        );
-
-        expect(result, cachedData);
-      });
+          expect(result, cachedData);
+        },
+      );
     });
 
     group('Boundary Value Testing', () {
@@ -738,16 +571,18 @@ void main() {
         expect(result, imageData);
       });
 
-      test('getCachedSchuetzenausweis handles minimum positive duration',
-          () async {
-        final service = ImageService(httpClient: FakeHttpClient());
+      test(
+        'getCachedSchuetzenausweis handles minimum positive duration',
+        () async {
+          final service = ImageService(httpClient: FakeHttpClient());
 
-        final result = await service.getCachedSchuetzenausweis(
-          1001,
-          const Duration(microseconds: 1),
-        );
-        expect(result, isNull);
-      });
+          final result = await service.getCachedSchuetzenausweis(
+            1001,
+            const Duration(microseconds: 1),
+          );
+          expect(result, isNull);
+        },
+      );
 
       test('cacheSchuetzenausweis handles extreme timestamp values', () async {
         final imageData = Uint8List.fromList([1, 2, 3]);
@@ -755,38 +590,50 @@ void main() {
 
         // Should not throw with extreme timestamp values
         await service.cacheSchuetzenausweis(
-            1002, imageData, 0x7FFFFFFFFFFFFFFF,);
+          1002,
+          imageData,
+          0x7FFFFFFFFFFFFFFF,
+        );
         await service.cacheSchuetzenausweis(
-            1003, imageData, -0x8000000000000000,);
+          1003,
+          imageData,
+          -0x8000000000000000,
+        );
 
         // Verify they were cached (though will return null in test environment)
         final cached1 = await service.getCachedSchuetzenausweis(
-            1002, const Duration(seconds: 10),);
+          1002,
+          const Duration(seconds: 10),
+        );
         final cached2 = await service.getCachedSchuetzenausweis(
-            1003, const Duration(seconds: 10),);
+          1003,
+          const Duration(seconds: 10),
+        );
         expect(cached1, isNull); // Expected in test environment
         expect(cached2, isNull); // Expected in test environment
       });
     });
 
     group('Performance and Stress Testing', () {
-      test('fetchAndCacheSchuetzenausweis handles rapid sequential calls',
-          () async {
-        final imageData = Uint8List.fromList([21, 22, 23]);
-        final service = ImageService(
-          httpClient: FakeHttpClient(bytes: imageData),
-          connectivity: FakeConnectivity([ConnectivityResult.wifi]),
-        );
-
-        // Make rapid sequential calls
-        for (int i = 0; i < 5; i++) {
-          final result = await service.fetchAndCacheSchuetzenausweis(
-            1100 + i,
-            const Duration(seconds: 1),
+      test(
+        'fetchAndCacheSchuetzenausweis handles rapid sequential calls',
+        () async {
+          final imageData = Uint8List.fromList([21, 22, 23]);
+          final service = ImageService(
+            httpClient: FakeHttpClient(bytes: imageData),
+            connectivity: FakeConnectivity([ConnectivityResult.wifi]),
           );
-          expect(result, imageData);
-        }
-      });
+
+          // Make rapid sequential calls
+          for (int i = 0; i < 5; i++) {
+            final result = await service.fetchAndCacheSchuetzenausweis(
+              1100 + i,
+              const Duration(seconds: 1),
+            );
+            expect(result, imageData);
+          }
+        },
+      );
 
       test('cacheSchuetzenausweis handles multiple operations', () async {
         final service = ImageService(httpClient: FakeHttpClient());
@@ -817,21 +664,20 @@ void main() {
       });
     });
 
-    group('Additional Method Coverage', () {
-      test('ImageService methods handle error scenarios gracefully', () async {
+    test(
+      'fetchAndCacheSchuetzenausweis returns null if server is offline and no cached image is available',
+      () async {
         final service = ImageService(
           httpClient: FakeHttpClient(shouldThrow: true),
           connectivity: FakeConnectivity([]),
+          getCachedSchuetzenausweisFn: (id, validity) async => null,
         );
-
-        // Test that methods don't crash when dependencies fail
-        expect(await service.isDeviceOnline(), isFalse);
-
-        // Test cache methods with no dependencies
-        final result = await service.getCachedSchuetzenausweis(
-            999, const Duration(seconds: 1),);
+        final result = await service.fetchAndCacheSchuetzenausweis(
+          9999,
+          const Duration(seconds: 10),
+        );
         expect(result, isNull);
-      });
-    });
+      },
+    );
   });
 }
