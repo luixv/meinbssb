@@ -2,9 +2,9 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main,pipeline]
   pull_request:
-    branches: [ main ]
+    branches: [ main,pipeline]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
