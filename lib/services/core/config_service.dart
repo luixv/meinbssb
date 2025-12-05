@@ -148,6 +148,8 @@ class ConfigService {
     if (path == null) {
       throw StateError('ConfigService: path for $name is missing or empty.');
     }
-    return '$protocol://$server:$port/$path';
+    // Add trailing slash to path if it's not empty, to ensure proper endpoint concatenation
+    final pathWithSlash = path.isEmpty ? '' : '$path/';
+    return '$protocol://$server:$port/$pathWithSlash';
   }
 }
