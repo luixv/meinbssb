@@ -367,6 +367,11 @@ class _MyAppState extends State<MyApp> {
             if (settings.name!.startsWith('/set-password')) {
               final uri = Uri.base;
               final token = uri.queryParameters['token'] ?? '';
+              // Construct the full path with query parameters for the URL
+              final fullPath =
+                  uri.query.isNotEmpty
+                      ? '/set-password?${uri.query}'
+                      : '/set-password';
               return MaterialPageRoute(
                 builder:
                     (context) => SetPasswordScreen(
@@ -377,13 +382,18 @@ class _MyAppState extends State<MyApp> {
                             listen: false,
                           ).authService,
                     ),
-                settings: settings,
+                settings: RouteSettings(name: fullPath),
               );
             }
             if (settings.name!.startsWith('/reset-password')) {
               final uri = Uri.base;
               final token = uri.queryParameters['token'] ?? '';
               final personId = uri.queryParameters['personId'] ?? '';
+              // Construct the full path with query parameters for the URL
+              final fullPath =
+                  uri.query.isNotEmpty
+                      ? '/reset-password?${uri.query}'
+                      : '/reset-password';
               return MaterialPageRoute(
                 builder:
                     (context) => ResetPasswordScreen(
@@ -394,7 +404,7 @@ class _MyAppState extends State<MyApp> {
                         listen: false,
                       ),
                     ),
-                settings: settings,
+                settings: RouteSettings(name: fullPath),
               );
             }
             if (settings.name!.startsWith('/verify-email')) {
@@ -403,13 +413,18 @@ class _MyAppState extends State<MyApp> {
               final token = uri.queryParameters['token'] ?? '';
               final personId = uri.queryParameters['personId'] ?? '';
               LoggerService.logInfo('Token: $token, PersonId: $personId');
+              // Construct the full path with query parameters for the URL
+              final fullPath =
+                  uri.query.isNotEmpty
+                      ? '/verify-email?${uri.query}'
+                      : '/verify-email';
               return MaterialPageRoute(
                 builder:
                     (context) => EmailVerificationScreen(
                       verificationToken: token,
                       personId: personId,
                     ),
-                settings: settings,
+                settings: RouteSettings(name: fullPath),
               );
             }
             // Allow anonymous access to SchulungenSearchScreen and all its subroutes
