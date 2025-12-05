@@ -101,7 +101,7 @@ jobs:
       - name: Decode Keystore
         run: |
           mkdir -p android/app
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/***-keystore.jks
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/${{ env.ANDROID_KEYSTORE_NAME }}
 
       - name: Set KEY_STORE_FILE env
         run: echo "KEY_STORE_FILE=***-keystore.jks" >> $GITHUB_ENV
@@ -232,7 +232,7 @@ jobs:
       - name: Decode Keystore
         run: |
           mkdir -p android/app
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/***-keystore.jks
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/${{ env.ANDROID_KEYSTORE_NAME }}
 
       - name: Set KEY_STORE_FILE env
         run: echo "KEY_STORE_FILE=***-keystore.jks" >> $GITHUB_ENV
