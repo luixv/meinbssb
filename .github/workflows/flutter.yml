@@ -120,17 +120,14 @@ jobs:
       - name: Create versioned Android artifacts (APK / AAB)
         run: |
           mkdir -p release_artifacts
-
           APK_PATH=build/app/outputs/flutter-apk/app-release.apk
           AAB_PATH=build/app/outputs/bundle/release/app-release.aab
-
           if [ -f "$APK_PATH" ]; then
             cp "$APK_PATH" release_artifacts/release-${{ steps.version.outputs.version }}-TEST.apk
             echo "✅ APK packaged successfully"
           else
             echo "::warning::APK not found at $APK_PATH"
           fi
-
           if [ -f "$AAB_PATH" ]; then
             cp "$AAB_PATH" release_artifacts/release-${{ steps.version.outputs.version }}-TEST.aab
             echo "✅ AAB packaged successfully"
@@ -298,17 +295,14 @@ jobs:
       - name: Create versioned Android artifacts (APK / AAB)
         run: |
           mkdir -p release_artifacts
-
           APK_PATH=build/app/outputs/flutter-apk/app-release.apk
           AAB_PATH=build/app/outputs/bundle/release/app-release.aab
-
           if [ -f "$APK_PATH" ]; then
             cp "$APK_PATH" release_artifacts/release-${{ steps.version.outputs.version }}-PROD.apk
             echo "✅ APK packaged successfully"
           else
             echo "::warning::APK not found at $APK_PATH"
           fi
-
           if [ -f "$AAB_PATH" ]; then
             cp "$AAB_PATH" release_artifacts/release-${{ steps.version.outputs.version }}-PROD.aab
             echo "✅ AAB packaged successfully"
@@ -412,25 +406,24 @@ jobs:
           RELEASE_DIR="$GITHUB_WORKSPACE/release_assets"
           mkdir -p "$RELEASE_DIR"
           VERSION="${{ steps.release_version.outputs.version }}"
-
           # Android - copy the APK and AAB files
-          if [ -f "artifacts/release-${VERSION}-PROD.apk" ]; then
-            cp "artifacts/release-${VERSION}-PROD.apk" "$RELEASE_DIR/"
+          if [ -f "artifacts/release-${VERSION}-PROD.apk/release-${VERSION}-PROD.apk" ]; then
+            cp "artifacts/release-${VERSION}-PROD.apk/release-${VERSION}-PROD.apk" "$RELEASE_DIR/"
           else
             echo "::warning::No Android PROD APK artifact found for version $VERSION"
           fi
-          if [ -f "artifacts/release-${VERSION}-PROD.aab" ]; then
-            cp "artifacts/release-${VERSION}-PROD.aab" "$RELEASE_DIR/"
+          if [ -f "artifacts/release-${VERSION}-PROD.aab/release-${VERSION}-PROD.aab" ]; then
+            cp "artifacts/release-${VERSION}-PROD.aab/release-${VERSION}-PROD.aab" "$RELEASE_DIR/"
           else
             echo "::warning::No Android PROD AAB artifact found for version $VERSION"
           fi
-          if [ -f "artifacts/release-${VERSION}-TEST.apk" ]; then
-            cp "artifacts/release-${VERSION}-TEST.apk" "$RELEASE_DIR/"
+          if [ -f "artifacts/release-${VERSION}-TEST.apk/release-${VERSION}-TEST.apk" ]; then
+            cp "artifacts/release-${VERSION}-TEST.apk/release-${VERSION}-TEST.apk" "$RELEASE_DIR/"
           else
             echo "::warning::No Android TEST APK artifact found for version $VERSION"
           fi
-          if [ -f "artifacts/release-${VERSION}-TEST.aab" ]; then
-            cp "artifacts/release-${VERSION}-TEST.aab" "$RELEASE_DIR/"
+          if [ -f "artifacts/release-${VERSION}-TEST.aab/release-${VERSION}-TEST.aab" ]; then
+            cp "artifacts/release-${VERSION}-TEST.aab/release-${VERSION}-TEST.aab" "$RELEASE_DIR/"
           else
             echo "::warning::No Android TEST AAB artifact found for version $VERSION"
           fi
