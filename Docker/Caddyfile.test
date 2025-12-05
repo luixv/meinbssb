@@ -1,48 +1,60 @@
 {
-  #local_certs
+  # Global options – use Let's Encrypt STAGING for all automatic HTTPS
+  acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
+
 # Redirect HTTP to HTTPS
 http://meintest.bssb.de {
   redir https://meintest.bssb.de{uri}
 }
 
-# Serve Flutter Web App (HTTPS)
-https://meintest.bssb.de {
-  root * /web
-  file_server
-  try_files {path} /index.html
-}
+# Serve Flutter Web App and PostgREST API (HTTPS)
+meintest.bssb.de {
+  # Handle PostgREST API requests on /api path
+  handle /api/* {
+    uri strip_prefix /api
+    
+    @cors_preflight {
+      method OPTIONS
+    }
 
-# Serve PostgREST API (HTTPS) on port 8081 for any host
-https://meintest.bssb.de:8081 {
-  @cors_preflight {
-    method OPTIONS
+    handle @cors_preflight {
+      respond "" 204
+      header Access-Control-Allow-Origin "*"
+      header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+      header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+      header Access-Control-Allow-Credentials "false"
+    }
+
+    handle {
+      reverse_proxy postgrest:3000
+      header Access-Control-Allow-Origin "*"
+      header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+      header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+      header Access-Control-Allow-Credentials "false"
+    }
   }
 
-  handle @cors_preflight {
-    respond "" 204
-    header Access-Control-Allow-Origin "*"
-    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
-    header Access-Control-Allow-Credentials "false"
-  }
-
-  handle {
-    reverse_proxy postgrest:3000
-    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
-    header Access-Control-Allow-Credentials "false"
-  }
-}
-https://meintest.bssb.de:8080 {
+  # Handle email service requests on /email path
+  handle /email/* {
+    uri strip_prefix /email
     reverse_proxy email-service:3001
     header {
       Access-Control-Allow-Origin "*"
       Access-Control-Allow-Methods "POST, OPTIONS"
       Access-Control-Allow-Headers "Authorization, Content-Type"
     }
+  }
+
+  # Serve Flutter Web App (default handler)
+  handle {
+    root * /web
+    file_server
+    try_files {path} /index.html
+  }
 }
 
-https://meintest.bssb.de:8083 {
+# ZMI Monitor on 8083 (internal only, no SSL needed from browser)
+meintest.bssb.de:8083 {
   reverse_proxy zmi-monitor:80
 }

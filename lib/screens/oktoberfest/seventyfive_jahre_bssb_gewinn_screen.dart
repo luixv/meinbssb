@@ -12,6 +12,8 @@ import '/helpers/utils.dart';
 
 // import 'agb_screen.dart';
 import '/widgets/scaled_text.dart';
+import 'package:meinbssb/services/api/bank_service.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class SeventyFiveJahreBSSBGewinnScreen extends StatefulWidget {
   const SeventyFiveJahreBSSBGewinnScreen({
@@ -42,6 +44,7 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
   final TextEditingController _kontoinhaberController = TextEditingController();
   final TextEditingController _ibanController = TextEditingController();
   final TextEditingController _bicController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   bool _bankDataLoading = false;
 
   @override
@@ -306,9 +309,11 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
       _hasPendingGewinne &&
       _bankDataResult != null &&
       _bankDataResult!.kontoinhaber.isNotEmpty &&
-      _bankDataResult!.iban.isNotEmpty &&
+      _bankDataResult != null &&
+      _bankDataResult!.kontoinhaber.isNotEmpty &&
+      BankService.validateIBAN(_bankDataResult!.iban) &&
       (_bankDataResult!.iban.toUpperCase().startsWith('DE') ||
-          _bankDataResult!.bic.isNotEmpty);
+          BankService.validateBIC(_bankDataResult!.bic) == null);
 
   Widget _buildBankDataSection() {
     final bool isDisabled = !_hasPendingGewinne && _gewinne.isNotEmpty;
@@ -324,41 +329,71 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
           borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
         ),
         padding: UIConstants.defaultPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Bankdaten',
-              style: UIStyles.subtitleStyle,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            if (_bankDataLoading)
-              const Padding(
-                padding: EdgeInsets.only(bottom: UIConstants.spacingM),
-                child: CircularProgressIndicator(),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Bankdaten',
+                style: UIStyles.subtitleStyle,
               ),
-            TextFormField(
-              controller: _kontoinhaberController,
-              readOnly: isDisabled,
-              decoration: UIStyles.formInputDecoration.copyWith(
-                labelText: 'Kontoinhaber',
+              const SizedBox(height: UIConstants.spacingM),
+              if (_bankDataLoading)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: UIConstants.spacingM),
+                  child: CircularProgressIndicator(),
+                ),
+              _KeyboardFocusTextField(
+                controller: _kontoinhaberController,
+                label: 'Kontoinhaber',
+                readOnly: isDisabled,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Kontoinhaber ist erforderlich';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            _KeyboardFocusTextField(
-              controller: _ibanController,
-              label: 'IBAN',
-              readOnly: isDisabled,
-            ),
-            const SizedBox(height: UIConstants.spacingM),
-            _KeyboardFocusTextField(
-              controller: _bicController,
-              label: isBicRequired(_ibanController.text.trim())
-                  ? 'BIC *'
-                  : 'BIC (optional)',
-              readOnly: isDisabled,
-            ),
-          ],
+              const SizedBox(height: UIConstants.spacingM),
+              _KeyboardFocusTextField(
+                controller: _ibanController,
+                label: 'IBAN',
+                readOnly: isDisabled,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'IBAN ist erforderlich';
+                  }
+                  if (!BankService.validateIBAN(value)) {
+                    return 'Ungültige IBAN';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: UIConstants.spacingM),
+              _KeyboardFocusTextField(
+                controller: _bicController,
+                label: isBicRequired(_ibanController.text.trim())
+                    ? 'BIC *'
+                    : 'BIC (optional)',
+                readOnly: isDisabled,
+                validator: (value) {
+                  String ibanText = _ibanController.text.trim();
+                  if (ibanText.toUpperCase().startsWith('DE')) {
+                    if (value == null || value.isEmpty) {
+                      return null;
+                    }
+                    return BankService.validateBIC(value);
+                  } else {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte geben Sie die BIC ein';
+                    }
+                    return BankService.validateBIC(value);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -399,6 +434,7 @@ class _SeventyFiveJahreBSSBGewinnScreenState extends State<SeventyFiveJahreBSSBG
   }
 
   Future<void> _submitGewinne() async {
+    if (!_formKey.currentState!.validate()) return;
     setState(() {
       _loading = true;
     });
@@ -536,11 +572,13 @@ class _KeyboardFocusTextField extends StatefulWidget {
     required this.controller,
     required this.label,
     this.readOnly = false,
+    this.validator,
   });
 
   final TextEditingController controller;
   final String label;
   final bool readOnly;
+  final String? Function(String?)? validator;
 
   @override
   State<_KeyboardFocusTextField> createState() => _KeyboardFocusTextFieldState();
@@ -553,21 +591,22 @@ class _KeyboardFocusTextFieldState extends State<_KeyboardFocusTextField> {
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(_handleFocus);
+    _focusNode.addListener(_onFocusChange);
   }
 
   @override
   void dispose() {
-    _focusNode.removeListener(_handleFocus);
+    _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     super.dispose();
   }
 
-  void _handleFocus() {
+  void _onFocusChange() {
     setState(() {
       _isFocused = _focusNode.hasFocus;
     });
-    if (_focusNode.hasFocus) {
+
+    if (_focusNode.hasFocus && !widget.readOnly) {
       final text = widget.controller.text;
       widget.controller.selection = TextSelection.collapsed(
         offset: text.length,
@@ -584,24 +623,66 @@ class _KeyboardFocusTextFieldState extends State<_KeyboardFocusTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboardMode =
-        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
-    final hasKeyboardFocus = _isFocused && isKeyboardMode;
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        final isKeyboardMode =
+            FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+        final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
-    return TextFormField(
-      focusNode: _focusNode,
-      controller: widget.controller,
-      readOnly: widget.readOnly,
-      decoration: UIStyles.formInputDecoration.copyWith(
-        labelText: widget.label,
-        filled: true,
-        fillColor: hasKeyboardFocus ? Colors.yellow.shade50 : UIConstants.whiteColor,
-        enabledBorder: _border(UIConstants.mydarkGreyColor, 1),
-        focusedBorder: _border(
-          hasKeyboardFocus ? Colors.yellow.shade700 : UIConstants.primaryColor,
-          hasKeyboardFocus ? 2.5 : 1.5,
-        ),
-      ),
+        final baseFillColor = widget.readOnly ? Colors.grey.shade100 : UIConstants.whiteColor;
+
+        final decoration = UIStyles.formInputDecoration.copyWith(
+          labelText: widget.label,
+          labelStyle: UIStyles.formInputDecoration.labelStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.labelStyle!.fontSize! *
+                fontSizeProvider.scaleFactor,
+          ),
+          floatingLabelStyle:
+              UIStyles.formInputDecoration.floatingLabelStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.floatingLabelStyle!.fontSize! *
+                fontSizeProvider.scaleFactor,
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: widget.readOnly ? null : widget.label,
+          hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
+            fontSize:
+                UIStyles.formInputDecoration.hintStyle!.fontSize! *
+                fontSizeProvider.scaleFactor,
+          ),
+          filled: true,
+          fillColor: hasKeyboardFocus ? Colors.yellow.shade50 : baseFillColor,
+          enabledBorder: _border(UIConstants.mydarkGreyColor, 1.0),
+          focusedBorder: _border(
+            hasKeyboardFocus ? Colors.yellow.shade700 : UIConstants.primaryColor,
+            hasKeyboardFocus ? 2.5 : 1.5,
+          ),
+        );
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
+          child: TextFormField(
+            focusNode: _focusNode,
+            controller: widget.controller,
+            style: widget.readOnly
+                ? UIStyles.formValueBoldStyle.copyWith(
+                    fontSize:
+                        UIStyles.formValueBoldStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  )
+                : UIStyles.formValueStyle.copyWith(
+                    fontSize:
+                        UIStyles.formValueStyle.fontSize! *
+                        fontSizeProvider.scaleFactor,
+                  ),
+            decoration: decoration,
+            validator: widget.validator,
+            readOnly: widget.readOnly,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          ),
+        );
+      },
     );
   }
 }

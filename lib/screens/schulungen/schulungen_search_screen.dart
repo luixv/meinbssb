@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
+import '/web_redirect_stub.dart' if (dart.library.html) '/web_redirect_web.dart';
 
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
@@ -133,24 +135,25 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
         automaticallyImplyLeading: true,
         showMenu: widget.showMenu,
         showConnectivityIcon: widget.showConnectivityIcon,
-        leading:
-            widget.showMenu
-                ? Semantics(
-                  button: true,
-                  label: 'Zurück',
-                  hint: 'Zur vorherigen Seite wechseln',
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: UIConstants.textColor,
-                    ),
-                    tooltip: 'Zurück',
-                    onPressed: () {
-                      Navigator.of(context).maybePop();
-                    },
-                  ),
-                )
-                : null,
+        leading: Semantics(
+          button: true,
+          label: 'Zurück',
+          hint: 'Zur Startseite wechseln',
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
+            tooltip: 'Zurück',
+            onPressed: () {
+              if (widget.showMenu) {
+                Navigator.of(context).maybePop();
+              } else {
+                // Redirect to root URL which will show splash and then login
+                if (kIsWeb) {
+                  WebRedirect.redirectTo('/');
+                }
+              }
+            },
+          ),
+        ),
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -160,7 +163,8 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
               icon: Icons.refresh,
               tooltip: 'Formular zurücksetzen',
               semanticLabel: 'Formular zurücksetzen',
-              semanticHint: 'Alle Filter werden auf Standardwerte zurückgesetzt',
+              semanticHint:
+                  'Alle Filter werden auf Standardwerte zurückgesetzt',
               onPressed: () {
                 setState(() {
                   selectedDate = DateTime.now();
@@ -179,7 +183,8 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
               icon: Icons.search,
               tooltip: 'Suchen',
               semanticLabel: 'Suche starten',
-              semanticHint: 'Aktuelle Filter anwenden und Suchergebnisse anzeigen',
+              semanticHint:
+                  'Aktuelle Filter anwenden und Suchergebnisse anzeigen',
               onPressed: _navigateToResults,
             ),
           ],
@@ -205,10 +210,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                   semanticLabel: 'Fachbereich auswählen',
                   semanticHint: 'Doppelt tippen zum Auswählen',
                   items: [
-                    const DropdownMenuItem<int>(
-                      value: 0,
-                      child: Text('Alle'),
-                    ),
+                    const DropdownMenuItem<int>(value: 0, child: Text('Alle')),
                     ...Schulungstermin.webGruppeMap.entries
                         .where((entry) => entry.key != 0)
                         .map(
@@ -256,7 +258,8 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
                   controller: _ortController,
                   label: 'Ort',
                   semanticLabel: 'Ort eingeben',
-                  semanticHint: 'Wohn- oder Veranstaltungsort als Text eingeben',
+                  semanticHint:
+                      'Wohn- oder Veranstaltungsort als Text eingeben',
                   fontSizeProvider: fontSizeProvider,
                 ),
                 const SizedBox(height: UIConstants.spacingM),
@@ -330,7 +333,8 @@ class _KeyboardFocusTextField extends StatefulWidget {
   final FontSizeProvider fontSizeProvider;
 
   @override
-  State<_KeyboardFocusTextField> createState() => _KeyboardFocusTextFieldState();
+  State<_KeyboardFocusTextField> createState() =>
+      _KeyboardFocusTextFieldState();
 }
 
 class _KeyboardFocusTextFieldState extends State<_KeyboardFocusTextField> {
@@ -351,7 +355,8 @@ class _KeyboardFocusTextFieldState extends State<_KeyboardFocusTextField> {
   }
 
   void _onFocusChange() {
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     setState(() {
       _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
     });
@@ -367,27 +372,34 @@ class _KeyboardFocusTextFieldState extends State<_KeyboardFocusTextField> {
         focusNode: _focusNode,
         controller: widget.controller,
         style: UIStyles.formValueStyle.copyWith(
-          fontSize: UIStyles.formValueStyle.fontSize! * widget.fontSizeProvider.scaleFactor,
+          fontSize:
+              UIStyles.formValueStyle.fontSize! *
+              widget.fontSizeProvider.scaleFactor,
         ),
         decoration: UIStyles.formInputDecoration.copyWith(
           labelText: widget.label,
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           labelStyle: UIStyles.formLabelStyle.copyWith(
-            fontSize: UIStyles.formLabelStyle.fontSize! * widget.fontSizeProvider.scaleFactor,
+            fontSize:
+                UIStyles.formLabelStyle.fontSize! *
+                widget.fontSizeProvider.scaleFactor,
           ),
           hintStyle: UIStyles.formInputDecoration.hintStyle?.copyWith(
-            fontSize: widget.fontSizeProvider.getScaledFontSize(UIConstants.bodyFontSize),
+            fontSize: widget.fontSizeProvider.getScaledFontSize(
+              UIConstants.bodyFontSize,
+            ),
           ),
           filled: true,
           fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
-          focusedBorder: _hasKeyboardFocus
-              ? OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.yellow.shade700,
-                    width: 2.0,
-                  ),
-                )
-              : null,
+          focusedBorder:
+              _hasKeyboardFocus
+                  ? OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.yellow.shade700,
+                      width: 2.0,
+                    ),
+                  )
+                  : null,
         ),
       ),
     );
@@ -413,7 +425,8 @@ class _KeyboardFocusDropdown<T> extends StatefulWidget {
   final ValueChanged<T?> onChanged;
 
   @override
-  State<_KeyboardFocusDropdown<T>> createState() => _KeyboardFocusDropdownState<T>();
+  State<_KeyboardFocusDropdown<T>> createState() =>
+      _KeyboardFocusDropdownState<T>();
 }
 
 class _KeyboardFocusDropdownState<T> extends State<_KeyboardFocusDropdown<T>> {
@@ -434,7 +447,8 @@ class _KeyboardFocusDropdownState<T> extends State<_KeyboardFocusDropdown<T>> {
   }
 
   void _onFocusChange() {
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     setState(() {
       _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
     });
@@ -450,7 +464,8 @@ class _KeyboardFocusDropdownState<T> extends State<_KeyboardFocusDropdown<T>> {
         onKeyEvent: (node, event) {
           // Handle space key to open dropdown - Flutter's dropdown already handles this
           // but we ensure it's properly handled
-          if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+          if (event is KeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.space) {
             // The DropdownButtonFormField will handle opening when space is pressed
             return KeyEventResult.ignored; // Let the dropdown handle it
           }
@@ -462,14 +477,15 @@ class _KeyboardFocusDropdownState<T> extends State<_KeyboardFocusDropdown<T>> {
             labelText: widget.label,
             filled: true,
             fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
-            focusedBorder: _hasKeyboardFocus
-                ? OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.yellow.shade700,
-                      width: 2.0,
-                    ),
-                  )
-                : null,
+            focusedBorder:
+                _hasKeyboardFocus
+                    ? OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.yellow.shade700,
+                        width: 2.0,
+                      ),
+                    )
+                    : null,
           ),
           items: widget.items,
           onChanged: widget.onChanged,
@@ -530,7 +546,8 @@ class _KeyboardFocusFABState extends State<_KeyboardFocusFAB> {
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -542,16 +559,18 @@ class _KeyboardFocusFABState extends State<_KeyboardFocusFAB> {
         child: Tooltip(
           message: widget.tooltip,
           child: Padding(
-            padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+            padding:
+                hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
             child: Container(
-              decoration: hasKeyboardFocus
-                  ? BoxDecoration(
-                      border: Border.all(
-                        color: Colors.yellow.shade700,
-                        width: 3.0,
-                      ),
-                    )
-                  : null,
+              decoration:
+                  hasKeyboardFocus
+                      ? BoxDecoration(
+                        border: Border.all(
+                          color: Colors.yellow.shade700,
+                          width: 3.0,
+                        ),
+                      )
+                      : null,
               child: FloatingActionButton(
                 heroTag: widget.heroTag,
                 onPressed: widget.onPressed,

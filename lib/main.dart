@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'app.dart';
 import 'services/api/auth_service.dart';
 import 'services/api/user_service.dart';
@@ -51,6 +53,20 @@ Future<void> main() async {
 
   try {
     WidgetsFlutterBinding.ensureInitialized();
+
+    // Use path-based URL strategy instead of hash-based (removes # from URLs)
+    // Only available on web platform, wrapped in try-catch for test environments
+    if (kIsWeb) {
+      try {
+        usePathUrlStrategy();
+      } catch (e) {
+        debugPrint('Path URL strategy not available: $e');
+      }
+    }
+
+    // Initialize date formatting for German locale
+    await initializeDateFormatting('de_DE', null);
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -110,14 +126,12 @@ Future<void> main() async {
       }
     }
 
-    final fragment = Uri.base.fragment;
     final path = Uri.base.path;
 
     final bool isDirectSchulungenSearch =
-        fragment == '/schulungen_search' ||
-        fragment == 'schulungen_search' ||
         path == '/schulungen_search' ||
-        path == 'schulungen_search';
+        path == 'schulungen_search' ||
+        path.startsWith('/schulungen_search/');
 
     // Declare killSwitchProvider in outer scope so it is available for providers
     ChangeNotifierProvider<KillSwitchProvider>? killSwitchProviderInstance;

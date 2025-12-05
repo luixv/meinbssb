@@ -18,11 +18,16 @@ class PostgrestService {
 
   final http.Client _httpClient;
 
-  String get _baseUrl => ConfigService.buildBaseUrlForServer(
-        configService,
-        name: 'postgrest',
-        protocolKey: 'postgrestProtocol',
-      );
+  String get _baseUrl {
+    final baseUrl = ConfigService.buildBaseUrlForServer(
+      configService,
+      name: 'postgrest',
+      protocolKey: 'postgrestProtocol',
+    );
+    // Add trailing slash to ensure proper endpoint concatenation
+    // (e.g., /api + users = /api/users, not /apiusers)
+    return baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
+  }
 
   Map<String, String> get _headers {
     final apiKey = configService.getString('postgrestApiKey');

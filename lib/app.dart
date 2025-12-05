@@ -28,6 +28,7 @@ import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'web_storage_stub.dart' if (dart.library.html) 'web_storage_web.dart';
+import 'web_redirect_stub.dart' if (dart.library.html) 'web_redirect_web.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -60,7 +61,42 @@ class MyAppWrapper extends StatelessWidget {
               ? Consumer<ThemeProvider>(
                 builder:
                     (context, themeProvider, _) => MaterialApp(
-                      home: initialScreen,
+                      initialRoute: '/schulungen_search',
+                      onGenerateRoute: (settings) {
+                        if (settings.name == '/login') {
+                          return MaterialPageRoute(
+                            builder:
+                                (context) => LoginScreen(
+                                  onLoginSuccess: (userData) {
+                                    // Login success is handled by LoginScreen's navigation
+                                    // No need to do anything here
+                                  },
+                                ),
+                            settings: settings,
+                          );
+                        }
+                        if (settings.name == '/home') {
+                          // Redirect to root URL to load the full app
+                          if (kIsWeb) {
+                            WebRedirect.redirectTo('/');
+                          }
+                          // Return a loading screen while redirecting
+                          return MaterialPageRoute(
+                            builder:
+                                (_) => const Scaffold(
+                                  body: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                            settings: settings,
+                          );
+                        }
+                        // Default to schulungen_search screen
+                        return MaterialPageRoute(
+                          builder: (_) => initialScreen!,
+                          settings: settings,
+                        );
+                      },
                       theme: themeProvider.getTheme(false),
                       darkTheme: themeProvider.getTheme(false),
                       themeMode: ThemeMode.system,
@@ -200,82 +236,83 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final fragment = Uri.base.fragment;
     final path = Uri.base.path;
 
-    // Determine initial route based on fragment and remembered route
+    // Determine initial route based on path and remembered route
     String initialRoute;
     if (kIsWeb) {
       // Robust logic for web: handle Schulungen-only and login systems
-      bool isSchulungenUrl =
-          fragment.startsWith('schulungen_search') ||
-          path.startsWith('/schulungen_search');
-      bool isSetPasswordUrl =
-          fragment.startsWith('set-password') ||
-          path.startsWith('/set-password');
-      bool isResetPasswordUrl =
-          fragment.startsWith('reset-password') ||
-          path.startsWith('/reset-password');
-      bool isVerifyEmailUrl =
-          fragment.startsWith('verify-email') ||
-          path.startsWith('/verify-email');
+      bool isSchulungenUrl = path.startsWith('/schulungen_search');
+      bool isSetPasswordUrl = path.startsWith('/set-password');
+      bool isResetPasswordUrl = path.startsWith('/reset-password');
+      bool isVerifyEmailUrl = path.startsWith('/verify-email');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
 
+      // Get the full URI with query parameters
+      final uri = Uri.base;
+      final queryString = uri.query.isNotEmpty ? '?${uri.query}' : '';
+
       if (isSetPasswordUrl) {
-        // If on set-password URL, route directly to set-password
-        initialRoute = '/set-password';
+        // If on set-password URL, route directly to set-password with query params
+        initialRoute = '/set-password$queryString';
       } else if (isResetPasswordUrl) {
-        // If on reset-password URL, route directly to reset-password
-        initialRoute = '/reset-password';
+        // If on reset-password URL, route directly to reset-password with query params
+        initialRoute = '/reset-password$queryString';
       } else if (isVerifyEmailUrl) {
-        // If on verify-email URL, route directly to verify-email
-        initialRoute = '/verify-email';
+        // If on verify-email URL, route directly to verify-email with query params
+        initialRoute = '/verify-email$queryString';
       } else if (isSchulungenUrl) {
         // If on Schulungen-only URL, clear any login-related remembered route
         if (rememberedRoute != null &&
-            !rememberedRoute.startsWith('schulungen_search')) {
+            !rememberedRoute.startsWith('/schulungen_search')) {
           WebStorage.removeItem('intendedRoute');
         }
         initialRoute = '/schulungen_search';
-      } else if (fragment.isEmpty && path.isEmpty) {
+      } else if (path == '/' || path.isEmpty) {
         // Root URL case - check if user is logged in
         if (_isLoggedIn && _userData != null) {
           // If logged in, go to home
           initialRoute = '/home';
         } else {
-          // If not logged in, go to login page
-          initialRoute = '/login';
-        }
-      } else if (fragment.isEmpty && rememberedRoute != null) {
-        // If fragment is empty but we remember a route, use it
-        if (rememberedRoute.startsWith('schulungen_search')) {
-          initialRoute = '/schulungen_search';
-        } else {
-          // If remembered route is login system, but URL is for Schulungen, clear it and use Schulungen
-          if (Uri.base.toString().contains('schulungen_search')) {
-            WebStorage.removeItem('intendedRoute');
+          // If not logged in, check remembered route or default to login
+          if (rememberedRoute != null &&
+              rememberedRoute.startsWith('/schulungen_search')) {
             initialRoute = '/schulungen_search';
           } else {
-            initialRoute = rememberedRoute;
+            initialRoute = '/login';
           }
         }
-      } else if (fragment.isEmpty) {
-        // Empty fragment but not root - default to Schulungen-only system
-        initialRoute = '/schulungen_search';
+      } else if (rememberedRoute != null) {
+        // If we have a remembered route, use it
+        if (rememberedRoute.startsWith('/schulungen_search')) {
+          initialRoute = '/schulungen_search';
+        } else {
+          initialRoute = rememberedRoute;
+        }
       } else {
-        // Any other route (like /home, /help, etc.) - use normal login system
+        // Any other route - use normal login system
         initialRoute = '/splash';
       }
       // Store the current route for future reloads
-      if (fragment.isNotEmpty) {
-        WebStorage.setItem('intendedRoute', fragment);
+      if (path.isNotEmpty && path != '/') {
+        WebStorage.setItem('intendedRoute', path);
       }
     } else {
       // Non-web platforms: always start with splash
       initialRoute = '/splash';
     }
-    // Skip splash if Schulungen-only mode
-    if (_loading && initialRoute != '/schulungen_search') {
+    // Skip splash if accessing anonymous routes directly
+    final skipSplashRoutes = [
+      '/schulungen_search',
+      '/set-password',
+      '/reset-password',
+      '/verify-email',
+    ];
+    // Check if initialRoute starts with any of the skip routes (to handle query parameters)
+    final shouldSkipSplash = skipSplashRoutes.any(
+      (route) => initialRoute.startsWith(route),
+    );
+    if (_loading && !shouldSkipSplash) {
       // Show the animated SplashScreen for at least 3 seconds
       return MaterialApp(
         home: SplashScreen(
@@ -325,19 +362,15 @@ class _MyAppState extends State<MyApp> {
           },
           // Only use onGenerateRoute, no static routes map
           onGenerateRoute: (settings) {
-            if (_loading) {
-              return MaterialPageRoute(
-                builder:
-                    (_) => const Scaffold(
-                      body: Center(child: CircularProgressIndicator()),
-                    ),
-                settings: settings,
-              );
-            }
-            // Allow anonymous access to /set-password
+            // Allow anonymous access to /set-password (check before _loading)
             if (settings.name!.startsWith('/set-password')) {
               final uri = Uri.base;
               final token = uri.queryParameters['token'] ?? '';
+              // Construct the full path with query parameters for the URL
+              final fullPath =
+                  uri.query.isNotEmpty
+                      ? '/set-password?${uri.query}'
+                      : '/set-password';
               return MaterialPageRoute(
                 builder:
                     (context) => SetPasswordScreen(
@@ -348,13 +381,18 @@ class _MyAppState extends State<MyApp> {
                             listen: false,
                           ).authService,
                     ),
-                settings: settings,
+                settings: RouteSettings(name: fullPath),
               );
             }
             if (settings.name!.startsWith('/reset-password')) {
               final uri = Uri.base;
               final token = uri.queryParameters['token'] ?? '';
               final personId = uri.queryParameters['personId'] ?? '';
+              // Construct the full path with query parameters for the URL
+              final fullPath =
+                  uri.query.isNotEmpty
+                      ? '/reset-password?${uri.query}'
+                      : '/reset-password';
               return MaterialPageRoute(
                 builder:
                     (context) => ResetPasswordScreen(
@@ -365,7 +403,7 @@ class _MyAppState extends State<MyApp> {
                         listen: false,
                       ),
                     ),
-                settings: settings,
+                settings: RouteSettings(name: fullPath),
               );
             }
             if (settings.name!.startsWith('/verify-email')) {
@@ -374,11 +412,27 @@ class _MyAppState extends State<MyApp> {
               final token = uri.queryParameters['token'] ?? '';
               final personId = uri.queryParameters['personId'] ?? '';
               LoggerService.logInfo('Token: $token, PersonId: $personId');
+              // Construct the full path with query parameters for the URL
+              final fullPath =
+                  uri.query.isNotEmpty
+                      ? '/verify-email?${uri.query}'
+                      : '/verify-email';
               return MaterialPageRoute(
                 builder:
                     (context) => EmailVerificationScreen(
                       verificationToken: token,
                       personId: personId,
+                    ),
+                settings: RouteSettings(name: fullPath),
+              );
+            }
+
+            // Show loading screen for other routes while initializing
+            if (_loading) {
+              return MaterialPageRoute(
+                builder:
+                    (_) => const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
                     ),
                 settings: settings,
               );
