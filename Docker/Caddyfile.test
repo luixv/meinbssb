@@ -10,7 +10,6 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App and PostgREST API (HTTPS)
 meintest.bssb.de {
-  # Handle PostgREST API requests on /api path
   handle /api/* {
     uri strip_prefix /api
     
@@ -20,18 +19,28 @@ meintest.bssb.de {
 
     handle @cors_preflight {
       respond "" 204
-      header Access-Control-Allow-Origin "*"
-      header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-      header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
-      header Access-Control-Allow-Credentials "false"
+      header {
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+        Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+        Access-Control-Allow-Credentials "false"
+      }
     }
 
     handle {
-      reverse_proxy postgrest:3000
-      header Access-Control-Allow-Origin "*"
-      header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-      header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
-      header Access-Control-Allow-Credentials "false"
+      reverse_proxy postgrest:3000 {
+        header_up Host {upstream_hostport}
+        header_down -Access-Control-Allow-Origin
+        header_down -Access-Control-Allow-Methods
+        header_down -Access-Control-Allow-Headers
+        header_down -Access-Control-Allow-Credentials
+      }
+      header {
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+        Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+        Access-Control-Allow-Credentials "false"
+      }
     }
   }
 
