@@ -44,8 +44,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-   #   - name: Run unit tests
-   #     run: flutter test ./test/unit --coverage
+      - name: Run unit tests
+        run: 
+          if [ "$RUN_UNIT_TESTS" = "true" ]; then
+            flutter test ./test/unit --coverage
+          fi
 
       - name: Extract version
         id: version
