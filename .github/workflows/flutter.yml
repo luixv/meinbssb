@@ -398,7 +398,8 @@ jobs:
       - name: Extract version for release
         id: release_version
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ')
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ' | tr '+' '-')
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version for release: $VERSION"
       - name: Prepare Release Assets
