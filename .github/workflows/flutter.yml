@@ -397,6 +397,11 @@ jobs:
         with:
           path: artifacts
 
+      - name: Debug artifacts folder
+        run: |
+          echo "Listing artifacts folder:"
+          ls -R artifacts
+
       - name: Extract version for release
         id: release_version
         run: |
