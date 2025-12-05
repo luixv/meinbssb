@@ -437,7 +437,7 @@ jobs:
             echo "::warning::No Android TEST AAB artifact found for version $VERSION"
           fi
           # Web - copy the entire build directory
-          WEB_ARTIFACT_DIR="artifacts/release-${VERSION}-web/web-${VERSION}"
+          WEB_ARTIFACT_DIR="artifacts/release-${VERSION}-web"
 
           if [ -d "$WEB_ARTIFACT_DIR" ]; then
             echo "Copying Web artifact from $WEB_ARTIFACT_DIR"
