@@ -164,12 +164,13 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
+
       - name: Install dependencies
         run: flutter pub get
-      # - name: Run tests
-      #     # flutter test ./test/unit --coverage        COMMENTED FOR THE TIME BEING
-      #     # echo "Skipping unit tests for now"
-      #   run: flutter test ./test/unit --coverage
+      - name: Run tests
+        run: |
+          flutter test ./test/unit --coverage
+          echo "Running unit tests "
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
