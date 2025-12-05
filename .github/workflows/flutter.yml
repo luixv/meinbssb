@@ -187,7 +187,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: prod-artifacts
+          name: release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD
           path: release/
 
   # ------------------------------------------------------------
@@ -247,7 +247,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts
+          name: release-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-TEST
           path: release/
 
   # ------------------------------------------------------------
@@ -294,7 +294,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: web-artifacts
+          name: web-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}
           path: release/
 
   # ------------------------------------------------------------
