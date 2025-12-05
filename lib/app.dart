@@ -60,7 +60,13 @@ class MyAppWrapper extends StatelessWidget {
               ? Consumer<ThemeProvider>(
                 builder:
                     (context, themeProvider, _) => MaterialApp(
-                      home: initialScreen,
+                      initialRoute: '/schulungen_search',
+                      onGenerateRoute: (settings) {
+                        return MaterialPageRoute(
+                          builder: (_) => initialScreen!,
+                          settings: settings,
+                        );
+                      },
                       theme: themeProvider.getTheme(false),
                       darkTheme: themeProvider.getTheme(false),
                       themeMode: ThemeMode.system,
