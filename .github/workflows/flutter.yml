@@ -184,19 +184,19 @@ jobs:
         run: |
           mkdir -p release
           cp build/app/outputs/flutter-apk/app-release.apk \
-               release/release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.apk
+               release/release-${{ steps.version.outputs.version }}-PROD.apk
           cp build/app/outputs/bundle/release/app-release.aab \
-               release/release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.aab
+               release/release-${{ steps.version.outputs.version }}-PROD.aab
 
       - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.apk
-          path: release/release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.apk
+          name: release-${{ steps.version.outputs.version }}-PROD.apk
+          path: release/release-${{ steps.version.outputs.version }}-PROD.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.aab
-          path: release/release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.aab
+          name: release-${{ steps.version.outputs.version }}-PROD.aab
+          path: release/release-${{ steps.version.outputs.version }}-PROD.aab
 
   # ------------------------------------------------------------
   # 3) BUILD TEST (uses SAME version as PROD)
@@ -263,12 +263,12 @@ jobs:
         run: |
           mkdir -p release
           cp build/app/outputs/flutter-apk/app-release.apk \
-             release/release-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-TEST.apk
+             release/release-${{ needs.build-prod.outputs.version }}-TEST.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-TEST.apk
-          path: release/release-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-TEST.apk
+          name: release-${{ needs.build-prod.outputs.version }}-TEST.apk
+          path: release/release-${{ needs.build-prod.outputs.version }}-TEST.apk
 
   # ------------------------------------------------------------
   # 4) BUILD WEB (uses same version)
@@ -310,11 +310,11 @@ jobs:
       - name: Package WEB
         run: |
           mkdir -p release
-          cp -r build/web release/web-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}
+          cp -r build/web release/web-${{ needs.build-prod.outputs.version }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: web-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}
+          name: web-${{ needs.build-prod.outputs.version }}
           path: release/
 
   # ------------------------------------------------------------
