@@ -134,23 +134,25 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
         showMenu: widget.showMenu,
         showConnectivityIcon: widget.showConnectivityIcon,
         leading:
-            widget.showMenu
-                ? Semantics(
-                  button: true,
-                  label: 'Zurück',
-                  hint: 'Zur vorherigen Seite wechseln',
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: UIConstants.textColor,
-                    ),
-                    tooltip: 'Zurück',
-                    onPressed: () {
-                      Navigator.of(context).maybePop();
-                    },
-                  ),
-                )
-                : null,
+            Semantics(
+              button: true,
+              label: 'Zurück',
+              hint: 'Zur Login-Seite wechseln',
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: UIConstants.textColor,
+                ),
+                tooltip: 'Zurück',
+                onPressed: () {
+                  if (widget.showMenu) {
+                    Navigator.of(context).maybePop();
+                  } else {
+                    Navigator.of(context).pushReplacementNamed('/login');
+                  }
+                },
+              ),
+            ),
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
