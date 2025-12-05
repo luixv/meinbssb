@@ -250,7 +250,7 @@ jobs:
           path: release/
 
   # ------------------------------------------------------------
-  # 4) BUILD WEB (uses same version)
+  # 4 BUILD WEB (uses same version)
   # ------------------------------------------------------------
   build-web:
     name: Build Web
