@@ -122,9 +122,8 @@ jobs:
 
           echo "Base: $BASE_VERSION"
           echo "Build number: $BUILD_NUMBER"
+
           if [ "$INCREMENT_BUILD_NUMBER" = "true" ] && [ -n "$BUILD_NUMBER" ]; then
-
-
             NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
             NEW_VERSION="$BASE_VERSION+$NEW_BUILD_NUMBER"
 
@@ -150,8 +149,6 @@ jobs:
           fi
         
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
-
 
       - name: Save version for other jobs
         id: save
@@ -210,6 +207,13 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
+
+      - name: Set up JDK 21
+        id: setup-java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
 
       - name: Set JAVA_HOME for Gradle
         run: echo "JAVA_HOME=${{ steps.setup-java.outputs.path }}" >> $GITHUB_ENV
