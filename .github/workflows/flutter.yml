@@ -41,8 +41,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-  #    - name: Run unit tests
-  #      run: flutter test ./test/unit --coverage
+      - name: Run unit tests
+        run: flutter test ./test/unit --coverage
 
       - name: Extract version
         id: version
@@ -90,6 +90,9 @@ jobs:
         run: |
           mkdir -p android/app
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      - name: Set KEY_STORE_FILE env
+        run: echo "KEY_STORE_FILE=android/app/upload-keystore.jks" >> $GITHUB_ENV
 
       # Increment build number
       - name: Increment version safely
@@ -181,6 +184,9 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
+
+      - name: Set KEY_STORE_FILE env
+        run: echo "KEY_STORE_FILE=android/app/upload-keystore.jks" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: flutter pub get
