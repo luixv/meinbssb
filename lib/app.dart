@@ -68,14 +68,25 @@ class MyAppWrapper extends StatelessWidget {
                             builder:
                                 (context) => LoginScreen(
                                   onLoginSuccess: (userData) {
-                                    // Reload the page to reinitialize with full app
-                                    if (kIsWeb) {
-                                      // On web, reload the window
-                                      // This will cause the app to reinitialize with the user logged in
-                                      // and navigate to the home screen
-                                      html.window.location.reload();
-                                    }
+                                    // Login success is handled by LoginScreen's navigation
+                                    // No need to do anything here
                                   },
+                                ),
+                            settings: settings,
+                          );
+                        }
+                        if (settings.name == '/home') {
+                          // Redirect to root URL to load the full app
+                          if (kIsWeb) {
+                            html.window.location.href = '/';
+                          }
+                          // Return a loading screen while redirecting
+                          return MaterialPageRoute(
+                            builder:
+                                (_) => const Scaffold(
+                                  body: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
                             settings: settings,
                           );
