@@ -411,47 +411,33 @@ jobs:
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version for release: $VERSION"
+
       - name: Prepare Release Assets
         run: |
           RELEASE_DIR="$GITHUB_WORKSPACE/release_assets"
           mkdir -p "$RELEASE_DIR"
-          VERSION="${{ steps.release_version.outputs.version }}"
-          # Android - copy the APK and AAB files
-          if [ -f "artifacts/release-${VERSION}-PROD.apk/release-${VERSION}-PROD.apk" ]; then
-            cp "artifacts/release-${VERSION}-PROD.apk/release-${VERSION}-PROD.apk" "$RELEASE_DIR/"
-          else
-            echo "::warning::No Android PROD APK artifact found for version $VERSION"
-          fi
-          if [ -f "artifacts/release-${VERSION}-PROD.aab/release-${VERSION}-PROD.aab" ]; then
-            cp "artifacts/release-${VERSION}-PROD.aab/release-${VERSION}-PROD.aab" "$RELEASE_DIR/"
-          else
-            echo "::warning::No Android PROD AAB artifact found for version $VERSION"
-          fi
-          if [ -f "artifacts/release-${VERSION}-TEST.apk/release-${VERSION}-TEST.apk" ]; then
-            cp "artifacts/release-${VERSION}-TEST.apk/release-${VERSION}-TEST.apk" "$RELEASE_DIR/"
-          else
-            echo "::warning::No Android TEST APK artifact found for version $VERSION"
-          fi
-          if [ -f "artifacts/release-${VERSION}-TEST.aab/release-${VERSION}-TEST.aab" ]; then
-            cp "artifacts/release-${VERSION}-TEST.aab/release-${VERSION}-TEST.aab" "$RELEASE_DIR/"
-          else
-            echo "::warning::No Android TEST AAB artifact found for version $VERSION"
-          fi
-          # Web - copy the entire build directory
-          VERSION="${{ steps.release_version.outputs.version }}"
-          SAFE_VERSION="${VERSION//+/-}"
 
-          WEB_ARTIFACT_DIR="artifacts/release-${SAFE_VERSION}-web"
+          PROD_VERSION="${{ steps.built_versions.outputs.prod }}"
+          TEST_VERSION="${{ steps.built_versions.outputs.test }}"
+          WEB_VERSION="${{ steps.built_versions.outputs.web }}"
+          SAFE_WEB="${WEB_VERSION//+/-}"
 
-          if [ -d "$WEB_ARTIFACT_DIR" ]; then
-            echo "Copying Web artifact from $WEB_ARTIFACT_DIR"
-            cp -r "$WEB_ARTIFACT_DIR" "$RELEASE_DIR/web-${SAFE_VERSION}"
-          else
-            echo "::warning::No Web build artifacts found at $WEB_ARTIFACT_DIR"
+          # --- PROD ---
+          if [ -n "$PROD_VERSION" ]; then
+            cp "artifacts/release-${PROD_VERSION}-PROD.apk/release-${PROD_VERSION}-PROD.apk" "$RELEASE_DIR/" || true
+            cp "artifacts/release-${PROD_VERSION}-PROD.aab/release-${PROD_VERSION}-PROD.aab" "$RELEASE_DIR/" || true
           fi
 
+          # --- TEST ---
+          if [ -n "$TEST_VERSION" ]; then
+            cp "artifacts/release-${TEST_VERSION}-TEST.apk/release-${TEST_VERSION}-TEST.apk" "$RELEASE_DIR/" || true
+            cp "artifacts/release-${TEST_VERSION}-TEST.aab/release-${TEST_VERSION}-TEST.aab" "$RELEASE_DIR/" || true
+          fi
 
-
+          # --- WEB ---
+          if [ -d "artifacts/release-${SAFE_WEB}-web" ]; then
+            cp -r "artifacts/release-${SAFE_WEB}-web" "$RELEASE_DIR/web-${SAFE_WEB}"
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
