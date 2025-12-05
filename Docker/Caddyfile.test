@@ -1,6 +1,4 @@
-{
-  local_certs
-}
+
 # Redirect HTTP to HTTPS
 http://meintest.bssb.de {
   redir https://meintest.bssb.de{uri}
@@ -8,6 +6,9 @@ http://meintest.bssb.de {
 
 # Serve Flutter Web App (HTTPS)
 https://meintest.bssb.de {
+  tls {
+    ca https://acme-staging-v02.api.letsencrypt.org/directory
+  }
   root * /web
   file_server
   try_files {path} /index.html

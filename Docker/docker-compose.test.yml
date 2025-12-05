@@ -40,6 +40,8 @@ services:
     volumes:
       - ./Caddyfile.test:/etc/caddy/Caddyfile
       - ../build/web:/web
+      - ./caddy-data:/data
+      - ./caddy-config:/config
     depends_on:
       - postgrest
 
