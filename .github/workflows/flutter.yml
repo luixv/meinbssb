@@ -86,13 +86,14 @@ jobs:
           cache: true
 
       - name: Set up JDK 21
+        id: setup-java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 21
 
       - name: Set JAVA_HOME for Gradle
-        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+        run: echo "JAVA_HOME=${{ steps.setup-java.outputs.path }}" >> $GITHUB_ENV
 
       # Decode keystore
       - name: Decode Keystore
@@ -211,7 +212,7 @@ jobs:
           cache: true
 
       - name: Set JAVA_HOME for Gradle
-        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+        run: echo "JAVA_HOME=${{ steps.setup-java.outputs.path }}" >> $GITHUB_ENV
 
       - name: Set KEY_STORE_FILE env
         run: echo "KEY_STORE_FILE=upload-keystore.jks" >> $GITHUB_ENV
