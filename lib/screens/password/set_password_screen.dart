@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:meinbssb/services/api/auth_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
@@ -10,6 +11,7 @@ import 'package:meinbssb/screens/registration/registration_success_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/helpers/utils.dart';
+import 'dart:html' as html show window;
 
 class SetPasswordScreen extends StatefulWidget {
   const SetPasswordScreen({
@@ -272,6 +274,15 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
       userData: null,
       isLoggedIn: false,
       onLogout: () {},
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
+        tooltip: 'Zurück',
+        onPressed: () {
+          if (kIsWeb) {
+            html.window.location.href = '/';
+          }
+        },
+      ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
         child: Form(

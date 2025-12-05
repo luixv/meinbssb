@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '/constants/ui_constants.dart';
 import '/screens/base_screen_layout.dart';
@@ -7,6 +8,7 @@ import '/services/core/logger_service.dart';
 import 'email_verification_success_screen.dart';
 import 'email_verification_fail_screen.dart';
 import '/models/contact_data.dart';
+import 'dart:html' as html show window;
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({
@@ -140,6 +142,15 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
       onLogout: () {
         Navigator.pushReplacementNamed(context, '/login');
       },
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: UIConstants.textColor),
+        tooltip: 'Zurück',
+        onPressed: () {
+          if (kIsWeb) {
+            html.window.location.href = '/';
+          }
+        },
+      ),
       body: Semantics(
         container: true,
         label:
