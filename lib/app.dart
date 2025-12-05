@@ -362,16 +362,7 @@ class _MyAppState extends State<MyApp> {
           },
           // Only use onGenerateRoute, no static routes map
           onGenerateRoute: (settings) {
-            if (_loading) {
-              return MaterialPageRoute(
-                builder:
-                    (_) => const Scaffold(
-                      body: Center(child: CircularProgressIndicator()),
-                    ),
-                settings: settings,
-              );
-            }
-            // Allow anonymous access to /set-password
+            // Allow anonymous access to /set-password (check before _loading)
             if (settings.name!.startsWith('/set-password')) {
               final uri = Uri.base;
               final token = uri.queryParameters['token'] ?? '';
@@ -433,6 +424,17 @@ class _MyAppState extends State<MyApp> {
                       personId: personId,
                     ),
                 settings: RouteSettings(name: fullPath),
+              );
+            }
+
+            // Show loading screen for other routes while initializing
+            if (_loading) {
+              return MaterialPageRoute(
+                builder:
+                    (_) => const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    ),
+                settings: settings,
               );
             }
             // Allow anonymous access to SchulungenSearchScreen and all its subroutes
