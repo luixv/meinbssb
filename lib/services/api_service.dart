@@ -121,7 +121,7 @@ class ApiService {
   //
   // --- Image Service Methods --
   //
-  Future<Uint8List> fetchSchuetzenausweis(int personId) async {
+  Future<Uint8List?> fetchSchuetzenausweis(int personId) async {
     return _imageService.fetchAndCacheSchuetzenausweis(
       personId,
       getCacheExpirationDuration(),

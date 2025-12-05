@@ -260,15 +260,7 @@ class MockImageService extends _i1.Mock implements _i11.ImageService {
           as _i2.Future<_i10.Uint8List?>);
 
   @override
-  _i2.Future<bool> isDeviceOnline() =>
-      (super.noSuchMethod(
-            Invocation.method(#isDeviceOnline, []),
-            returnValue: _i2.Future<bool>.value(false),
-          )
-          as _i2.Future<bool>);
-
-  @override
-  _i2.Future<_i10.Uint8List> fetchAndCacheSchuetzenausweis(
+  _i2.Future<_i10.Uint8List?> fetchAndCacheSchuetzenausweis(
     int? personId,
     Duration? validityDuration,
   ) =>
@@ -277,9 +269,9 @@ class MockImageService extends _i1.Mock implements _i11.ImageService {
               personId,
               validityDuration,
             ]),
-            returnValue: _i2.Future<_i10.Uint8List>.value(_i10.Uint8List(0)),
+            returnValue: _i2.Future<_i10.Uint8List?>.value(),
           )
-          as _i2.Future<_i10.Uint8List>);
+          as _i2.Future<_i10.Uint8List?>);
 
   @override
   _i2.Future<String?> getSchuetzenausweisCacheDate(int? personId) =>
@@ -1715,6 +1707,27 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
             returnValue: _i2.Future<bool>.value(false),
           )
           as _i2.Future<bool>);
+
+  @override
+  _i2.Future<void> logApiRequest({
+    required int? personId,
+    required String? apiBaseServer,
+    required String? apiBasePath,
+    required String? apiBasePort,
+    required String? endpoint,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#logApiRequest, [], {
+              #personId: personId,
+              #apiBaseServer: apiBaseServer,
+              #apiBasePath: apiBasePath,
+              #apiBasePort: apiBasePort,
+              #endpoint: endpoint,
+            }),
+            returnValue: _i2.Future<void>.value(),
+            returnValueForMissingStub: _i2.Future<void>.value(),
+          )
+          as _i2.Future<void>);
 
   @override
   _i2.Future<_i10.Uint8List?> getProfilePhoto(String? userId) =>

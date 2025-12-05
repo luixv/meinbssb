@@ -183,7 +183,7 @@ class LoginScreenState extends State<LoginScreen> {
         await _saveRememberMeCredentials();
       }
 
-      await apiService.fetchSchuetzenausweis(personId);
+      apiService.fetchSchuetzenausweis(personId);
       if (!mounted) return;
       Navigator.pushReplacementNamed(
         context,
