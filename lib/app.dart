@@ -28,6 +28,7 @@ import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'web_storage_stub.dart' if (dart.library.html) 'web_storage_web.dart';
+import 'dart:html' as html show window;
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -62,6 +63,24 @@ class MyAppWrapper extends StatelessWidget {
                     (context, themeProvider, _) => MaterialApp(
                       initialRoute: '/schulungen_search',
                       onGenerateRoute: (settings) {
+                        if (settings.name == '/login') {
+                          return MaterialPageRoute(
+                            builder:
+                                (context) => LoginScreen(
+                                  onLoginSuccess: (userData) {
+                                    // Reload the page to reinitialize with full app
+                                    if (kIsWeb) {
+                                      // On web, reload the window
+                                      // This will cause the app to reinitialize with the user logged in
+                                      // and navigate to the home screen
+                                      html.window.location.reload();
+                                    }
+                                  },
+                                ),
+                            settings: settings,
+                          );
+                        }
+                        // Default to schulungen_search screen
                         return MaterialPageRoute(
                           builder: (_) => initialScreen!,
                           settings: settings,
