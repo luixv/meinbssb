@@ -428,9 +428,9 @@ jobs:
             echo "::warning::No Android TEST AAB artifact found for version $VERSION"
           fi
           # Web - copy the entire build directory
-          if [ -d "artifacts/release-${VERSION}-web" ]; then
-            echo "cp -r artifacts/release-${VERSION}-web $RELEASE_DIR/web-${VERSION}"
-            cp -r "artifacts/release-${VERSION}-web" "$RELEASE_DIR/web-${VERSION}"
+          if [ -d "artifacts/release-${VERSION}-web/web-${VERSION}" ]; then
+            echo "cp -r artifacts/release-${VERSION}-web/web-${VERSION} $RELEASE_DIR/web-${VERSION}"
+            cp -r "artifacts/release-${VERSION}-web/web-${VERSION}" "$RELEASE_DIR/web-${VERSION}"
           else
             echo "::warning::No Web build artifacts found for version $VERSION"
           fi
