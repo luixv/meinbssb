@@ -170,7 +170,7 @@ jobs:
       - name: Run tests
         run: |
           flutter test ./test/unit --coverage
-          echo "Running unit tests "
+          echo "Running unit tests"
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
