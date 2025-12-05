@@ -95,22 +95,39 @@ jobs:
       - name: Increment version
         id: version
         run: |
-          echo "Old version: ${{ needs.test.outputs.version }}"
-          BASE=$(echo "${{ needs.test.outputs.version }}" | cut -d'+' -f1)
-          OLD=$(echo "${{ needs.test.outputs.version }}" | cut -d'+' -f2)
-          NEW=$((OLD + 1))
-          FINAL="$BASE+$NEW"
+          echo "Current version from pubspec.yaml:"
+          VERSION_LINE=$(grep '^version:' pubspec.yaml)
+          VERSION=$(echo "$VERSION_LINE" | sed 's/version: *//' | tr -d ' ')
+          BASE_VERSION=$(echo "$VERSION" | cut -d'+' -f1)
+          BUILD_NUMBER=$(echo "$VERSION" | cut -d'+' -f2)
 
-          sed -i "s/^version:.*/version: $FINAL/" pubspec.yaml
+          echo "Base: $BASE_VERSION"
+          echo "Build number: $BUILD_NUMBER"
 
+          NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
+          NEW_VERSION="$BASE_VERSION+$NEW_BUILD_NUMBER"
+
+          echo "Updating version to: $NEW_VERSION"
+
+          # Update pubspec.yaml
+          sed -i "s/^version:.*/version: $NEW_VERSION/" pubspec.yaml
+
+          # Configure git
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add pubspec.yaml
-          git commit -m "CI: Increment build number to $NEW [skip ci]"
-          git push
 
-          echo "version=$FINAL" >> $GITHUB_OUTPUT
-          echo "Updated version: $FINAL"
+          # ALWAYS rebase before pushing to avoid 'rejected' errors
+          git fetch origin ${{ github.ref_name }}
+          git pull --rebase origin ${{ github.ref_name }}
+
+          git add pubspec.yaml
+          git commit -m "CI: Increment build number to $NEW_BUILD_NUMBER [skip ci]"
+
+          # Safe push
+          git push origin HEAD:${{ github.ref_name }}
+
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
 
       - name: Save version for other jobs
         id: save
