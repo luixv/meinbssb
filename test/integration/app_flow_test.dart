@@ -9,6 +9,7 @@ import 'package:meinbssb/services/core/network_service.dart';
 import 'package:meinbssb/main.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart' hide NetworkException;
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Generate mocks for services that will be overridden
 class MockNetworkService extends Mock implements NetworkService {}
@@ -23,6 +24,9 @@ void main() {
     late NetworkService networkService; // Declare networkService
 
     setUpAll(() async {
+      // Initialize mock for SharedPreferences to avoid MissingPluginException
+      SharedPreferences.setMockInitialValues({});
+
       // Initialize the app's service providers.
       // This will set the static variables in AppInitializer.
       await AppInitializer.init();

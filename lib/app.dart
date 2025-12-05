@@ -200,25 +200,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final fragment = Uri.base.fragment;
     final path = Uri.base.path;
 
-    // Determine initial route based on fragment and remembered route
+    // Determine initial route based on path and remembered route
     String initialRoute;
     if (kIsWeb) {
       // Robust logic for web: handle Schulungen-only and login systems
-      bool isSchulungenUrl =
-          fragment.startsWith('schulungen_search') ||
-          path.startsWith('/schulungen_search');
-      bool isSetPasswordUrl =
-          fragment.startsWith('set-password') ||
-          path.startsWith('/set-password');
-      bool isResetPasswordUrl =
-          fragment.startsWith('reset-password') ||
-          path.startsWith('/reset-password');
-      bool isVerifyEmailUrl =
-          fragment.startsWith('verify-email') ||
-          path.startsWith('/verify-email');
+      bool isSchulungenUrl = path.startsWith('/schulungen_search');
+      bool isSetPasswordUrl = path.startsWith('/set-password');
+      bool isResetPasswordUrl = path.startsWith('/reset-password');
+      bool isVerifyEmailUrl = path.startsWith('/verify-email');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
 
       if (isSetPasswordUrl) {
@@ -233,42 +224,38 @@ class _MyAppState extends State<MyApp> {
       } else if (isSchulungenUrl) {
         // If on Schulungen-only URL, clear any login-related remembered route
         if (rememberedRoute != null &&
-            !rememberedRoute.startsWith('schulungen_search')) {
+            !rememberedRoute.startsWith('/schulungen_search')) {
           WebStorage.removeItem('intendedRoute');
         }
         initialRoute = '/schulungen_search';
-      } else if (fragment.isEmpty && path.isEmpty) {
+      } else if (path == '/' || path.isEmpty) {
         // Root URL case - check if user is logged in
         if (_isLoggedIn && _userData != null) {
           // If logged in, go to home
           initialRoute = '/home';
         } else {
-          // If not logged in, go to login page
-          initialRoute = '/login';
-        }
-      } else if (fragment.isEmpty && rememberedRoute != null) {
-        // If fragment is empty but we remember a route, use it
-        if (rememberedRoute.startsWith('schulungen_search')) {
-          initialRoute = '/schulungen_search';
-        } else {
-          // If remembered route is login system, but URL is for Schulungen, clear it and use Schulungen
-          if (Uri.base.toString().contains('schulungen_search')) {
-            WebStorage.removeItem('intendedRoute');
+          // If not logged in, check remembered route or default to login
+          if (rememberedRoute != null &&
+              rememberedRoute.startsWith('/schulungen_search')) {
             initialRoute = '/schulungen_search';
           } else {
-            initialRoute = rememberedRoute;
+            initialRoute = '/login';
           }
         }
-      } else if (fragment.isEmpty) {
-        // Empty fragment but not root - default to login
-        initialRoute = '/login';
+      } else if (rememberedRoute != null) {
+        // If we have a remembered route, use it
+        if (rememberedRoute.startsWith('/schulungen_search')) {
+          initialRoute = '/schulungen_search';
+        } else {
+          initialRoute = rememberedRoute;
+        }
       } else {
-        // Any other route (like /home, /help, etc.) - use normal login system
+        // Any other route - use normal login system
         initialRoute = '/splash';
       }
       // Store the current route for future reloads
-      if (fragment.isNotEmpty) {
-        WebStorage.setItem('intendedRoute', fragment);
+      if (path.isNotEmpty && path != '/') {
+        WebStorage.setItem('intendedRoute', path);
       }
     } else {
       // Non-web platforms: always start with splash
