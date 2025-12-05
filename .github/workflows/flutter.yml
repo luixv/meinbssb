@@ -1,6 +1,7 @@
 env:
   FLUTTER_VERSION: '3.38.3'
   FLUTTER_CHANNEL: 'stable'
+  ANDROID_KEYSTORE_NAME: "***-keystore.jks"
   INCREMENT_BUILD_NUMBER: 'true'
   RUN_UNIT_TESTS: 'false'
 
@@ -336,4 +337,7 @@ jobs:
         with:
           tag_name: v${{ needs.build-prod.outputs.version }}
           generate_release_notes: true
-          files: artifacts/**
+          files: |
+            artifacts/PROD/**
+            artifacts/*.apk
+            artifacts/*.aab
