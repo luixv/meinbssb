@@ -8,6 +8,16 @@ http://mein.bssb.de {
   redir https://mein.bssb.de{uri} permanent
 }
 
+# Redirect old port 8080 (HTTP) on meinprod.bssb.de to HTTPS /email endpoint
+https://meinprod.bssb.de:8080 {
+  redir https://mein.bssb.de/email{uri} permanent
+}
+
+# Redirect old port 8081 (HTTP) on meinprod.bssb.de to HTTPS /api endpoint
+https://meinprod.bssb.de:8081 {
+  redir https://mein.bssb.de/api{uri} permanent
+}
+
 https://mein.bssb.de {
  # Handle PostgREST API requests on /api path
   handle /api/* {
@@ -118,4 +128,3 @@ https://meinprod.bssb.de {
     try_files {path} /index.html
   }
 }
-
