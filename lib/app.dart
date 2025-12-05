@@ -308,7 +308,11 @@ class _MyAppState extends State<MyApp> {
       '/reset-password',
       '/verify-email',
     ];
-    if (_loading && !skipSplashRoutes.contains(initialRoute)) {
+    // Check if initialRoute starts with any of the skip routes (to handle query parameters)
+    final shouldSkipSplash = skipSplashRoutes.any(
+      (route) => initialRoute.startsWith(route),
+    );
+    if (_loading && !shouldSkipSplash) {
       // Show the animated SplashScreen for at least 3 seconds
       return MaterialApp(
         home: SplashScreen(
