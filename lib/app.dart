@@ -297,8 +297,14 @@ class _MyAppState extends State<MyApp> {
       // Non-web platforms: always start with splash
       initialRoute = '/splash';
     }
-    // Skip splash if Schulungen-only mode
-    if (_loading && initialRoute != '/schulungen_search') {
+    // Skip splash if accessing anonymous routes directly
+    final skipSplashRoutes = [
+      '/schulungen_search',
+      '/set-password',
+      '/reset-password',
+      '/verify-email',
+    ];
+    if (_loading && !skipSplashRoutes.contains(initialRoute)) {
       // Show the animated SplashScreen for at least 3 seconds
       return MaterialApp(
         home: SplashScreen(
