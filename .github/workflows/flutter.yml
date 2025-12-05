@@ -430,12 +430,15 @@ jobs:
             echo "::warning::No Android TEST AAB artifact found for version $VERSION"
           fi
           # Web - copy the entire build directory
-          if [ -d "artifacts/release-${VERSION}-web" ]; then
-            echo "cp -r artifacts/release-${VERSION}-web $RELEASE_DIR/web-${VERSION}"
-            cp -r "artifacts/release-${VERSION}-web" "$RELEASE_DIR/web-${VERSION}"
+          WEB_ARTIFACT_DIR="artifacts/release-${VERSION}-web/web-${VERSION}"
+
+          if [ -d "$WEB_ARTIFACT_DIR" ]; then
+            echo "Copying Web artifact from $WEB_ARTIFACT_DIR"
+            cp -r "$WEB_ARTIFACT_DIR" "$RELEASE_DIR/web-${VERSION}"
           else
-            echo "::warning::No Web build artifacts found for version $VERSION"
+            echo "::warning::No Web build artifacts found at $WEB_ARTIFACT_DIR"
           fi
+
 
 
       - name: Create GitHub Release
