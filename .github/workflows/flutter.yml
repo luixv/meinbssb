@@ -91,6 +91,9 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
+      - name: Set JAVA_HOME for Gradle
+        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+
       # Decode keystore
       - name: Decode Keystore
         run: |
@@ -206,6 +209,9 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
+
+      - name: Set JAVA_HOME for Gradle
+        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
 
       - name: Set KEY_STORE_FILE env
         run: echo "KEY_STORE_FILE=upload-keystore.jks" >> $GITHUB_ENV
