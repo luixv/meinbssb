@@ -3,14 +3,13 @@ env:
   FLUTTER_CHANNEL: 'stable'
   ANDROID_KEYSTORE_NAME: "***-keystore.jks"
   INCREMENT_BUILD_NUMBER: 'true'
-  RUN_UNIT_TESTS: 'false'
-
+  RUN_UNIT_TESTS: 'true'
 
 name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main, pipeline ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
