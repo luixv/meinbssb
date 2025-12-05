@@ -1,7 +1,7 @@
 env:
   FLUTTER_VERSION: '3.38.3'
   FLUTTER_CHANNEL: 'stable'
-  INCREMENT_BUILD_NUMBER: 'false'
+  INCREMENT_BUILD_NUMBER: 'true'
 
 name: Flutter CI/CD
 
@@ -229,7 +229,7 @@ jobs:
             git config --local user.name "GitHub Actions Bot"
             git config --local user.email "actions@github.com"
             git add pubspec.yaml
-            git commit -m "CI: Incremented build number to $NEW_BUILD_NUMBER"
+            git commit -m "CI: Incremented build number to $NEW_BUILD_NUMBER [skip ci]"
             git push
             VERSION="$NEW_VERSION"
           fi
