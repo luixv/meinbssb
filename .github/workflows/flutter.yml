@@ -166,13 +166,20 @@ jobs:
       - name: Build AAB
         run: flutter build appbundle --release
 
+      - name: Extract build number
+        id: buildnum
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ')
+          BUILD_NUMBER=$(echo "$VERSION" | cut -d'+' -f2)
+          echo "buildnum=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+
       - name: Package artifacts
         run: |
           mkdir -p release
           cp build/app/outputs/flutter-apk/app-release.apk \
-               release/release-${{ steps.version.outputs.version }}-PROD.apk
+               release/release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.apk
           cp build/app/outputs/bundle/release/app-release.aab \
-               release/release-${{ steps.version.outputs.version }}-PROD.aab
+               release/release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.aab
 
       - uses: actions/upload-artifact@v4
         with:
@@ -218,11 +225,18 @@ jobs:
       - name: Build TEST APK
         run: flutter build apk --release
 
+      - name: Extract build number
+        id: buildnum
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ')
+          BUILD_NUMBER=$(echo "$VERSION" | cut -d'+' -f2)
+          echo "buildnum=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+
       - name: Package TEST artifact
         run: |
           mkdir -p release
           cp build/app/outputs/flutter-apk/app-release.apk \
-             release/release-${{ needs.build-prod.outputs.version }}-TEST.apk
+             release/release-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-TEST.apk
 
       - uses: actions/upload-artifact@v4
         with:
@@ -259,10 +273,17 @@ jobs:
       - name: Build WEB
         run: flutter build web --release
 
+      - name: Extract build number
+        id: buildnum
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ')
+          BUILD_NUMBER=$(echo "$VERSION" | cut -d'+' -f2)
+          echo "buildnum=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+
       - name: Package WEB
         run: |
           mkdir -p release
-          cp -r build/web release/web-${{ needs.build-prod.outputs.version }}
+          cp -r build/web release/web-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}
 
       - uses: actions/upload-artifact@v4
         with:
