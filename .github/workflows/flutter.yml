@@ -1,15 +1,14 @@
 env:
   FLUTTER_VERSION: '3.38.3'
   FLUTTER_CHANNEL: 'stable'
-  INCREMENT_BUILD_NUMBER: 'true'
 
 name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main, pipeline]
+    branches: [ main, pipeline ]
   pull_request:
-    branches: [ main]
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,11 +20,14 @@ permissions:
   actions: write
 
 jobs:
-  build-android-test:
-    name: Build Android TEST APK 
-    needs: test
+  # ------------------------------------------------------------
+  # 1) TEST + DETERMINE VERSION (single source of truth)
+  # ------------------------------------------------------------
+  test:
+    name: Run Tests + Determine Version
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,122 +38,18 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
+      - name: Install dependencies
+        run: flutter pub get
 
-      # --------------------------------------------------
-      # Decode the Base64 Keystore Secret into a file
-      # --------------------------------------------------
-      - name: Decode and Setup Keystore File
-        run: |
-          mkdir -p android/app
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
-          echo "✅ Keystore file created at android/app/upload-keystore.jks"
-          ls -la android/app/upload-keystore.jks
+      - name: Run unit tests
+        run: flutter test --coverage
 
-      # --------------------------------------------------
-      # Extract version from pubspec.yaml
-      # --------------------------------------------------
-      - name: Extract version from pubspec.yaml
+      - name: Extract version
         id: version
         run: |
-          VERSION_LINE=$(grep '^version:' pubspec.yaml)
-          VERSION=$(echo "$VERSION_LINE" | sed 's/version: *//' | tr -d ' ')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Extracted version: $VERSION"
-
-      # --------------------------------------------------
-      # Clean previous builds
-      # --------------------------------------------------
-      - name: Clean previous builds
-        run: |
-          flutter clean
-          cd android && ./gradlew --stop || true
-          cd ..
-
-      # --------------------------------------------------
-      # Install dependencies
-      # --------------------------------------------------
-      - name: Install dependencies
-        run: flutter pub get
-
-      # --------------------------------------------------
-      # Replace config for deployment
-      # --------------------------------------------------
-      - name: Replace config for deployment
-        run: |
-          echo "🧩 Replacing config for deployment"
-          cp assets/config.test.json assets/config.json
-          head -20 assets/config.test.json || echo "No config.json found!"
-
-      # --------------------------------------------------
-      # Build TEST APK with signing + validate 
-      # --------------------------------------------------
-      - name: Build TEST APK versions + Validate
-        run: |
-          export FLUTTER_WEB=false
-          export KEY_STORE_FILE=$GITHUB_WORKSPACE/android/app/upload-keystore.jks
-          export KEY_STORE_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
-          export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
-          export KEY_KEY_PASSWORD=${{ secrets.KEY_KEY_PASSWORD }}
-
-          if [ ! -f "$KEY_STORE_FILE" ]; then
-            echo "::error::Keystore file not found at $KEY_STORE_FILE"
-            exit 1
-          fi
-          echo "🔐 Keystore found at $KEY_STORE_FILE"
-
-          echo "🏗️ Building APK..."
-          flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
-
-
-      # --------------------------------------------------
-      # Create versioned Android artifacts
-      # --------------------------------------------------
-      - name: Create versioned Android artifacts (APK)
-        run: |
-          mkdir -p release_artifacts
-          APK_PATH=build/app/outputs/flutter-apk/app-release.apk
-          if [ -f "$APK_PATH" ]; then
-            cp "$APK_PATH" release_artifacts/release-${{ steps.version.outputs.version }}-TEST.apk
-            echo "✅ APK packaged successfully"
-          else
-            echo "::warning::APK not found at $APK_PATH"
-          fi
-
-      # --------------------------------------------------
-      # Upload APK
-      # --------------------------------------------------
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-${{ steps.version.outputs.version }}-TEST.apk
-          path: release_artifacts/release-${{ steps.version.outputs.version }}-TEST.apk
-          if-no-files-found: error
-
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: ${{ env.FLUTTER_CHANNEL }}
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Run tests
-        run: |
-          flutter test ./test/unit --coverage
-          echo "Running unit tests"
+          RAW=$(grep '^version:' pubspec.yaml | sed 's/version: *//' )
+          echo "version=$RAW" >> $GITHUB_OUTPUT
+          echo "Extracted version: $RAW"
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
@@ -160,14 +58,19 @@ jobs:
           files: ./coverage/lcov.info
           fail_ci_if_error: true
 
-  build-android-prod:
-    name: Build Android PROD (APK / AAB)
+  # ------------------------------------------------------------
+  # 2) BUILD PROD (increments version + saves it)
+  # ------------------------------------------------------------
+  build-prod:
+    name: Build PROD (APK + AAB)
     needs: test
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+
+    outputs:
+      version: ${{ steps.save.outputs.version }}
+
     steps:
       - uses: actions/checkout@v4
-
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -180,253 +83,164 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: 21
 
-      # --------------------------------------------------
-      # Decode the Base64 Keystore Secret into a file
-      # --------------------------------------------------
-      - name: Decode and Setup Keystore File
+      # Decode keystore
+      - name: Decode Keystore
         run: |
           mkdir -p android/app
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
-          echo "✅ Keystore file created at android/app/upload-keystore.jks"
-          ls -la android/app/upload-keystore.jks
 
-      # --------------------------------------------------
-      # Extract version from pubspec.yaml
-      # --------------------------------------------------
-      - name: Extract version from pubspec.yaml
+      # Increment build number
+      - name: Increment version
         id: version
         run: |
-          VERSION_LINE=$(grep '^version:' pubspec.yaml)
-          VERSION=$(echo "$VERSION_LINE" | sed 's/version: *//' | tr -d ' ')
-          BASE_VERSION=$(echo "$VERSION" | cut -d'+' -f1)
-          BUILD_NUMBER=$(echo "$VERSION" | cut -d'+' -f2)
-          if [ "$INCREMENT_BUILD_NUMBER" = "true" ] && [ -n "$BUILD_NUMBER" ]; then
-            NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
-            NEW_VERSION="$BASE_VERSION+$NEW_BUILD_NUMBER"
-            # Update pubspec.yaml
-            sed -i "s/^version: .*/version: $NEW_VERSION/" pubspec.yaml
-            echo "Updated version in pubspec.yaml: $NEW_VERSION"
-            # Commit the change to git
-            git config --local user.name "GitHub Actions Bot"
-            git config --local user.email "actions@github.com"
-            git add pubspec.yaml
-            git commit -m "CI: Incremented build number to $NEW_BUILD_NUMBER [skip ci]"
-            git push
-            VERSION="$NEW_VERSION"
-          fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Extracted version: $VERSION"
+          echo "Old version: ${{ needs.test.outputs.version }}"
+          BASE=$(echo "${{ needs.test.outputs.version }}" | cut -d'+' -f1)
+          OLD=$(echo "${{ needs.test.outputs.version }}" | cut -d'+' -f2)
+          NEW=$((OLD + 1))
+          FINAL="$BASE+$NEW"
 
-      # --------------------------------------------------
-      # Clean previous builds
-      # --------------------------------------------------
-      - name: Clean previous builds
+          sed -i "s/^version:.*/version: $FINAL/" pubspec.yaml
+
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add pubspec.yaml
+          git commit -m "CI: Increment build number to $NEW [skip ci]"
+          git push
+
+          echo "version=$FINAL" >> $GITHUB_OUTPUT
+          echo "Updated version: $FINAL"
+
+      - name: Save version for other jobs
+        id: save
         run: |
-          flutter clean
-          cd android && ./gradlew --stop || true
-          cd ..
+          echo "version=${{ steps.version.outputs.version }}" >> $GITHUB_OUTPUT
 
-      # --------------------------------------------------
-      # Install dependencies
-      # --------------------------------------------------
       - name: Install dependencies
         run: flutter pub get
 
-      # --------------------------------------------------
-      # Replace config for deployment
-      # --------------------------------------------------
-      - name: Replace config for deployment
+      - name: Use PROD config
+        run: cp assets/config.prod.json assets/config.json
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Build AAB
+        run: flutter build appbundle --release
+
+      - name: Package artifacts
         run: |
-          echo "🧩 Replacing config for deployment"
-          cp assets/config.prod.json assets/config.json
-          head -20 assets/config.prod.json || echo "No config.json found!"
+          mkdir -p release
+          cp build/app/outputs/flutter-apk/app-release.apk \
+               release/release-${{ steps.version.outputs.version }}-PROD.apk
+          cp build/app/outputs/bundle/release/app-release.aab \
+               release/release-${{ steps.version.outputs.version }}-PROD.aab
 
-      # --------------------------------------------------
-      # Build APK / AAB with signing + validate AAB
-      # --------------------------------------------------
-      - name: Build PROD APK and AAB  versions + Validate
-        run: |
-          export FLUTTER_WEB=false
-          export KEY_STORE_FILE=$GITHUB_WORKSPACE/android/app/upload-keystore.jks
-          export KEY_STORE_PASSWORD=${{ secrets.KEY_STORE_PASSWORD }}
-          export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
-          export KEY_KEY_PASSWORD=${{ secrets.KEY_KEY_PASSWORD }}
-
-          if [ ! -f "$KEY_STORE_FILE" ]; then
-            echo "::error::Keystore file not found at $KEY_STORE_FILE"
-            exit 1
-          fi
-          echo "🔐 Keystore found at $KEY_STORE_FILE"
-
-
-          echo "🏗️ Building APK..."
-          flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
-     
-
-          echo "🏗️ Building AAB..."
-          flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
-
-          echo "🧪 Validating AAB..."
-          curl -L -o bundletool.jar https://github.com/google/bundletool/releases/download/1.14.1/bundletool-all-1.14.1.jar
-          java -jar bundletool.jar validate --bundle=build/app/outputs/bundle/release/app-release.aab
-
-      # --------------------------------------------------
-      # Create versioned Android artifacts
-      # --------------------------------------------------
-      - name: Create versioned Android artifacts (APK / AAB)
-        run: |
-          mkdir -p release_artifacts
-          APK_PATH=build/app/outputs/flutter-apk/app-release.apk
-          AAB_PATH=build/app/outputs/bundle/release/app-release.aab
-          if [ -f "$APK_PATH" ]; then
-            cp "$APK_PATH" release_artifacts/release-${{ steps.version.outputs.version }}-PROD.apk
-            echo "✅ APK packaged successfully"
-          else
-            echo "::warning::APK not found at $APK_PATH"
-          fi
-          if [ -f "$AAB_PATH" ]; then
-            cp "$AAB_PATH" release_artifacts/release-${{ steps.version.outputs.version }}-PROD.aab
-            echo "✅ AAB packaged successfully"
-          else
-            echo "::warning::AAB not found at $AAB_PATH"
-          fi
-
-      # --------------------------------------------------
-      # Upload artifacts separately (APK and AAB)
-      # --------------------------------------------------
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ steps.version.outputs.version }}-PROD.apk
-          path: release_artifacts/release-${{ steps.version.outputs.version }}-PROD.apk
-          if-no-files-found: error
+          name: prod-artifacts
+          path: release/
 
-      - name: Upload AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-${{ steps.version.outputs.version }}-PROD.aab
-          path: release_artifacts/release-${{ steps.version.outputs.version }}-PROD.aab
-          if-no-files-found: error
-          
-  build-web:
-    name: Build Web
-    needs: test
+  # ------------------------------------------------------------
+  # 3) BUILD TEST (uses SAME version as PROD)
+  # ------------------------------------------------------------
+  build-test:
+    name: Build TEST APK
+    needs: build-prod
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+
+    outputs:
+      version: ${{ needs.build-prod.outputs.version }}
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
-      - name: Extract version from pubspec.yaml
-        id: version
-        run: |
-          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ')
-          VERSION=${VERSION//+/-}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Extracted version: $VERSION"
 
       - name: Install dependencies
         run: flutter pub get
-      - name: Replace config for deployment
+
+      - name: Use TEST config
+        run: cp assets/config.test.json assets/config.json
+
+      - name: Build TEST APK
+        run: flutter build apk --release
+
+      - name: Package TEST artifact
         run: |
-          echo "Copying config.prod.json to config.json for deployment"
-          cp assets/config.prod.json assets/config.json
-          echo "Config file replaced successfully"
-      - name: Build Web
-        run: flutter build web 
-      - name: Create versioned Web archive
-        run: |
-          mkdir -p release_artifacts
-          cp -r build/web release_artifacts/web-${{ steps.version.outputs.version }}
-      - name: Upload Web Artifacts
-        uses: actions/upload-artifact@v4
+          mkdir -p release
+          cp build/app/outputs/flutter-apk/app-release.apk \
+             release/release-${{ needs.build-prod.outputs.version }}-TEST.apk
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ steps.version.outputs.version }}-web
-          path: release_artifacts/web-${{ steps.version.outputs.version }}
-          if-no-files-found: ignore
-         
-  release:
-    name: Create Release
-    needs: [build-android-prod, build-android-test, build-web]
+          name: test-artifacts
+          path: release/
+
+  # ------------------------------------------------------------
+  # 4) BUILD WEB (uses same version)
+  # ------------------------------------------------------------
+  build-web:
+    name: Build Web
+    needs: build-prod
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+
+    outputs:
+      version: ${{ needs.build-prod.outputs.version }}
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          fetch-depth: 0
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
 
-      - name: Determine Version
-        id: version
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Use PROD config
+        run: cp assets/config.prod.json assets/config.json
+
+      - name: Build WEB
+        run: flutter build web --release
+
+      - name: Package WEB
         run: |
-          VERSION=$(date +%Y.%m.%d-%H%M%S)
-          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+          mkdir -p release
+          cp -r build/web release/web-${{ needs.build-prod.outputs.version }}
 
-      - name: Create Git Tag
-        run: |
-          git config --local user.name "GitHub Actions Bot"
-          git config --local user.email "actions@github.com"
-          git tag ${{ steps.version.outputs.tag }}
-          git push origin refs/tags/${{ steps.version.outputs.tag }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-artifacts
+          path: release/
 
+  # ------------------------------------------------------------
+  # 5) CREATE RELEASE
+  # ------------------------------------------------------------
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-prod, build-test, build-web]
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
         with:
           path: artifacts
-
-      - name: Debug artifacts folder
-        run: |
-          echo "Listing artifacts folder:"
-          ls -R artifacts
-
-      - name: Extract version for release
-        id: release_version
-        run: |
-          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//' | tr -d ' ')
-
-
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Extracted version for release: $VERSION"
-
-      - name: Prepare Release Assets
-        run: |
-          RELEASE_DIR="$GITHUB_WORKSPACE/release_assets"
-          mkdir -p "$RELEASE_DIR"
-
-          PROD_VERSION="${{ steps.built_versions.outputs.prod }}"
-          TEST_VERSION="${{ steps.built_versions.outputs.test }}"
-          WEB_VERSION="${{ steps.built_versions.outputs.web }}"
-          SAFE_WEB="${WEB_VERSION//+/-}"
-
-          # --- PROD ---
-          if [ -n "$PROD_VERSION" ]; then
-            cp "artifacts/release-${PROD_VERSION}-PROD.apk/release-${PROD_VERSION}-PROD.apk" "$RELEASE_DIR/" || true
-            cp "artifacts/release-${PROD_VERSION}-PROD.aab/release-${PROD_VERSION}-PROD.aab" "$RELEASE_DIR/" || true
-          fi
-
-          # --- TEST ---
-          if [ -n "$TEST_VERSION" ]; then
-            cp "artifacts/release-${TEST_VERSION}-TEST.apk/release-${TEST_VERSION}-TEST.apk" "$RELEASE_DIR/" || true
-          fi
-
-          # --- WEB ---
-          if [ -d "artifacts/release-${SAFE_WEB}-web" ]; then
-            cp -r "artifacts/release-${SAFE_WEB}-web" "$RELEASE_DIR/web-${SAFE_WEB}"
-          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          files: release_assets/*
+          tag_name: v${{ needs.build-prod.outputs.version }}
           generate_release_notes: true
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: artifacts/**
