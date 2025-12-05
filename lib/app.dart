@@ -248,15 +248,19 @@ class _MyAppState extends State<MyApp> {
       bool isVerifyEmailUrl = path.startsWith('/verify-email');
       String? rememberedRoute = WebStorage.getItem('intendedRoute');
 
+      // Get the full URI with query parameters
+      final uri = Uri.base;
+      final queryString = uri.query.isNotEmpty ? '?${uri.query}' : '';
+
       if (isSetPasswordUrl) {
-        // If on set-password URL, route directly to set-password
-        initialRoute = '/set-password';
+        // If on set-password URL, route directly to set-password with query params
+        initialRoute = '/set-password$queryString';
       } else if (isResetPasswordUrl) {
-        // If on reset-password URL, route directly to reset-password
-        initialRoute = '/reset-password';
+        // If on reset-password URL, route directly to reset-password with query params
+        initialRoute = '/reset-password$queryString';
       } else if (isVerifyEmailUrl) {
-        // If on verify-email URL, route directly to verify-email
-        initialRoute = '/verify-email';
+        // If on verify-email URL, route directly to verify-email with query params
+        initialRoute = '/verify-email$queryString';
       } else if (isSchulungenUrl) {
         // If on Schulungen-only URL, clear any login-related remembered route
         if (rememberedRoute != null &&
