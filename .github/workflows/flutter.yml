@@ -227,17 +227,14 @@ jobs:
 
       - name: Set JAVA_HOME for Gradle
         run: echo "JAVA_HOME=${{ steps.setup-java.outputs.path }}" >> $GITHUB_ENV
-
         
       - name: Decode Keystore
         run: |
           mkdir -p android/app
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/***-keystore.jks
 
-
-
       - name: Set KEY_STORE_FILE env
-        run: echo "KEY_STORE_FILE=upload-keystore.jks" >> $GITHUB_ENV
+        run: echo "KEY_STORE_FILE=***-keystore.jks" >> $GITHUB_ENV
 
       - name: Set signing env vars
         run: |
