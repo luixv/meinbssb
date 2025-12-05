@@ -99,10 +99,10 @@ jobs:
       - name: Decode Keystore
         run: |
           mkdir -p android/app
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/***-keystore.jks
 
       - name: Set KEY_STORE_FILE env
-        run: echo "KEY_STORE_FILE=upload-keystore.jks" >> $GITHUB_ENV
+        run: echo "KEY_STORE_FILE=***-keystore.jks" >> $GITHUB_ENV
 
       - name: Set signing env vars
         run: |
@@ -184,8 +184,13 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD
-          path: release/
+          name: release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.apk
+          path: release/release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.aab
+          path: release/release-${{ steps.version.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-PROD.aab
 
   # ------------------------------------------------------------
   # 3) BUILD TEST (uses SAME version as PROD)
@@ -251,8 +256,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: release-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-TEST
-          path: release/
+          name: release-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-TEST.apk
+          path: release/release-${{ needs.build-prod.outputs.version }}-b${{ steps.buildnum.outputs.buildnum }}-TEST.apk
 
   # ------------------------------------------------------------
   # 4) BUILD WEB (uses same version)
