@@ -8,47 +8,53 @@ http://meintest.bssb.de {
   redir https://meintest.bssb.de{uri}
 }
 
-# Serve Flutter Web App (HTTPS)
+# Serve Flutter Web App and PostgREST API (HTTPS)
 meintest.bssb.de {
-  root * /web
-  file_server
-  try_files {path} /index.html
-}
+  # Handle PostgREST API requests on /api path
+  handle /api/* {
+    uri strip_prefix /api
+    
+    @cors_preflight {
+      method OPTIONS
+    }
 
-# Serve PostgREST API (HTTPS) on port 8081
-meintest.bssb.de:8081 {
-  @cors_preflight {
-    method OPTIONS
+    handle @cors_preflight {
+      respond "" 204
+      header Access-Control-Allow-Origin "*"
+      header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+      header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+      header Access-Control-Allow-Credentials "false"
+    }
+
+    handle {
+      reverse_proxy postgrest:3000
+      header Access-Control-Allow-Origin "*"
+      header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+      header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
+      header Access-Control-Allow-Credentials "false"
+    }
   }
 
-  handle @cors_preflight {
-    respond "" 204
-    header Access-Control-Allow-Origin "*"
-    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
-    header Access-Control-Allow-Credentials "false"
+  # Handle email service requests on /email path
+  handle /email/* {
+    uri strip_prefix /email
+    reverse_proxy email-service:3001
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
   }
 
+  # Serve Flutter Web App (default handler)
   handle {
-    reverse_proxy postgrest:3000
-    header Access-Control-Allow-Origin "*"
-    header Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    header Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
-    header Access-Control-Allow-Credentials "false"
+    root * /web
+    file_server
+    try_files {path} /index.html
   }
 }
 
-# Email API on 8080
-meintest.bssb.de:8080 {
-  reverse_proxy email-service:3001
-  header {
-    Access-Control-Allow-Origin "*"
-    Access-Control-Allow-Methods "POST, OPTIONS"
-    Access-Control-Allow-Headers "Authorization, Content-Type"
-  }
-}
-
-# ZMI Monitor on 8083
+# ZMI Monitor on 8083 (internal only, no SSL needed from browser)
 meintest.bssb.de:8083 {
   reverse_proxy zmi-monitor:80
 }
