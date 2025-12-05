@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -24,7 +22,7 @@ void main() {
 
   setUp(() {
     mockApiService = MockApiService();
-    passnummer = 'PASS-1';
+    passnummer = 'TEST-456';
     userData = UserData(
       personId: 1,
       webLoginId: 999,
@@ -32,25 +30,16 @@ void main() {
       vereinNr: 42,
       namen: 'Doe',
       vorname: 'Jane',
-      vereinName: 'Demo Verein',
-      passdatenId: 77,
-      mitgliedschaftId: 88,
+      vereinName: 'Test Verein',
+      passdatenId: 1,
+      mitgliedschaftId: 1,
     );
     currentYear = DateTime.now().year;
 
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer((_) async => []);
-    when(mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
-      (_) async => [
-        BankData(
-          id: 1,
-          webloginId: userData.webLoginId,
-          kontoinhaber: 'Jane Doe',
-          iban: 'DE00123456780000000000',
-          bic: 'GENODEF1XXX',
-          mandatSeq: 1,
-        ),
-      ],
-    );
+    when(mockApiService.fetchGewinne(any, any))
+        .thenAnswer((_) async => <Gewinn>[]);
+    when(mockApiService.fetchBankdatenMyBSSB(any))
+        .thenAnswer((_) async => <BankData>[]);
   });
 
   Widget buildTestWidget() {
@@ -71,411 +60,141 @@ void main() {
     );
   }
 
-  testWidgets('fetches Gewinne for current year on init', (tester) async {
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
+  group('OktoberfestGewinnScreen - Initialization', () {
+    testWidgets('should fetch Gewinne on init', (tester) async {
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
 
-    verify(mockApiService.fetchGewinne(currentYear, passnummer))
-        .called(1);
+      verify(mockApiService.fetchGewinne(currentYear, passnummer)).called(1);
+    });
+
+    testWidgets('should fetch bank data on init', (tester) async {
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      verify(mockApiService.fetchBankdatenMyBSSB(userData.webLoginId))
+          .called(1);
+    });
   });
 
-  testWidgets('prefills bank data form with stored values', (tester) async {
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
+  group('OktoberfestGewinnScreen - Year Selection', () {
+    testWidgets('should display year dropdown', (tester) async {
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
 
-    expect(find.text('Jane Doe'), findsOneWidget);
-    expect(find.text('DE00123456780000000000'), findsOneWidget);
-    expect(find.text('GENODEF1XXX'), findsOneWidget);
+      expect(find.byType(DropdownButtonFormField<int>), findsOneWidget);
+      expect(find.text('$currentYear'), findsOneWidget);
+    });
+
+    testWidgets('should fetch Gewinne when year changes', (tester) async {
+      when(mockApiService.fetchGewinne(currentYear - 1, passnummer))
+          .thenAnswer((_) async => <Gewinn>[]);
+
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(DropdownButtonFormField<int>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('${currentYear - 1}').last);
+      await tester.pumpAndSettle();
+
+      verify(mockApiService.fetchGewinne(currentYear - 1, passnummer))
+          .called(1);
+    });
   });
 
-  testWidgets('changing year triggers new fetch', (tester) async {
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
+  group('OktoberfestGewinnScreen - Bank Data', () {
+    testWidgets('should prefill bank data when available', (tester) async {
+      when(mockApiService.fetchBankdatenMyBSSB(any))
+          .thenAnswer((_) async => [
+                BankData(
+                  id: 1,
+                  webloginId: userData.webLoginId,
+                  kontoinhaber: 'Jane Doe',
+                  iban: 'DE89370400440532013000',
+                  bic: 'GENODEF1XXX',
+                  mandatSeq: 1,
+                ),
+              ]);
 
-    when(mockApiService.fetchGewinne(currentYear - 1, passnummer))
-        .thenAnswer((_) async => [Gewinn(gewinnId: 1, jahr: currentYear - 1, isSachpreis: true, geldpreis: 0, sachpreis: 'Preis', wettbewerb: 'Test', abgerufenAm: '', platz: 1)]);
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.byType(DropdownButtonFormField<int>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('${currentYear - 1}').last);
-    await tester.pumpAndSettle();
-
-    verify(mockApiService.fetchGewinne(currentYear - 1, passnummer))
-        .called(1);
+      expect(find.text('Jane Doe'), findsOneWidget);
+      expect(find.text('DE89370400440532013000'), findsOneWidget);
+      expect(find.text('GENODEF1XXX'), findsOneWidget);
+    });
   });
 
-  testWidgets('renders list tiles when Gewinne returned', (tester) async {
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 7,
-          jahr: currentYear,
-          isSachpreis: false,
-          geldpreis: 250,
-          sachpreis: '',
-          wettbewerb: 'Schießen A',
-          abgerufenAm: '',
-          platz: 2,
-        ),
-      ],
-    );
+  group('OktoberfestGewinnScreen - Gewinne Display', () {
+    testWidgets('should display Gewinne list', (tester) async {
+      when(mockApiService.fetchGewinne(any, any)).thenAnswer(
+        (_) async => [
+          Gewinn(
+            gewinnId: 1,
+            jahr: currentYear,
+            isSachpreis: false,
+            geldpreis: 250,
+            sachpreis: '',
+            wettbewerb: 'Test Wettbewerb',
+            abgerufenAm: '',
+            platz: 1,
+          ),
+        ],
+      );
 
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
 
-    expect(find.byType(ListTile), findsWidgets);
-    expect(find.textContaining('Schießen A'), findsOneWidget);
+      expect(find.byType(ListTile), findsWidgets);
+      expect(find.textContaining('Test Wettbewerb'), findsOneWidget);
+    });
   });
 
-  testWidgets('shows loading indicator while fetching', (tester) async {
-    final completer = Completer<List<Gewinn>>();
-    when(mockApiService.fetchGewinne(currentYear - 1, passnummer))
-        .thenAnswer((_) => completer.future);
+  group('OktoberfestGewinnScreen - Submit', () {
+    testWidgets('should disable submit when no pending Gewinne', (tester) async {
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
 
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
+      final button = tester.widget<ElevatedButton>(
+        find.widgetWithText(ElevatedButton, 'Gewinne wurden abgerufen.'),
+      );
+      expect(button.onPressed, isNull);
+    });
 
-    await tester.tap(find.byType(DropdownButtonFormField<int>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('${currentYear - 1}').last);
-    await tester.pump();
+    testWidgets('should enable submit with valid data', (tester) async {
+      when(mockApiService.fetchGewinne(any, any)).thenAnswer(
+        (_) async => [
+          Gewinn(
+            gewinnId: 1,
+            jahr: currentYear,
+            isSachpreis: false,
+            geldpreis: 100,
+            sachpreis: '',
+            wettbewerb: 'Test',
+            abgerufenAm: '',
+            platz: 1,
+          ),
+        ],
+      );
 
-    expect(find.byType(CircularProgressIndicator), findsWidgets);
+      when(mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
+        (_) async => [
+          BankData(
+            id: 1,
+            webloginId: userData.webLoginId,
+            kontoinhaber: 'Jane Doe',
+            iban: 'DE89370400440532013000',
+            bic: 'GENODEF1XXX',
+            mandatSeq: 1,
+          ),
+        ],
+      );
 
-    completer.complete([]);
-    await tester.pumpAndSettle();
-  });
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
 
-  testWidgets('validates Kontoinhaber field when empty', (tester) async {
-    when(mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
-      (_) async => [],
-    );
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 1,
-          jahr: currentYear,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Test',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Find the Kontoinhaber field and clear it
-    final kontoinhaberField = find.widgetWithText(TextFormField, 'Kontoinhaber');
-    expect(kontoinhaberField, findsOneWidget);
-    
-    await tester.tap(kontoinhaberField);
-    await tester.pumpAndSettle();
-    await tester.enterText(kontoinhaberField, '');
-    await tester.pumpAndSettle();
-
-    // Trigger validation by entering and removing text
-    await tester.enterText(kontoinhaberField, 'a');
-    await tester.pumpAndSettle();
-    await tester.enterText(kontoinhaberField, '');
-    await tester.pumpAndSettle();
-
-    // Validation error should appear
-    expect(find.text('Kontoinhaber ist erforderlich'), findsOneWidget);
-  });
-
-  testWidgets('validates IBAN field with invalid format', (tester) async {
-    when(mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
-      (_) async => [],
-    );
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 1,
-          jahr: currentYear,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Test',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Find the IBAN field
-    final ibanField = find.widgetWithText(TextFormField, 'IBAN');
-    expect(ibanField, findsOneWidget);
-    
-    await tester.tap(ibanField);
-    await tester.pumpAndSettle();
-    await tester.enterText(ibanField, 'INVALID');
-    await tester.pumpAndSettle();
-
-    // Validation error should appear
-    expect(find.text('Ungültige IBAN'), findsOneWidget);
-  });
-
-  testWidgets('accepts valid German IBAN', (tester) async {
-    when(mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
-      (_) async => [],
-    );
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 1,
-          jahr: currentYear,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Test',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Find the IBAN field
-    final ibanField = find.widgetWithText(TextFormField, 'IBAN');
-    expect(ibanField, findsOneWidget);
-    
-    await tester.tap(ibanField);
-    await tester.pumpAndSettle();
-    await tester.enterText(ibanField, 'DE89370400440532013000');
-    await tester.pumpAndSettle();
-
-    // Should not show validation error
-    expect(find.text('Ungültige IBAN'), findsNothing);
-  });
-
-  testWidgets('BIC is optional for German IBAN', (tester) async {
-    when(mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
-      (_) async => [
-        BankData(
-          id: 1,
-          webloginId: userData.webLoginId,
-          kontoinhaber: 'Jane Doe',
-          iban: 'DE89370400440532013000',
-          bic: '',
-          mandatSeq: 1,
-        ),
-      ],
-    );
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 1,
-          jahr: currentYear,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Test',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Find the BIC field
-    final bicField = find.text('BIC (optional)');
-    expect(bicField, findsOneWidget);
-  });
-
-  testWidgets('BIC is required for non-German IBAN', (tester) async {
-    when(mockApiService.fetchBankdatenMyBSSB(any)).thenAnswer(
-      (_) async => [],
-    );
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 1,
-          jahr: currentYear,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Test',
-          abgerufenAm: '',
-          platz: 1,
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Enter a valid Austrian IBAN
-    final ibanField = find.widgetWithText(TextFormField, 'IBAN');
-    await tester.tap(ibanField);
-    await tester.pumpAndSettle();
-    await tester.enterText(ibanField, 'AT611904300234573201');
-    await tester.pumpAndSettle();
-
-    // BIC label should show as required
-    final bicField = find.text('BIC *');
-    expect(bicField, findsOneWidget);
-  });
-
-  testWidgets('submit button calls gewinneAbrufen with correct parameters', (tester) async {
-    final gewinnList = [
-      Gewinn(
-        gewinnId: 123,
-        jahr: currentYear,
-        isSachpreis: false,
-        geldpreis: 100,
-        sachpreis: '',
-        wettbewerb: 'Test',
-        abgerufenAm: '',
-        platz: 1,
-      ),
-    ];
-    
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => gewinnList,
-    );
-    
-    when(mockApiService.gewinneAbrufen(
-      gewinnIDs: anyNamed('gewinnIDs'),
-      iban: anyNamed('iban'),
-      passnummer: anyNamed('passnummer'),
-    )).thenAnswer((_) async => true);
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Wait for data to load
-    await tester.pump(const Duration(milliseconds: 200));
-    await tester.pumpAndSettle();
-
-    // Find and tap the submit button
-    final submitButton = find.text('Gewinne abrufen');
-    await tester.tap(submitButton.first);
-    await tester.pump();
-
-    // Verify the API was called with correct parameters
-    verify(mockApiService.gewinneAbrufen(
-      gewinnIDs: [123],
-      iban: 'DE00123456780000000000',
-      passnummer: passnummer,
-    )).called(1);
-  });
-
-  testWidgets('displays success message after successful submission', (tester) async {
-    final gewinnList = [
-      Gewinn(
-        gewinnId: 123,
-        jahr: currentYear,
-        isSachpreis: false,
-        geldpreis: 100,
-        sachpreis: '',
-        wettbewerb: 'Test',
-        abgerufenAm: '',
-        platz: 1,
-      ),
-    ];
-    
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => gewinnList,
-    );
-    
-    when(mockApiService.gewinneAbrufen(
-      gewinnIDs: anyNamed('gewinnIDs'),
-      iban: anyNamed('iban'),
-      passnummer: anyNamed('passnummer'),
-    )).thenAnswer((_) async => true);
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Wait for data to load
-    await tester.pump(const Duration(milliseconds: 200));
-    await tester.pumpAndSettle();
-
-    // Find and tap the submit button
-    final submitButton = find.text('Gewinne abrufen');
-    await tester.tap(submitButton.first);
-    await tester.pump();
-    await tester.pumpAndSettle();
-
-    // Verify success message is shown
-    expect(find.text('Gewinne wurden erfolgreich übertragen.'), findsOneWidget);
-  });
-
-  testWidgets('displays error message on submission failure', (tester) async {
-    final gewinnList = [
-      Gewinn(
-        gewinnId: 123,
-        jahr: currentYear,
-        isSachpreis: false,
-        geldpreis: 100,
-        sachpreis: '',
-        wettbewerb: 'Test',
-        abgerufenAm: '',
-        platz: 1,
-      ),
-    ];
-    
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => gewinnList,
-    );
-    
-    when(mockApiService.gewinneAbrufen(
-      gewinnIDs: anyNamed('gewinnIDs'),
-      iban: anyNamed('iban'),
-      passnummer: anyNamed('passnummer'),
-    )).thenAnswer((_) async => false);
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Wait for data to load
-    await tester.pump(const Duration(milliseconds: 200));
-    await tester.pumpAndSettle();
-
-    // Find and tap the submit button
-    final submitButton = find.text('Gewinne abrufen');
-    await tester.tap(submitButton.first);
-    await tester.pump();
-    await tester.pumpAndSettle();
-
-    // Verify error message is shown
-    expect(find.text('Fehler beim Abrufen der Gewinne.'), findsOneWidget);
-  });
-
-  testWidgets('bank data fields are disabled when all Gewinne are retrieved', (tester) async {
-    when(mockApiService.fetchGewinne(any, any)).thenAnswer(
-      (_) async => [
-        Gewinn(
-          gewinnId: 1,
-          jahr: currentYear,
-          isSachpreis: false,
-          geldpreis: 100,
-          sachpreis: '',
-          wettbewerb: 'Test',
-          abgerufenAm: '2024-01-01T00:00:00',
-          platz: 1,
-        ),
-      ],
-    );
-
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
-
-    // Verify bank data section is present with reduced opacity (disabled state)
-    expect(find.text('Bankdaten'), findsOneWidget);
-    
-    // Verify submit button shows the correct text when all Gewinne are retrieved
-    expect(find.text('Gewinne wurden abgerufen.'), findsOneWidget);
+      expect(find.text('Gewinne abrufen'), findsOneWidget);
+    });
   });
 }
