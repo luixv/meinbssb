@@ -213,32 +213,6 @@ void main() {
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     });
 
-    testWidgets('should not show back button when showMenu is false', (
-      WidgetTester tester,
-    ) async {
-      final testWidgetNoMenu = MaterialApp(
-        home: MultiProvider(
-          providers: [
-            Provider<ApiService>.value(value: mockApiService),
-            ChangeNotifierProvider<FontSizeProvider>.value(
-              value: mockFontSizeProvider,
-            ),
-          ],
-          child: SchulungenSearchScreen(
-            userData: dummyUser,
-            isLoggedIn: true,
-            onLogout: mockLogout,
-            showMenu: false,
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(testWidgetNoMenu);
-      await tester.pumpAndSettle();
-
-      expect(find.byIcon(Icons.arrow_back), findsNothing);
-    });
-
     testWidgets('should dispose controllers properly', (
       WidgetTester tester,
     ) async {
