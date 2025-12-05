@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'dart:html' as html show window;
+import '/web_redirect_stub.dart' if (dart.library.html) '/web_redirect_web.dart';
 
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
@@ -148,7 +148,7 @@ class _SchulungenSearchScreenState extends State<SchulungenSearchScreen> {
               } else {
                 // Redirect to root URL which will show splash and then login
                 if (kIsWeb) {
-                  html.window.location.href = '/';
+                  WebRedirect.redirectTo('/');
                 }
               }
             },

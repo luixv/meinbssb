@@ -28,7 +28,7 @@ import 'main.dart';
 import 'screens/schulungen/schulungen_search_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'web_storage_stub.dart' if (dart.library.html) 'web_storage_web.dart';
-import 'dart:html' as html show window;
+import 'web_redirect_stub.dart' if (dart.library.html) 'web_redirect_web.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey =
     GlobalKey<NavigatorState>();
@@ -78,7 +78,7 @@ class MyAppWrapper extends StatelessWidget {
                         if (settings.name == '/home') {
                           // Redirect to root URL to load the full app
                           if (kIsWeb) {
-                            html.window.location.href = '/';
+                            WebRedirect.redirectTo('/');
                           }
                           // Return a loading screen while redirecting
                           return MaterialPageRoute(

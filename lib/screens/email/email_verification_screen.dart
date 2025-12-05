@@ -8,7 +8,7 @@ import '/services/core/logger_service.dart';
 import 'email_verification_success_screen.dart';
 import 'email_verification_fail_screen.dart';
 import '/models/contact_data.dart';
-import 'dart:html' as html show window;
+import '/web_redirect_stub.dart' if (dart.library.html) '/web_redirect_web.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({
@@ -147,7 +147,7 @@ class EmailVerificationScreenState extends State<EmailVerificationScreen> {
         tooltip: 'Zurück',
         onPressed: () {
           if (kIsWeb) {
-            html.window.location.href = '/';
+            WebRedirect.redirectTo('/');
           }
         },
       ),
