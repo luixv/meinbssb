@@ -315,7 +315,7 @@ class HttpClient {
     return _makeBytesRequest('GET', apiUrl, null);
   }
 
-  /// Helper method to log API requests to oktoberFestBaseServer, apiBaseServer, and api1BaseServer
+  /// Helper method to log API requests to api7BaseServer, apiBaseServer, and api1BaseServer
   void _logApiRequest(String requestBaseUrl, String endpoint) {
     // Only log if PostgrestService is available
     if (_postgrestService == null) {
@@ -326,10 +326,10 @@ class HttpClient {
       // Define the server configurations to check
       final serverConfigs = [
         {
-          'name': 'oktoberFestBase',
-          'serverKey': 'oktoberFestBaseServer',
-          'pathKey': 'oktoberFestBasePath',
-          'portKey': 'oktoberFestBasePort',
+          'name': 'api7Base',
+          'serverKey': 'api7BaseServer',
+          'pathKey': 'api7BasePath',
+          'portKey': 'api7BasePort',
         },
         {
           'name': 'apiBase',

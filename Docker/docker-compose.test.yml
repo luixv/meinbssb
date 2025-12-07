@@ -18,6 +18,15 @@ services:
     depends_on:
       - postfix-relay
 
+  token-proxy:
+    build: ./token-proxy
+    container_name: token-proxy
+    restart: always
+    environment:
+      - USERNAME_WEB_USER=${USERNAME_WEB_USER}
+      - PASSWORD_WEB_USER=${PASSWORD_WEB_USER}
+      - TOKEN_SERVER_URL=https://webintern.bssb.bayern:56400/rest/zmi/token
+
   postfix-relay:
     image: boky/postfix
     container_name: postfix-relay

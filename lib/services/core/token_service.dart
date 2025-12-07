@@ -27,25 +27,17 @@ class TokenService {
   /// Fetches a new authentication token from the server.
   /// This method is responsible for making the actual HTTP request
   /// to the token endpoint.
+  /// Note: Credentials are injected server-side by the token-proxy service.
+  /// The client no longer sends username/password.
   Future<String> _fetchToken() async {
     final String tokenServerURL =
         _configService.getString('tokenServerURL') ?? '';
 
-    final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
-    final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
-
-    final Map<String, String> body = {
-      'username': usernameWebUser,
-      'password': passwordWebUser,
-    };
-
+    // Create an empty POST request - credentials will be injected server-side
     var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
-    body.forEach((key, value) {
-      request.fields[key] = value;
-    });
 
     LoggerService.logInfo(
-      'TokenService: Fetching new token from: $tokenServerURL',
+      'TokenService: Fetching new token from: $tokenServerURL (credentials injected server-side)',
     );
 
     try {

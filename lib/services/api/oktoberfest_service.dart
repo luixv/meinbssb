@@ -20,7 +20,7 @@ class OktoberfestService {
     try {
       final baseUrl = ConfigService.buildBaseUrlForServer(
         configService,
-        name: 'oktoberFestBase',
+        name: 'api7Base',
       );
       final endpoint = 'results/$passnummer';
       final response =
@@ -51,7 +51,7 @@ class OktoberfestService {
     try {
       final baseUrl = ConfigService.buildBaseUrlForServer(
         configService,
-        name: 'oktoberFestBase',
+        name: 'api7Base',
       );
       final endpoint = 'GewinneEx/$jahr/$passnummer/1';
       final response =
@@ -85,7 +85,7 @@ class OktoberfestService {
     try {
       final baseUrl = ConfigService.buildBaseUrlForServer(
         configService,
-        name: 'oktoberFestBase',
+        name: 'api7Base',
       );
       const endpoint = 'GewinneAbrufenEx';
       final body = {
@@ -124,7 +124,7 @@ class OktoberfestService {
     try {
       final baseUrl = ConfigService.buildBaseUrlForServer(
         configService,
-        name: 'oktoberFestBase',
+        name: 'api7Base',
       );
       final endpoint = 'GewinneEx/2025/$passnummer/3';
       final response =
@@ -157,7 +157,7 @@ class OktoberfestService {
     try {
       final baseUrl = ConfigService.buildBaseUrlForServer(
         configService,
-        name: 'oktoberFestBase',
+        name: 'api7Base',
       );
       const endpoint = 'GewinneAbrufenEx';
       final body = {

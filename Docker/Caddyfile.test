@@ -44,7 +44,20 @@ meintest.bssb.de {
     }
   }
 
-  # Redirect /rest requests to internal web server
+  # Handle token requests with server-side credential injection
+  # IMPORTANT: This must come BEFORE the general /rest/* handler
+  handle /rest/zmi/token {
+    reverse_proxy token-proxy:3002 {
+      header_up Host {upstream_hostport}
+    }
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
+  }
+
+  # Redirect all other /rest requests to internal web server
   handle /rest/* {
     redir https://webintern.bssb.bayern:56400{uri} permanent
   }
@@ -66,4 +79,9 @@ meintest.bssb.de {
     file_server
     try_files {path} /index.html
   }
+}
+
+# ZMI Monitor on 8083 (internal only, no SSL needed from browser)
+meintest.bssb.de:8083 {
+  reverse_proxy zmi-monitor:80
 }
