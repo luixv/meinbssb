@@ -516,6 +516,9 @@ class TrainingService {
     required String telefon,
     required BankData bankData,
     required List<Map<String, dynamic>> felderArray,
+    required String angemeldetUeber,
+    required String angemeldetUeberEmail,
+    required String angemeldetUeberTelefon,
   }) async {
     final body = {
       'SchulungTerminID': schulungTerminId,
@@ -535,7 +538,7 @@ class TrainingService {
       'Verpflegung': 0,
       'Uebernachtung': 0,
       'Lehrmaterial': 0,
-      'AngemeldetUeber ': '',
+      'AngemeldetUeber ': angemeldetUeber,
       'Bemerkung': '',
       'Bankdaten': {
         'Kontoinhaber': bankData.kontoinhaber,
@@ -546,8 +549,8 @@ class TrainingService {
         'Mandatname': bankData.mandatName,
         'MandatSeq': bankData.mandatSeq,
       },
-      'AngemeldetUeberEmail': '',
-      'AngemeldetUeberTelefon': '',
+      'AngemeldetUeberEmail': angemeldetUeberEmail,
+      'AngemeldetUeberTelefon': angemeldetUeberTelefon,
       'Telefon': telefon,
       'VereinID': user.vereinNr,
       'FelderArray': felderArray,

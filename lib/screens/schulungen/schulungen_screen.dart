@@ -11,6 +11,7 @@ import '/helpers/utils.dart';
 
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
+import '/services/api/bank_service.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/dialog_fabs.dart';
 import '/widgets/keyboard_focus_fab.dart';
@@ -705,6 +706,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   ibanController.text
                                                       .trim()
                                                       .isNotEmpty &&
+                                                  BankService.validateIBAN(
+                                                    ibanController.text.trim(),
+                                                  ) &&
                                                   (!isBicRequired(
                                                         ibanController.text
                                                             .trim(),
@@ -724,6 +728,9 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                   ibanController.text
                                                       .trim()
                                                       .isNotEmpty &&
+                                                  BankService.validateIBAN(
+                                                    ibanController.text.trim(),
+                                                  ) &&
                                                   (!isBicRequired(
                                                         ibanController.text
                                                             .trim(),
@@ -1183,6 +1190,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         return RegisterPersonFormDialog(
           schulungsTermin: schulungsTermin,
           bankData: bankData,
+          loggedInUser: _userData!,
           prefillUser: prefillUser,
           prefillEmail: prefillEmail,
           apiService: apiService,

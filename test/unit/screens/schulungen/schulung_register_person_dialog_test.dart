@@ -4,6 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:meinbssb/screens/schulungen/schulungen_register_person_dialog.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
 import 'package:meinbssb/models/bank_data.dart';
+import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,7 @@ void main() {
     mockApiService.currentZusatzfelder = currentZusatzfelder;
   });
 
-  Widget buildDialog() {
+  Widget buildDialog({String iban = 'DE89370400440532013000'}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FontSizeProvider>(
@@ -87,12 +88,23 @@ void main() {
               bezeichnung: 'Test',
               angemeldeteTeilnehmer: 0,
             ),
-            bankData: const BankData(
+            bankData: BankData(
               id: 1,
               webloginId: 1,
               kontoinhaber: '',
-              iban: '',
+              iban: iban,
               bic: '',
+            ),
+            loggedInUser: const UserData(
+              personId: 1,
+              webLoginId: 1,
+              passnummer: '12345678',
+              vereinNr: 1,
+              namen: 'Test',
+              vorname: 'User',
+              vereinName: 'Test Club',
+              passdatenId: 1,
+              mitgliedschaftId: 1,
             ),
             apiService: mockApiService,
           ),
@@ -236,8 +248,77 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    // Button should be enabled because all fields are filled
+    // (validation happens on submit, not on field fill)
+    final fabFinder = find.byKey(const ValueKey('okFab'));
+    final fab = tester.widget<FloatingActionButton>(fabFinder);
+    expect(fab.onPressed, isNotNull);
+    
+    // Try to submit the form - this should trigger validation
     await tester.tap(find.byTooltip('OK'));
     await tester.pumpAndSettle();
+    
+    // Validation error should appear
     expect(find.text('Ungültige E-Mail-Adresse'), findsOneWidget);
+  });
+
+  testWidgets('disables OK button when IBAN is invalid', (tester) async {
+    await tester.pumpWidget(buildDialog(iban: 'INVALID_IBAN'));
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Vorname'),
+      'Max',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Nachname'),
+      'Mustermann',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Passnummer'),
+      '123',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'E-Mail'),
+      'max@test.de',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Telefonnummer'),
+      '123456',
+    );
+    await tester.pumpAndSettle();
+
+    final fabFinder = find.byKey(const ValueKey('okFab'));
+    final fab = tester.widget<FloatingActionButton>(fabFinder);
+    // Button should be disabled because IBAN is invalid
+    expect(fab.onPressed, isNull);
+  });
+
+  testWidgets('disables OK button when IBAN is empty', (tester) async {
+    await tester.pumpWidget(buildDialog(iban: ''));
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Vorname'),
+      'Max',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Nachname'),
+      'Mustermann',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Passnummer'),
+      '123',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'E-Mail'),
+      'max@test.de',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Telefonnummer'),
+      '123456',
+    );
+    await tester.pumpAndSettle();
+
+    final fabFinder = find.byKey(const ValueKey('okFab'));
+    final fab = tester.widget<FloatingActionButton>(fabFinder);
+    // Button should be disabled because IBAN is empty
+    expect(fab.onPressed, isNull);
   });
 }
