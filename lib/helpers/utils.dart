@@ -7,7 +7,7 @@ bool isBicRequired(String iban) {
 }
 
 /// Extracts phone number from contact list
-/// Prioritizes private contacts (mobile/phone), falls back to business contacts
+/// Prioritizes: type 2 (mobile private), then 6 (mobile business), then 1 (phone private), then 5 (phone business)
 String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
   final privateContacts =
       contacts.firstWhere(
@@ -15,24 +15,66 @@ String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
             orElse: () => <String, dynamic>{'contacts': []},
           )['contacts']
           as List<dynamic>;
-  var phoneContact = privateContacts.cast<Map<String, dynamic>>().firstWhere(
-    (contact) => contact['rawKontaktTyp'] == 1 || contact['rawKontaktTyp'] == 2,
+  
+  final businessContacts =
+      contacts.firstWhere(
+            (category) => category['category'] == 'Geschäftlich',
+            orElse: () => <String, dynamic>{'contacts': []},
+          )['contacts']
+          as List<dynamic>;
+  
+  final allContacts = [
+    ...privateContacts.cast<Map<String, dynamic>>(),
+    ...businessContacts.cast<Map<String, dynamic>>(),
+  ];
+  
+  // Priority order: type 2, then 6, then 1, then 5
+  final priorityOrder = [2, 6, 1, 5];
+  
+  for (final type in priorityOrder) {
+    final contact = allContacts.firstWhere(
+      (c) => c['rawKontaktTyp'] == type && (c['value'] as String).isNotEmpty,
+      orElse: () => <String, dynamic>{'value': ''},
+    );
+    if (contact['value'] != '') {
+      return contact['value'] as String;
+    }
+  }
+  
+  return '';
+}
+
+/// Extracts email from contact list
+/// Prioritizes type 4 (private email), falls back to type 8 (business email)
+String extractEmail(List<Map<String, dynamic>> contacts) {
+  final privateContacts =
+      contacts.firstWhere(
+            (category) => category['category'] == 'Privat',
+            orElse: () => <String, dynamic>{'contacts': []},
+          )['contacts']
+          as List<dynamic>;
+  
+  // First try type 4 (private email)
+  var emailContact = privateContacts.cast<Map<String, dynamic>>().firstWhere(
+    (contact) => contact['rawKontaktTyp'] == 4 && (contact['value'] as String).isNotEmpty,
     orElse: () => <String, dynamic>{'value': ''},
   );
-  if (phoneContact['value'] == '') {
+  
+  // If not found, try type 8 (business email)
+  if (emailContact['value'] == '') {
     final businessContacts =
         contacts.firstWhere(
               (category) => category['category'] == 'Geschäftlich',
               orElse: () => <String, dynamic>{'contacts': []},
             )['contacts']
             as List<dynamic>;
-    phoneContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
-      (contact) =>
-          contact['rawKontaktTyp'] == 5 || contact['rawKontaktTyp'] == 6,
+    emailContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
+      (contact) => contact['rawKontaktTyp'] == 8 && (contact['value'] as String).isNotEmpty,
       orElse: () => <String, dynamic>{'value': ''},
     );
   }
-  return phoneContact['value'] as String;
+  
+  return emailContact['value'] as String;
 }
 
 /// Formats a DateTime to German date format (dd.MM.yyyy)

@@ -1183,6 +1183,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         return RegisterPersonFormDialog(
           schulungsTermin: schulungsTermin,
           bankData: bankData,
+          loggedInUser: _userData!,
           prefillUser: prefillUser,
           prefillEmail: prefillEmail,
           apiService: apiService,

@@ -363,6 +363,9 @@ class ApiService {
     required String telefon,
     required BankData bankData,
     required List<Map<String, dynamic>> felderArray,
+    required String angemeldetUeber,
+    required String angemeldetUeberEmail,
+    required String angemeldetUeberTelefon,
   }) async {
     return _trainingService.registerSchulungenTeilnehmer(
       schulungTerminId: schulungTerminId,
@@ -371,6 +374,9 @@ class ApiService {
       telefon: telefon,
       bankData: bankData,
       felderArray: felderArray,
+      angemeldetUeber: angemeldetUeber,
+      angemeldetUeberEmail: angemeldetUeberEmail,
+      angemeldetUeberTelefon: angemeldetUeberTelefon,
     );
   }
 
