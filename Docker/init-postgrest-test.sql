@@ -122,6 +122,179 @@ CREATE TABLE IF NOT EXISTS bed_waffe_besitz (
     bemerkung           VARCHAR(500)
 );
 
+-- History tables for bed_* entities
+CREATE TABLE IF NOT EXISTS his_bed_auswahl_typ (
+    id          INT,
+    kurz        TEXT,
+    lang        TEXT,
+    created_at  TIMESTAMP,
+    deleted_at  TIMESTAMP,
+    action      TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS his_bed_auswahl_data (
+    id          INT,
+    typ_id      INT,
+    kurz        TEXT,
+    lang        TEXT,
+    created_at  TIMESTAMP,
+    deleted_at  TIMESTAMP,
+    action      TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS his_bed_datei (
+    id              INT,
+    created_at      TIMESTAMP,
+    changed_at      TIMESTAMP,
+    deleted_at      TIMESTAMP,
+    antragsnummer   TEXT,
+    dateiname       TEXT,
+    file_bytes      BYTEA,
+    action          TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS his_bed_sport (
+    id                  INT,
+    created_at          TIMESTAMP,
+    changed_at          TIMESTAMP,
+    deleted_at          TIMESTAMP,
+    antragsnummer       TEXT,
+    schiessdatum        DATE,
+    waffenart_id        INT,
+    disziplin_id        INT,
+    training            BOOLEAN,
+    wettkampfart_id     INT,
+    wettkampfergebnis   NUMERIC(7,1),
+    action              TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS his_bed_waffe_besitz (
+    id                  INT,
+    created_at          TIMESTAMP,
+    changed_at          TIMESTAMP,
+    deleted_at          TIMESTAMP,
+    antragsnummer       TEXT,
+    wbk_nr              VARCHAR(25),
+    lfd_wbk             VARCHAR(3),
+    waffenart_id        INT,
+    hersteller          VARCHAR(60),
+    kaliber_id          INT,
+    lauflaenge_id       INT,
+    gewicht             VARCHAR(10),
+    kompensator         BOOLEAN,
+    beduerfnisgrund_id  INT,
+    verband_id          INT,
+    bemerkung           VARCHAR(500),
+    action              TEXT NOT NULL
+);
+
+-- Trigger functions for history logging
+CREATE OR REPLACE FUNCTION fn_his_bed_auswahl_typ() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO his_bed_auswahl_typ VALUES (NEW.id, NEW.kurz, NEW.lang, NEW.created_at, NEW.deleted_at, 'insert');
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO his_bed_auswahl_typ VALUES (OLD.id, OLD.kurz, OLD.lang, OLD.created_at, OLD.deleted_at, 'update');
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO his_bed_auswahl_typ VALUES (OLD.id, OLD.kurz, OLD.lang, OLD.created_at, OLD.deleted_at, 'delete');
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_his_bed_auswahl_data() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO his_bed_auswahl_data VALUES (NEW.id, NEW.typ_id, NEW.kurz, NEW.lang, NEW.created_at, NEW.deleted_at, 'insert');
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO his_bed_auswahl_data VALUES (OLD.id, OLD.typ_id, OLD.kurz, OLD.lang, OLD.created_at, OLD.deleted_at, 'update');
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO his_bed_auswahl_data VALUES (OLD.id, OLD.typ_id, OLD.kurz, OLD.lang, OLD.created_at, OLD.deleted_at, 'delete');
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_his_bed_datei() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO his_bed_datei VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.dateiname, NEW.file_bytes, 'insert');
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO his_bed_datei VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.dateiname, OLD.file_bytes, 'update');
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO his_bed_datei VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.dateiname, OLD.file_bytes, 'delete');
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_his_bed_sport() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO his_bed_sport VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.schiessdatum, NEW.waffenart_id, NEW.disziplin_id, NEW.training, NEW.wettkampfart_id, NEW.wettkampfergebnis, 'insert');
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, 'update');
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, 'delete');
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_his_bed_waffe_besitz() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO his_bed_waffe_besitz VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.wbk_nr, NEW.lfd_wbk, NEW.waffenart_id, NEW.hersteller, NEW.kaliber_id, NEW.lauflaenge_id, NEW.gewicht, NEW.kompensator, NEW.beduerfnisgrund_id, NEW.verband_id, NEW.bemerkung, 'insert');
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO his_bed_waffe_besitz VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.wbk_nr, OLD.lfd_wbk, OLD.waffenart_id, OLD.hersteller, OLD.kaliber_id, OLD.lauflaenge_id, OLD.gewicht, OLD.kompensator, OLD.beduerfnisgrund_id, OLD.verband_id, OLD.bemerkung, 'update');
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO his_bed_waffe_besitz VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.wbk_nr, OLD.lfd_wbk, OLD.waffenart_id, OLD.hersteller, OLD.kaliber_id, OLD.lauflaenge_id, OLD.gewicht, OLD.kompensator, OLD.beduerfnisgrund_id, OLD.verband_id, OLD.bemerkung, 'delete');
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Triggers to capture changes
+DROP TRIGGER IF EXISTS trg_his_bed_auswahl_typ ON bed_auswahl_typ;
+CREATE TRIGGER trg_his_bed_auswahl_typ
+AFTER INSERT OR UPDATE OR DELETE ON bed_auswahl_typ
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_auswahl_typ();
+
+DROP TRIGGER IF EXISTS trg_his_bed_auswahl_data ON bed_auswahl_data;
+CREATE TRIGGER trg_his_bed_auswahl_data
+AFTER INSERT OR UPDATE OR DELETE ON bed_auswahl_data
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_auswahl_data();
+
+DROP TRIGGER IF EXISTS trg_his_bed_datei ON bed_datei;
+CREATE TRIGGER trg_his_bed_datei
+AFTER INSERT OR UPDATE OR DELETE ON bed_datei
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_datei();
+
+DROP TRIGGER IF EXISTS trg_his_bed_sport ON bed_sport;
+CREATE TRIGGER trg_his_bed_sport
+AFTER INSERT OR UPDATE OR DELETE ON bed_sport
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_sport();
+
+DROP TRIGGER IF EXISTS trg_his_bed_waffe_besitz ON bed_waffe_besitz;
+CREATE TRIGGER trg_his_bed_waffe_besitz
+AFTER INSERT OR UPDATE OR DELETE ON bed_waffe_besitz
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_waffe_besitz();
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_pass_number ON users(pass_number);
