@@ -496,7 +496,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               .center,
                                                       children: [
                                                         _KeyboardFocusCheckbox(
-                                                          label: 'Checkbox zum Akzeptieren der AGB',
+                                                          label:
+                                                              'Checkbox zum Akzeptieren der AGB',
                                                           value: agbChecked,
                                                           onChanged: (val) {
                                                             setState(
@@ -602,8 +603,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                               .center,
                                                       children: [
                                                         _KeyboardFocusCheckbox(
-                                                          label: 'Checkbox zur Bestätigung des Lastschrifteinzugs',
-                                                          value: lastschriftChecked,
+                                                          label:
+                                                              'Checkbox zur Bestätigung des Lastschrifteinzugs',
+                                                          value:
+                                                              lastschriftChecked,
                                                           onChanged: (val) {
                                                             setState(
                                                               () =>
@@ -691,7 +694,8 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                       mini: true,
                                       tooltip: 'Buchen',
                                       icon: Icons.check,
-                                      semanticLabel: 'Button zum Buchen der Buchung',
+                                      semanticLabel:
+                                          'Button zum Buchen der Buchung',
                                       backgroundColor:
                                           (agbChecked &&
                                                   lastschriftChecked &&
@@ -743,20 +747,32 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                           .getCachedUsername() ??
                                                       '';
                                                   final BankData
-                                                  safeBankData =
-                                                      bankData ??
-                                                      BankData(
-                                                        id: 0,
-                                                        webloginId:
-                                                            user.webLoginId,
-                                                        kontoinhaber: '',
-                                                        iban: '',
-                                                        bic: '',
-                                                        mandatSeq: 2,
-                                                        bankName: '',
-                                                        mandatNr: '',
-                                                        mandatName: '',
-                                                      );
+                                                  safeBankData = BankData(
+                                                    id: bankData?.id ?? 0,
+                                                    webloginId: user.webLoginId,
+                                                    kontoinhaber:
+                                                        kontoinhaberController
+                                                            .text
+                                                            .trim(),
+                                                    iban:
+                                                        ibanController.text
+                                                            .trim(),
+                                                    bic:
+                                                        bicController.text
+                                                            .trim(),
+                                                    mandatSeq:
+                                                        bankData?.mandatSeq ??
+                                                        2,
+                                                    bankName:
+                                                        bankData?.bankName ??
+                                                        '',
+                                                    mandatNr:
+                                                        bankData?.mandatNr ??
+                                                        '',
+                                                    mandatName:
+                                                        bankData?.mandatName ??
+                                                        '',
+                                                  );
                                                   await registerPersonAndShowDialog(
                                                     schulungsTermin:
                                                         schulungsTermin,
@@ -1466,7 +1482,8 @@ class _KeyboardFocusCheckboxState extends State<_KeyboardFocusCheckbox> {
   @override
   Widget build(BuildContext context) {
     // Check if focus is from keyboard navigation
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -1482,19 +1499,17 @@ class _KeyboardFocusCheckboxState extends State<_KeyboardFocusCheckbox> {
           return KeyEventResult.ignored;
         },
         child: Container(
-          decoration: hasKeyboardFocus
-              ? BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(
-                    color: Colors.yellow.shade700,
-                    width: 3.0,
-                  ),
-                )
-              : null,
-          child: Checkbox(
-            value: widget.value,
-            onChanged: widget.onChanged,
-          ),
+          decoration:
+              hasKeyboardFocus
+                  ? BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: Colors.yellow.shade700,
+                      width: 3.0,
+                    ),
+                  )
+                  : null,
+          child: Checkbox(value: widget.value, onChanged: widget.onChanged),
         ),
       ),
     );
