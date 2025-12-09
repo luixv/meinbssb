@@ -54,6 +54,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool allFieldsFilled = false;
+  String? personIdError;
 
   List<SchulungstermineZusatzfelder> zusatzfelder = [];
   final Map<int, TextEditingController> zusatzfeldControllers = {};
@@ -93,9 +94,18 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
       }
     });
 
-    vornameController.addListener(_checkAllFieldsFilled);
-    nachnameController.addListener(_checkAllFieldsFilled);
-    passnummerController.addListener(_checkAllFieldsFilled);
+    vornameController.addListener(() {
+      _checkAllFieldsFilled();
+      _clearPersonIdError();
+    });
+    nachnameController.addListener(() {
+      _checkAllFieldsFilled();
+      _clearPersonIdError();
+    });
+    passnummerController.addListener(() {
+      _checkAllFieldsFilled();
+      _clearPersonIdError();
+    });
     emailController.addListener(_checkAllFieldsFilled);
     telefonnummerController.addListener(_checkAllFieldsFilled);
     
@@ -120,6 +130,14 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
   bool isEmailValid(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}');
     return emailRegex.hasMatch(email);
+  }
+
+  void _clearPersonIdError() {
+    if (personIdError != null) {
+      setState(() {
+        personIdError = null;
+      });
+    }
   }
 
   Future<List<SchulungstermineZusatzfelder>> fetchSchulungstermineZusatzfelder(
@@ -148,15 +166,11 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
 
     // Check if the person is valid
     if (personId == 0) {
-      setState(() => isLoading = false);
+      setState(() {
+        isLoading = false;
+        personIdError = Messages.noPersonIdFound;
+      });
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(Messages.noPersonIdFound),
-          duration: UIConstants.snackbarDuration,
-          backgroundColor: UIConstants.errorColor,
-        ),
-      );
       return;
     }
     
@@ -491,6 +505,44 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                       ),
                                     );
                                   }),
+                                if (personIdError != null) ...[
+                                  const SizedBox(height: UIConstants.spacingS),
+                                  Container(
+                                    padding: const EdgeInsets.all(
+                                      UIConstants.spacingS,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: UIConstants.errorColor.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(
+                                        UIConstants.cornerRadius,
+                                      ),
+                                      border: Border.all(
+                                        color: UIConstants.errorColor,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          color: UIConstants.errorColor,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: UIConstants.spacingS),
+                                        Expanded(
+                                          child: Text(
+                                            personIdError!,
+                                            style: TextStyle(
+                                              color: UIConstants.errorColor,
+                                              fontSize: UIStyles.formValueStyle.fontSize! *
+                                                  fontSizeProvider.scaleFactor,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -517,22 +569,19 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                       color: UIConstants.whiteColor,
                     ),
                   ),
-                  Opacity(
-                    opacity: allFieldsFilled ? 1.0 : 0.5,
-                    child: FloatingActionButton(
-                      key: const ValueKey('okFab'),
-                      heroTag: 'okRegisterAnotherFab',
-                      mini: true,
-                      tooltip: 'OK',
-                      backgroundColor:
-                          allFieldsFilled
-                              ? UIConstants.defaultAppColor
-                              : UIConstants.disabledBackgroundColor,
-                      onPressed: allFieldsFilled ? submit : null,
-                      child: const Icon(
-                        Icons.check,
-                        color: UIConstants.whiteColor,
-                      ),
+                  FloatingActionButton(
+                    key: const ValueKey('okFab'),
+                    heroTag: 'okRegisterAnotherFab',
+                    mini: true,
+                    tooltip: 'OK',
+                    backgroundColor:
+                        allFieldsFilled
+                            ? UIConstants.defaultAppColor
+                            : UIConstants.disabledBackgroundColor,
+                    onPressed: allFieldsFilled ? submit : null,
+                    child: const Icon(
+                      Icons.check,
+                      color: UIConstants.whiteColor,
                     ),
                   ),
                 ],
