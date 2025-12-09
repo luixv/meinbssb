@@ -517,19 +517,22 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                       color: UIConstants.whiteColor,
                     ),
                   ),
-                  FloatingActionButton(
-                    key: const ValueKey('okFab'),
-                    heroTag: 'okRegisterAnotherFab',
-                    mini: true,
-                    tooltip: 'OK',
-                    backgroundColor:
-                        allFieldsFilled
-                            ? UIConstants.defaultAppColor
-                            : UIConstants.disabledBackgroundColor,
-                    onPressed: allFieldsFilled ? submit : null,
-                    child: const Icon(
-                      Icons.check,
-                      color: UIConstants.whiteColor,
+                  Opacity(
+                    opacity: allFieldsFilled ? 1.0 : 0.5,
+                    child: FloatingActionButton(
+                      key: const ValueKey('okFab'),
+                      heroTag: 'okRegisterAnotherFab',
+                      mini: true,
+                      tooltip: 'OK',
+                      backgroundColor:
+                          allFieldsFilled
+                              ? UIConstants.defaultAppColor
+                              : UIConstants.disabledBackgroundColor,
+                      onPressed: allFieldsFilled ? submit : null,
+                      child: const Icon(
+                        Icons.check,
+                        color: UIConstants.whiteColor,
+                      ),
                     ),
                   ),
                 ],
