@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a sport record (bed_sport) in the BSSB system.
 @immutable
-class Sport {
-  /// Creates a [Sport] instance from a JSON map.
-  factory Sport.fromJson(Map<String, dynamic> json) {
-    return Sport(
+class BeduerfnisseSport {
+  /// Creates a [BeduerfnisseSport] instance from a JSON map.
+  factory BeduerfnisseSport.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisseSport(
       id: json['ID'] as int?,
       createdAt:
           json['CREATED_AT'] == null
@@ -35,8 +35,8 @@ class Sport {
     );
   }
 
-  /// Creates a new instance of [Sport].
-  const Sport({
+  /// Creates a new instance of [BeduerfnisseSport].
+  const BeduerfnisseSport({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -83,7 +83,7 @@ class Sport {
   /// The competition result (nullable).
   final double? wettkampfergebnis;
 
-  /// Converts the [Sport] instance to a JSON map.
+  /// Converts the [BeduerfnisseSport] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

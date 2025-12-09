@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a selection data value (bed_auswahl_data) in the BSSB system.
 @immutable
-class AuswahlData {
-  /// Creates an [AuswahlData] instance from a JSON map.
-  factory AuswahlData.fromJson(Map<String, dynamic> json) {
-    return AuswahlData(
+class BeduerfnisseAuswahl {
+  /// Creates an [BeduerfnisseAuswahl] instance from a JSON map.
+  factory BeduerfnisseAuswahl.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisseAuswahl(
       id: json['ID'] as int?,
       typId: json['TYP_ID'] as int,
       kurz: json['KURZ'] as String,
@@ -21,8 +21,8 @@ class AuswahlData {
     );
   }
 
-  /// Creates a new instance of [AuswahlData].
-  const AuswahlData({
+  /// Creates a new instance of [BeduerfnisseAuswahl].
+  const BeduerfnisseAuswahl({
     this.id,
     required this.typId,
     required this.kurz,
@@ -49,7 +49,7 @@ class AuswahlData {
   /// The deletion timestamp (nullable).
   final DateTime? deletedAt;
 
-  /// Converts the [AuswahlData] instance to a JSON map.
+  /// Converts the [BeduerfnisseAuswahl] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a file record (bed_datei) in the BSSB system.
 @immutable
-class Datei {
-  /// Creates a [Datei] instance from a JSON map.
-  factory Datei.fromJson(Map<String, dynamic> json) {
-    return Datei(
+class BeduerfnisseDatei {
+  /// Creates a [BeduerfnisseDatei] instance from a JSON map.
+  factory BeduerfnisseDatei.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisseDatei(
       id: json['ID'] as int?,
       createdAt:
           json['CREATED_AT'] == null
@@ -26,8 +26,8 @@ class Datei {
     );
   }
 
-  /// Creates a new instance of [Datei].
-  const Datei({
+  /// Creates a new instance of [BeduerfnisseDatei].
+  const BeduerfnisseDatei({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -58,7 +58,7 @@ class Datei {
   /// The file bytes (binary data).
   final List<int> fileBytes;
 
-  /// Converts the [Datei] instance to a JSON map.
+  /// Converts the [BeduerfnisseDatei] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

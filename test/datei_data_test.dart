@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/datei_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
 
 void main() {
-  group('Datei', () {
+  group('BeduerfnisseDatei', () {
     test('fromJson and toJson', () {
       final json = {
         'ID': 3,
@@ -13,7 +13,7 @@ void main() {
         'DATEINAME': 'file.txt',
         'FILE_BYTES': [1, 2, 3, 4],
       };
-      final model = Datei.fromJson(json);
+      final model = BeduerfnisseDatei.fromJson(json);
       expect(model.id, 3);
       expect(model.createdAt, DateTime.parse('2023-03-03T12:00:00.000Z'));
       expect(model.changedAt, null);
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('toJson with all fields', () {
-      final model = Datei(
+      final model = BeduerfnisseDatei(
         id: 4,
         createdAt: DateTime.parse('2023-04-04T12:00:00.000Z'),
         changedAt: DateTime.parse('2023-05-05T12:00:00.000Z'),
@@ -54,7 +54,7 @@ void main() {
         'DATEINAME': 'empty.txt',
         'FILE_BYTES': [],
       };
-      final model = Datei.fromJson(json);
+      final model = BeduerfnisseDatei.fromJson(json);
       expect(model.id, 5);
       expect(model.createdAt, null);
       expect(model.changedAt, null);

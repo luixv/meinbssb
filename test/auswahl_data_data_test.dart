@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/auswahl_data_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 
 void main() {
-  group('AuswahlData', () {
+  group('BeduerfnisseAuswahl', () {
     test('fromJson and toJson', () {
       final json = {
         'ID': 2,
@@ -12,7 +12,7 @@ void main() {
         'CREATED_AT': '2023-02-02T12:00:00.000Z',
         'DELETED_AT': null,
       };
-      final model = AuswahlData.fromJson(json);
+      final model = BeduerfnisseAuswahl.fromJson(json);
       expect(model.id, 2);
       expect(model.typId, 1);
       expect(model.kurz, 'B');
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('toJson with all fields', () {
-      final model = AuswahlData(
+      final model = BeduerfnisseAuswahl(
         id: 3,
         typId: 2,
         kurz: 'C',
@@ -49,7 +49,7 @@ void main() {
         'CREATED_AT': null,
         'DELETED_AT': null,
       };
-      final model = AuswahlData.fromJson(json);
+      final model = BeduerfnisseAuswahl.fromJson(json);
       expect(model.id, 4);
       expect(model.typId, 3);
       expect(model.kurz, 'D');

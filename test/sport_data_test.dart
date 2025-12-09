@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/sport_data.dart';
+import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
 
 void main() {
-  group('Sport', () {
+  group('BeduerfnisseSport', () {
     test('fromJson and toJson', () {
       final json = {
         'ID': 4,
@@ -17,7 +17,7 @@ void main() {
         'WETTKAMPFART_ID': null,
         'WETTKAMPFERGEBNIS': 99.9,
       };
-      final model = Sport.fromJson(json);
+      final model = BeduerfnisseSport.fromJson(json);
       expect(model.id, 4);
       expect(model.createdAt, DateTime.parse('2023-04-04T12:00:00.000Z'));
       expect(model.changedAt, null);
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('toJson with all fields', () {
-      final model = Sport(
+      final model = BeduerfnisseSport(
         id: 5,
         createdAt: DateTime.parse('2023-06-06T12:00:00.000Z'),
         changedAt: DateTime.parse('2023-07-07T12:00:00.000Z'),
@@ -74,7 +74,7 @@ void main() {
         'WETTKAMPFART_ID': null,
         'WETTKAMPFERGEBNIS': null,
       };
-      final model = Sport.fromJson(json);
+      final model = BeduerfnisseSport.fromJson(json);
       expect(model.id, null);
       expect(model.createdAt, null);
       expect(model.changedAt, null);

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/waffe_besitz_dart.dart';
+import 'package:meinbssb/models/beduerfnisse_waffe_besitz_dart.dart';
 
 void main() {
-  group('WaffeBesitz', () {
+  group('BeduerfnisseWaffeBesitz', () {
     test('fromJson and toJson', () {
       final json = {
         'ID': 5,
@@ -22,7 +22,7 @@ void main() {
         'VERBAND_ID': null,
         'BEMERKUNG': null,
       };
-      final model = WaffeBesitz.fromJson(json);
+      final model = BeduerfnisseWaffeBesitz.fromJson(json);
       expect(model.id, 5);
       expect(model.createdAt, DateTime.parse('2023-06-06T12:00:00.000Z'));
       expect(model.changedAt, null);
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('toJson with all fields', () {
-      final model = WaffeBesitz(
+      final model = BeduerfnisseWaffeBesitz(
         id: 6,
         createdAt: DateTime.parse('2023-07-07T12:00:00.000Z'),
         changedAt: DateTime.parse('2023-08-08T12:00:00.000Z'),
@@ -99,7 +99,7 @@ void main() {
         'VERBAND_ID': null,
         'BEMERKUNG': null,
       };
-      final model = WaffeBesitz.fromJson(json);
+      final model = BeduerfnisseWaffeBesitz.fromJson(json);
       expect(model.id, null);
       expect(model.createdAt, null);
       expect(model.changedAt, null);

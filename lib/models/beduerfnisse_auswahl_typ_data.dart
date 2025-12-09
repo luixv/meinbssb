@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a selection type/category (bed_auswahl_typ) in the BSSB system.
 @immutable
-class AuswahlTyp {
-  /// Creates an [AuswahlTyp] instance from a JSON map.
-  factory AuswahlTyp.fromJson(Map<String, dynamic> json) {
-    return AuswahlTyp(
+class BeduerfnisseAuswahlTyp {
+  /// Creates an [BeduerfnisseAuswahlTyp] instance from a JSON map.
+  factory BeduerfnisseAuswahlTyp.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisseAuswahlTyp(
       id: json['ID'] as int?,
       kurz: json['KURZ'] as String,
       lang: json['LANG'] as String,
@@ -20,8 +20,8 @@ class AuswahlTyp {
     );
   }
 
-  /// Creates a new instance of [AuswahlTyp].
-  const AuswahlTyp({
+  /// Creates a new instance of [BeduerfnisseAuswahlTyp].
+  const BeduerfnisseAuswahlTyp({
     this.id,
     required this.kurz,
     required this.lang,
@@ -44,7 +44,7 @@ class AuswahlTyp {
   /// The deletion timestamp (nullable).
   final DateTime? deletedAt;
 
-  /// Converts the [AuswahlTyp] instance to a JSON map.
+  /// Converts the [BeduerfnisseAuswahlTyp] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

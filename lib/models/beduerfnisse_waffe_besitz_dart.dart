@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a weapon possession record (bed_waffe_besitz) in the BSSB system.
 @immutable
-class WaffeBesitz {
-  /// Creates a [WaffeBesitz] instance from a JSON map.
-  factory WaffeBesitz.fromJson(Map<String, dynamic> json) {
-    return WaffeBesitz(
+class BeduerfnisseWaffeBesitz {
+  /// Creates a [BeduerfnisseWaffeBesitz] instance from a JSON map.
+  factory BeduerfnisseWaffeBesitz.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisseWaffeBesitz(
       id: json['ID'] as int?,
       createdAt:
           json['CREATED_AT'] == null
@@ -34,8 +34,8 @@ class WaffeBesitz {
     );
   }
 
-  /// Creates a new instance of [WaffeBesitz].
-  const WaffeBesitz({
+  /// Creates a new instance of [BeduerfnisseWaffeBesitz].
+  const BeduerfnisseWaffeBesitz({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -102,7 +102,7 @@ class WaffeBesitz {
   /// Remarks (nullable).
   final String? bemerkung;
 
-  /// Converts the [WaffeBesitz] instance to a JSON map.
+  /// Converts the [BeduerfnisseWaffeBesitz] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,
