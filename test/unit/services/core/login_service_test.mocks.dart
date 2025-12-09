@@ -1191,6 +1191,9 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
     required String? telefon,
     required _i23.BankData? bankData,
     required List<Map<String, dynamic>>? felderArray,
+    required String? angemeldetUeber,
+    required String? angemeldetUeberEmail,
+    required String? angemeldetUeberTelefon,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#registerSchulungenTeilnehmer, [], {
@@ -1200,6 +1203,9 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
               #telefon: telefon,
               #bankData: bankData,
               #felderArray: felderArray,
+              #angemeldetUeber: angemeldetUeber,
+              #angemeldetUeberEmail: angemeldetUeberEmail,
+              #angemeldetUeberTelefon: angemeldetUeberTelefon,
             }),
             returnValue:
                 _i2.Future<_i5.RegisterSchulungenTeilnehmerResponse>.value(
@@ -1212,6 +1218,9 @@ class MockTrainingService extends _i1.Mock implements _i16.TrainingService {
                       #telefon: telefon,
                       #bankData: bankData,
                       #felderArray: felderArray,
+                      #angemeldetUeber: angemeldetUeber,
+                      #angemeldetUeberEmail: angemeldetUeberEmail,
+                      #angemeldetUeberTelefon: angemeldetUeberTelefon,
                     }),
                   ),
                 ),

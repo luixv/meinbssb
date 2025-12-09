@@ -973,6 +973,9 @@ void main() {
               telefon: anyNamed('telefon'),
               bankData: anyNamed('bankData'),
               felderArray: anyNamed('felderArray'),
+              angemeldetUeber: anyNamed('angemeldetUeber'),
+              angemeldetUeberEmail: anyNamed('angemeldetUeberEmail'),
+              angemeldetUeberTelefon: anyNamed('angemeldetUeberTelefon'),
             ),
           ).thenAnswer((_) async => expectedResponse);
 
@@ -985,6 +988,9 @@ void main() {
             felderArray: [
               {'field': 'value'},
             ],
+            angemeldetUeber: 'Test User',
+            angemeldetUeberEmail: 'registrar@example.com',
+            angemeldetUeberTelefon: '987654321',
           );
 
           expect(result, equals(expectedResponse));
@@ -998,6 +1004,9 @@ void main() {
               felderArray: [
                 {'field': 'value'},
               ],
+              angemeldetUeber: 'Test User',
+              angemeldetUeberEmail: 'registrar@example.com',
+              angemeldetUeberTelefon: '987654321',
             ),
           ).called(1);
         },

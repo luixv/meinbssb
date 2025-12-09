@@ -10,6 +10,7 @@ import '/models/schulungstermine_zusatzfelder_data.dart';
 import '/helpers/utils.dart';
 
 import '/services/api_service.dart';
+import '/services/api/bank_service.dart';
 import '/widgets/dialog_fabs.dart';
 import '/widgets/scaled_text.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
@@ -97,6 +98,9 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     passnummerController.addListener(_checkAllFieldsFilled);
     emailController.addListener(_checkAllFieldsFilled);
     telefonnummerController.addListener(_checkAllFieldsFilled);
+    
+    // Initial check for IBAN validity
+    _checkAllFieldsFilled();
   }
 
   @override
@@ -272,7 +276,10 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
               .isNotEmpty ??
           false,
     );
-    final filled = staticFilled && zusatzFilled;
+    // Validate IBAN from bankData
+    final ibanValid = widget.bankData.iban.trim().isNotEmpty &&
+        BankService.validateIBAN(widget.bankData.iban.trim());
+    final filled = staticFilled && zusatzFilled && ibanValid;
     if (filled != allFieldsFilled) {
       setState(() {
         allFieldsFilled = filled;

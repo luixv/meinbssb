@@ -50,19 +50,7 @@ void main() {
   });
 
   group('extractPhoneNumber', () {
-    test('extracts phone from private mobile contact (rawKontaktTyp 1)', () {
-      final contacts = <Map<String, dynamic>>[
-        {
-          'category': 'Privat',
-          'contacts': [
-            {'rawKontaktTyp': 1, 'value': '+49 123 456789'},
-          ],
-        },
-      ];
-      expect(extractPhoneNumber(contacts), '+49 123 456789');
-    });
-
-    test('extracts phone from private phone contact (rawKontaktTyp 2)', () {
+    test('extracts phone from private mobile contact (rawKontaktTyp 2) - highest priority', () {
       final contacts = <Map<String, dynamic>>[
         {
           'category': 'Privat',
@@ -74,25 +62,33 @@ void main() {
       expect(extractPhoneNumber(contacts), '0123 456789');
     });
 
-    test('prioritizes private contacts over business contacts', () {
+    test('extracts phone from private phone contact (rawKontaktTyp 1) - third priority', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 1, 'value': '+49 123 456789'},
+          ],
+        },
+      ];
+      expect(extractPhoneNumber(contacts), '+49 123 456789');
+    });
+
+    test('prioritizes type 2 (private mobile) over type 1 (private phone)', () {
       final contacts = <Map<String, dynamic>>[
         {
           'category': 'Privat',
           'contacts': [
             {'rawKontaktTyp': 1, 'value': '+49 111 111111'},
-          ],
-        },
-        {
-          'category': 'Geschäftlich',
-          'contacts': [
-            {'rawKontaktTyp': 5, 'value': '+49 222 222222'},
+            {'rawKontaktTyp': 2, 'value': '+49 222 222222'},
           ],
         },
       ];
-      expect(extractPhoneNumber(contacts), '+49 111 111111');
+      // Type 2 has higher priority than type 1
+      expect(extractPhoneNumber(contacts), '+49 222 222222');
     });
 
-    test('falls back to business mobile (rawKontaktTyp 5) if no private phone', () {
+    test('falls back to business mobile (rawKontaktTyp 6) if no private phone - second priority', () {
       final contacts = <Map<String, dynamic>>[
         {
           'category': 'Privat',
@@ -103,28 +99,49 @@ void main() {
         {
           'category': 'Geschäftlich',
           'contacts': [
-            {'rawKontaktTyp': 5, 'value': '+49 333 333333'},
+            {'rawKontaktTyp': 6, 'value': '+49 333 333333'},
           ],
         },
       ];
+      // Type 6 (business mobile) has second priority
       expect(extractPhoneNumber(contacts), '+49 333 333333');
     });
 
-    test('falls back to business phone (rawKontaktTyp 6) if no private phone', () {
+    test('falls back to private phone (rawKontaktTyp 1) - third priority', () {
       final contacts = <Map<String, dynamic>>[
         {
           'category': 'Privat',
           'contacts': [
-            {'rawKontaktTyp': 4, 'value': 'fax number'},
+            {'rawKontaktTyp': 1, 'value': '0456 789012'},
           ],
         },
         {
           'category': 'Geschäftlich',
           'contacts': [
-            {'rawKontaktTyp': 6, 'value': '0456 789012'},
+            {'rawKontaktTyp': 7, 'value': 'fax number'},
           ],
         },
       ];
+      // Type 1 (private phone) has third priority
+      expect(extractPhoneNumber(contacts), '0456 789012');
+    });
+
+    test('falls back to business phone (rawKontaktTyp 5) - fourth priority', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 4, 'value': 'email@example.com'},
+          ],
+        },
+        {
+          'category': 'Geschäftlich',
+          'contacts': [
+            {'rawKontaktTyp': 5, 'value': '0456 789012'},
+          ],
+        },
+      ];
+      // Type 5 (business phone) has fourth priority
       expect(extractPhoneNumber(contacts), '0456 789012');
     });
 
@@ -177,7 +194,7 @@ void main() {
       expect(extractPhoneNumber(contacts), '');
     });
 
-    test('handles contacts with multiple phone numbers, picks first match', () {
+    test('handles contacts with multiple phone numbers, picks by priority order', () {
       final contacts = <Map<String, dynamic>>[
         {
           'category': 'Privat',
@@ -187,7 +204,171 @@ void main() {
           ],
         },
       ];
-      expect(extractPhoneNumber(contacts), '+49 111 111111');
+      // Type 2 (private mobile) has higher priority than type 1 (private phone)
+      expect(extractPhoneNumber(contacts), '+49 222 222222');
+    });
+
+    test('follows priority order: 2, 6, 1, 5', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 1, 'value': 'type1'},
+            {'rawKontaktTyp': 2, 'value': 'type2'},
+          ],
+        },
+        {
+          'category': 'Geschäftlich',
+          'contacts': [
+            {'rawKontaktTyp': 5, 'value': 'type5'},
+            {'rawKontaktTyp': 6, 'value': 'type6'},
+          ],
+        },
+      ];
+      // Priority: 2 > 6 > 1 > 5
+      expect(extractPhoneNumber(contacts), 'type2');
+    });
+
+    test('picks type 6 when type 2 is not available', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 1, 'value': 'type1'},
+          ],
+        },
+        {
+          'category': 'Geschäftlich',
+          'contacts': [
+            {'rawKontaktTyp': 5, 'value': 'type5'},
+            {'rawKontaktTyp': 6, 'value': 'type6'},
+          ],
+        },
+      ];
+      // Priority: 2 (not available) > 6 > 1 > 5
+      expect(extractPhoneNumber(contacts), 'type6');
+    });
+  });
+
+  group('extractEmail', () {
+    test('extracts email from private email contact (rawKontaktTyp 4)', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 4, 'value': 'private@example.com'},
+          ],
+        },
+      ];
+      expect(extractEmail(contacts), 'private@example.com');
+    });
+
+    test('falls back to business email (rawKontaktTyp 8) if no private email', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 1, 'value': '+49 123 456789'},
+          ],
+        },
+        {
+          'category': 'Geschäftlich',
+          'contacts': [
+            {'rawKontaktTyp': 8, 'value': 'business@example.com'},
+          ],
+        },
+      ];
+      expect(extractEmail(contacts), 'business@example.com');
+    });
+
+    test('prioritizes private email over business email', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 4, 'value': 'private@example.com'},
+          ],
+        },
+        {
+          'category': 'Geschäftlich',
+          'contacts': [
+            {'rawKontaktTyp': 8, 'value': 'business@example.com'},
+          ],
+        },
+      ];
+      expect(extractEmail(contacts), 'private@example.com');
+    });
+
+    test('returns empty string if no email contact found', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 1, 'value': '+49 123 456789'},
+          ],
+        },
+        {
+          'category': 'Geschäftlich',
+          'contacts': [
+            {'rawKontaktTyp': 5, 'value': '+49 987 654321'},
+          ],
+        },
+      ];
+      expect(extractEmail(contacts), '');
+    });
+
+    test('falls back to business email if private email is empty', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 4, 'value': ''},
+          ],
+        },
+        {
+          'category': 'Geschäftlich',
+          'contacts': [
+            {'rawKontaktTyp': 8, 'value': 'business@example.com'},
+          ],
+        },
+      ];
+      // Should fall back to business email since private is empty
+      expect(extractEmail(contacts), 'business@example.com');
+    });
+
+    test('returns empty string if both emails are empty', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Privat',
+          'contacts': [
+            {'rawKontaktTyp': 4, 'value': ''},
+          ],
+        },
+        {
+          'category': 'Geschäftlich',
+          'contacts': [
+            {'rawKontaktTyp': 8, 'value': ''},
+          ],
+        },
+      ];
+      expect(extractEmail(contacts), '');
+    });
+
+    test('handles empty contacts list', () {
+      final contacts = <Map<String, dynamic>>[];
+      expect(extractEmail(contacts), '');
+    });
+
+    test('handles missing categories', () {
+      final contacts = <Map<String, dynamic>>[
+        {
+          'category': 'Other',
+          'contacts': [
+            {'rawKontaktTyp': 4, 'value': 'email@example.com'},
+          ],
+        },
+      ];
+      expect(extractEmail(contacts), '');
     });
   });
 
