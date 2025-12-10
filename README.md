@@ -21,18 +21,19 @@ This project uses GitHub Actions for continuous integration and deployment. The 
 
 ### Version Management
 
-Version management is handled through the `scripts/version.sh` script:
-
-```bash
-# Increment patch version
-./scripts/version.sh patch
-
-# Increment minor version
-./scripts/version.sh minor
-
-# Increment major version
-./scripts/version.sh major
+Version management is handled through the pipeline:
+See <root>/.github/workflows/flutter.yml
 ```
+  INCREMENT_BUILD_NUMBER: 'yes'
+```
+The variable INCREMENT_BUILD_NUMBER must be set to yes. Then just make a normal push to git.
+If -for any reason- you want to avoid the unit test just set:
+```
+  RUN_UNIT_TESTS: 'false'
+```
+
+In order to deploy Android version go to:
+
 
 ### Code Quality
 

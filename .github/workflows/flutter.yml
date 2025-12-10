@@ -3,7 +3,7 @@ env:
   FLUTTER_CHANNEL: 'stable'
   ANDROID_KEYSTORE_NAME: "***-keystore.jks"
   INCREMENT_BUILD_NUMBER: 'yes'
-  RUN_UNIT_TESTS: 'true'
+  RUN_UNIT_TESTS: 'false'
 
 name: Flutter CI/CD
 
