@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 
 import '/constants/ui_constants.dart';
 import '/constants/ui_styles.dart';
+import '/constants/messages.dart';
 import '/models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/models/bank_data.dart';
 import '/models/schulungstermine_zusatzfelder_data.dart';
+import '/helpers/utils.dart';
 
 import '/services/api_service.dart';
+import '/services/api/bank_service.dart';
 import '/widgets/dialog_fabs.dart';
 import '/widgets/scaled_text.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
@@ -25,12 +28,14 @@ class RegisterPersonFormDialog extends StatefulWidget {
     super.key,
     required this.schulungsTermin,
     required this.bankData,
+    required this.loggedInUser,
     this.prefillUser,
     this.prefillEmail = '',
     required this.apiService,
   });
   final Schulungstermin schulungsTermin;
   final BankData bankData;
+  final UserData loggedInUser;
   final UserData? prefillUser;
   final String prefillEmail;
   final ApiService apiService;
@@ -49,6 +54,7 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool allFieldsFilled = false;
+  String? personIdError;
 
   List<SchulungstermineZusatzfelder> zusatzfelder = [];
   final Map<int, TextEditingController> zusatzfeldControllers = {};
@@ -88,11 +94,23 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
       }
     });
 
-    vornameController.addListener(_checkAllFieldsFilled);
-    nachnameController.addListener(_checkAllFieldsFilled);
-    passnummerController.addListener(_checkAllFieldsFilled);
+    vornameController.addListener(() {
+      _checkAllFieldsFilled();
+      _clearPersonIdError();
+    });
+    nachnameController.addListener(() {
+      _checkAllFieldsFilled();
+      _clearPersonIdError();
+    });
+    passnummerController.addListener(() {
+      _checkAllFieldsFilled();
+      _clearPersonIdError();
+    });
     emailController.addListener(_checkAllFieldsFilled);
     telefonnummerController.addListener(_checkAllFieldsFilled);
+    
+    // Initial check for IBAN validity
+    _checkAllFieldsFilled();
   }
 
   @override
@@ -114,6 +132,14 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
     return emailRegex.hasMatch(email);
   }
 
+  void _clearPersonIdError() {
+    if (personIdError != null) {
+      setState(() {
+        personIdError = null;
+      });
+    }
+  }
+
   Future<List<SchulungstermineZusatzfelder>> fetchSchulungstermineZusatzfelder(
     int schulungsTerminId,
   ) async {
@@ -125,10 +151,14 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
   Future<void> submit() async {
     if (!formKey.currentState!.validate()) return;
     setState(() => isLoading = true);
+    
+    final vorname = vornameController.text.trim();
     final nachname = nachnameController.text.trim();
     final passnummer = passnummerController.text.trim();
 
-    final personId = await widget.apiService.findePersonID2(
+    // Call findePersonIDSimple to get the personId
+    final personId = await widget.apiService.findePersonIDSimple(
+      vorname,
       nachname,
       passnummer,
     );
@@ -136,41 +166,45 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
 
     // Check if the person is valid
     if (personId == 0) {
+      setState(() {
+        isLoading = false;
+        personIdError = Messages.noPersonIdFound;
+      });
+      if (!mounted) return;
+      return;
+    }
+    
+    // Fetch Passdaten using the personId
+    final passdatenResult = await widget.apiService.fetchPassdaten(personId);
+    if (!mounted) return;
+    
+    if (passdatenResult == null) {
       setState(() => isLoading = false);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Nachname und Passnummer stimmen nicht überein oder existieren nicht.',
-          ),
+          content: Text('Fehler beim Laden der Passdaten.'),
           duration: UIConstants.snackbarDuration,
           backgroundColor: UIConstants.errorColor,
         ),
       );
       return;
     }
-    // Remove the check for widget.prefillUser == null
-    // Use the form fields to create the new person for registration
-    final userData =
-        widget.prefillUser?.copyWith(
-          vorname: vornameController.text,
-          namen: nachnameController.text,
-          passnummer: passnummerController.text,
-          telefon: telefonnummerController.text,
-        ) ??
-        UserData(
-          personId: personId,
-          webLoginId: 0,
-          passnummer: passnummerController.text,
-          vereinNr: 0,
-          namen: nachnameController.text,
-          vorname: vornameController.text,
-          vereinName: '',
-          passdatenId: 0,
-          mitgliedschaftId: 0,
-          telefon: telefonnummerController.text,
-          // other optional fields use defaults from the model
-        );
+    
+    // Fetch contacts to extract email and phone
+    final contacts = await widget.apiService.fetchKontakte(personId);
+    if (!mounted) return;
+    
+    // Extract email and phone from contacts
+    final contactEmail = extractEmail(contacts);
+    final contactPhone = extractPhoneNumber(contacts);
+    
+    // Use contact data if available, otherwise fall back to form values
+    final emailToUse = contactEmail.isNotEmpty ? contactEmail : emailController.text;
+    final phoneToUse = contactPhone.isNotEmpty ? contactPhone : telefonnummerController.text;
+    
+    // Use the passdaten data to create UserData for registration
+    final userData = passdatenResult;
     final felderArray =
         zusatzfelder
             .map(
@@ -182,18 +216,19 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
               },
             )
             .toList();
+    // Prepare angemeldetUeber with logged-in user's name
+    final angemeldetUeber = '${widget.loggedInUser.vorname} ${widget.loggedInUser.namen}';
+    
     final response = await widget.apiService.registerSchulungenTeilnehmer(
       schulungTerminId: widget.schulungsTermin.schulungsterminId,
-      user: userData.copyWith(
-        vorname: vornameController.text,
-        namen: nachnameController.text,
-        passnummer: passnummerController.text,
-        telefon: telefonnummerController.text,
-      ),
-      email: emailController.text,
-      telefon: telefonnummerController.text,
+      user: userData,
+      email: emailToUse,
+      telefon: phoneToUse,
       bankData: widget.bankData,
       felderArray: felderArray,
+      angemeldetUeber: angemeldetUeber,
+      angemeldetUeberEmail: emailController.text.trim(),
+      angemeldetUeberTelefon: telefonnummerController.text.trim(),
     );
     if (!mounted) return;
     final msg = response.msg;
@@ -209,10 +244,10 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
         personId: personId.toString(),
         schulungName: widget.schulungsTermin.bezeichnung,
         schulungDate: formattedDate,
-        firstName: vornameController.text,
-        lastName: nachnameController.text,
-        passnumber: passnummerController.text,
-        email: emailController.text,
+        firstName: userData.vorname,
+        lastName: userData.namen,
+        passnumber: userData.passnummer,
+        email: emailToUse,
         schulungRegistered: response.platz,
         schulungTotal: response.maxPlaetze,
         location: widget.schulungsTermin.ort,
@@ -224,9 +259,9 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
       if (!mounted) return;
       Navigator.of(context).pop(
         RegisteredPerson(
-          vornameController.text,
-          nachnameController.text,
-          passnummerController.text,
+          userData.vorname,
+          userData.namen,
+          userData.passnummer,
         ),
       );
     } else {
@@ -255,7 +290,10 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
               .isNotEmpty ??
           false,
     );
-    final filled = staticFilled && zusatzFilled;
+    // Validate IBAN from bankData
+    final ibanValid = widget.bankData.iban.trim().isNotEmpty &&
+        BankService.validateIBAN(widget.bankData.iban.trim());
+    final filled = staticFilled && zusatzFilled && ibanValid;
     if (filled != allFieldsFilled) {
       setState(() {
         allFieldsFilled = filled;
@@ -467,6 +505,44 @@ class _RegisterPersonFormDialogState extends State<RegisterPersonFormDialog> {
                                       ),
                                     );
                                   }),
+                                if (personIdError != null) ...[
+                                  const SizedBox(height: UIConstants.spacingS),
+                                  Container(
+                                    padding: const EdgeInsets.all(
+                                      UIConstants.spacingS,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: UIConstants.errorColor.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(
+                                        UIConstants.cornerRadius,
+                                      ),
+                                      border: Border.all(
+                                        color: UIConstants.errorColor,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          color: UIConstants.errorColor,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: UIConstants.spacingS),
+                                        Expanded(
+                                          child: Text(
+                                            personIdError!,
+                                            style: TextStyle(
+                                              color: UIConstants.errorColor,
+                                              fontSize: UIStyles.formValueStyle.fontSize! *
+                                                  fontSizeProvider.scaleFactor,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),

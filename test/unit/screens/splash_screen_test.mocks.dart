@@ -574,6 +574,9 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
     required String? telefon,
     required _i23.BankData? bankData,
     required List<Map<String, dynamic>>? felderArray,
+    required String? angemeldetUeber,
+    required String? angemeldetUeberEmail,
+    required String? angemeldetUeberTelefon,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#registerSchulungenTeilnehmer, [], {
@@ -583,6 +586,9 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
               #telefon: telefon,
               #bankData: bankData,
               #felderArray: felderArray,
+              #angemeldetUeber: angemeldetUeber,
+              #angemeldetUeberEmail: angemeldetUeberEmail,
+              #angemeldetUeberTelefon: angemeldetUeberTelefon,
             }),
             returnValue:
                 _i10.Future<_i7.RegisterSchulungenTeilnehmerResponse>.value(
@@ -595,6 +601,9 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
                       #telefon: telefon,
                       #bankData: bankData,
                       #felderArray: felderArray,
+                      #angemeldetUeber: angemeldetUeber,
+                      #angemeldetUeberEmail: angemeldetUeberEmail,
+                      #angemeldetUeberTelefon: angemeldetUeberTelefon,
                     }),
                   ),
                 ),

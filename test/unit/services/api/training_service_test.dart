@@ -1426,6 +1426,9 @@ void main() {
           telefon: '123',
           bankData: bank,
           felderArray: [],
+          angemeldetUeber: 'Test User',
+          angemeldetUeberEmail: 'test@example.com',
+          angemeldetUeberTelefon: '123456789',
         ),
         throwsException,
       );
