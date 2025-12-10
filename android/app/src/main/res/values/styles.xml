@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is on -->
+    <!-- Theme applied to the Android Window while the process is starting -->
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <!-- Show a splash screen on the first activity (and letterbox the splash screen on pre-v31) -->
+        <!-- Show a splash screen on the first activity -->
         <item name="android:windowBackground">@drawable/launch_background</item>
-        <!-- The following lines ensure the app goes edge-to-edge -->
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <!-- Edge-to-edge configuration for Android 15+ -->
+        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
     </style>
     
     <!-- Theme applied to the Android Window as soon as the Android process has started.
-         This theme is merged into the activity's theme to affect start-up behavior.
-         The theme is the one defined in the AndroidManifest.xml's <activity> element. -->
+         This theme determines the color of the Android Window while your Flutter UI initializes,
+         as well as behind your Flutter UI while it's running. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
     </style>
 </resources>

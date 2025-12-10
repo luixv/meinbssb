@@ -1,8 +1,9 @@
 # Mein BSSB
-
 This project is a starting point for the Mein BSSB application.
 Be sure that flutter config --enable-web has been executed.
 A Flutter application for managing BSSB-related stuff.
+
+IMPORTANT: In order to view (and edit) this file you can use the online editor Stackedit: https://stackedit.io/app#
 
 ## CI/CD Pipeline
 
@@ -16,7 +17,7 @@ This project uses GitHub Actions for continuous integration and deployment. The 
 ### Pipeline Steps
 
 1. **Test**: Runs all tests and generates coverage reports
-2. **Build**: Creates release builds for Android and iOS
+2. **Build**: Creates release builds for Android (AAB, APK-TEST, APK-PROD)
 3. **Deploy**: Creates a GitHub release with the built artifacts
 
 ### Version Management
@@ -89,11 +90,11 @@ For building the project:
     flutter build web                                  
     flutter run
 
+    If some packages have newer versions run:
+    flutter pub outdated / flutter pub upgrade
 
 For generating mocks and testing:
     flutter pub run build_runner build --delete-conflicting-outputs
-
-    flutter test .\test\unit
 
 For integration tests:
     flutter drive --driver=test_driver/integration_test.dart --target=test/integration/app_flow_test.dart
@@ -102,6 +103,7 @@ For integration tests:
 
 For installing at the phone do this: 
     adb install build/app/outputs/flutter-apk/app-release.apk
+    Or easily open the corresponding apk with the package installer at yuor phone.
 
 For the web version go to project root and at a shell run the following:
 
