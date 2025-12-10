@@ -88,8 +88,8 @@ CREATE TABLE IF NOT EXISTS bed_auswahl_typ (
     CONSTRAINT uq_bed_auswahl_typ_kurz UNIQUE (kurz)
 );
 
--- Create bed_auswahl_data table (Selection Data Values)
-CREATE TABLE IF NOT EXISTS bed_auswahl_data (
+-- Create bed_auswahl table (Selection Data Values)
+CREATE TABLE IF NOT EXISTS bed_auswahl (
     id          SERIAL PRIMARY KEY,
     typ_id      INT NOT NULL REFERENCES bed_auswahl_typ(id) ON DELETE CASCADE,
     kurz        TEXT NOT NULL,
@@ -118,10 +118,10 @@ CREATE TABLE IF NOT EXISTS bed_sport (
     deleted_at          TIMESTAMP,
     antragsnummer       TEXT NOT NULL,
     schiessdatum         DATE NOT NULL,
-    waffenart_id         INT NOT NULL REFERENCES bed_auswahl_data(id),
-    disziplin_id         INT NOT NULL REFERENCES bed_auswahl_data(id),
+    waffenart_id         INT NOT NULL REFERENCES bed_auswahl(id),
+    disziplin_id         INT NOT NULL REFERENCES bed_auswahl(id),
     training             BOOLEAN NOT NULL DEFAULT false,
-    wettkampfart_id      INT REFERENCES bed_auswahl_data(id),
+    wettkampfart_id      INT REFERENCES bed_auswahl(id),
     wettkampfergebnis    NUMERIC(7,1)
 );
 
@@ -134,14 +134,14 @@ CREATE TABLE IF NOT EXISTS bed_waffe_besitz (
     antragsnummer       TEXT NOT NULL,
     wbk_nr              VARCHAR(25) NOT NULL,
     lfd_wbk             VARCHAR(3) NOT NULL,
-    waffenart_id        INT NOT NULL REFERENCES bed_auswahl_data(id),
+    waffenart_id        INT NOT NULL REFERENCES bed_auswahl(id),
     hersteller          VARCHAR(60),
-    kaliber_id          INT NOT NULL REFERENCES bed_auswahl_data(id),
-    lauflaenge_id       INT REFERENCES bed_auswahl_data(id),
+    kaliber_id          INT NOT NULL REFERENCES bed_auswahl(id),
+    lauflaenge_id       INT REFERENCES bed_auswahl(id),
     gewicht             VARCHAR(10),
     kompensator         BOOLEAN NOT NULL DEFAULT false,
-    beduerfnisgrund_id  INT REFERENCES bed_auswahl_data(id),
-    verband_id          INT REFERENCES bed_auswahl_data(id),
+    beduerfnisgrund_id  INT REFERENCES bed_auswahl(id),
+    verband_id          INT REFERENCES bed_auswahl(id),
     bemerkung           VARCHAR(500)
 );
 
@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS his_bed_auswahl_typ (
     action      TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS his_bed_auswahl_data (
+CREATE TABLE IF NOT EXISTS his_bed_auswahl (
     id          INT,
     typ_id      INT,
     kurz        TEXT,
@@ -228,16 +228,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fn_his_bed_auswahl_data() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION fn_his_bed_auswahl() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        INSERT INTO his_bed_auswahl_data VALUES (NEW.id, NEW.typ_id, NEW.kurz, NEW.lang, NEW.created_at, NEW.deleted_at, 'insert');
+        INSERT INTO his_bed_auswahl VALUES (NEW.id, NEW.typ_id, NEW.kurz, NEW.lang, NEW.created_at, NEW.deleted_at, 'insert');
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
-        INSERT INTO his_bed_auswahl_data VALUES (OLD.id, OLD.typ_id, OLD.kurz, OLD.lang, OLD.created_at, OLD.deleted_at, 'update');
+        INSERT INTO his_bed_auswahl VALUES (OLD.id, OLD.typ_id, OLD.kurz, OLD.lang, OLD.created_at, OLD.deleted_at, 'update');
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
-        INSERT INTO his_bed_auswahl_data VALUES (OLD.id, OLD.typ_id, OLD.kurz, OLD.lang, OLD.created_at, OLD.deleted_at, 'delete');
+        INSERT INTO his_bed_auswahl VALUES (OLD.id, OLD.typ_id, OLD.kurz, OLD.lang, OLD.created_at, OLD.deleted_at, 'delete');
         RETURN OLD;
     END IF;
     RETURN NULL;
@@ -298,10 +298,10 @@ CREATE TRIGGER trg_his_bed_auswahl_typ
 AFTER INSERT OR UPDATE OR DELETE ON bed_auswahl_typ
 FOR EACH ROW EXECUTE FUNCTION fn_his_bed_auswahl_typ();
 
-DROP TRIGGER IF EXISTS trg_his_bed_auswahl_data ON bed_auswahl_data;
-CREATE TRIGGER trg_his_bed_auswahl_data
-AFTER INSERT OR UPDATE OR DELETE ON bed_auswahl_data
-FOR EACH ROW EXECUTE FUNCTION fn_his_bed_auswahl_data();
+DROP TRIGGER IF EXISTS trg_his_bed_auswahl ON bed_auswahl;
+CREATE TRIGGER trg_his_bed_auswahl
+AFTER INSERT OR UPDATE OR DELETE ON bed_auswahl
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_auswahl();
 
 DROP TRIGGER IF EXISTS trg_his_bed_datei ON bed_datei;
 CREATE TRIGGER trg_his_bed_datei
@@ -334,9 +334,9 @@ CREATE INDEX IF NOT EXISTS idx_api_request_logs_person_id ON api_request_logs(pe
 CREATE INDEX IF NOT EXISTS idx_api_request_logs_created_at ON api_request_logs(created_at);
 
 -- Indexes for bed_auswahl tables
-CREATE INDEX IF NOT EXISTS idx_bed_auswahl_data_typ_id ON bed_auswahl_data(typ_id);
+CREATE INDEX IF NOT EXISTS idx_bed_auswahl_typ_id ON bed_auswahl(typ_id);
 CREATE INDEX IF NOT EXISTS idx_bed_auswahl_typ_kurz ON bed_auswahl_typ(kurz);
-CREATE INDEX IF NOT EXISTS idx_bed_auswahl_data_kurz ON bed_auswahl_data(kurz);
+CREATE INDEX IF NOT EXISTS idx_bed_auswahl_kurz ON bed_auswahl(kurz);
 
 -- Indexes for bed_datei table
 CREATE INDEX IF NOT EXISTS idx_bed_datei_antragsnummer ON bed_datei(antragsnummer);
@@ -376,7 +376,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE password_reset TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE user_email_validation TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE api_request_logs TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_auswahl_typ TO bssbuser;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_auswahl_data TO bssbuser;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_auswahl TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_datei TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_sport TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_waffe_besitz TO bssbuser;
@@ -387,7 +387,7 @@ GRANT USAGE ON SCHEMA public TO web_anon;
 
 GRANT SELECT (id, firstname, lastname, created_at, is_verified) ON users TO web_anon;
 GRANT SELECT ON bed_auswahl_typ TO web_anon;
-GRANT SELECT ON bed_auswahl_data TO web_anon;
+GRANT SELECT ON bed_auswahl TO web_anon;
 GRANT SELECT, INSERT, UPDATE ON bed_datei TO web_anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON bed_sport TO web_anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON bed_waffe_besitz TO web_anon;
