@@ -204,7 +204,7 @@ class AuthService {
         LoggerService.logError('Other login exception: $e');
         return {
           'ResultType': 0,
-          'ResultMessage': 'Anmeldung fehlgeschlagen: $e',
+          'ResultMessage': Messages.loginFailed,
         };
       }
     }
