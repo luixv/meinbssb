@@ -33,7 +33,12 @@ If -for any reason- you want to avoid the unit test just set:
 ```
 
 In order to deploy Android version go to:
-
+https://play.google.com/
+log in
+Choose MeinBSSB
+At the left hand side menu choose "Test and Release -> Production"
+Click the button "Create Release"
+Then follow the instructions at the screen
 
 ### Code Quality
 
