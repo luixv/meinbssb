@@ -124,8 +124,100 @@ This project uses Docker Compose to orchestrate a local development environment 
 
 ## Services Overview
 
-### 1. PostgreSQL (`local_postgres`)
+### Production Services (docker-compose.prod.yml)
+
+#### 1. PostgREST (`postgrest`)
+- **Image:** `postgrest/postgrest`
+- **Container Name:** `postgrest`
+- **Port:** `3000` (internal only)
+- **External Access:** Via Caddy on `https://mein.bssb.de/api` or `https://meinprod.bssb.de/api`
+- **Environment:**
+  - Connects to external PostgreSQL database
+  - Anonymous role: `web_anon`
+  - Schema: `public`
+  - CORS enabled via Caddy
+- **Logs:**
+  ```bash
+  docker logs postgrest
+  docker logs -f postgrest  # Follow logs in real-time
+  docker logs --tail 100 postgrest  # Last 100 lines
+  ```
+
+#### 2. Email Service (`email-service`)
+- **Image:** Custom build from `./email-service/Dockerfile`
+- **Container Name:** `email-service`
+- **Port:** `3001` (internal only)
+- **External Access:** Via Caddy on `https://mein.bssb.de/email/send-email` or `https://meinprod.bssb.de/email/send-email`
+- **Depends on:** `postfix-relay`
+- **Functionality:**
+  - Handles email sending requests from the application
+  - Routes emails through Postfix relay
+  - Email endpoint: `/email/send-email` (Caddy routes `/email/*` to the service, which handles `/send-email`)
+- **Logs:**
+  ```bash
+  docker logs email-service
+  docker logs -f email-service  # Follow logs in real-time
+  docker logs --tail 50 email-service  # Last 50 lines
+  ```
+
+#### 3. Postfix Relay (`postfix-relay`)
+- **Image:** `boky/postfix`
+- **Container Name:** `postfix-relay`
+- **Functionality:**
+  - SMTP relay server for sending emails
+  - Uses TLS/STARTTLS for secure email transmission
+  - Relays through: `relay-cluster-eu01.hornetsecurity.com:25`
+- **Environment:**
+  - `RELAYHOST`: `relay-cluster-eu01.hornetsecurity.com`
+  - `RELAYHOST_PORT`: `25`
+  - `SMTP_TLS_SECURITY_LEVEL`: `may`
+- **Logs:**
+  ```bash
+  docker logs postfix-relay
+  docker logs -f postfix-relay  # Follow logs in real-time
+  docker logs --tail 100 postfix-relay  # Last 100 lines
+  ```
+
+#### 4. Caddy (`caddy`)
+- **Image:** `caddy:2`
+- **Container Name:** `caddy`
+- **Ports:**
+  - `443` (HTTPS - All services via path-based routing)
+- **Depends on:** `postgrest`
+- **Volumes:**
+  - `./Caddyfile.prod:/etc/caddy/Caddyfile`
+  - `../build/web:/web` (Flutter web app files)
+  - `./caddy-data:/data` (SSL certificates and data)
+  - `./caddy-config:/config` (Caddy configuration)
+- **Routes:**
+  - `/api/*` → PostgREST API (reverse proxy to `postgrest:3000`)
+  - `/email/*` → Email Service (reverse proxy to `email-service:3001`, endpoint: `/email/send-email`)
+  - Default → Flutter Web App (serves static files from `/web`)
+- **Domains:**
+  - `mein.bssb.de` (primary)
+  - `meinprod.bssb.de` (legacy, redirects to `mein.bssb.de`)
+- **Legacy Port Redirects:**
+  - Ports `8080` and `8081` on `meinprod.bssb.de` redirect to HTTPS paths (for backward compatibility)
+- **Features:**
+  - Automatic HTTPS with Let's Encrypt
+  - CORS headers for API endpoints
+  - HTTP to HTTPS redirects
+  - Path-based routing (all services accessible via HTTPS on port 443)
+- **Logs:**
+  ```bash
+  docker logs caddy
+  docker logs -f caddy  # Follow logs in real-time
+  docker logs --tail 200 caddy  # Last 200 lines
+  docker logs caddy 2>&1 | grep error  # Filter for errors
+  ```
+
+### Development Services (docker-compose.yml)
+
+For local development, the setup includes additional services:
+
+#### 1. PostgreSQL (`local_postgres`)
 - **Image:** `postgres:16`
+- **Container Name:** `local_postgres`
 - **Port:** `5432`
 - **Volumes:**
   - Persists data: `pgdata:/var/lib/postgresql/data`
@@ -134,42 +226,75 @@ This project uses Docker Compose to orchestrate a local development environment 
   - **DB Name:** `devdb`
   - **User:** `devuser`
   - **Password:** `devpass`
+- **Logs:**
+  ```bash
+  docker logs local_postgres
+  docker logs -f local_postgres
+  ```
 
-### 2. PostgREST (`postgrest`)
+#### 2. PostgREST (`postgrest`)
 - **Image:** `postgrest/postgrest`
+- **Container Name:** `postgrest`
 - **Port:** `3000`
-- **Depends on:** PostgreSQL
+- **Depends on:** `postgres`
 - **Environment:**
   - Connects to PostgreSQL on `local_postgres:5432`
   - Anonymous role: `web_anon`
   - Schema: `public`
   - CORS enabled
   - Proxy URI: `http://localhost:3000`
+- **Logs:**
+  ```bash
+  docker logs postgrest
+  docker logs -f postgrest
+  ```
 
-### 3. MailHog (`local_mailhog`)
+#### 3. Caddy (`caddy`)
+- **Image:** `caddy:2`
+- **Container Name:** `caddy`
+- **Ports:**
+  - `8080` (Flutter Web App)
+  - `8081` (PostgREST API)
+  - `8083` (ZMI Monitor)
+- **Depends on:** `postgrest`, `zmi-monitor`
+- **Volumes:**
+  - `./Caddyfile:/etc/caddy/Caddyfile`
+  - `../build/web:/web`
+- **Logs:**
+  ```bash
+  docker logs caddy
+  docker logs -f caddy
+  ```
+
+#### 4. MailHog (`local_mailhog`)
+- **Image:** `mailhog/mailhog`
+- **Container Name:** `local_mailhog`
+- **Ports:**
+  - SMTP (send mail): `1025`
+  - Web UI: `8025`
+- **Access Web UI:** [http://localhost:8025](http://localhost:8025)
+- **Logs:**
+  ```bash
+  docker logs local_mailhog
+  docker logs -f local_mailhog
+  ```
+
+#### 2. MailHog (`local_mailhog`)
 - **Image:** `mailhog/mailhog`
 - **Ports:**
   - SMTP (send mail): `1025`
   - Web UI: `8025`
 - **Access Web UI:** [http://localhost:8025](http://localhost:8025)
 
-### 4. Caddy (`caddy`)
-- **Image:** `caddy:2`
-- **Port:** `8080` (Web App)
-- **Port:** `8081` (Postgrest)
-- **Port:** `8083` (ZMI Monitor)
-- **Depends on:** PostgREST, ZMI Monitor
-- **Volumes:**
-  - `./Caddyfile:/etc/caddy/Caddyfile`
-  - `./build/web:/web`
-
-### 5. ZMI Monitor (`zmi-monitor`)
+#### 5. ZMI Monitor (`zmi-monitor`)
 - **Image:** Custom build from `./zmi-monitor/Dockerfile`
+- **Container Name:** `zmi_monitor`
 - **Port:** `8083` (via Caddy)
 - **Environment:**
   - Monitors BSSB ZMI server
   - Runs monitoring checks every 5 minutes
   - Provides web dashboard with charts and tables
+  - Target URL: `https://webintern.bssb.bayern:56400/rest/zmi/api/serverping`
 - **Volumes:**
   - Persists monitoring data: `zmi_data:/var/www/html/data`
 - **How it works:**
@@ -190,12 +315,88 @@ docker exec zmi_monitor ps aux
 ```
 - **Logs:**
 ```bash
+# View container logs
+docker logs zmi_monitor
+docker logs -f zmi_monitor
+
 # View monitoring script execution logs
 docker exec zmi_monitor tail -f /var/log/monitor.log
 
 # Check if the CSV file is being updated
 docker exec zmi_monitor ls -la /var/www/html/data/
 docker exec zmi_monitor tail -5 /var/www/html/data/https_monitor.csv
+```
+
+## Viewing Logs
+
+### General Log Commands
+
+View logs for any service:
+```bash
+# View all logs
+docker logs <container_name>
+
+# Follow logs in real-time (like tail -f)
+docker logs -f <container_name>
+
+# View last N lines
+docker logs --tail 100 <container_name>
+
+# View logs with timestamps
+docker logs -t <container_name>
+
+# View logs since a specific time
+docker logs --since 10m <container_name>  # Last 10 minutes
+docker logs --since 2024-01-01T00:00:00 <container_name>
+```
+
+### Production Service Logs
+
+```bash
+# Caddy (web server and reverse proxy)
+docker logs caddy
+docker logs -f caddy
+
+# PostgREST (API service)
+docker logs postgrest
+docker logs -f postgrest
+
+# Email Service
+docker logs email-service
+docker logs -f email-service
+
+# Postfix Relay (email relay)
+docker logs postfix-relay
+docker logs -f postfix-relay
+```
+
+### Development Service Logs
+
+```bash
+# PostgreSQL
+docker logs local_postgres
+docker logs -f local_postgres
+
+# MailHog
+docker logs local_mailhog
+docker logs -f local_mailhog
+
+# ZMI Monitor
+docker logs zmi-monitor
+docker logs -f zmi-monitor
+```
+
+### Filtering Logs
+
+```bash
+# Filter for errors only
+docker logs caddy 2>&1 | grep -i error
+
+# Filter for specific patterns
+docker logs postgrest 2>&1 | grep "GET\|POST"
+
+# View logs from multiple containers
+docker logs caddy postgrest email-service
 ```
 
 ## How to Start
@@ -219,14 +420,55 @@ docker exec zmi_monitor tail -5 /var/www/html/data/https_monitor.csv
 
 ## How to Access Services
 
+### Production (via docker-compose.prod.yml)
+
+| Service      | URL                              |
+|--------------|----------------------------------|
+| Web App      | https://mein.bssb.de             |
+| PostgREST    | https://mein.bssb.de/api         |
+| Email API    | https://mein.bssb.de/email/send-email |
+
+**Note:** All services are accessible via HTTPS on port 443 using path-based routing. Ports 8080 and 8081 exposed in docker-compose.prod.yml are only used for legacy redirects from the old domain (`meinprod.bssb.de`) and should not be used for new integrations.
+
+### Development (via docker-compose.yml)
+
 | Service      | URL                              |
 |--------------|----------------------------------|
 | Web App      | http://localhost:8080            |
 | PostgREST    | http://localhost:8081/api        |
-| ZMI Monitor  | http://localhost:8086            |
+| ZMI Monitor  | http://localhost:8083            |
 | MailHog UI   | http://localhost:8025            |
 | Mail SMTP    | localhost:1025                   |
 | PostgreSQL   | localhost:5432 (external tools)  |
+
+### Quick Log Commands Reference
+
+```bash
+# Production services
+docker logs caddy              # Caddy web server
+docker logs postgrest          # PostgREST API
+docker logs email-service      # Email service
+docker logs postfix-relay      # Postfix email relay
+
+# Development services
+docker logs local_postgres     # PostgreSQL database
+docker logs postgrest          # PostgREST API
+docker logs caddy              # Caddy web server
+docker logs local_mailhog      # MailHog email testing
+docker logs zmi_monitor        # ZMI monitoring service
+
+# Follow logs in real-time (add -f flag)
+docker logs -f caddy
+
+# View last N lines
+docker logs --tail 100 caddy
+
+# View logs with timestamps
+docker logs -t caddy
+
+# Filter logs for errors
+docker logs caddy 2>&1 | grep -i error
+```
 
 
 ## How to deploy and create a new APK
@@ -340,3 +582,56 @@ In order to see/change these settings you have to:
 - Log in
 - Select the project "Mein BSSB"
 - Follow the instructions at the screen
+
+## How to Submit an iOS Version
+
+To submit an iOS version of the app to the App Store, you need the following prerequisites:
+
+### Prerequisites
+
+1. **MacBook** - iOS builds can only be created on macOS
+2. **Xcode** - Install the latest version from the Mac App Store
+3. **Apple Developer Account** - You need an Apple ID with developer access
+4. **BSSB Developer Account Access** - Contact the admin to grant your account access to the BSSB developer account in Apple Developer
+
+### Build and Submission Steps
+
+1. **Clean and prepare the project:**
+   ```bash
+   flutter clean
+   flutter pub get
+   ```
+
+2. **Navigate to the iOS folder and run the pods script:**
+   ```bash
+   cd ios
+   ./run-pods.sh
+   ```
+
+3. **Open the Xcode workspace:**
+   - Open `Runner.xcworkspace` (not `Runner.xcodeproj`) in Xcode
+   - This file is located in the `ios` folder
+
+4. **Create an Archive:**
+   - In Xcode, go to **Product** → **Archive**
+   - Wait for the archive process to complete
+
+5. **Choose the distribution method:**
+   - After archiving, the Organizer window will open
+   - Choose either:
+     - **Release** - For App Store submission
+     - **TestFlight** - For beta testing
+
+6. **Follow the submission wizard:**
+   - Follow the on-screen instructions in Xcode
+   - The wizard will guide you through:
+     - Code signing
+     - App Store Connect upload
+     - Metadata and version information
+
+### Notes
+
+- Always use `Runner.xcworkspace` (not `.xcodeproj`) when opening the project in Xcode
+- Ensure your Apple Developer account has been added to the BSSB team by the admin
+- The version number should be managed automatically - do not change it manually
+- Make sure you have the correct provisioning profiles and certificates configured in Xcode
