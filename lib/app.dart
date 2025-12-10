@@ -1,5 +1,6 @@
 // lib/app.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/password/reset_password_screen.dart';
 import 'package:meinbssb/screens/email/email_verification_screen.dart';
@@ -127,6 +128,16 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _apiService = Provider.of<ApiService>(context, listen: false);
+
+    // Configure system UI for edge-to-edge display on Android 15+
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+      ),
+    );
+
     _startSplashAndAuthCheck();
   }
 
