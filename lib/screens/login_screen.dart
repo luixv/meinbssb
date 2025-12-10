@@ -151,7 +151,7 @@ class LoginScreenState extends State<LoginScreen> {
           response['WebLoginID'],
         );
       } else {
-        setState(() => _errorMessage = response['ResultMessage']);
+        setState(() => _errorMessage = Messages.loginFailed);
       }
     } catch (e) {
       setState(() => _errorMessage = 'Error: ${e.toString()}');

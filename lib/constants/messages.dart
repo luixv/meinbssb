@@ -69,6 +69,7 @@ class Messages {
 
   static const String loginButtonLabel = 'Anmelden';
   static const String loginTitle = 'Anmeldung';
+  static const String loginFailed = 'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.';
   static const String forgotPasswordLabel = 'Passwort vergessen?';
   static const String bankDataTitle = 'Bankdaten';
   static const String bankDataSubtitle = 'Bitte geben Sie Ihre Bankdaten ein';
