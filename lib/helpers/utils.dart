@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
 
 /// Checks if BIC is required based on IBAN country code
 /// Returns true if IBAN is not from Germany (DE)
@@ -47,6 +48,7 @@ String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
 /// Extracts email from contact list
 /// Prioritizes type 4 (private email), falls back to type 8 (business email)
 String extractEmail(List<Map<String, dynamic>> contacts) {
+  LoggerService.logInfo('Extract email from contacts: $contacts');
   final privateContacts =
       contacts.firstWhere(
             (category) => category['category'] == 'Privat',
