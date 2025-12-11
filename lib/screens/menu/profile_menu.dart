@@ -11,6 +11,7 @@ import '/screens/contact_data_screen.dart';
 import '/screens/bankdata/bank_data_screen.dart';
 import '/screens/password/change_password_screen.dart';
 import '/screens/schulungen/absolvierte_schulungen_screen.dart';
+import '/screens/beduerfnisse/beduerfnisbescheinigung_screen.dart';
 import '/screens/logo_widget.dart';
 import '../personal/personal_pict_upload_screen.dart';
 
@@ -35,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
       automaticallyImplyLeading: true,
       body: Semantics(
         label:
-            'Profilmenü: Profilbild, persönliche Daten, Kontaktdaten, Bankdaten, absolvierte Schulungen, Passwort ändern.',
+            'Profilmenü: Profilbild, persönliche Daten, Kontaktdaten, Bankdaten, absolvierte Schulungen, Bedürfnisse, Passwort ändern.',
         child: SingleChildScrollView(
           padding: UIConstants.screenPadding,
           child: Column(
@@ -121,6 +122,24 @@ class ProfileScreen extends StatelessWidget {
                   );
                 },
               ),
+              _buildMenuItem(
+                context,
+                'Bedürfnisse',
+                Icons.description_outlined,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => BeduerfnisbescheinigungScreen(
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                },
+              ),
               _buildMenuItem(context, 'Passwort ändern', Icons.lock, () {
                 Navigator.push(
                   context,
@@ -174,20 +193,21 @@ class ProfileScreen extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.only(bottom: UIConstants.spacingS),
         child: ListTile(
-          leading: icon == Icons.person
-              ? Tooltip(
-                  message: 'Profil',
-                  child: Icon(
+          leading:
+              icon == Icons.person
+                  ? Tooltip(
+                    message: 'Profil',
+                    child: Icon(
+                      icon,
+                      color: UIStyles.profileIconColor,
+                      semanticLabel: title,
+                    ),
+                  )
+                  : Icon(
                     icon,
                     color: UIStyles.profileIconColor,
                     semanticLabel: title,
                   ),
-                )
-              : Icon(
-                  icon,
-                  color: UIStyles.profileIconColor,
-                  semanticLabel: title,
-                ),
           title: ScaledText(
             title,
             style: const TextStyle(
