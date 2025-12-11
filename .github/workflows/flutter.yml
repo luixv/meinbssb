@@ -137,16 +137,12 @@ jobs:
             git config user.name "GitHub Actions Bot"
             git config user.email "actions@github.com"
 
-            # FIRST: commit the change locally
+            # Commit the change locally
             git add pubspec.yaml
             git commit -m "CI: Increment build number to $NEW_BUILD_NUMBER [skip ci]"
 
-            # THEN: rebase with remote
-            git fetch origin pipeline
-            git pull --rebase origin pipeline || true
-
-            # Push final version
-            git push origin HEAD:pipeline
+            # Push to the current branch
+            git push origin HEAD:${GITHUB_REF#refs/heads/}
 
             echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
             echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
