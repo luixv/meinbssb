@@ -93,10 +93,10 @@ packages:
     dependency: transitive
     description:
       name: build_modules
-      sha256: f2fc2635343fa04038aec83532e58f4b206a403694555ad19e495c9ae326b811
+      sha256: "8a605a996691e79c5d81d9051e849680917157e27bd655b9cd2c5bb8019a432e"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.4"
+    version: "5.1.5"
   build_resolvers:
     dependency: "direct overridden"
     description:
