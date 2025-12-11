@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
 
 /// Checks if BIC is required based on IBAN country code
 /// Returns true if IBAN is not from Germany (DE)
@@ -9,19 +10,17 @@ bool isBicRequired(String iban) {
 /// Extracts phone number from contact list
 /// Prioritizes: type 2 (mobile private), then 6 (mobile business), then 1 (phone private), then 5 (phone business)
 String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
-  final privateContacts =
-      contacts.firstWhere(
-            (category) => category['category'] == 'Privat',
-            orElse: () => <String, dynamic>{'contacts': []},
-          )['contacts']
-          as List<dynamic>;
-  
-  final businessContacts =
-      contacts.firstWhere(
-            (category) => category['category'] == 'Geschäftlich',
-            orElse: () => <String, dynamic>{'contacts': []},
-          )['contacts']
-          as List<dynamic>;
+  final privatCategory = contacts.firstWhere(
+    (category) => category['category'] == 'Privat',
+    orElse: () => <String, dynamic>{'contacts': []},
+  );
+  final privateContacts = privatCategory['contacts'] as List<dynamic>;
+
+  final businessCategory = contacts.firstWhere(
+    (category) => category['category'] == 'Geschäftlich',
+    orElse: () => <String, dynamic>{'contacts': []},
+  );
+  final businessContacts = businessCategory['contacts'] as List<dynamic>;
   
   final allContacts = [
     ...privateContacts.cast<Map<String, dynamic>>(),
@@ -47,12 +46,12 @@ String extractPhoneNumber(List<Map<String, dynamic>> contacts) {
 /// Extracts email from contact list
 /// Prioritizes type 4 (private email), falls back to type 8 (business email)
 String extractEmail(List<Map<String, dynamic>> contacts) {
-  final privateContacts =
-      contacts.firstWhere(
-            (category) => category['category'] == 'Privat',
-            orElse: () => <String, dynamic>{'contacts': []},
-          )['contacts']
-          as List<dynamic>;
+  LoggerService.logInfo('Extract email from contacts: $contacts');
+  final privatCategory = contacts.firstWhere(
+    (category) => category['category'] == 'Privat',
+    orElse: () => <String, dynamic>{'contacts': []},
+  );
+  final privateContacts = privatCategory['contacts'] as List<dynamic>;
   
   // First try type 4 (private email)
   var emailContact = privateContacts.cast<Map<String, dynamic>>().firstWhere(
@@ -62,12 +61,11 @@ String extractEmail(List<Map<String, dynamic>> contacts) {
   
   // If not found, try type 8 (business email)
   if (emailContact['value'] == '') {
-    final businessContacts =
-        contacts.firstWhere(
-              (category) => category['category'] == 'Geschäftlich',
-              orElse: () => <String, dynamic>{'contacts': []},
-            )['contacts']
-            as List<dynamic>;
+    final businessCategory = contacts.firstWhere(
+      (category) => category['category'] == 'Geschäftlich',
+      orElse: () => <String, dynamic>{'contacts': []},
+    );
+    final businessContacts = businessCategory['contacts'] as List<dynamic>;
     emailContact = businessContacts.cast<Map<String, dynamic>>().firstWhere(
       (contact) => contact['rawKontaktTyp'] == 8 && (contact['value'] as String).isNotEmpty,
       orElse: () => <String, dynamic>{'value': ''},
