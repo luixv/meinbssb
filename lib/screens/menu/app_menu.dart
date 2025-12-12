@@ -13,7 +13,7 @@ import '/screens/impressum_screen.dart';
 import '/screens/datenschutz_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/schulungen/schulungen_search_screen.dart';
-import 'preisschiessen_menu.dart';
+import './preisschiessen_menu.dart';
 
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';

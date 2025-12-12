@@ -5,7 +5,9 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/beduerfnisse/meine_beduerfnisseantraege_screen.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import '/widgets/keyboard_focus_fab.dart';
 
 class BeduerfnisbescheinigungScreen extends StatelessWidget {
   const BeduerfnisbescheinigungScreen({
@@ -32,6 +34,26 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
             userData: userData,
             isLoggedIn: isLoggedIn,
             onLogout: onLogout,
+            floatingActionButton: KeyboardFocusFAB(
+              heroTag: 'meineBeduerfnisseantraegeFab',
+              tooltip: 'Meine Bedürfnisseanträge',
+              semanticLabel: 'Meine Bedürfnisseanträge Button',
+              semanticHint: 'Navigieren zu Meine Bedürfnisseanträge',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => MeineBeduerfnisseantraegeScreen(
+                          userData: userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
+                        ),
+                  ),
+                );
+              },
+              icon: Icons.list_alt,
+            ),
             body: Focus(
               autofocus: true,
               child: Semantics(
