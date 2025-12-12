@@ -2,7 +2,8 @@ env:
   FLUTTER_VERSION: '3.38.3'
   FLUTTER_CHANNEL: 'stable'
   ANDROID_KEYSTORE_NAME: "***-keystore.jks"
-  INCREMENT_BUILD_NUMBER: 'yes'
+  INCREMENT_BUILD_NUMBER: 'true'
+  INCREMENT_VERSION_NUMBER: 'false'
   RUN_UNIT_TESTS: 'true'
 
 name: Flutter CI/CD
@@ -111,7 +112,7 @@ jobs:
           echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
           echo "KEY_KEY_PASSWORD=${{ secrets.KEY_KEY_PASSWORD }}" >> $GITHUB_ENV
 
-      # Increment build number
+      # Increment version and/or build number
       - name: Increment version safely
         id: version
         run: |
@@ -124,10 +125,34 @@ jobs:
           echo "Base: $BASE_VERSION"
           echo "Build number: $BUILD_NUMBER"
 
+          NEW_BASE_VERSION="$BASE_VERSION"
+          NEW_BUILD_NUMBER="$BUILD_NUMBER"
+          VERSION_CHANGED=false
+
+          # Increment version number (patch version)
+          if [ "$INCREMENT_VERSION_NUMBER" = "true" ]; then
+            # Split version into major.minor.patch
+            MAJOR=$(echo "$BASE_VERSION" | cut -d'.' -f1)
+            MINOR=$(echo "$BASE_VERSION" | cut -d'.' -f2)
+            PATCH=$(echo "$BASE_VERSION" | cut -d'.' -f3)
+            
+            # Increment patch version
+            NEW_PATCH=$((PATCH + 1))
+            NEW_BASE_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+            VERSION_CHANGED=true
+            echo "Incrementing version from $BASE_VERSION to $NEW_BASE_VERSION"
+          fi
+
+          # Increment build number
           if [ "$INCREMENT_BUILD_NUMBER" = "true" ] && [ -n "$BUILD_NUMBER" ]; then
             NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
-            NEW_VERSION="$BASE_VERSION+$NEW_BUILD_NUMBER"
+            VERSION_CHANGED=true
+            echo "Incrementing build number from $BUILD_NUMBER to $NEW_BUILD_NUMBER"
+          fi
 
+          # Apply changes if any
+          if [ "$VERSION_CHANGED" = "true" ]; then
+            NEW_VERSION="$NEW_BASE_VERSION+$NEW_BUILD_NUMBER"
             echo "Updating version to: $NEW_VERSION"
 
             # Update pubspec.yaml
@@ -137,20 +162,30 @@ jobs:
             git config user.name "GitHub Actions Bot"
             git config user.email "actions@github.com"
 
-            # FIRST: commit the change locally
+            # Commit the change locally
             git add pubspec.yaml
-            git commit -m "CI: Increment build number to $NEW_BUILD_NUMBER [skip ci]"
+            
+            COMMIT_MSG="CI: "
+            if [ "$INCREMENT_VERSION_NUMBER" = "true" ]; then
+              COMMIT_MSG="${COMMIT_MSG}Increment version to $NEW_BASE_VERSION"
+            fi
+            if [ "$INCREMENT_BUILD_NUMBER" = "true" ]; then
+              if [ "$INCREMENT_VERSION_NUMBER" = "true" ]; then
+                COMMIT_MSG="${COMMIT_MSG} and "
+              fi
+              COMMIT_MSG="${COMMIT_MSG}build number to $NEW_BUILD_NUMBER"
+            fi
+            COMMIT_MSG="${COMMIT_MSG} [skip ci]"
+            
+            git commit -m "$COMMIT_MSG"
 
-            # THEN: rebase with remote
-            git fetch origin pipeline
-            git pull --rebase origin pipeline || true
-
-            # Push final version
-            git push origin HEAD:pipeline
+            # Push to the current branch
+            git push origin HEAD:${GITHUB_REF#refs/heads/}
 
             echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
             echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
           else
+            echo "No version changes requested"
             echo "version=$VERSION" >> $GITHUB_OUTPUT
             echo "VERSION=$VERSION" >> $GITHUB_ENV
           fi

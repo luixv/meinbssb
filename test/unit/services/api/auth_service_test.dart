@@ -435,8 +435,7 @@ void main() {
 
           expect(result, {
             'ResultType': 0,
-            'ResultMessage':
-                'Anmeldung fehlgeschlagen: Exception: Some other unexpected error',
+            'ResultMessage': Messages.loginFailed,
           });
           verify(
             mockHttpClient.post(
@@ -1343,17 +1342,38 @@ void main() {
       });
 
       test('returns error if reset requested within 24h', () async {
-        // Mock getPersonIDByPassnummer
+        reset(mockHttpClient);
+        // Mock config service for getPersonIDByPassnummer (uses api1Base)
         when(
-          mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+          mockConfigService.getString('api1BaseServer', any),
+        ).thenReturn('webintern.bssb.bayern');
+        when(
+          mockConfigService.getString('api1BasePort', any),
+        ).thenReturn('56400');
+        when(
+          mockConfigService.getString('api1BasePath', any),
+        ).thenReturn('rest/zmi/api1');
+        // Mock config service for getPassDatenByPersonId (uses apiBase)
+        when(
+          mockConfigService.getString('apiBaseServer', null),
+        ).thenReturn('webintern.bssb.bayern');
+        when(
+          mockConfigService.getString('apiBasePort', null),
+        ).thenReturn('56400');
+        when(
+          mockConfigService.getString('apiBasePath', null),
+        ).thenReturn('rest/zmi/api1');
+        // Mock getPersonIDByPassnummer (first call)
+        when(
+          mockHttpClient.get('PersonID/123', overrideBaseUrl: anyNamed('overrideBaseUrl')),
         ).thenAnswer(
           (_) async => [
             {'PERSONID': 1},
           ],
         );
-        // Mock getPassDatenByPersonId
+        // Mock getPassDatenByPersonId (second call)
         when(
-          mockHttpClient.get(any, overrideBaseUrl: anyNamed('overrideBaseUrl')),
+          mockHttpClient.get('Passdaten/1', overrideBaseUrl: anyNamed('overrideBaseUrl')),
         ).thenAnswer(
           (_) async => [
             {'foo': 'bar'},
@@ -1365,7 +1385,10 @@ void main() {
         when(
           mockPostgrestService.getLatestPasswordResetForPerson(any),
         ).thenAnswer(
-          (_) async => {'created_at': DateTime.now().toIso8601String()},
+          (_) async => {
+            'created_at': DateTime.now().toIso8601String(),
+            'is_used': false,
+          },
         );
 
         final result = await authService.resetPasswordStep1('123');

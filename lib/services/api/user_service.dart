@@ -434,7 +434,8 @@ class UserService {
                     .toList(),
           },
         ];
-
+        LoggerService.logInfo('All contacts for personId $personId: $contactList');
+        LoggerService.logInfo('Categorized contacts for personId $personId: $categorizedContacts');
         return categorizedContacts;
       } else {
         LoggerService.logError(

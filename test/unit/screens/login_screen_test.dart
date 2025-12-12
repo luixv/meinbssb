@@ -14,6 +14,7 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:meinbssb/constants/messages.dart';
 
 @GenerateMocks([ApiService, ConfigService])
 import 'login_screen_test.mocks.dart';
@@ -170,7 +171,7 @@ void main() {
   });
 
   group('LoginScreen - Error Handling', () {
-    testWidgets('failed login shows backend message', (tester) async {
+    testWidgets('failed login shows custom error message', (tester) async {
       when(mockApiService.login(any, any)).thenAnswer(
         (_) async => {'ResultType': 0, 'ResultMessage': 'Backend Fehler'},
       );
@@ -179,7 +180,7 @@ void main() {
       await tester.enterText(find.byKey(const Key('passwordField')), 'b');
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
-      expect(find.text('Backend Fehler'), findsOneWidget);
+      expect(find.text(Messages.loginFailed), findsOneWidget);
     });
 
     testWidgets('exception during login is caught', (tester) async {
@@ -219,7 +220,7 @@ void main() {
       await tester.enterText(find.byKey(const Key('passwordField')), 'pw');
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
-      expect(find.text('Bad'), findsOneWidget);
+      expect(find.text(Messages.loginFailed), findsOneWidget);
 
       await tester.enterText(
         find.byKey(const Key('usernameField')),
@@ -227,7 +228,7 @@ void main() {
       );
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
-      expect(find.text('Bad'), findsNothing);
+      expect(find.text(Messages.loginFailed), findsNothing);
       expect(find.byType(Placeholder), findsOneWidget);
     });
   });
@@ -249,6 +250,7 @@ void main() {
 
       completer.complete({'ResultType': 0, 'ResultMessage': 'Fail'});
       await tester.pumpAndSettle();
+      expect(find.text(Messages.loginFailed), findsOneWidget);
     });
 
     testWidgets('onSubmitted triggers login once', (tester) async {
@@ -261,7 +263,7 @@ void main() {
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pumpAndSettle();
       verify(mockApiService.login('z', 'z')).called(1);
-      expect(find.text('Nope'), findsOneWidget);
+      expect(find.text(Messages.loginFailed), findsOneWidget);
     });
   });
 
@@ -352,7 +354,7 @@ void main() {
       await tester.enterText(find.byKey(const Key('passwordField')), 'b');
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
-      expect(find.text('Fail'), findsOneWidget);
+      expect(find.text(Messages.loginFailed), findsOneWidget);
 
       when(mockApiService.login('a', 'b')).thenAnswer(
         (_) async => {
@@ -371,7 +373,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pump(); // loading
-      expect(find.text('Fail'), findsNothing);
+      expect(find.text(Messages.loginFailed), findsNothing);
     });
 
     testWidgets('rapid password toggle stable', (tester) async {

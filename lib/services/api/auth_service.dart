@@ -204,7 +204,7 @@ class AuthService {
         LoggerService.logError('Other login exception: $e');
         return {
           'ResultType': 0,
-          'ResultMessage': 'Anmeldung fehlgeschlagen: $e',
+          'ResultMessage': Messages.loginFailed,
         };
       }
     }
@@ -592,7 +592,8 @@ class AuthService {
         final createdAt = DateTime.tryParse(
           latestReset['created_at'].toString(),
         );
-        if (createdAt != null &&
+        final isUsed = latestReset['is_used'];
+        if (!isUsed && createdAt != null &&
             DateTime.now().difference(createdAt).inHours < 24) {
           return {
             'ResultType': 98,
