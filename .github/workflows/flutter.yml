@@ -373,12 +373,16 @@ jobs:
         with:
           path: artifacts
 
+      - name: List downloaded artifacts
+        run: |
+          echo "Contents of artifacts directory:"
+          ls -R artifacts/
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ needs.build-prod.outputs.version }}
           generate_release_notes: true
           files: |
-            artifacts/PROD/**
-            artifacts/*.apk
-            artifacts/*.aab
+            artifacts/**/*.apk
+            artifacts/**/*.aab
