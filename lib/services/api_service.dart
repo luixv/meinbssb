@@ -740,4 +740,195 @@ class ApiService {
       personId: personId,
     );
   }
+
+  //
+  // --- bed_auswahl_typ Service Methods ---
+  //
+
+  Future<Map<String, dynamic>> createBedAuswahlTyp({
+    required String kurz,
+    required String lang,
+  }) async {
+    return _postgrestService.createBedAuswahlTyp(kurz: kurz, lang: lang);
+  }
+
+  Future<List<Map<String, dynamic>>> getBedAuswahlTypen() async {
+    return _postgrestService.getBedAuswahlTypen();
+  }
+
+  Future<Map<String, dynamic>?> getBedAuswahlTypById(int id) async {
+    return _postgrestService.getBedAuswahlTypById(id);
+  }
+
+  Future<bool> updateBedAuswahlTyp(int id, Map<String, dynamic> data) async {
+    return _postgrestService.updateBedAuswahlTyp(id, data);
+  }
+
+  Future<bool> deleteBedAuswahlTyp(int id) async {
+    return _postgrestService.deleteBedAuswahlTyp(id);
+  }
+
+  //
+  // --- bed_auswahl Service Methods ---
+  //
+
+  Future<Map<String, dynamic>> createBedAuswahl({
+    required int typId,
+    required String kurz,
+    required String lang,
+  }) async {
+    return _postgrestService.createBedAuswahl(
+      typId: typId,
+      kurz: kurz,
+      lang: lang,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getBedAuswahlList() async {
+    return _postgrestService.getBedAuswahlList();
+  }
+
+  Future<List<Map<String, dynamic>>> getBedAuswahlByTypId(int typId) async {
+    return _postgrestService.getBedAuswahlByTypId(typId);
+  }
+
+  Future<Map<String, dynamic>?> getBedAuswahlById(int id) async {
+    return _postgrestService.getBedAuswahlById(id);
+  }
+
+  Future<bool> updateBedAuswahl(int id, Map<String, dynamic> data) async {
+    return _postgrestService.updateBedAuswahl(id, data);
+  }
+
+  Future<bool> deleteBedAuswahl(int id) async {
+    return _postgrestService.deleteBedAuswahl(id);
+  }
+
+  //
+  // --- bed_datei Service Methods ---
+  //
+
+  Future<Map<String, dynamic>> createBedDatei({
+    required String antragsnummer,
+    required String dateiname,
+    required List<int> fileBytes,
+  }) async {
+    return _postgrestService.createBedDatei(
+      antragsnummer: antragsnummer,
+      dateiname: dateiname,
+      fileBytes: fileBytes,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getBedDateiByAntragsnummer(
+    String antragsnummer,
+  ) async {
+    return _postgrestService.getBedDateiByAntragsnummer(antragsnummer);
+  }
+
+  Future<Map<String, dynamic>?> getBedDateiById(int id) async {
+    return _postgrestService.getBedDateiById(id);
+  }
+
+  Future<bool> updateBedDatei(int id, Map<String, dynamic> data) async {
+    return _postgrestService.updateBedDatei(id, data);
+  }
+
+  Future<bool> deleteBedDatei(int id) async {
+    return _postgrestService.deleteBedDatei(id);
+  }
+
+  //
+  // --- bed_sport Service Methods ---
+  //
+
+  Future<Map<String, dynamic>> createBedSport({
+    required String antragsnummer,
+    required String schiessdatum,
+    required int waffenartId,
+    required int disziplinId,
+    required bool training,
+    int? wettkampfartId,
+    double? wettkampfergebnis,
+  }) async {
+    return _postgrestService.createBedSport(
+      antragsnummer: antragsnummer,
+      schiessdatum: schiessdatum,
+      waffenartId: waffenartId,
+      disziplinId: disziplinId,
+      training: training,
+      wettkampfartId: wettkampfartId,
+      wettkampfergebnis: wettkampfergebnis,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getBedSportByAntragsnummer(
+    String antragsnummer,
+  ) async {
+    return _postgrestService.getBedSportByAntragsnummer(antragsnummer);
+  }
+
+  Future<Map<String, dynamic>?> getBedSportById(int id) async {
+    return _postgrestService.getBedSportById(id);
+  }
+
+  Future<bool> updateBedSport(int id, Map<String, dynamic> data) async {
+    return _postgrestService.updateBedSport(id, data);
+  }
+
+  Future<bool> deleteBedSport(int id) async {
+    return _postgrestService.deleteBedSport(id);
+  }
+
+  //
+  // --- bed_waffe_besitz Service Methods ---
+  //
+
+  Future<Map<String, dynamic>> createBedWaffeBesitz({
+    required String antragsnummer,
+    required String wbkNr,
+    required String lfdWbk,
+    required int waffenartId,
+    String? hersteller,
+    required int kaliberId,
+    int? lauflaengeId,
+    String? gewicht,
+    required bool kompensator,
+    int? beduerfnisgrundId,
+    int? verbandId,
+    String? bemerkung,
+  }) async {
+    return _postgrestService.createBedWaffeBesitz(
+      antragsnummer: antragsnummer,
+      wbkNr: wbkNr,
+      lfdWbk: lfdWbk,
+      waffenartId: waffenartId,
+      hersteller: hersteller,
+      kaliberId: kaliberId,
+      lauflaengeId: lauflaengeId,
+      gewicht: gewicht,
+      kompensator: kompensator,
+      beduerfnisgrundId: beduerfnisgrundId,
+      verbandId: verbandId,
+      bemerkung: bemerkung,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getBedWaffeBesitzByAntragsnummer(
+    String antragsnummer,
+  ) async {
+    return _postgrestService.getBedWaffeBesitzByAntragsnummer(antragsnummer);
+  }
+
+  Future<Map<String, dynamic>?> getBedWaffeBesitzById(int id) async {
+    return _postgrestService.getBedWaffeBesitzById(id);
+  }
+
+  Future<bool> updateBedWaffeBesitz(int id, Map<String, dynamic> data) async {
+    return _postgrestService.updateBedWaffeBesitz(id, data);
+  }
+
+  Future<bool> deleteBedWaffeBesitz(int id) async {
+    return _postgrestService.deleteBedWaffeBesitz(id);
+  }
 }
