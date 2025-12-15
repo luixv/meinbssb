@@ -1147,6 +1147,308 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
             returnValueForMissingStub: _i10.Future<void>.value(),
           )
           as _i10.Future<void>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> createBedAuswahlTyp({
+    required String? kurz,
+    required String? lang,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#createBedAuswahlTyp, [], {
+              #kurz: kurz,
+              #lang: lang,
+            }),
+            returnValue: _i10.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedAuswahlTypen() =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAuswahlTypen, []),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<Map<String, dynamic>?> getBedAuswahlTypById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAuswahlTypById, [id]),
+            returnValue: _i10.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i10.Future<Map<String, dynamic>?>);
+
+  @override
+  _i10.Future<bool> updateBedAuswahlTyp(int? id, Map<String, dynamic>? data) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateBedAuswahlTyp, [id, data]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> deleteBedAuswahlTyp(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedAuswahlTyp, [id]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> createBedAuswahl({
+    required int? typId,
+    required String? kurz,
+    required String? lang,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#createBedAuswahl, [], {
+              #typId: typId,
+              #kurz: kurz,
+              #lang: lang,
+            }),
+            returnValue: _i10.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedAuswahlList() =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAuswahlList, []),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedAuswahlByTypId(int? typId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAuswahlByTypId, [typId]),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<Map<String, dynamic>?> getBedAuswahlById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAuswahlById, [id]),
+            returnValue: _i10.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i10.Future<Map<String, dynamic>?>);
+
+  @override
+  _i10.Future<bool> updateBedAuswahl(int? id, Map<String, dynamic>? data) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateBedAuswahl, [id, data]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> deleteBedAuswahl(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedAuswahl, [id]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> createBedDatei({
+    required String? antragsnummer,
+    required String? dateiname,
+    required List<int>? fileBytes,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#createBedDatei, [], {
+              #antragsnummer: antragsnummer,
+              #dateiname: dateiname,
+              #fileBytes: fileBytes,
+            }),
+            returnValue: _i10.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedDateiByAntragsnummer(
+    String? antragsnummer,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiByAntragsnummer, [antragsnummer]),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<Map<String, dynamic>?> getBedDateiById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiById, [id]),
+            returnValue: _i10.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i10.Future<Map<String, dynamic>?>);
+
+  @override
+  _i10.Future<bool> updateBedDatei(int? id, Map<String, dynamic>? data) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateBedDatei, [id, data]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> deleteBedDatei(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDatei, [id]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> createBedSport({
+    required String? antragsnummer,
+    required String? schiessdatum,
+    required int? waffenartId,
+    required int? disziplinId,
+    required bool? training,
+    int? wettkampfartId,
+    double? wettkampfergebnis,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#createBedSport, [], {
+              #antragsnummer: antragsnummer,
+              #schiessdatum: schiessdatum,
+              #waffenartId: waffenartId,
+              #disziplinId: disziplinId,
+              #training: training,
+              #wettkampfartId: wettkampfartId,
+              #wettkampfergebnis: wettkampfergebnis,
+            }),
+            returnValue: _i10.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedSportByAntragsnummer(
+    String? antragsnummer,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedSportByAntragsnummer, [antragsnummer]),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<Map<String, dynamic>?> getBedSportById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedSportById, [id]),
+            returnValue: _i10.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i10.Future<Map<String, dynamic>?>);
+
+  @override
+  _i10.Future<bool> updateBedSport(int? id, Map<String, dynamic>? data) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateBedSport, [id, data]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> deleteBedSport(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedSport, [id]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> createBedWaffeBesitz({
+    required String? antragsnummer,
+    required String? wbkNr,
+    required String? lfdWbk,
+    required int? waffenartId,
+    String? hersteller,
+    required int? kaliberId,
+    int? lauflaengeId,
+    String? gewicht,
+    required bool? kompensator,
+    int? beduerfnisgrundId,
+    int? verbandId,
+    String? bemerkung,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#createBedWaffeBesitz, [], {
+              #antragsnummer: antragsnummer,
+              #wbkNr: wbkNr,
+              #lfdWbk: lfdWbk,
+              #waffenartId: waffenartId,
+              #hersteller: hersteller,
+              #kaliberId: kaliberId,
+              #lauflaengeId: lauflaengeId,
+              #gewicht: gewicht,
+              #kompensator: kompensator,
+              #beduerfnisgrundId: beduerfnisgrundId,
+              #verbandId: verbandId,
+              #bemerkung: bemerkung,
+            }),
+            returnValue: _i10.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedWaffeBesitzByAntragsnummer(
+    String? antragsnummer,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedWaffeBesitzByAntragsnummer, [
+              antragsnummer,
+            ]),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<Map<String, dynamic>?> getBedWaffeBesitzById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedWaffeBesitzById, [id]),
+            returnValue: _i10.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i10.Future<Map<String, dynamic>?>);
+
+  @override
+  _i10.Future<bool> updateBedWaffeBesitz(int? id, Map<String, dynamic>? data) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateBedWaffeBesitz, [id, data]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> deleteBedWaffeBesitz(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedWaffeBesitz, [id]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
 }
 
 /// A class which mocks [FontSizeProvider].
