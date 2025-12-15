@@ -10,9 +10,12 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
   pull_request:
-    branches: [ main ]
+    branches: 
+      - main
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -179,8 +182,12 @@ jobs:
             
             git commit -m "$COMMIT_MSG"
 
-            # Push to the current branch
-            git push origin HEAD:${GITHUB_REF#refs/heads/}
+            # Only push if this is a direct push to a branch (not a PR)
+            if [ "${{ github.event_name }}" = "push" ]; then
+              git push origin HEAD:${GITHUB_REF#refs/heads/}
+            else
+              echo "Skipping push for pull request - version changes are only committed on merge"
+            fi
 
             echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
             echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
@@ -366,12 +373,16 @@ jobs:
         with:
           path: artifacts
 
+      - name: List downloaded artifacts
+        run: |
+          echo "Contents of artifacts directory:"
+          ls -R artifacts/
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ needs.build-prod.outputs.version }}
           generate_release_notes: true
           files: |
-            artifacts/PROD/**
-            artifacts/*.apk
-            artifacts/*.aab
+            artifacts/**/*.apk
+            artifacts/**/*.aab
