@@ -62,3 +62,4 @@ windows/flutter/generated_plugins.cmake
 # FVM Version Cache
 .fvm/
 .fvmrc
+*.lock
