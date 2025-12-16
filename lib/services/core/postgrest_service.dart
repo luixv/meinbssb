@@ -641,16 +641,16 @@ class PostgrestService {
 
   /// Create a new bed_auswahl_typ entry
   Future<Map<String, dynamic>> createBedAuswahlTyp({
-    required String kurz,
-    required String lang,
+    required String kuerzel,
+    required String beschreibung,
   }) async {
     try {
       final response = await _httpClient.post(
         Uri.parse('${_baseUrl}bed_auswahl_typ'),
         headers: _headers,
         body: jsonEncode({
-          'kurz': kurz,
-          'lang': lang,
+          'kuerzel': kuerzel,
+          'beschreibung': beschreibung,
           'created_at': DateTime.now().toIso8601String(),
         }),
       );
@@ -774,8 +774,8 @@ class PostgrestService {
   /// Create a new bed_auswahl entry
   Future<Map<String, dynamic>> createBedAuswahl({
     required int typId,
-    required String kurz,
-    required String lang,
+    required String kuerzel,
+    required String beschreibung,
   }) async {
     try {
       final response = await _httpClient.post(
@@ -783,8 +783,8 @@ class PostgrestService {
         headers: _headers,
         body: jsonEncode({
           'typ_id': typId,
-          'kurz': kurz,
-          'lang': lang,
+          'kuerzel': kuerzel,
+          'beschreibung': beschreibung,
           'created_at': DateTime.now().toIso8601String(),
         }),
       );
@@ -1361,6 +1361,414 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError('Error deleting bed_waffe_besitz: $e');
+      return false;
+    }
+  }
+
+  //
+  // --- bed_antrag_status Service Methods ---
+  //
+
+  /// Create a new bed_antrag_status entry
+  Future<Map<String, dynamic>> createBedAntragStatus({
+    required String status,
+    String? beschreibung,
+  }) async {
+    try {
+      final body = {
+        'status': status,
+        if (beschreibung != null) 'beschreibung': beschreibung,
+      };
+
+      final response = await _httpClient.post(
+        Uri.parse('${_baseUrl}bed_antrag_status'),
+        headers: _headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201) {
+        final List<dynamic> data = jsonDecode(response.body);
+        LoggerService.logInfo('bed_antrag_status created successfully');
+        return data[0];
+      } else {
+        LoggerService.logError(
+          'Failed to create bed_antrag_status. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        throw Exception('Failed to create bed_antrag_status');
+      }
+    } catch (e) {
+      LoggerService.logError('Error creating bed_antrag_status: $e');
+      rethrow;
+    }
+  }
+
+  /// Get all bed_antrag_status entries (excluding soft deleted)
+  Future<List<Map<String, dynamic>>> getBedAntragStatusList() async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('${_baseUrl}bed_antrag_status?deleted_at=is.null'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_antrag_status list. Status: ${response.statusCode}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_antrag_status list: $e');
+      return [];
+    }
+  }
+
+  /// Get a bed_antrag_status entry by ID
+  Future<Map<String, dynamic>?> getBedAntragStatusById(int id) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('${_baseUrl}bed_antrag_status?id=eq.$id&deleted_at=is.null'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        if (data.isNotEmpty) {
+          return data[0];
+        }
+        return null;
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_antrag_status. Status: ${response.statusCode}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_antrag_status by ID: $e');
+      return null;
+    }
+  }
+
+  /// Get a bed_antrag_status entry by status value
+  Future<Map<String, dynamic>?> getBedAntragStatusByStatus(
+    String status,
+  ) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+          '${_baseUrl}bed_antrag_status?status=eq.$status&deleted_at=is.null',
+        ),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        if (data.isNotEmpty) {
+          return data[0];
+        }
+        return null;
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_antrag_status by status. Status: ${response.statusCode}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_antrag_status by status: $e');
+      return null;
+    }
+  }
+
+  /// Update a bed_antrag_status entry
+  Future<bool> updateBedAntragStatus(
+    int id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_antrag_status?id=eq.$id'),
+        headers: _headers,
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_antrag_status updated successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to update bed_antrag_status. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error updating bed_antrag_status: $e');
+      return false;
+    }
+  }
+
+  /// Soft delete a bed_antrag_status entry
+  Future<bool> deleteBedAntragStatus(int id) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_antrag_status?id=eq.$id'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_antrag_status deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_antrag_status. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_antrag_status: $e');
+      return false;
+    }
+  }
+
+  //
+  // --- bed_antrag Service Methods ---
+  //
+
+  /// Create a new bed_antrag entry
+  Future<Map<String, dynamic>> createBedAntrag({
+    required String antragsnummer,
+    required int personId,
+    int? statusId,
+    bool? wbkNeu,
+    String? wbkArt,
+    String? beduerfnisart,
+    int? anzahlWaffen,
+    bool? vereinGenehmigt,
+    String? email,
+    Map<String, dynamic>? bankdaten,
+    bool? abbuchungErfolgt,
+    String? bemerkung,
+  }) async {
+    try {
+      final body = {
+        'antragsnummer': antragsnummer,
+        'person_id': personId,
+        if (statusId != null) 'status_id': statusId,
+        if (wbkNeu != null) 'wbk_neu': wbkNeu,
+        if (wbkArt != null) 'wbk_art': wbkArt,
+        if (beduerfnisart != null) 'beduerfnisart': beduerfnisart,
+        if (anzahlWaffen != null) 'anzahl_waffen': anzahlWaffen,
+        if (vereinGenehmigt != null) 'verein_genehmigt': vereinGenehmigt,
+        if (email != null) 'email': email,
+        if (bankdaten != null) 'bankdaten': bankdaten,
+        if (abbuchungErfolgt != null) 'abbuchung_erfolgt': abbuchungErfolgt,
+        if (bemerkung != null) 'bemerkung': bemerkung,
+      };
+
+      final response = await _httpClient.post(
+        Uri.parse('${_baseUrl}bed_antrag'),
+        headers: _headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201) {
+        final List<dynamic> data = jsonDecode(response.body);
+        LoggerService.logInfo('bed_antrag created successfully');
+        return data[0];
+      } else {
+        LoggerService.logError(
+          'Failed to create bed_antrag. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        throw Exception('Failed to create bed_antrag');
+      }
+    } catch (e) {
+      LoggerService.logError('Error creating bed_antrag: $e');
+      rethrow;
+    }
+  }
+
+  /// Get all bed_antrag entries (excluding soft deleted)
+  Future<List<Map<String, dynamic>>> getBedAntragList() async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('${_baseUrl}bed_antrag?deleted_at=is.null'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_antrag list. Status: ${response.statusCode}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_antrag list: $e');
+      return [];
+    }
+  }
+
+  /// Get bed_antrag entries by antragsnummer
+  Future<List<Map<String, dynamic>>> getBedAntragByAntragsnummer(
+    String antragsnummer,
+  ) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+          '${_baseUrl}bed_antrag?antragsnummer=eq.$antragsnummer&deleted_at=is.null',
+        ),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_antrag by antragsnummer. Status: ${response.statusCode}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_antrag by antragsnummer: $e');
+      return [];
+    }
+  }
+
+  /// Get bed_antrag entries by person_id
+  Future<List<Map<String, dynamic>>> getBedAntragByPersonId(int personId) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+          '${_baseUrl}bed_antrag?person_id=eq.$personId&deleted_at=is.null',
+        ),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_antrag by person_id. Status: ${response.statusCode}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_antrag by person_id: $e');
+      return [];
+    }
+  }
+
+  /// Get bed_antrag entries by status_id
+  Future<List<Map<String, dynamic>>> getBedAntragByStatusId(int statusId) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+          '${_baseUrl}bed_antrag?status_id=eq.$statusId&deleted_at=is.null',
+        ),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_antrag by status_id. Status: ${response.statusCode}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_antrag by status_id: $e');
+      return [];
+    }
+  }
+
+  /// Get a bed_antrag entry by ID
+  Future<Map<String, dynamic>?> getBedAntragById(int id) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('${_baseUrl}bed_antrag?id=eq.$id&deleted_at=is.null'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        if (data.isNotEmpty) {
+          return data[0];
+        }
+        return null;
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_antrag. Status: ${response.statusCode}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_antrag by ID: $e');
+      return null;
+    }
+  }
+
+  /// Update a bed_antrag entry
+  Future<bool> updateBedAntrag(int id, Map<String, dynamic> data) async {
+    try {
+      // Always update changed_at when updating
+      final updateData = {
+        ...data,
+        'changed_at': DateTime.now().toIso8601String(),
+      };
+
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_antrag?id=eq.$id'),
+        headers: _headers,
+        body: jsonEncode(updateData),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_antrag updated successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to update bed_antrag. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error updating bed_antrag: $e');
+      return false;
+    }
+  }
+
+  /// Soft delete a bed_antrag entry
+  Future<bool> deleteBedAntrag(int id) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_antrag?id=eq.$id'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_antrag deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_antrag. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_antrag: $e');
       return false;
     }
   }

@@ -2278,32 +2278,32 @@ void main() {
 
     group('bed_auswahl_typ Service Tests', () {
       test('createBedAuswahlTyp delegates to postgrest service', () async {
-        final expectedResult = {'id': 1, 'kurz': 'WA', 'lang': 'Waffenart'};
+        final expectedResult = {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'};
         when(
           mockPostgrestService.createBedAuswahlTyp(
-            kurz: anyNamed('kurz'),
-            lang: anyNamed('lang'),
+            kuerzel: anyNamed('kuerzel'),
+            beschreibung: anyNamed('beschreibung'),
           ),
         ).thenAnswer((_) async => expectedResult);
 
         final result = await apiService.createBedAuswahlTyp(
-          kurz: 'WA',
-          lang: 'Waffenart',
+          kuerzel: 'WA',
+          beschreibung: 'Waffenart',
         );
 
         expect(result, equals(expectedResult));
         verify(
           mockPostgrestService.createBedAuswahlTyp(
-            kurz: 'WA',
-            lang: 'Waffenart',
+            kuerzel: 'WA',
+            beschreibung: 'Waffenart',
           ),
         ).called(1);
       });
 
       test('getBedAuswahlTypen delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'kurz': 'WA', 'lang': 'Waffenart'},
-          {'id': 2, 'kurz': 'DI', 'lang': 'Disziplin'},
+          {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'},
+          {'id': 2, 'kuerzel': 'DI', 'beschreibung': 'Disziplin'},
         ];
         when(
           mockPostgrestService.getBedAuswahlTypen(),
@@ -2315,7 +2315,7 @@ void main() {
       });
 
       test('getBedAuswahlTypById delegates to postgrest service', () async {
-        final expectedType = {'id': 1, 'kurz': 'WA', 'lang': 'Waffenart'};
+        final expectedType = {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'};
         when(
           mockPostgrestService.getBedAuswahlTypById(1),
         ).thenAnswer((_) async => expectedType);
@@ -2327,12 +2327,12 @@ void main() {
 
       test('updateBedAuswahlTyp delegates to postgrest service', () async {
         when(
-          mockPostgrestService.updateBedAuswahlTyp(1, {'lang': 'Weapon Type'}),
+          mockPostgrestService.updateBedAuswahlTyp(1, {'beschreibung': 'Weapon Type'}),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedAuswahlTyp(1, {'lang': 'Weapon Type'});
+        final result = await apiService.updateBedAuswahlTyp(1, {'beschreibung': 'Weapon Type'});
         expect(result, isTrue);
-        verify(mockPostgrestService.updateBedAuswahlTyp(1, {'lang': 'Weapon Type'})).called(1);
+        verify(mockPostgrestService.updateBedAuswahlTyp(1, {'beschreibung': 'Weapon Type'})).called(1);
       });
 
       test('deleteBedAuswahlTyp delegates to postgrest service', () async {
@@ -2348,35 +2348,35 @@ void main() {
 
     group('bed_auswahl Service Tests', () {
       test('createBedAuswahl delegates to postgrest service', () async {
-        final expectedResult = {'id': 1, 'typ_id': 1, 'kurz': 'PIS', 'lang': 'Pistole'};
+        final expectedResult = {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'};
         when(
           mockPostgrestService.createBedAuswahl(
             typId: anyNamed('typId'),
-            kurz: anyNamed('kurz'),
-            lang: anyNamed('lang'),
+            kuerzel: anyNamed('kuerzel'),
+            beschreibung: anyNamed('beschreibung'),
           ),
         ).thenAnswer((_) async => expectedResult);
 
         final result = await apiService.createBedAuswahl(
           typId: 1,
-          kurz: 'PIS',
-          lang: 'Pistole',
+          kuerzel: 'PIS',
+          beschreibung: 'Pistole',
         );
 
         expect(result, equals(expectedResult));
         verify(
           mockPostgrestService.createBedAuswahl(
             typId: 1,
-            kurz: 'PIS',
-            lang: 'Pistole',
+            kuerzel: 'PIS',
+            beschreibung: 'Pistole',
           ),
         ).called(1);
       });
 
       test('getBedAuswahlList delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'typ_id': 1, 'kurz': 'PIS', 'lang': 'Pistole'},
-          {'id': 2, 'typ_id': 1, 'kurz': 'REV', 'lang': 'Revolver'},
+          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
+          {'id': 2, 'typ_id': 1, 'kuerzel': 'REV', 'beschreibung': 'Revolver'},
         ];
         when(
           mockPostgrestService.getBedAuswahlList(),
@@ -2389,7 +2389,7 @@ void main() {
 
       test('getBedAuswahlByTypId delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'typ_id': 1, 'kurz': 'PIS', 'lang': 'Pistole'},
+          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
         ];
         when(
           mockPostgrestService.getBedAuswahlByTypId(1),
@@ -2401,7 +2401,7 @@ void main() {
       });
 
       test('getBedAuswahlById delegates to postgrest service', () async {
-        final expectedItem = {'id': 1, 'typ_id': 1, 'kurz': 'PIS', 'lang': 'Pistole'};
+        final expectedItem = {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'};
         when(
           mockPostgrestService.getBedAuswahlById(1),
         ).thenAnswer((_) async => expectedItem);
@@ -2413,12 +2413,12 @@ void main() {
 
       test('updateBedAuswahl delegates to postgrest service', () async {
         when(
-          mockPostgrestService.updateBedAuswahl(1, {'lang': 'Handgun'}),
+          mockPostgrestService.updateBedAuswahl(1, {'beschreibung': 'Handgun'}),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedAuswahl(1, {'lang': 'Handgun'});
+        final result = await apiService.updateBedAuswahl(1, {'beschreibung': 'Handgun'});
         expect(result, isTrue);
-        verify(mockPostgrestService.updateBedAuswahl(1, {'lang': 'Handgun'})).called(1);
+        verify(mockPostgrestService.updateBedAuswahl(1, {'beschreibung': 'Handgun'})).called(1);
       });
 
       test('deleteBedAuswahl delegates to postgrest service', () async {
@@ -2798,6 +2798,251 @@ void main() {
         final result = await apiService.deleteBedWaffeBesitz(1);
         expect(result, isTrue);
         verify(mockPostgrestService.deleteBedWaffeBesitz(1)).called(1);
+      });
+    });
+
+    group('bed_antrag_status Service Tests', () {
+      test('createBedAntragStatus delegates to postgrest service', () async {
+        final expectedResult = {
+          'id': 1,
+          'status': 'offen',
+          'beschreibung': 'Antrag eingegangen'
+        };
+        when(
+          mockPostgrestService.createBedAntragStatus(
+            status: anyNamed('status'),
+            beschreibung: anyNamed('beschreibung'),
+          ),
+        ).thenAnswer((_) async => expectedResult);
+
+        final result = await apiService.createBedAntragStatus(
+          status: 'offen',
+          beschreibung: 'Antrag eingegangen',
+        );
+
+        expect(result, equals(expectedResult));
+        verify(
+          mockPostgrestService.createBedAntragStatus(
+            status: 'offen',
+            beschreibung: 'Antrag eingegangen',
+          ),
+        ).called(1);
+      });
+
+      test('getBedAntragStatusList delegates to postgrest service', () async {
+        final expectedList = [
+          {'id': 1, 'status': 'offen', 'beschreibung': 'Antrag eingegangen'},
+          {'id': 2, 'status': 'bearbeitung', 'beschreibung': 'In Bearbeitung'},
+        ];
+        when(
+          mockPostgrestService.getBedAntragStatusList(),
+        ).thenAnswer((_) async => expectedList);
+
+        final result = await apiService.getBedAntragStatusList();
+        expect(result, equals(expectedList));
+        verify(mockPostgrestService.getBedAntragStatusList()).called(1);
+      });
+
+      test('getBedAntragStatusById delegates to postgrest service', () async {
+        final expectedStatus = {
+          'id': 1,
+          'status': 'offen',
+          'beschreibung': 'Antrag eingegangen'
+        };
+        when(
+          mockPostgrestService.getBedAntragStatusById(1),
+        ).thenAnswer((_) async => expectedStatus);
+
+        final result = await apiService.getBedAntragStatusById(1);
+        expect(result, equals(expectedStatus));
+        verify(mockPostgrestService.getBedAntragStatusById(1)).called(1);
+      });
+
+      test('getBedAntragStatusByStatus delegates to postgrest service', () async {
+        final expectedStatus = {
+          'id': 1,
+          'status': 'offen',
+          'beschreibung': 'Antrag eingegangen'
+        };
+        when(
+          mockPostgrestService.getBedAntragStatusByStatus('offen'),
+        ).thenAnswer((_) async => expectedStatus);
+
+        final result = await apiService.getBedAntragStatusByStatus('offen');
+        expect(result, equals(expectedStatus));
+        verify(mockPostgrestService.getBedAntragStatusByStatus('offen')).called(1);
+      });
+
+      test('updateBedAntragStatus delegates to postgrest service', () async {
+        when(
+          mockPostgrestService.updateBedAntragStatus(
+            1,
+            {'beschreibung': 'Updated'},
+          ),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.updateBedAntragStatus(
+          1,
+          {'beschreibung': 'Updated'},
+        );
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.updateBedAntragStatus(
+            1,
+            {'beschreibung': 'Updated'},
+          ),
+        ).called(1);
+      });
+
+      test('deleteBedAntragStatus delegates to postgrest service', () async {
+        when(
+          mockPostgrestService.deleteBedAntragStatus(1),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBedAntragStatus(1);
+        expect(result, isTrue);
+        verify(mockPostgrestService.deleteBedAntragStatus(1)).called(1);
+      });
+    });
+
+    group('bed_antrag Service Tests', () {
+      test('createBedAntrag delegates to postgrest service', () async {
+        final expectedResult = {
+          'id': 1,
+          'antragsnummer': 'A123',
+          'person_id': 100,
+          'status_id': 1,
+        };
+        when(
+          mockPostgrestService.createBedAntrag(
+            antragsnummer: anyNamed('antragsnummer'),
+            personId: anyNamed('personId'),
+            statusId: anyNamed('statusId'),
+            wbkNeu: anyNamed('wbkNeu'),
+            wbkArt: anyNamed('wbkArt'),
+            beduerfnisart: anyNamed('beduerfnisart'),
+            anzahlWaffen: anyNamed('anzahlWaffen'),
+            vereinGenehmigt: anyNamed('vereinGenehmigt'),
+            email: anyNamed('email'),
+            bankdaten: anyNamed('bankdaten'),
+            abbuchungErfolgt: anyNamed('abbuchungErfolgt'),
+            bemerkung: anyNamed('bemerkung'),
+          ),
+        ).thenAnswer((_) async => expectedResult);
+
+        final result = await apiService.createBedAntrag(
+          antragsnummer: 'A123',
+          personId: 100,
+          statusId: 1,
+        );
+
+        expect(result, equals(expectedResult));
+        verify(
+          mockPostgrestService.createBedAntrag(
+            antragsnummer: 'A123',
+            personId: 100,
+            statusId: 1,
+            wbkNeu: null,
+            wbkArt: null,
+            beduerfnisart: null,
+            anzahlWaffen: null,
+            vereinGenehmigt: null,
+            email: null,
+            bankdaten: null,
+            abbuchungErfolgt: null,
+            bemerkung: null,
+          ),
+        ).called(1);
+      });
+
+      test('getBedAntragList delegates to postgrest service', () async {
+        final expectedList = [
+          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+          {'id': 2, 'antragsnummer': 'A124', 'person_id': 101},
+        ];
+        when(
+          mockPostgrestService.getBedAntragList(),
+        ).thenAnswer((_) async => expectedList);
+
+        final result = await apiService.getBedAntragList();
+        expect(result, equals(expectedList));
+        verify(mockPostgrestService.getBedAntragList()).called(1);
+      });
+
+      test('getBedAntragByAntragsnummer delegates to postgrest service', () async {
+        final expectedList = [
+          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+        ];
+        when(
+          mockPostgrestService.getBedAntragByAntragsnummer('A123'),
+        ).thenAnswer((_) async => expectedList);
+
+        final result = await apiService.getBedAntragByAntragsnummer('A123');
+        expect(result, equals(expectedList));
+        verify(mockPostgrestService.getBedAntragByAntragsnummer('A123')).called(1);
+      });
+
+      test('getBedAntragByPersonId delegates to postgrest service', () async {
+        final expectedList = [
+          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+        ];
+        when(
+          mockPostgrestService.getBedAntragByPersonId(100),
+        ).thenAnswer((_) async => expectedList);
+
+        final result = await apiService.getBedAntragByPersonId(100);
+        expect(result, equals(expectedList));
+        verify(mockPostgrestService.getBedAntragByPersonId(100)).called(1);
+      });
+
+      test('getBedAntragByStatusId delegates to postgrest service', () async {
+        final expectedList = [
+          {'id': 1, 'antragsnummer': 'A123', 'status_id': 1},
+        ];
+        when(
+          mockPostgrestService.getBedAntragByStatusId(1),
+        ).thenAnswer((_) async => expectedList);
+
+        final result = await apiService.getBedAntragByStatusId(1);
+        expect(result, equals(expectedList));
+        verify(mockPostgrestService.getBedAntragByStatusId(1)).called(1);
+      });
+
+      test('getBedAntragById delegates to postgrest service', () async {
+        final expectedAntrag = {
+          'id': 1,
+          'antragsnummer': 'A123',
+          'person_id': 100,
+        };
+        when(
+          mockPostgrestService.getBedAntragById(1),
+        ).thenAnswer((_) async => expectedAntrag);
+
+        final result = await apiService.getBedAntragById(1);
+        expect(result, equals(expectedAntrag));
+        verify(mockPostgrestService.getBedAntragById(1)).called(1);
+      });
+
+      test('updateBedAntrag delegates to postgrest service', () async {
+        when(
+          mockPostgrestService.updateBedAntrag(1, {'verein_genehmigt': true}),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.updateBedAntrag(1, {'verein_genehmigt': true});
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.updateBedAntrag(1, {'verein_genehmigt': true}),
+        ).called(1);
+      });
+
+      test('deleteBedAntrag delegates to postgrest service', () async {
+        when(
+          mockPostgrestService.deleteBedAntrag(1),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBedAntrag(1);
+        expect(result, isTrue);
+        verify(mockPostgrestService.deleteBedAntrag(1)).called(1);
       });
     });
   });

@@ -693,7 +693,7 @@ void main() {
     group('bed_auswahl_typ Service Methods', () {
       test('createBedAuswahlTyp creates entry successfully', () async {
         final mockResponse = [
-          {'id': 1, 'kurz': 'WA', 'lang': 'Waffenart'},
+          {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'},
         ];
         when(mockClient.post(
           any,
@@ -702,8 +702,8 @@ void main() {
         )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedAuswahlTyp(
-          kurz: 'WA',
-          lang: 'Waffenart',
+          kuerzel: 'WA',
+          beschreibung: 'Waffenart',
         );
 
         expect(result, equals(mockResponse[0]));
@@ -722,15 +722,15 @@ void main() {
         )).thenAnswer((_) async => http.Response('Error', 400));
 
         expect(
-          () => service.createBedAuswahlTyp(kurz: 'WA', lang: 'Waffenart'),
+          () => service.createBedAuswahlTyp(kuerzel: 'WA', beschreibung: 'Waffenart'),
           throwsException,
         );
       });
 
       test('getBedAuswahlTypen returns list of types', () async {
         final mockResponse = [
-          {'id': 1, 'kurz': 'WA', 'lang': 'Waffenart'},
-          {'id': 2, 'kurz': 'DI', 'lang': 'Disziplin'},
+          {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'},
+          {'id': 2, 'kuerzel': 'DI', 'beschreibung': 'Disziplin'},
         ];
         when(mockClient.get(
           any,
@@ -739,13 +739,13 @@ void main() {
 
         final result = await service.getBedAuswahlTypen();
         expect(result, hasLength(2));
-        expect(result[0]['kurz'], equals('WA'));
+        expect(result[0]['kuerzel'], equals('WA'));
         verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
       });
 
       test('getBedAuswahlTypById returns type when found', () async {
         final mockResponse = [
-          {'id': 1, 'kurz': 'WA', 'lang': 'Waffenart'},
+          {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'},
         ];
         when(mockClient.get(
           any,
@@ -754,7 +754,7 @@ void main() {
 
         final result = await service.getBedAuswahlTypById(1);
         expect(result, isNotNull);
-        expect(result!['kurz'], equals('WA'));
+        expect(result!['kuerzel'], equals('WA'));
       });
 
       test('getBedAuswahlTypById returns null when not found', () async {
@@ -774,7 +774,7 @@ void main() {
           body: anyNamed('body'),
         )).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.updateBedAuswahlTyp(1, {'lang': 'Weapon Type'});
+        final result = await service.updateBedAuswahlTyp(1, {'beschreibung': 'Weapon Type'});
         expect(result, isTrue);
         verify(mockClient.patch(
           any,
@@ -790,7 +790,7 @@ void main() {
           body: anyNamed('body'),
         )).thenAnswer((_) async => http.Response('Error', 500));
 
-        final result = await service.updateBedAuswahlTyp(1, {'lang': 'Weapon Type'});
+        final result = await service.updateBedAuswahlTyp(1, {'beschreibung': 'Weapon Type'});
         expect(result, isFalse);
       });
 
@@ -814,7 +814,7 @@ void main() {
     group('bed_auswahl Service Methods', () {
       test('createBedAuswahl creates entry successfully', () async {
         final mockResponse = [
-          {'id': 1, 'typ_id': 1, 'kurz': 'PIS', 'lang': 'Pistole'},
+          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
         ];
         when(mockClient.post(
           any,
@@ -824,8 +824,8 @@ void main() {
 
         final result = await service.createBedAuswahl(
           typId: 1,
-          kurz: 'PIS',
-          lang: 'Pistole',
+          kuerzel: 'PIS',
+          beschreibung: 'Pistole',
         );
 
         expect(result, equals(mockResponse[0]));
@@ -838,8 +838,8 @@ void main() {
 
       test('getBedAuswahlList returns list of entries', () async {
         final mockResponse = [
-          {'id': 1, 'typ_id': 1, 'kurz': 'PIS', 'lang': 'Pistole'},
-          {'id': 2, 'typ_id': 1, 'kurz': 'REV', 'lang': 'Revolver'},
+          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
+          {'id': 2, 'typ_id': 1, 'kuerzel': 'REV', 'beschreibung': 'Revolver'},
         ];
         when(mockClient.get(
           any,
@@ -848,12 +848,12 @@ void main() {
 
         final result = await service.getBedAuswahlList();
         expect(result, hasLength(2));
-        expect(result[0]['kurz'], equals('PIS'));
+        expect(result[0]['kuerzel'], equals('PIS'));
       });
 
       test('getBedAuswahlByTypId returns filtered list', () async {
         final mockResponse = [
-          {'id': 1, 'typ_id': 1, 'kurz': 'PIS', 'lang': 'Pistole'},
+          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
         ];
         when(mockClient.get(
           any,
@@ -867,7 +867,7 @@ void main() {
 
       test('getBedAuswahlById returns entry when found', () async {
         final mockResponse = [
-          {'id': 1, 'typ_id': 1, 'kurz': 'PIS', 'lang': 'Pistole'},
+          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
         ];
         when(mockClient.get(
           any,
@@ -876,7 +876,7 @@ void main() {
 
         final result = await service.getBedAuswahlById(1);
         expect(result, isNotNull);
-        expect(result!['kurz'], equals('PIS'));
+        expect(result!['kuerzel'], equals('PIS'));
       });
 
       test('updateBedAuswahl updates entry successfully', () async {
@@ -886,7 +886,7 @@ void main() {
           body: anyNamed('body'),
         )).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.updateBedAuswahl(1, {'lang': 'Handgun'});
+        final result = await service.updateBedAuswahl(1, {'beschreibung': 'Handgun'});
         expect(result, isTrue);
       });
 
@@ -1210,6 +1210,348 @@ void main() {
 
         final result = await service.deleteBedWaffeBesitz(1);
         expect(result, isTrue);
+      });
+    });
+
+    group('bed_antrag_status Service Methods', () {
+      test('createBedAntragStatus creates entry successfully', () async {
+        final mockResponse = [
+          {'id': 1, 'status': 'offen', 'beschreibung': 'Antrag eingegangen'},
+        ];
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+
+        final result = await service.createBedAntragStatus(
+          status: 'offen',
+          beschreibung: 'Antrag eingegangen',
+        );
+
+        expect(result, equals(mockResponse[0]));
+        verify(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('createBedAntragStatus throws exception on failure', () async {
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 400));
+
+        expect(
+          () => service.createBedAntragStatus(
+            status: 'offen',
+            beschreibung: 'Antrag eingegangen',
+          ),
+          throwsException,
+        );
+      });
+
+      test('getBedAntragStatusList returns list of statuses', () async {
+        final mockResponse = [
+          {'id': 1, 'status': 'offen', 'beschreibung': 'Antrag eingegangen'},
+          {'id': 2, 'status': 'bearbeitung', 'beschreibung': 'In Bearbeitung'},
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragStatusList();
+        expect(result, hasLength(2));
+        expect(result[0]['status'], equals('offen'));
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+      });
+
+      test('getBedAntragStatusById returns status when found', () async {
+        final mockResponse = [
+          {'id': 1, 'status': 'offen', 'beschreibung': 'Antrag eingegangen'},
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragStatusById(1);
+        expect(result, isNotNull);
+        expect(result!['status'], equals('offen'));
+      });
+
+      test('getBedAntragStatusById returns null when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getBedAntragStatusById(999);
+        expect(result, isNull);
+      });
+
+      test('getBedAntragStatusByStatus returns status when found', () async {
+        final mockResponse = [
+          {'id': 1, 'status': 'offen', 'beschreibung': 'Antrag eingegangen'},
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragStatusByStatus('offen');
+        expect(result, isNotNull);
+        expect(result!['status'], equals('offen'));
+      });
+
+      test('getBedAntragStatusByStatus returns null when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getBedAntragStatusByStatus('nonexistent');
+        expect(result, isNull);
+      });
+
+      test('updateBedAntragStatus updates entry successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.updateBedAntragStatus(
+          1,
+          {'beschreibung': 'Updated description'},
+        );
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('updateBedAntragStatus returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.updateBedAntragStatus(
+          1,
+          {'beschreibung': 'Updated description'},
+        );
+        expect(result, isFalse);
+      });
+
+      test('deleteBedAntragStatus soft deletes entry successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.deleteBedAntragStatus(1);
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+    });
+
+    group('bed_antrag Service Methods', () {
+      test('createBedAntrag creates entry successfully', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': 'A123',
+            'person_id': 100,
+            'status_id': 1,
+            'wbk_neu': true,
+            'wbk_art': 'yellow',
+            'beduerfnisart': 'langwaffe',
+            'anzahl_waffen': 2,
+            'verein_genehmigt': false,
+            'email': 'test@example.com',
+            'abbuchung_erfolgt': false,
+          },
+        ];
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+
+        final result = await service.createBedAntrag(
+          antragsnummer: 'A123',
+          personId: 100,
+          statusId: 1,
+          wbkNeu: true,
+          wbkArt: 'yellow',
+          beduerfnisart: 'langwaffe',
+          anzahlWaffen: 2,
+          email: 'test@example.com',
+        );
+
+        expect(result, equals(mockResponse[0]));
+        verify(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('createBedAntrag throws exception on failure', () async {
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 400));
+
+        expect(
+          () => service.createBedAntrag(
+            antragsnummer: 'A123',
+            personId: 100,
+          ),
+          throwsException,
+        );
+      });
+
+      test('getBedAntragList returns list of entries', () async {
+        final mockResponse = [
+          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+          {'id': 2, 'antragsnummer': 'A124', 'person_id': 101},
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragList();
+        expect(result, hasLength(2));
+        expect(result[0]['antragsnummer'], equals('A123'));
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+      });
+
+      test('getBedAntragByAntragsnummer returns filtered list', () async {
+        final mockResponse = [
+          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragByAntragsnummer('A123');
+        expect(result, hasLength(1));
+        expect(result[0]['antragsnummer'], equals('A123'));
+      });
+
+      test('getBedAntragByPersonId returns filtered list', () async {
+        final mockResponse = [
+          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+          {'id': 2, 'antragsnummer': 'A124', 'person_id': 100},
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragByPersonId(100);
+        expect(result, hasLength(2));
+        expect(result[0]['person_id'], equals(100));
+      });
+
+      test('getBedAntragByStatusId returns filtered list', () async {
+        final mockResponse = [
+          {'id': 1, 'antragsnummer': 'A123', 'status_id': 1},
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragByStatusId(1);
+        expect(result, hasLength(1));
+        expect(result[0]['status_id'], equals(1));
+      });
+
+      test('getBedAntragById returns entry when found', () async {
+        final mockResponse = [
+          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragById(1);
+        expect(result, isNotNull);
+        expect(result!['antragsnummer'], equals('A123'));
+      });
+
+      test('getBedAntragById returns null when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getBedAntragById(999);
+        expect(result, isNull);
+      });
+
+      test('updateBedAntrag updates entry successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.updateBedAntrag(
+          1,
+          {'verein_genehmigt': true},
+        );
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('updateBedAntrag returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.updateBedAntrag(1, {'verein_genehmigt': true});
+        expect(result, isFalse);
+      });
+
+      test('deleteBedAntrag soft deletes entry successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.deleteBedAntrag(1);
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
       });
     });
   });

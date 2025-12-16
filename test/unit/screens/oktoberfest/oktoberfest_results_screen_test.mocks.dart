@@ -1148,13 +1148,13 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
 
   @override
   _i10.Future<Map<String, dynamic>> createBedAuswahlTyp({
-    required String? kurz,
-    required String? lang,
+    required String? kuerzel,
+    required String? beschreibung,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createBedAuswahlTyp, [], {
-              #kurz: kurz,
-              #lang: lang,
+              #kuerzel: kuerzel,
+              #beschreibung: beschreibung,
             }),
             returnValue: _i10.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
@@ -1199,14 +1199,14 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
   @override
   _i10.Future<Map<String, dynamic>> createBedAuswahl({
     required int? typId,
-    required String? kurz,
-    required String? lang,
+    required String? kuerzel,
+    required String? beschreibung,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createBedAuswahl, [], {
               #typId: typId,
-              #kurz: kurz,
-              #lang: lang,
+              #kuerzel: kuerzel,
+              #beschreibung: beschreibung,
             }),
             returnValue: _i10.Future<Map<String, dynamic>>.value(
               <String, dynamic>{},
@@ -1444,6 +1444,175 @@ class MockApiService extends _i1.Mock implements _i8.ApiService {
   _i10.Future<bool> deleteBedWaffeBesitz(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#deleteBedWaffeBesitz, [id]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> createBedAntragStatus({
+    required String? status,
+    String? beschreibung,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#createBedAntragStatus, [], {
+              #status: status,
+              #beschreibung: beschreibung,
+            }),
+            returnValue: _i10.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedAntragStatusList() =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAntragStatusList, []),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<Map<String, dynamic>?> getBedAntragStatusById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAntragStatusById, [id]),
+            returnValue: _i10.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i10.Future<Map<String, dynamic>?>);
+
+  @override
+  _i10.Future<Map<String, dynamic>?> getBedAntragStatusByStatus(
+    String? status,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAntragStatusByStatus, [status]),
+            returnValue: _i10.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i10.Future<Map<String, dynamic>?>);
+
+  @override
+  _i10.Future<bool> updateBedAntragStatus(
+    int? id,
+    Map<String, dynamic>? data,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateBedAntragStatus, [id, data]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> deleteBedAntragStatus(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedAntragStatus, [id]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<Map<String, dynamic>> createBedAntrag({
+    required String? antragsnummer,
+    required int? personId,
+    int? statusId,
+    bool? wbkNeu,
+    String? wbkArt,
+    String? beduerfnisart,
+    int? anzahlWaffen,
+    bool? vereinGenehmigt,
+    String? email,
+    Map<String, dynamic>? bankdaten,
+    bool? abbuchungErfolgt,
+    String? bemerkung,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#createBedAntrag, [], {
+              #antragsnummer: antragsnummer,
+              #personId: personId,
+              #statusId: statusId,
+              #wbkNeu: wbkNeu,
+              #wbkArt: wbkArt,
+              #beduerfnisart: beduerfnisart,
+              #anzahlWaffen: anzahlWaffen,
+              #vereinGenehmigt: vereinGenehmigt,
+              #email: email,
+              #bankdaten: bankdaten,
+              #abbuchungErfolgt: abbuchungErfolgt,
+              #bemerkung: bemerkung,
+            }),
+            returnValue: _i10.Future<Map<String, dynamic>>.value(
+              <String, dynamic>{},
+            ),
+          )
+          as _i10.Future<Map<String, dynamic>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedAntragList() =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAntragList, []),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedAntragByAntragsnummer(
+    String? antragsnummer,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAntragByAntragsnummer, [antragsnummer]),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedAntragByPersonId(
+    int? personId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAntragByPersonId, [personId]),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<List<Map<String, dynamic>>> getBedAntragByStatusId(
+    int? statusId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAntragByStatusId, [statusId]),
+            returnValue: _i10.Future<List<Map<String, dynamic>>>.value(
+              <Map<String, dynamic>>[],
+            ),
+          )
+          as _i10.Future<List<Map<String, dynamic>>>);
+
+  @override
+  _i10.Future<Map<String, dynamic>?> getBedAntragById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedAntragById, [id]),
+            returnValue: _i10.Future<Map<String, dynamic>?>.value(),
+          )
+          as _i10.Future<Map<String, dynamic>?>);
+
+  @override
+  _i10.Future<bool> updateBedAntrag(int? id, Map<String, dynamic>? data) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateBedAntrag, [id, data]),
+            returnValue: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<bool> deleteBedAntrag(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedAntrag, [id]),
             returnValue: _i10.Future<bool>.value(false),
           )
           as _i10.Future<bool>);
