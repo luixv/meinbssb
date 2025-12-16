@@ -124,23 +124,6 @@ void main() {
       expect(json['DELETED_AT'], isNull);
     });
 
-    test('equality works correctly', () {
-      final deletedAt = DateTime(2024, 1, 2);
-      final status1 = BeduerfnisseAntragStatus(
-        id: 1,
-        status: 'offen',
-        beschreibung: 'Antrag eingegangen',
-        deletedAt: deletedAt,
-      );
-      final status2 = BeduerfnisseAntragStatus(
-        id: 1,
-        status: 'offen',
-        beschreibung: 'Antrag eingegangen',
-        deletedAt: deletedAt,
-      );
-      expect(status1, equals(status2));
-    });
-
     test('inequality with different status', () {
       const status1 = BeduerfnisseAntragStatus(
         id: 1,

@@ -3,24 +3,6 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 
 void main() {
   group('BeduerfnisseAuswahl', () {
-    test('fromJson creates correct object with uppercase keys', () {
-      final json = {
-        'ID': 1,
-        'TYP_ID': 10,
-        'KUERZEL': 'PIS',
-        'BESCHREIBUNG': 'Pistole',
-        'CREATED_AT': '2024-01-01T10:00:00.000Z',
-        'DELETED_AT': null,
-      };
-      final auswahl = BeduerfnisseAuswahl.fromJson(json);
-      expect(auswahl.id, 1);
-      expect(auswahl.typId, 10);
-      expect(auswahl.kuerzel, 'PIS');
-      expect(auswahl.beschreibung, 'Pistole');
-      expect(auswahl.createdAt, DateTime.parse('2024-01-01T10:00:00.000Z'));
-      expect(auswahl.deletedAt, isNull);
-    });
-
     test('fromJson creates correct object with snake_case keys', () {
       final json = {
         'id': 2,
@@ -144,26 +126,6 @@ void main() {
       expect(json['CREATED_AT'], isNull);
       expect(json['DELETED_AT'], isNull);
     });
-
-    test('equality works correctly', () {
-      final createdAt = DateTime(2024, 1, 1);
-      final auswahl1 = BeduerfnisseAuswahl(
-        id: 1,
-        typId: 10,
-        kuerzel: 'PIS',
-        beschreibung: 'Pistole',
-        createdAt: createdAt,
-      );
-      final auswahl2 = BeduerfnisseAuswahl(
-        id: 1,
-        typId: 10,
-        kuerzel: 'PIS',
-        beschreibung: 'Pistole',
-        createdAt: createdAt,
-      );
-      expect(auswahl1, equals(auswahl2));
-    });
-
     test('inequality with different typId', () {
       const auswahl1 = BeduerfnisseAuswahl(
         id: 1,

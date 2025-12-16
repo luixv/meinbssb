@@ -1499,7 +1499,7 @@ void main() {
 
       test('getBedAntragByStatusId returns filtered list', () async {
         final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'status_id': 1},
+          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100, 'status_id': 1},
         ];
         when(mockClient.get(
           any,

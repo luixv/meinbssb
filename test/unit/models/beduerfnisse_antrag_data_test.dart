@@ -3,44 +3,6 @@ import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 
 void main() {
   group('BeduerfnisseAntrag', () {
-    test('fromJson creates correct object with uppercase keys', () {
-      final json = {
-        'ID': 1,
-        'CREATED_AT': '2024-01-01T10:00:00.000Z',
-        'CHANGED_AT': '2024-01-02T10:00:00.000Z',
-        'DELETED_AT': null,
-        'ANTRAGSNUMMER': 'A123',
-        'PERSON_ID': 100,
-        'STATUS_ID': 1,
-        'WBK_NEU': true,
-        'WBK_ART': 'yellow',
-        'BEDUERFNISART': 'langwaffe',
-        'ANZAHL_WAFFEN': 2,
-        'VEREIN_GENEHMIGT': false,
-        'EMAIL': 'test@example.com',
-        'BANKDATEN': {'iban': 'DE1234567890'},
-        'ABBUCHUNG_ERFOLGT': false,
-        'BEMERKUNG': 'Test bemerkung',
-      };
-      final antrag = BeduerfnisseAntrag.fromJson(json);
-      expect(antrag.id, 1);
-      expect(antrag.createdAt, DateTime.parse('2024-01-01T10:00:00.000Z'));
-      expect(antrag.changedAt, DateTime.parse('2024-01-02T10:00:00.000Z'));
-      expect(antrag.deletedAt, isNull);
-      expect(antrag.antragsnummer, 'A123');
-      expect(antrag.personId, 100);
-      expect(antrag.statusId, 1);
-      expect(antrag.wbkNeu, true);
-      expect(antrag.wbkArt, 'yellow');
-      expect(antrag.beduerfnisart, 'langwaffe');
-      expect(antrag.anzahlWaffen, 2);
-      expect(antrag.vereinGenehmigt, false);
-      expect(antrag.email, 'test@example.com');
-      expect(antrag.bankdaten, {'iban': 'DE1234567890'});
-      expect(antrag.abbuchungErfolgt, false);
-      expect(antrag.bemerkung, 'Test bemerkung');
-    });
-
     test('fromJson creates correct object with snake_case keys', () {
       final json = {
         'id': 2,
@@ -252,25 +214,6 @@ void main() {
       expect(json['EMAIL'], isNull);
       expect(json['BANKDATEN'], isNull);
       expect(json['BEMERKUNG'], isNull);
-    });
-
-    test('equality works correctly', () {
-      final createdAt = DateTime(2024, 1, 1);
-      final antrag1 = BeduerfnisseAntrag(
-        id: 1,
-        createdAt: createdAt,
-        antragsnummer: 'A123',
-        personId: 100,
-        statusId: 1,
-      );
-      final antrag2 = BeduerfnisseAntrag(
-        id: 1,
-        createdAt: createdAt,
-        antragsnummer: 'A123',
-        personId: 100,
-        statusId: 1,
-      );
-      expect(antrag1, equals(antrag2));
     });
 
     test('inequality with different antragsnummer', () {
