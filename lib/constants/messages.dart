@@ -24,9 +24,11 @@ class Messages {
 
   // Registration Process Messages
   static const String existingAccountFound =
-      'Sie haben bereits einen MeinBSSB Account.\nBitte verwenden Sie ihre bekannten Zugangsdaten.';
+      'Sie haben bereits einen gültigen MeinBSSB Account.\nBitte melden Sie sich mit den bekannten Daten an.\nSollten Sie ihr Passwort vergessen haben, führen Sie eine Passwortrücksetzung durch.\nSollten Sie ihre Account e-Mail Adresse vergessen, oder sonstige Fragen haben, wenden Sie sich bitte an webportal@bssb.bayern';
   static const String noPersonIdFound =
       'Die eingegebenen Daten stimmen nicht mit den Daten in ZMI überein.';
+  static const String passwordResetLinkAlreadySent = 
+      'Sie haben bereits eine Passwortrücksetzung beantragt.\nBitte überprüfen Sie auch ihre Spamnachrichten.\nEine erneute Rücksetzung kann in {hours} erfolgen.\nSollten Sie keine E-Mail erhalten haben, wenden Sie sich bitte an webportal@bssb.bayern';
   static const String configError =
       'Systemkonfigurationsfehler. Bitte kontaktieren Sie den Support.';
   static const String emailConfigError =
@@ -48,7 +50,7 @@ class Messages {
   static const String registrationDataNotVerified =
       'Registrierungsdaten nicht verifiziert. Bitte registrieren Sie sich erneut.';
   static const String registrationDataAlreadyExists =
-      'Eine Registrierung für diese Schützenausweisnummer ist bereits in Bearbeitung. Bitte überprüfen Sie Ihre E-Mails oder warten Sie 24 Stunden, um es erneut zu versuchen.';
+      'Eine Registrierung für diese Schützenausweisnummer ist bereits in Bearbeitung.\nBitte überprüfen Sie auch ihre Spamnachrichten.\nEine erneute Registrierung kann in {hours} erfolgen.\nSollten Sie keine E-Mail erhalten haben, wenden Sie sich bitte an webportal@bssb.bayern';
   static const String registrationOffline =
       'Registrierung ist offline nicht verfügbar. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind.';
   static const String registrationSuccess =

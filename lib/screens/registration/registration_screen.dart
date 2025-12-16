@@ -169,7 +169,7 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           MaterialPageRoute(
             builder:
                 (_) => RegistrationFailScreen(
-                  message: _existingAccountMessage!,
+                  message: Messages.existingAccountFound,
                   userData: null,
                 ),
           ),
@@ -237,6 +237,25 @@ class RegistrationScreenState extends State<RegistrationScreen> {
         final difference = now.difference(createdAt);
 
         if (difference.inHours <= 24) {
+          // Calculate remaining time until new registration is allowed
+          final totalMinutesRemaining = (24 * 60) - difference.inMinutes;
+          final hoursRemaining = totalMinutesRemaining ~/ 60;
+          final minutesRemaining = totalMinutesRemaining % 60;
+          
+          // Format time remaining message
+          String timeRemaining;
+          if (hoursRemaining > 1) {
+            timeRemaining = '$hoursRemaining Stunden';
+          } else if (hoursRemaining == 1) {
+            if (minutesRemaining > 0) {
+              timeRemaining = '1 Stunde und $minutesRemaining Minuten';
+            } else {
+              timeRemaining = '1 Stunde';
+            }
+          } else {
+            timeRemaining = '$minutesRemaining Minuten';
+          }
+          
           setState(() {
             _isRegistering = false;
           });
@@ -244,8 +263,9 @@ class RegistrationScreenState extends State<RegistrationScreen> {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder:
-                  (_) => const RegistrationFailScreen(
-                    message: Messages.registrationDataAlreadyExists,
+                  (_) => RegistrationFailScreen(
+                    message: Messages.registrationDataAlreadyExists
+                        .replaceAll('{hours}', timeRemaining),
                     userData: null,
                   ),
             ),
