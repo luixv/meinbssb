@@ -4,20 +4,19 @@ import 'package:flutter/foundation.dart';
 @immutable
 class BeduerfnisseAuswahl {
   /// Creates an [BeduerfnisseAuswahl] instance from a JSON map.
+  /// Supports both snake_case (PostgREST) and uppercase formats.
   factory BeduerfnisseAuswahl.fromJson(Map<String, dynamic> json) {
     return BeduerfnisseAuswahl(
-      id: json['ID'] as int?,
-      typId: json['TYP_ID'] as int,
-      kurz: json['KURZ'] as String,
-      lang: json['LANG'] as String,
-      createdAt:
-          json['CREATED_AT'] == null
-              ? null
-              : DateTime.parse(json['CREATED_AT'] as String),
-      deletedAt:
-          json['DELETED_AT'] == null
-              ? null
-              : DateTime.parse(json['DELETED_AT'] as String),
+      id: (json['ID'] ?? json['id']) as int?,
+      typId: (json['TYP_ID'] ?? json['typ_id']) as int,
+      kuerzel: (json['KUERZEL'] ?? json['kuerzel']) as String,
+      beschreibung: (json['BESCHREIBUNG'] ?? json['beschreibung']) as String,
+      createdAt: json['CREATED_AT'] ?? json['created_at'] == null
+          ? null
+          : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
+      deletedAt: json['DELETED_AT'] ?? json['deleted_at'] == null
+          ? null
+          : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
     );
   }
 
@@ -25,8 +24,8 @@ class BeduerfnisseAuswahl {
   const BeduerfnisseAuswahl({
     this.id,
     required this.typId,
-    required this.kurz,
-    required this.lang,
+    required this.kuerzel,
+    required this.beschreibung,
     this.createdAt,
     this.deletedAt,
   });
@@ -38,10 +37,10 @@ class BeduerfnisseAuswahl {
   final int typId;
 
   /// The short code (unique per type).
-  final String kurz;
+  final String kuerzel;
 
   /// The long description.
-  final String lang;
+  final String beschreibung;
 
   /// The creation timestamp.
   final DateTime? createdAt;
@@ -54,8 +53,8 @@ class BeduerfnisseAuswahl {
     return {
       'ID': id,
       'TYP_ID': typId,
-      'KURZ': kurz,
-      'LANG': lang,
+      'KUERZEL': kuerzel,
+      'BESCHREIBUNG': beschreibung,
       'CREATED_AT': createdAt?.toIso8601String(),
       'DELETED_AT': deletedAt?.toIso8601String(),
     };

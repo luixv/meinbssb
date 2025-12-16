@@ -7,6 +7,10 @@ import 'package:http/http.dart' as http;
 
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 
 @GenerateMocks([
   ConfigService,
@@ -706,7 +710,10 @@ void main() {
           beschreibung: 'Waffenart',
         );
 
-        expect(result, equals(mockResponse[0]));
+        expect(result, isA<BeduerfnisseAuswahlTyp>());
+        expect(result.id, equals(1));
+        expect(result.kuerzel, equals('WA'));
+        expect(result.beschreibung, equals('Waffenart'));
         verify(mockClient.post(
           any,
           headers: anyNamed('headers'),
@@ -739,7 +746,8 @@ void main() {
 
         final result = await service.getBedAuswahlTypen();
         expect(result, hasLength(2));
-        expect(result[0]['kuerzel'], equals('WA'));
+        expect(result[0], isA<BeduerfnisseAuswahlTyp>());
+        expect(result[0].kuerzel, equals('WA'));
         verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
       });
 
@@ -754,7 +762,8 @@ void main() {
 
         final result = await service.getBedAuswahlTypById(1);
         expect(result, isNotNull);
-        expect(result!['kuerzel'], equals('WA'));
+        expect(result, isA<BeduerfnisseAuswahlTyp>());
+        expect(result!.kuerzel, equals('WA'));
       });
 
       test('getBedAuswahlTypById returns null when not found', () async {
@@ -828,7 +837,10 @@ void main() {
           beschreibung: 'Pistole',
         );
 
-        expect(result, equals(mockResponse[0]));
+        expect(result, isA<BeduerfnisseAuswahl>());
+        expect(result.id, equals(1));
+        expect(result.kuerzel, equals('PIS'));
+        expect(result.beschreibung, equals('Pistole'));
         verify(mockClient.post(
           any,
           headers: anyNamed('headers'),
@@ -848,7 +860,8 @@ void main() {
 
         final result = await service.getBedAuswahlList();
         expect(result, hasLength(2));
-        expect(result[0]['kuerzel'], equals('PIS'));
+        expect(result[0], isA<BeduerfnisseAuswahl>());
+        expect(result[0].kuerzel, equals('PIS'));
       });
 
       test('getBedAuswahlByTypId returns filtered list', () async {
@@ -862,7 +875,8 @@ void main() {
 
         final result = await service.getBedAuswahlByTypId(1);
         expect(result, hasLength(1));
-        expect(result[0]['typ_id'], equals(1));
+        expect(result[0], isA<BeduerfnisseAuswahl>());
+        expect(result[0].typId, equals(1));
       });
 
       test('getBedAuswahlById returns entry when found', () async {
@@ -876,7 +890,8 @@ void main() {
 
         final result = await service.getBedAuswahlById(1);
         expect(result, isNotNull);
-        expect(result!['kuerzel'], equals('PIS'));
+        expect(result, isA<BeduerfnisseAuswahl>());
+        expect(result!.kuerzel, equals('PIS'));
       });
 
       test('updateBedAuswahl updates entry successfully', () async {
@@ -1229,7 +1244,10 @@ void main() {
           beschreibung: 'Antrag eingegangen',
         );
 
-        expect(result, equals(mockResponse[0]));
+        expect(result, isA<BeduerfnisseAntragStatus>());
+        expect(result.id, equals(1));
+        expect(result.status, equals('offen'));
+        expect(result.beschreibung, equals('Antrag eingegangen'));
         verify(mockClient.post(
           any,
           headers: anyNamed('headers'),
@@ -1265,7 +1283,8 @@ void main() {
 
         final result = await service.getBedAntragStatusList();
         expect(result, hasLength(2));
-        expect(result[0]['status'], equals('offen'));
+        expect(result[0], isA<BeduerfnisseAntragStatus>());
+        expect(result[0].status, equals('offen'));
         verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
       });
 
@@ -1280,7 +1299,8 @@ void main() {
 
         final result = await service.getBedAntragStatusById(1);
         expect(result, isNotNull);
-        expect(result!['status'], equals('offen'));
+        expect(result, isA<BeduerfnisseAntragStatus>());
+        expect(result!.status, equals('offen'));
       });
 
       test('getBedAntragStatusById returns null when not found', () async {
@@ -1304,7 +1324,8 @@ void main() {
 
         final result = await service.getBedAntragStatusByStatus('offen');
         expect(result, isNotNull);
-        expect(result!['status'], equals('offen'));
+        expect(result, isA<BeduerfnisseAntragStatus>());
+        expect(result!.status, equals('offen'));
       });
 
       test('getBedAntragStatusByStatus returns null when not found', () async {
@@ -1401,7 +1422,10 @@ void main() {
           email: 'test@example.com',
         );
 
-        expect(result, equals(mockResponse[0]));
+        expect(result, isA<BeduerfnisseAntrag>());
+        expect(result.id, equals(1));
+        expect(result.antragsnummer, equals('A123'));
+        expect(result.personId, equals(100));
         verify(mockClient.post(
           any,
           headers: anyNamed('headers'),
@@ -1437,7 +1461,8 @@ void main() {
 
         final result = await service.getBedAntragList();
         expect(result, hasLength(2));
-        expect(result[0]['antragsnummer'], equals('A123'));
+        expect(result[0], isA<BeduerfnisseAntrag>());
+        expect(result[0].antragsnummer, equals('A123'));
         verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
       });
 
@@ -1452,7 +1477,8 @@ void main() {
 
         final result = await service.getBedAntragByAntragsnummer('A123');
         expect(result, hasLength(1));
-        expect(result[0]['antragsnummer'], equals('A123'));
+        expect(result[0], isA<BeduerfnisseAntrag>());
+        expect(result[0].antragsnummer, equals('A123'));
       });
 
       test('getBedAntragByPersonId returns filtered list', () async {
@@ -1467,7 +1493,8 @@ void main() {
 
         final result = await service.getBedAntragByPersonId(100);
         expect(result, hasLength(2));
-        expect(result[0]['person_id'], equals(100));
+        expect(result[0], isA<BeduerfnisseAntrag>());
+        expect(result[0].personId, equals(100));
       });
 
       test('getBedAntragByStatusId returns filtered list', () async {
@@ -1481,7 +1508,8 @@ void main() {
 
         final result = await service.getBedAntragByStatusId(1);
         expect(result, hasLength(1));
-        expect(result[0]['status_id'], equals(1));
+        expect(result[0], isA<BeduerfnisseAntrag>());
+        expect(result[0].statusId, equals(1));
       });
 
       test('getBedAntragById returns entry when found', () async {
@@ -1495,7 +1523,8 @@ void main() {
 
         final result = await service.getBedAntragById(1);
         expect(result, isNotNull);
-        expect(result!['antragsnummer'], equals('A123'));
+        expect(result, isA<BeduerfnisseAntrag>());
+        expect(result!.antragsnummer, equals('A123'));
       });
 
       test('getBedAntragById returns null when not found', () async {

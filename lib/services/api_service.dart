@@ -30,6 +30,10 @@ import 'package:meinbssb/models/person_data.dart';
 import 'package:meinbssb/models/result_data.dart';
 import 'package:meinbssb/models/bezirk_data.dart';
 import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -745,18 +749,18 @@ class ApiService {
   // --- bed_auswahl_typ Service Methods ---
   //
 
-  Future<Map<String, dynamic>> createBedAuswahlTyp({
+  Future<BeduerfnisseAuswahlTyp> createBedAuswahlTyp({
     required String kuerzel,
     required String beschreibung,
   }) async {
     return _postgrestService.createBedAuswahlTyp(kuerzel: kuerzel, beschreibung: beschreibung);
   }
 
-  Future<List<Map<String, dynamic>>> getBedAuswahlTypen() async {
+  Future<List<BeduerfnisseAuswahlTyp>> getBedAuswahlTypen() async {
     return _postgrestService.getBedAuswahlTypen();
   }
 
-  Future<Map<String, dynamic>?> getBedAuswahlTypById(int id) async {
+  Future<BeduerfnisseAuswahlTyp?> getBedAuswahlTypById(int id) async {
     return _postgrestService.getBedAuswahlTypById(id);
   }
 
@@ -772,7 +776,7 @@ class ApiService {
   // --- bed_auswahl Service Methods ---
   //
 
-  Future<Map<String, dynamic>> createBedAuswahl({
+  Future<BeduerfnisseAuswahl> createBedAuswahl({
     required int typId,
     required String kuerzel,
     required String beschreibung,
@@ -784,15 +788,15 @@ class ApiService {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getBedAuswahlList() async {
+  Future<List<BeduerfnisseAuswahl>> getBedAuswahlList() async {
     return _postgrestService.getBedAuswahlList();
   }
 
-  Future<List<Map<String, dynamic>>> getBedAuswahlByTypId(int typId) async {
+  Future<List<BeduerfnisseAuswahl>> getBedAuswahlByTypId(int typId) async {
     return _postgrestService.getBedAuswahlByTypId(typId);
   }
 
-  Future<Map<String, dynamic>?> getBedAuswahlById(int id) async {
+  Future<BeduerfnisseAuswahl?> getBedAuswahlById(int id) async {
     return _postgrestService.getBedAuswahlById(id);
   }
 
@@ -936,7 +940,7 @@ class ApiService {
   // --- bed_antrag_status Service Methods ---
   //
 
-  Future<Map<String, dynamic>> createBedAntragStatus({
+  Future<BeduerfnisseAntragStatus> createBedAntragStatus({
     required String status,
     String? beschreibung,
   }) async {
@@ -946,15 +950,15 @@ class ApiService {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getBedAntragStatusList() async {
+  Future<List<BeduerfnisseAntragStatus>> getBedAntragStatusList() async {
     return _postgrestService.getBedAntragStatusList();
   }
 
-  Future<Map<String, dynamic>?> getBedAntragStatusById(int id) async {
+  Future<BeduerfnisseAntragStatus?> getBedAntragStatusById(int id) async {
     return _postgrestService.getBedAntragStatusById(id);
   }
 
-  Future<Map<String, dynamic>?> getBedAntragStatusByStatus(
+  Future<BeduerfnisseAntragStatus?> getBedAntragStatusByStatus(
     String status,
   ) async {
     return _postgrestService.getBedAntragStatusByStatus(status);
@@ -972,7 +976,7 @@ class ApiService {
   // --- bed_antrag Service Methods ---
   //
 
-  Future<Map<String, dynamic>> createBedAntrag({
+  Future<BeduerfnisseAntrag> createBedAntrag({
     required String antragsnummer,
     required int personId,
     int? statusId,
@@ -1002,25 +1006,25 @@ class ApiService {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getBedAntragList() async {
+  Future<List<BeduerfnisseAntrag>> getBedAntragList() async {
     return _postgrestService.getBedAntragList();
   }
 
-  Future<List<Map<String, dynamic>>> getBedAntragByAntragsnummer(
+  Future<List<BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
     String antragsnummer,
   ) async {
     return _postgrestService.getBedAntragByAntragsnummer(antragsnummer);
   }
 
-  Future<List<Map<String, dynamic>>> getBedAntragByPersonId(int personId) async {
+  Future<List<BeduerfnisseAntrag>> getBedAntragByPersonId(int personId) async {
     return _postgrestService.getBedAntragByPersonId(personId);
   }
 
-  Future<List<Map<String, dynamic>>> getBedAntragByStatusId(int statusId) async {
+  Future<List<BeduerfnisseAntrag>> getBedAntragByStatusId(int statusId) async {
     return _postgrestService.getBedAntragByStatusId(statusId);
   }
 
-  Future<Map<String, dynamic>?> getBedAntragById(int id) async {
+  Future<BeduerfnisseAntrag?> getBedAntragById(int id) async {
     return _postgrestService.getBedAntragById(id);
   }
 

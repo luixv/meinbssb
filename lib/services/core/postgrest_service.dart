@@ -3,6 +3,10 @@ import 'package:http/http.dart' as http;
 import 'logger_service.dart';
 import 'config_service.dart';
 import 'dart:typed_data'; // Import Uint8List
+import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 
 class PostgrestService {
   PostgrestService({
@@ -640,7 +644,7 @@ class PostgrestService {
   //
 
   /// Create a new bed_auswahl_typ entry
-  Future<Map<String, dynamic>> createBedAuswahlTyp({
+  Future<BeduerfnisseAuswahlTyp> createBedAuswahlTyp({
     required String kuerzel,
     required String beschreibung,
   }) async {
@@ -658,7 +662,10 @@ class PostgrestService {
       if (response.statusCode == 201) {
         LoggerService.logInfo('bed_auswahl_typ created successfully');
         final List<dynamic> result = jsonDecode(response.body);
-        return result.isNotEmpty ? result[0] : {};
+        if (result.isNotEmpty) {
+          return BeduerfnisseAuswahlTyp.fromJson(result[0] as Map<String, dynamic>);
+        }
+        throw Exception('Empty response from create bed_auswahl_typ');
       } else {
         LoggerService.logError(
           'Failed to create bed_auswahl_typ. Status: ${response.statusCode}, Body: ${response.body}',
@@ -672,7 +679,7 @@ class PostgrestService {
   }
 
   /// Get all bed_auswahl_typ entries (excludes deleted)
-  Future<List<Map<String, dynamic>>> getBedAuswahlTypen() async {
+  Future<List<BeduerfnisseAuswahlTyp>> getBedAuswahlTypen() async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_auswahl_typ?deleted_at=is.null'),
@@ -681,7 +688,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> types = jsonDecode(response.body);
-        return types.cast<Map<String, dynamic>>();
+        return types
+            .map((json) => BeduerfnisseAuswahlTyp.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to get bed_auswahl_typ. Status: ${response.statusCode}, Body: ${response.body}',
@@ -695,7 +704,7 @@ class PostgrestService {
   }
 
   /// Get bed_auswahl_typ by ID
-  Future<Map<String, dynamic>?> getBedAuswahlTypById(int id) async {
+  Future<BeduerfnisseAuswahlTyp?> getBedAuswahlTypById(int id) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_auswahl_typ?id=eq.$id&deleted_at=is.null'),
@@ -704,7 +713,10 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> types = jsonDecode(response.body);
-        return types.isNotEmpty ? types[0] : null;
+        if (types.isNotEmpty) {
+          return BeduerfnisseAuswahlTyp.fromJson(types[0] as Map<String, dynamic>);
+        }
+        return null;
       } else {
         LoggerService.logError(
           'Failed to get bed_auswahl_typ by ID. Status: ${response.statusCode}, Body: ${response.body}',
@@ -772,7 +784,7 @@ class PostgrestService {
   //
 
   /// Create a new bed_auswahl entry
-  Future<Map<String, dynamic>> createBedAuswahl({
+  Future<BeduerfnisseAuswahl> createBedAuswahl({
     required int typId,
     required String kuerzel,
     required String beschreibung,
@@ -792,7 +804,10 @@ class PostgrestService {
       if (response.statusCode == 201) {
         LoggerService.logInfo('bed_auswahl created successfully');
         final List<dynamic> result = jsonDecode(response.body);
-        return result.isNotEmpty ? result[0] : {};
+        if (result.isNotEmpty) {
+          return BeduerfnisseAuswahl.fromJson(result[0] as Map<String, dynamic>);
+        }
+        throw Exception('Empty response from create bed_auswahl');
       } else {
         LoggerService.logError(
           'Failed to create bed_auswahl. Status: ${response.statusCode}, Body: ${response.body}',
@@ -806,7 +821,7 @@ class PostgrestService {
   }
 
   /// Get all bed_auswahl entries (excludes deleted)
-  Future<List<Map<String, dynamic>>> getBedAuswahlList() async {
+  Future<List<BeduerfnisseAuswahl>> getBedAuswahlList() async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_auswahl?deleted_at=is.null'),
@@ -815,7 +830,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> items = jsonDecode(response.body);
-        return items.cast<Map<String, dynamic>>();
+        return items
+            .map((json) => BeduerfnisseAuswahl.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to get bed_auswahl. Status: ${response.statusCode}, Body: ${response.body}',
@@ -829,7 +846,7 @@ class PostgrestService {
   }
 
   /// Get bed_auswahl by type ID
-  Future<List<Map<String, dynamic>>> getBedAuswahlByTypId(int typId) async {
+  Future<List<BeduerfnisseAuswahl>> getBedAuswahlByTypId(int typId) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_auswahl?typ_id=eq.$typId&deleted_at=is.null'),
@@ -838,7 +855,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> items = jsonDecode(response.body);
-        return items.cast<Map<String, dynamic>>();
+        return items
+            .map((json) => BeduerfnisseAuswahl.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to get bed_auswahl by type. Status: ${response.statusCode}, Body: ${response.body}',
@@ -852,7 +871,7 @@ class PostgrestService {
   }
 
   /// Get bed_auswahl by ID
-  Future<Map<String, dynamic>?> getBedAuswahlById(int id) async {
+  Future<BeduerfnisseAuswahl?> getBedAuswahlById(int id) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_auswahl?id=eq.$id&deleted_at=is.null'),
@@ -861,7 +880,10 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> items = jsonDecode(response.body);
-        return items.isNotEmpty ? items[0] : null;
+        if (items.isNotEmpty) {
+          return BeduerfnisseAuswahl.fromJson(items[0] as Map<String, dynamic>);
+        }
+        return null;
       } else {
         LoggerService.logError(
           'Failed to get bed_auswahl by ID. Status: ${response.statusCode}, Body: ${response.body}',
@@ -1370,7 +1392,7 @@ class PostgrestService {
   //
 
   /// Create a new bed_antrag_status entry
-  Future<Map<String, dynamic>> createBedAntragStatus({
+  Future<BeduerfnisseAntragStatus> createBedAntragStatus({
     required String status,
     String? beschreibung,
   }) async {
@@ -1389,7 +1411,10 @@ class PostgrestService {
       if (response.statusCode == 201) {
         final List<dynamic> data = jsonDecode(response.body);
         LoggerService.logInfo('bed_antrag_status created successfully');
-        return data[0];
+        if (data.isNotEmpty) {
+          return BeduerfnisseAntragStatus.fromJson(data[0] as Map<String, dynamic>);
+        }
+        throw Exception('Empty response from create bed_antrag_status');
       } else {
         LoggerService.logError(
           'Failed to create bed_antrag_status. Status: ${response.statusCode}, Body: ${response.body}',
@@ -1403,7 +1428,7 @@ class PostgrestService {
   }
 
   /// Get all bed_antrag_status entries (excluding soft deleted)
-  Future<List<Map<String, dynamic>>> getBedAntragStatusList() async {
+  Future<List<BeduerfnisseAntragStatus>> getBedAntragStatusList() async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_antrag_status?deleted_at=is.null'),
@@ -1412,7 +1437,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.cast<Map<String, dynamic>>();
+        return data
+            .map((json) => BeduerfnisseAntragStatus.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to fetch bed_antrag_status list. Status: ${response.statusCode}',
@@ -1426,7 +1453,7 @@ class PostgrestService {
   }
 
   /// Get a bed_antrag_status entry by ID
-  Future<Map<String, dynamic>?> getBedAntragStatusById(int id) async {
+  Future<BeduerfnisseAntragStatus?> getBedAntragStatusById(int id) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_antrag_status?id=eq.$id&deleted_at=is.null'),
@@ -1436,7 +1463,7 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
-          return data[0];
+          return BeduerfnisseAntragStatus.fromJson(data[0] as Map<String, dynamic>);
         }
         return null;
       } else {
@@ -1452,7 +1479,7 @@ class PostgrestService {
   }
 
   /// Get a bed_antrag_status entry by status value
-  Future<Map<String, dynamic>?> getBedAntragStatusByStatus(
+  Future<BeduerfnisseAntragStatus?> getBedAntragStatusByStatus(
     String status,
   ) async {
     try {
@@ -1466,7 +1493,7 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
-          return data[0];
+          return BeduerfnisseAntragStatus.fromJson(data[0] as Map<String, dynamic>);
         }
         return null;
       } else {
@@ -1539,7 +1566,7 @@ class PostgrestService {
   //
 
   /// Create a new bed_antrag entry
-  Future<Map<String, dynamic>> createBedAntrag({
+  Future<BeduerfnisseAntrag> createBedAntrag({
     required String antragsnummer,
     required int personId,
     int? statusId,
@@ -1578,7 +1605,10 @@ class PostgrestService {
       if (response.statusCode == 201) {
         final List<dynamic> data = jsonDecode(response.body);
         LoggerService.logInfo('bed_antrag created successfully');
-        return data[0];
+        if (data.isNotEmpty) {
+          return BeduerfnisseAntrag.fromJson(data[0] as Map<String, dynamic>);
+        }
+        throw Exception('Empty response from create bed_antrag');
       } else {
         LoggerService.logError(
           'Failed to create bed_antrag. Status: ${response.statusCode}, Body: ${response.body}',
@@ -1592,7 +1622,7 @@ class PostgrestService {
   }
 
   /// Get all bed_antrag entries (excluding soft deleted)
-  Future<List<Map<String, dynamic>>> getBedAntragList() async {
+  Future<List<BeduerfnisseAntrag>> getBedAntragList() async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_antrag?deleted_at=is.null'),
@@ -1601,7 +1631,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.cast<Map<String, dynamic>>();
+        return data
+            .map((json) => BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to fetch bed_antrag list. Status: ${response.statusCode}',
@@ -1615,7 +1647,7 @@ class PostgrestService {
   }
 
   /// Get bed_antrag entries by antragsnummer
-  Future<List<Map<String, dynamic>>> getBedAntragByAntragsnummer(
+  Future<List<BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
     String antragsnummer,
   ) async {
     try {
@@ -1628,7 +1660,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.cast<Map<String, dynamic>>();
+        return data
+            .map((json) => BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to fetch bed_antrag by antragsnummer. Status: ${response.statusCode}',
@@ -1642,7 +1676,7 @@ class PostgrestService {
   }
 
   /// Get bed_antrag entries by person_id
-  Future<List<Map<String, dynamic>>> getBedAntragByPersonId(int personId) async {
+  Future<List<BeduerfnisseAntrag>> getBedAntragByPersonId(int personId) async {
     try {
       final response = await _httpClient.get(
         Uri.parse(
@@ -1653,7 +1687,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.cast<Map<String, dynamic>>();
+        return data
+            .map((json) => BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to fetch bed_antrag by person_id. Status: ${response.statusCode}',
@@ -1667,7 +1703,7 @@ class PostgrestService {
   }
 
   /// Get bed_antrag entries by status_id
-  Future<List<Map<String, dynamic>>> getBedAntragByStatusId(int statusId) async {
+  Future<List<BeduerfnisseAntrag>> getBedAntragByStatusId(int statusId) async {
     try {
       final response = await _httpClient.get(
         Uri.parse(
@@ -1678,7 +1714,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.cast<Map<String, dynamic>>();
+        return data
+            .map((json) => BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to fetch bed_antrag by status_id. Status: ${response.statusCode}',
@@ -1692,7 +1730,7 @@ class PostgrestService {
   }
 
   /// Get a bed_antrag entry by ID
-  Future<Map<String, dynamic>?> getBedAntragById(int id) async {
+  Future<BeduerfnisseAntrag?> getBedAntragById(int id) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_antrag?id=eq.$id&deleted_at=is.null'),
@@ -1702,7 +1740,7 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
-          return data[0];
+          return BeduerfnisseAntrag.fromJson(data[0] as Map<String, dynamic>);
         }
         return null;
       } else {

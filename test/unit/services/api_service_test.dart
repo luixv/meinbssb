@@ -45,6 +45,10 @@ import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/calendar_service.dart';
 
 import 'package:meinbssb/models/person_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 
 @GenerateMocks([
   AuthService,
@@ -2278,7 +2282,11 @@ void main() {
 
     group('bed_auswahl_typ Service Tests', () {
       test('createBedAuswahlTyp delegates to postgrest service', () async {
-        final expectedResult = {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'};
+        final expectedResult = BeduerfnisseAuswahlTyp(
+          id: 1,
+          kuerzel: 'WA',
+          beschreibung: 'Waffenart',
+        );
         when(
           mockPostgrestService.createBedAuswahlTyp(
             kuerzel: anyNamed('kuerzel'),
@@ -2302,8 +2310,8 @@ void main() {
 
       test('getBedAuswahlTypen delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'},
-          {'id': 2, 'kuerzel': 'DI', 'beschreibung': 'Disziplin'},
+          BeduerfnisseAuswahlTyp(id: 1, kuerzel: 'WA', beschreibung: 'Waffenart'),
+          BeduerfnisseAuswahlTyp(id: 2, kuerzel: 'DI', beschreibung: 'Disziplin'),
         ];
         when(
           mockPostgrestService.getBedAuswahlTypen(),
@@ -2315,7 +2323,11 @@ void main() {
       });
 
       test('getBedAuswahlTypById delegates to postgrest service', () async {
-        final expectedType = {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'};
+        final expectedType = BeduerfnisseAuswahlTyp(
+          id: 1,
+          kuerzel: 'WA',
+          beschreibung: 'Waffenart',
+        );
         when(
           mockPostgrestService.getBedAuswahlTypById(1),
         ).thenAnswer((_) async => expectedType);
@@ -2348,7 +2360,12 @@ void main() {
 
     group('bed_auswahl Service Tests', () {
       test('createBedAuswahl delegates to postgrest service', () async {
-        final expectedResult = {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'};
+        final expectedResult = BeduerfnisseAuswahl(
+          id: 1,
+          typId: 1,
+          kuerzel: 'PIS',
+          beschreibung: 'Pistole',
+        );
         when(
           mockPostgrestService.createBedAuswahl(
             typId: anyNamed('typId'),
@@ -2375,8 +2392,8 @@ void main() {
 
       test('getBedAuswahlList delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
-          {'id': 2, 'typ_id': 1, 'kuerzel': 'REV', 'beschreibung': 'Revolver'},
+          BeduerfnisseAuswahl(id: 1, typId: 1, kuerzel: 'PIS', beschreibung: 'Pistole'),
+          BeduerfnisseAuswahl(id: 2, typId: 1, kuerzel: 'REV', beschreibung: 'Revolver'),
         ];
         when(
           mockPostgrestService.getBedAuswahlList(),
@@ -2389,7 +2406,7 @@ void main() {
 
       test('getBedAuswahlByTypId delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
+          BeduerfnisseAuswahl(id: 1, typId: 1, kuerzel: 'PIS', beschreibung: 'Pistole'),
         ];
         when(
           mockPostgrestService.getBedAuswahlByTypId(1),
@@ -2401,7 +2418,12 @@ void main() {
       });
 
       test('getBedAuswahlById delegates to postgrest service', () async {
-        final expectedItem = {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'};
+        final expectedItem = BeduerfnisseAuswahl(
+          id: 1,
+          typId: 1,
+          kuerzel: 'PIS',
+          beschreibung: 'Pistole',
+        );
         when(
           mockPostgrestService.getBedAuswahlById(1),
         ).thenAnswer((_) async => expectedItem);
@@ -2803,11 +2825,11 @@ void main() {
 
     group('bed_antrag_status Service Tests', () {
       test('createBedAntragStatus delegates to postgrest service', () async {
-        final expectedResult = {
-          'id': 1,
-          'status': 'offen',
-          'beschreibung': 'Antrag eingegangen'
-        };
+        final expectedResult = BeduerfnisseAntragStatus(
+          id: 1,
+          status: 'offen',
+          beschreibung: 'Antrag eingegangen',
+        );
         when(
           mockPostgrestService.createBedAntragStatus(
             status: anyNamed('status'),
@@ -2831,8 +2853,8 @@ void main() {
 
       test('getBedAntragStatusList delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'status': 'offen', 'beschreibung': 'Antrag eingegangen'},
-          {'id': 2, 'status': 'bearbeitung', 'beschreibung': 'In Bearbeitung'},
+          BeduerfnisseAntragStatus(id: 1, status: 'offen', beschreibung: 'Antrag eingegangen'),
+          BeduerfnisseAntragStatus(id: 2, status: 'bearbeitung', beschreibung: 'In Bearbeitung'),
         ];
         when(
           mockPostgrestService.getBedAntragStatusList(),
@@ -2844,11 +2866,11 @@ void main() {
       });
 
       test('getBedAntragStatusById delegates to postgrest service', () async {
-        final expectedStatus = {
-          'id': 1,
-          'status': 'offen',
-          'beschreibung': 'Antrag eingegangen'
-        };
+        final expectedStatus = BeduerfnisseAntragStatus(
+          id: 1,
+          status: 'offen',
+          beschreibung: 'Antrag eingegangen',
+        );
         when(
           mockPostgrestService.getBedAntragStatusById(1),
         ).thenAnswer((_) async => expectedStatus);
@@ -2859,11 +2881,11 @@ void main() {
       });
 
       test('getBedAntragStatusByStatus delegates to postgrest service', () async {
-        final expectedStatus = {
-          'id': 1,
-          'status': 'offen',
-          'beschreibung': 'Antrag eingegangen'
-        };
+        final expectedStatus = BeduerfnisseAntragStatus(
+          id: 1,
+          status: 'offen',
+          beschreibung: 'Antrag eingegangen',
+        );
         when(
           mockPostgrestService.getBedAntragStatusByStatus('offen'),
         ).thenAnswer((_) async => expectedStatus);
@@ -2907,12 +2929,12 @@ void main() {
 
     group('bed_antrag Service Tests', () {
       test('createBedAntrag delegates to postgrest service', () async {
-        final expectedResult = {
-          'id': 1,
-          'antragsnummer': 'A123',
-          'person_id': 100,
-          'status_id': 1,
-        };
+        final expectedResult = BeduerfnisseAntrag(
+          id: 1,
+          antragsnummer: 'A123',
+          personId: 100,
+          statusId: 1,
+        );
         when(
           mockPostgrestService.createBedAntrag(
             antragsnummer: anyNamed('antragsnummer'),
@@ -2957,8 +2979,8 @@ void main() {
 
       test('getBedAntragList delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
-          {'id': 2, 'antragsnummer': 'A124', 'person_id': 101},
+          BeduerfnisseAntrag(id: 1, antragsnummer: 'A123', personId: 100),
+          BeduerfnisseAntrag(id: 2, antragsnummer: 'A124', personId: 101),
         ];
         when(
           mockPostgrestService.getBedAntragList(),
@@ -2971,7 +2993,7 @@ void main() {
 
       test('getBedAntragByAntragsnummer delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+          BeduerfnisseAntrag(id: 1, antragsnummer: 'A123', personId: 100),
         ];
         when(
           mockPostgrestService.getBedAntragByAntragsnummer('A123'),
@@ -2984,7 +3006,7 @@ void main() {
 
       test('getBedAntragByPersonId delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+          BeduerfnisseAntrag(id: 1, antragsnummer: 'A123', personId: 100),
         ];
         when(
           mockPostgrestService.getBedAntragByPersonId(100),
@@ -2997,7 +3019,7 @@ void main() {
 
       test('getBedAntragByStatusId delegates to postgrest service', () async {
         final expectedList = [
-          {'id': 1, 'antragsnummer': 'A123', 'status_id': 1},
+          BeduerfnisseAntrag(id: 1, antragsnummer: 'A123', personId: 100, statusId: 1),
         ];
         when(
           mockPostgrestService.getBedAntragByStatusId(1),
@@ -3009,11 +3031,11 @@ void main() {
       });
 
       test('getBedAntragById delegates to postgrest service', () async {
-        final expectedAntrag = {
-          'id': 1,
-          'antragsnummer': 'A123',
-          'person_id': 100,
-        };
+        final expectedAntrag = BeduerfnisseAntrag(
+          id: 1,
+          antragsnummer: 'A123',
+          personId: 100,
+        );
         when(
           mockPostgrestService.getBedAntragById(1),
         ).thenAnswer((_) async => expectedAntrag);
