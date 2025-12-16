@@ -126,7 +126,7 @@ void main() {
       // (it was removed - now shown via RegistrationFailScreen during registration)
       expect(
         find.text(
-          'Sie haben bereits einen MeinBSSB Account.\nBitte verwenden Sie ihre bekannten Zugangsdaten.',
+          'Sie haben bereits einen gültigen MeinBSSB Account.\nBitte melden Sie sich mit den bekannten Daten an.\nSollten Sie ihr Passwort vergessen haben, führen Sie eine Passwortrücksetzung durch.\nSollten Sie ihre Account e-Mail Adresse vergessen, oder sonstige Fragen haben, wenden Sie sich bitte an webportal@bssb.bayern',
         ),
         findsNothing,
       );

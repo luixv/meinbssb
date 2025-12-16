@@ -595,10 +595,30 @@ class AuthService {
         final isUsed = latestReset['is_used'];
         if (!isUsed && createdAt != null &&
             DateTime.now().difference(createdAt).inHours < 24) {
+          // Calculate remaining time until 24 hours have passed
+          final timeSinceReset = DateTime.now().difference(createdAt);
+          final totalMinutesRemaining = (24 * 60) - timeSinceReset.inMinutes;
+          final hoursRemaining = totalMinutesRemaining ~/ 60;
+          final minutesRemaining = totalMinutesRemaining % 60;
+          
+          // Format time remaining message
+          String timeRemaining;
+          if (hoursRemaining > 1) {
+            timeRemaining = '$hoursRemaining Stunden';
+          } else if (hoursRemaining == 1) {
+            if (minutesRemaining > 0) {
+              timeRemaining = '1 Stunde und $minutesRemaining Minuten';
+            } else {
+              timeRemaining = '1 Stunde';
+            }
+          } else {
+            timeRemaining = '$minutesRemaining Minuten';
+          }
+          
           return {
             'ResultType': 98,
-            'ResultMessage':
-                'Passwort-Link wurde bereits an Ihre E-Mail gesendet. Bitte prüfen Sie Ihr Postfach.',
+            'ResultMessage': Messages.passwordResetLinkAlreadySent
+                .replaceAll('{hours}', timeRemaining),
           };
         }
       }
