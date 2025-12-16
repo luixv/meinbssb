@@ -31,6 +31,7 @@
   "schulungenBccEmail": "",
   "startRechteBccEmail": "ioannis.varsamidakis@nttdata.com",
   "registrationBccEmail": "",
+  "passwordResetBccEmail": "",
   "smtpSettings": {
     "emailProtocol": "",
     "host": "relay-cluster-eu01.hornetsecurity.com",

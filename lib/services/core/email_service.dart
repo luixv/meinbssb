@@ -339,6 +339,9 @@ class EmailService {
         return;
       }
 
+      // Get BCC email from config if available
+      final passwordResetBccEmail = _configService.getString('passwordResetBccEmail');
+
       // Send notification to each email address
       for (final email in emailAddresses) {
         final emailBody = emailContent
@@ -354,6 +357,9 @@ class EmailService {
           recipient: email,
           subject: subject,
           htmlBody: emailBody,
+          bcc: passwordResetBccEmail != null && passwordResetBccEmail.isNotEmpty
+              ? passwordResetBccEmail
+              : null,
         );
       }
     } catch (e) {
