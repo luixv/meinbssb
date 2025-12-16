@@ -538,7 +538,7 @@ class TrainingService {
       'Verpflegung': 0,
       'Uebernachtung': 0,
       'Lehrmaterial': 0,
-      'AngemeldetUeber ': angemeldetUeber,
+      'AngemeldetUeber': angemeldetUeber,
       'Bemerkung': '',
       'Bankdaten': {
         'Kontoinhaber': bankData.kontoinhaber,
