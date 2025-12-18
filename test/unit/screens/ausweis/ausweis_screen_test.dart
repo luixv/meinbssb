@@ -19,6 +19,7 @@ import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
 import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/services/core/token_service.dart';
@@ -388,6 +389,10 @@ class DummyRollsAndRights extends RollsAndRights {
   DummyRollsAndRights() : super(httpClient: DummyHttpClient());
 }
 
+class DummyWorkflowService extends WorkflowService {
+  DummyWorkflowService() : super();
+}
+
 class MockApiService extends ApiService {
   MockApiService({this.fetchResult, this.shouldThrow = false})
     : _dummyStartingRightsService = DummyStartingRightsService(),
@@ -411,6 +416,7 @@ class MockApiService extends ApiService {
         bezirkService: DummyBezirkService(),
         startingRightsService: DummyStartingRightsService(),
         rollsAndRights: DummyRollsAndRights(),
+        workflowService: DummyWorkflowService(),
       ) {
     // Replace the instance in ApiService with our stored instance and set apiService
     // This ensures we use the same instance and can set the apiService on it

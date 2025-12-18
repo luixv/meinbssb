@@ -1690,4 +1690,20 @@ class MockApiService extends _i1.Mock implements _i12.ApiService {
             ),
           )
           as _i14.Future<_i34.WorkflowRole>);
+
+  @override
+  bool canAntragChangeFromStateToState({
+    required _i34.BeduerfnisAntragStatus? currentState,
+    required _i34.BeduerfnisAntragStatus? nextState,
+    required _i34.WorkflowRole? userRole,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#canAntragChangeFromStateToState, [], {
+              #currentState: currentState,
+              #nextState: nextState,
+              #userRole: userRole,
+            }),
+            returnValue: false,
+          )
+          as bool);
 }

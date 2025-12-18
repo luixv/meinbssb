@@ -19,6 +19,7 @@ import 'services/api/verein_service.dart';
 import 'services/api/bezirk_service.dart';
 import 'services/api/starting_rights_service.dart';
 import 'services/api/rolls_and_rights_service.dart';
+import 'services/api/workflow_service.dart';
 
 import 'services/core/email_service.dart';
 import 'services/core/image_service.dart';
@@ -309,6 +310,7 @@ class AppInitializer {
   static late BezirkService bezirkService;
   static late StartingRightsService startingRightsService;
   static late RollsAndRights rollsAndRights;
+  static late WorkflowService workflowService;
   static late http.Client baseHttpClient;
   static bool _disposed = false;
 
@@ -417,6 +419,9 @@ class AppInitializer {
     // Initialize RollsAndRights service
     rollsAndRights = RollsAndRights(httpClient: httpClient);
 
+    // Initialize WorkflowService
+    workflowService = WorkflowService();
+
     // Create ApiService first (with temporary StartingRightsService to break circular dependency)
     final tempStartingRightsService = StartingRightsService();
 
@@ -438,6 +443,7 @@ class AppInitializer {
       bezirkService: bezirkService,
       startingRightsService: tempStartingRightsService,
       rollsAndRights: rollsAndRights,
+      workflowService: workflowService,
     );
 
     // Now set ApiService in the temporary StartingRightsService and use it as the real one

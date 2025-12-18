@@ -16,6 +16,7 @@ import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
 import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
@@ -44,6 +45,7 @@ import 'login_service_test.mocks.dart';
   BezirkService,
   StartingRightsService,
   RollsAndRights,
+  WorkflowService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -109,6 +111,7 @@ void main() {
       bezirkService: mockBezirkService,
       startingRightsService: mockStartingRightsService,
       rollsAndRights: mockRollsAndRights,
+      workflowService: MockWorkflowService(),
     );
   });
 

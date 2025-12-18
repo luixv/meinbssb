@@ -38,6 +38,7 @@ import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
 import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/token_service.dart';
@@ -70,6 +71,7 @@ import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
   BezirkService,
   StartingRightsService,
   RollsAndRights,
+  WorkflowService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -92,6 +94,7 @@ void main() {
   late MockBezirkService mockBezirkService;
   late MockStartingRightsService mockStartingRightsService;
   late MockRollsAndRights mockRollsAndRights;
+  late MockWorkflowService mockWorkflowService;
 
   late HttpClient httpClient;
 
@@ -113,6 +116,7 @@ void main() {
     mockBezirkService = MockBezirkService();
     mockStartingRightsService = MockStartingRightsService();
     mockRollsAndRights = MockRollsAndRights();
+    mockWorkflowService = MockWorkflowService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -140,6 +144,7 @@ void main() {
       bezirkService: mockBezirkService,
       startingRightsService: mockStartingRightsService,
       rollsAndRights: mockRollsAndRights,
+      workflowService: mockWorkflowService,
     );
   });
 
@@ -370,6 +375,7 @@ void main() {
             bezirkService: MockBezirkService(),
             startingRightsService: MockStartingRightsService(),
             rollsAndRights: MockRollsAndRights(),
+            workflowService: MockWorkflowService(),
           );
         });
 
@@ -1574,6 +1580,7 @@ void main() {
           bezirkService: MockBezirkService(),
           startingRightsService: MockStartingRightsService(),
           rollsAndRights: MockRollsAndRights(),
+          workflowService: MockWorkflowService(),
         );
       });
 

@@ -43,6 +43,7 @@ import 'package:meinbssb/services/api/starting_rights_service.dart' as _i45;
 import 'package:meinbssb/services/api/training_service.dart' as _i20;
 import 'package:meinbssb/services/api/user_service.dart' as _i28;
 import 'package:meinbssb/services/api/verein_service.dart' as _i35;
+import 'package:meinbssb/services/api/workflow_service.dart' as _i49;
 import 'package:meinbssb/services/api_service.dart' as _i46;
 import 'package:meinbssb/services/core/cache_service.dart' as _i16;
 import 'package:meinbssb/services/core/calendar_service.dart' as _i42;
@@ -2941,4 +2942,56 @@ class MockRollsAndRights extends _i1.Mock implements _i47.RollsAndRights {
             ),
           )
           as _i2.Future<_i48.WorkflowRole>);
+}
+
+/// A class which mocks [WorkflowService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockWorkflowService extends _i1.Mock implements _i49.WorkflowService {
+  MockWorkflowService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  bool canAntragChangeFromStateToState({
+    required _i48.BeduerfnisAntragStatus? currentState,
+    required _i48.BeduerfnisAntragStatus? nextState,
+    required _i48.WorkflowRole? userRole,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#canAntragChangeFromStateToState, [], {
+              #currentState: currentState,
+              #nextState: nextState,
+              #userRole: userRole,
+            }),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  List<_i48.BeduerfnisAntragStatus> getAvailableTransitions({
+    required _i48.BeduerfnisAntragStatus? currentState,
+    required _i48.WorkflowRole? userRole,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAvailableTransitions, [], {
+              #currentState: currentState,
+              #userRole: userRole,
+            }),
+            returnValue: <_i48.BeduerfnisAntragStatus>[],
+          )
+          as List<_i48.BeduerfnisAntragStatus>);
+
+  @override
+  _i48.WorkflowRole? getRequiredRoleForTransition({
+    required _i48.BeduerfnisAntragStatus? fromState,
+    required _i48.BeduerfnisAntragStatus? toState,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRequiredRoleForTransition, [], {
+              #fromState: fromState,
+              #toState: toState,
+            }),
+          )
+          as _i48.WorkflowRole?);
 }

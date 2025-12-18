@@ -1695,6 +1695,22 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
             ),
           )
           as _i12.Future<_i34.WorkflowRole>);
+
+  @override
+  bool canAntragChangeFromStateToState({
+    required _i34.BeduerfnisAntragStatus? currentState,
+    required _i34.BeduerfnisAntragStatus? nextState,
+    required _i34.WorkflowRole? userRole,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#canAntragChangeFromStateToState, [], {
+              #currentState: currentState,
+              #nextState: nextState,
+              #userRole: userRole,
+            }),
+            returnValue: false,
+          )
+          as bool);
 }
 
 /// A class which mocks [CacheService].

@@ -14,6 +14,7 @@ import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
 import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 
 import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/schulung_data.dart';
@@ -73,6 +74,7 @@ class ApiService {
     required BezirkService bezirkService,
     required StartingRightsService startingRightsService,
     required RollsAndRights rollsAndRights,
+    required WorkflowService workflowService,
   }) : _configService = configService,
        _imageService = imageService,
        _cacheService = cacheService,
@@ -87,7 +89,8 @@ class ApiService {
        _oktoberfestService = oktoberfestService,
        _bezirkService = bezirkService,
        _startingRightsService = startingRightsService,
-       _rollsAndRights = rollsAndRights;
+       _rollsAndRights = rollsAndRights,
+       _workflowService = workflowService;
 
   final ConfigService _configService;
   final ImageService _imageService;
@@ -104,6 +107,7 @@ class ApiService {
   final BezirkService _bezirkService;
   StartingRightsService _startingRightsService;
   final RollsAndRights _rollsAndRights;
+  final WorkflowService _workflowService;
 
   /// Sets the StartingRightsService instance.
   /// This is used to break the circular dependency during initialization.
@@ -1044,8 +1048,25 @@ class ApiService {
     return _postgrestService.deleteBedAntrag(id);
   }
 
-  // Rolles And Rights
+  //
+  // --- Rolles And Rights ---
+  //
   Future<WorkflowRole> getRoles(int personId) async {
     return _rollsAndRights.getRoles(personId);
+  }
+
+  //
+  // --- Workflow Service Methods ---
+  //
+  bool canAntragChangeFromStateToState({
+    required BeduerfnisAntragStatus currentState,
+    required BeduerfnisAntragStatus nextState,
+    required WorkflowRole userRole,
+  }) {
+    return _workflowService.canAntragChangeFromStateToState(
+      currentState: currentState,
+      nextState: nextState,
+      userRole: userRole,
+    );
   }
 }
