@@ -12,7 +12,7 @@ void main() {
         'deleted_at': '2024-01-03T10:00:00.000Z',
         'antragsnummer': 'A124',
         'person_id': 101,
-        'status_id': 2,
+        'status_id': BeduerfnisAntragStatus.eingereichtAmVerein,
         'wbk_neu': false,
         'wbk_art': 'green',
         'beduerfnisart': 'kurzwaffe',
