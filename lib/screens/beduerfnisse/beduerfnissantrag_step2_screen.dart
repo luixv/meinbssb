@@ -9,6 +9,7 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
+import 'beduerfnissantrag_step2_dialog_screen.dart';
 
 class BeduerfnissantragStep2Screen extends StatefulWidget {
   const BeduerfnissantragStep2Screen({
@@ -77,25 +78,59 @@ class _BeduerfnissantragStep2ScreenState
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  KeyboardFocusFAB(
-                    heroTag: 'backFromStep2Fab',
-                    tooltip: 'Zurück',
-                    semanticLabel: 'Zurück Button',
-                    semanticHint: 'Zurück zur vorherigen Seite',
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icons.arrow_back,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      KeyboardFocusFAB(
+                        heroTag: 'backFromStep2Fab',
+                        tooltip: 'Zurück',
+                        semanticLabel: 'Zurück Button',
+                        semanticHint: 'Zurück zur vorherigen Seite',
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icons.arrow_back,
+                      ),
+                    ],
                   ),
-                  KeyboardFocusFAB(
-                    heroTag: 'nextFromStep2Fab',
-                    tooltip: 'Weiter',
-                    semanticLabel: 'Weiter Button',
-                    semanticHint: 'Weiter zum nächsten Schritt',
-                    onPressed: () {
-                      _continueToNextStep();
-                    },
-                    icon: Icons.arrow_forward,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      KeyboardFocusFAB(
+                        heroTag: 'addBedSportFab',
+                        tooltip: 'Hinzufügen',
+                        semanticLabel: 'Hinzufügen Button',
+                        semanticHint: 'Neue Schießaktivität hinzufügen',
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => BeduerfnissantragStep2DialogScreen(
+                                  antragsnummer:
+                                      widget.antrag?.antragsnummer ?? '',
+                                  onSaved: (savedData) {
+                                    setState(() {
+                                      _bedSportFuture = _fetchBedSportData();
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                          );
+                        },
+                        icon: Icons.add,
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      KeyboardFocusFAB(
+                        heroTag: 'nextFromStep2Fab',
+                        tooltip: 'Weiter',
+                        semanticLabel: 'Weiter Button',
+                        semanticHint: 'Weiter zum nächsten Schritt',
+                        onPressed: () {
+                          _continueToNextStep();
+                        },
+                        icon: Icons.arrow_forward,
+                      ),
+                    ],
                   ),
                 ],
               ),

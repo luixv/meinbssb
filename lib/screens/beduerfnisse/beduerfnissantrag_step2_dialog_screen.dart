@@ -1,0 +1,500 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
+
+class BeduerfnissantragStep2DialogScreen extends StatefulWidget {
+  const BeduerfnissantragStep2DialogScreen({
+    required this.antragsnummer,
+    required this.onSaved,
+    super.key,
+  });
+
+  final String antragsnummer;
+  final Function(Map<String, dynamic>) onSaved;
+
+  @override
+  State<BeduerfnissantragStep2DialogScreen> createState() =>
+      _BeduerfnissantragStep2DialogScreenState();
+}
+
+class _BeduerfnissantragStep2DialogScreenState
+    extends State<BeduerfnissantragStep2DialogScreen> {
+  final TextEditingController _datumController = TextEditingController();
+  final TextEditingController _disziplinController = TextEditingController();
+  final TextEditingController _wettkampfartController = TextEditingController();
+  final TextEditingController _wettkampfergebnisController =
+      TextEditingController();
+  bool _training = false;
+  bool _isLoading = false;
+  int? _selectedWaffenartId;
+  late Future<List<BeduerfnisseAuswahlTyp>> _waffenartFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    _waffenartFuture = apiService.getBedAuswahlTypen();
+  }
+
+  @override
+  void dispose() {
+    _datumController.dispose();
+    _disziplinController.dispose();
+    _wettkampfartController.dispose();
+    _wettkampfergebnisController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _selectDate() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      _datumController.text =
+          '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+    }
+  }
+
+  Future<void> _saveBedSport() async {
+    if (_datumController.text.isEmpty ||
+        _selectedWaffenartId == null ||
+        _disziplinController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bitte füllen Sie alle erforderlichen Felder aus'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+
+      await apiService.createBedSport(
+        antragsnummer: widget.antragsnummer,
+        schiessdatum: _datumController.text,
+        waffenartId: _selectedWaffenartId!,
+        disziplinId: int.parse(_disziplinController.text),
+        training: _training,
+        wettkampfartId:
+            _wettkampfartController.text.isNotEmpty
+                ? int.parse(_wettkampfartController.text)
+                : null,
+        wettkampfergebnis:
+            _wettkampfergebnisController.text.isNotEmpty
+                ? double.parse(_wettkampfergebnisController.text)
+                : null,
+      );
+
+      if (mounted) {
+        widget.onSaved({
+          'schiessdatum': _datumController.text,
+          'waffenartId': _selectedWaffenartId!,
+          'disziplinId': int.parse(_disziplinController.text),
+          'training': _training,
+          'wettkampfartId':
+              _wettkampfartController.text.isNotEmpty
+                  ? int.parse(_wettkampfartController.text)
+                  : null,
+          'wettkampfergebnis':
+              _wettkampfergebnisController.text.isNotEmpty
+                  ? double.parse(_wettkampfergebnisController.text)
+                  : null,
+        });
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler beim Speichern: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<FontSizeProvider>(
+      builder: (context, fontSizeProvider, child) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+          ),
+          backgroundColor: UIConstants.backgroundColor,
+          child: Semantics(
+            container: true,
+            label: 'Dialog - Schießaktivität hinzufügen',
+            child: Padding(
+              padding: const EdgeInsets.all(UIConstants.spacingL),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Semantics(
+                      header: true,
+                      label: 'Schießaktivität hinzufügen',
+                      child: ScaledText(
+                        'Schießaktivität hinzufügen',
+                        style: UIStyles.titleStyle.copyWith(
+                          fontSize:
+                              UIStyles.titleStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                          color: UIConstants.defaultAppColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingL),
+
+                    // Datum
+                    TextField(
+                      controller: _datumController,
+                      readOnly: true,
+                      onTap: _selectDate,
+                      style: UIStyles.bodyTextStyle.copyWith(
+                        fontSize:
+                            UIStyles.bodyTextStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'Datum *',
+                        hintText: 'Wählen Sie ein Datum',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                          borderSide: const BorderSide(
+                            color: UIConstants.defaultAppColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                          borderSide: const BorderSide(
+                            color: UIConstants.defaultAppColor,
+                            width: 2,
+                          ),
+                        ),
+                        suffixIcon: const Icon(
+                          Icons.calendar_today,
+                          color: UIConstants.defaultAppColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingL),
+
+                    // Waffenart Dropdown
+                    FutureBuilder<List<BeduerfnisseAuswahlTyp>>(
+                      future: _waffenartFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return const Text(
+                            'Fehler beim Laden der Waffenarten',
+                          );
+                        }
+
+                        final waffenarten = snapshot.data ?? [];
+
+                        return DropdownButtonFormField<int>(
+                          value: _selectedWaffenartId,
+                          hint: const Text('Wählen Sie eine Waffenart'),
+                          items:
+                              waffenarten.map((waffenart) {
+                                return DropdownMenuItem<int>(
+                                  value: waffenart.id,
+                                  child: ScaledText(
+                                    waffenart.beschreibung,
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedWaffenartId = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Waffenart *',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: UIConstants.spacingL),
+
+                    // Disziplinnummer lt. SPO
+                    TextField(
+                      controller: _disziplinController,
+                      keyboardType: TextInputType.number,
+                      style: UIStyles.bodyTextStyle.copyWith(
+                        fontSize:
+                            UIStyles.bodyTextStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'Disziplinnummer lt. SPO *',
+                        hintText: 'z.B. 1',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                          borderSide: const BorderSide(
+                            color: UIConstants.defaultAppColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                          borderSide: const BorderSide(
+                            color: UIConstants.defaultAppColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingL),
+
+                    // Training Checkbox
+                    Semantics(
+                      checked: _training,
+                      enabled: true,
+                      label: 'Training',
+                      onTap: () {
+                        setState(() {
+                          _training = !_training;
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: _training,
+                            activeColor: UIConstants.defaultAppColor,
+                            onChanged: (value) {
+                              setState(() {
+                                _training = value ?? false;
+                              });
+                            },
+                          ),
+                          ScaledText(
+                            'Training',
+                            style: UIStyles.bodyTextStyle.copyWith(
+                              fontSize:
+                                  UIStyles.bodyTextStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingL),
+
+                    // Wettkampart (optional)
+                    TextField(
+                      controller: _wettkampfartController,
+                      keyboardType: TextInputType.number,
+                      style: UIStyles.bodyTextStyle.copyWith(
+                        fontSize:
+                            UIStyles.bodyTextStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'Wettkampart (optional)',
+                        hintText: 'z.B. 1',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                          borderSide: const BorderSide(
+                            color: UIConstants.defaultAppColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                          borderSide: const BorderSide(
+                            color: UIConstants.defaultAppColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingL),
+
+                    // Wettkampfergebnis (optional)
+                    TextField(
+                      controller: _wettkampfergebnisController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      style: UIStyles.bodyTextStyle.copyWith(
+                        fontSize:
+                            UIStyles.bodyTextStyle.fontSize! *
+                            fontSizeProvider.scaleFactor,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'Wettkampfergebnis (optional)',
+                        hintText: 'z.B. 95.5',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                          borderSide: const BorderSide(
+                            color: UIConstants.defaultAppColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                          borderSide: const BorderSide(
+                            color: UIConstants.defaultAppColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingXXL),
+
+                    // Action Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed:
+                              _isLoading
+                                  ? null
+                                  : () {
+                                    Navigator.of(context).pop();
+                                  },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: UIConstants.cancelButtonBackground,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: UIConstants.spacingL,
+                              vertical: UIConstants.spacingM,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                            ),
+                          ),
+                          child: ScaledText(
+                            'Abbrechen',
+                            style: UIStyles.buttonStyle.copyWith(
+                              fontSize:
+                                  UIStyles.buttonStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
+                              color: UIConstants.buttonTextColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: UIConstants.spacingM),
+                        ElevatedButton(
+                          onPressed: _isLoading ? null : _saveBedSport,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: UIConstants.submitButtonBackground,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: UIConstants.spacingL,
+                              vertical: UIConstants.spacingM,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                            ),
+                          ),
+                          child:
+                              _isLoading
+                                  ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                  : ScaledText(
+                                    'Speichern',
+                                    style: UIStyles.buttonStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.buttonStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                      color: UIConstants.buttonTextColor,
+                                    ),
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
