@@ -35,7 +35,9 @@ class _BeduerfnissantragStep1ScreenState
   String? _wbkType = 'neu'; // 'neu' or 'bestehend'
   String? _wbkColor = 'gelb'; // 'gelb' or 'gruen'
   String? _weaponType = 'kurz'; // 'kurz' or 'lang'
-  final TextEditingController _anzahlController = TextEditingController();
+  final TextEditingController _anzahlController = TextEditingController(
+    text: '0',
+  );
   String? _selectedVerein;
 
   @override

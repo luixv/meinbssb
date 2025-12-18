@@ -6,6 +6,7 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 
 class BeduerfnissantragStep2DialogScreen extends StatefulWidget {
   const BeduerfnissantragStep2DialogScreen({
@@ -26,26 +27,27 @@ class _BeduerfnissantragStep2DialogScreenState
     extends State<BeduerfnissantragStep2DialogScreen> {
   final TextEditingController _datumController = TextEditingController();
   final TextEditingController _disziplinController = TextEditingController();
-  final TextEditingController _wettkampfartController = TextEditingController();
   final TextEditingController _wettkampfergebnisController =
       TextEditingController();
   bool _training = false;
   bool _isLoading = false;
   int? _selectedWaffenartId;
   late Future<List<BeduerfnisseAuswahlTyp>> _waffenartFuture;
+  late Future<List<BeduerfnisseAuswahl>> _auswahlFuture;
+  int? _selectedWettkampfartId;
 
   @override
   void initState() {
     super.initState();
     final apiService = Provider.of<ApiService>(context, listen: false);
     _waffenartFuture = apiService.getBedAuswahlTypen();
+    _auswahlFuture = apiService.getBedAuswahlList();
   }
 
   @override
   void dispose() {
     _datumController.dispose();
     _disziplinController.dispose();
-    _wettkampfartController.dispose();
     _wettkampfergebnisController.dispose();
     super.dispose();
   }
@@ -89,10 +91,7 @@ class _BeduerfnissantragStep2DialogScreenState
         waffenartId: _selectedWaffenartId!,
         disziplinId: int.parse(_disziplinController.text),
         training: _training,
-        wettkampfartId:
-            _wettkampfartController.text.isNotEmpty
-                ? int.parse(_wettkampfartController.text)
-                : null,
+        wettkampfartId: _selectedWettkampfartId,
         wettkampfergebnis:
             _wettkampfergebnisController.text.isNotEmpty
                 ? double.parse(_wettkampfergebnisController.text)
@@ -105,10 +104,7 @@ class _BeduerfnissantragStep2DialogScreenState
           'waffenartId': _selectedWaffenartId!,
           'disziplinId': int.parse(_disziplinController.text),
           'training': _training,
-          'wettkampfartId':
-              _wettkampfartController.text.isNotEmpty
-                  ? int.parse(_wettkampfartController.text)
-                  : null,
+          'wettkampfartId': _selectedWettkampfartId,
           'wettkampfergebnis':
               _wettkampfergebnisController.text.isNotEmpty
                   ? double.parse(_wettkampfergebnisController.text)
@@ -227,12 +223,13 @@ class _BeduerfnissantragStep2DialogScreenState
                         return DropdownButtonFormField<int>(
                           value: _selectedWaffenartId,
                           hint: const Text('Wählen Sie eine Waffenart'),
+                          isExpanded: true,
                           items:
                               waffenarten.map((waffenart) {
                                 return DropdownMenuItem<int>(
                                   value: waffenart.id,
                                   child: ScaledText(
-                                    waffenart.beschreibung,
+                                    '${waffenart.id} - ${waffenart.beschreibung}',
                                     style: UIStyles.bodyTextStyle.copyWith(
                                       fontSize:
                                           UIStyles.bodyTextStyle.fontSize! *
@@ -246,6 +243,8 @@ class _BeduerfnissantragStep2DialogScreenState
                           onChanged: (value) {
                             setState(() {
                               _selectedWaffenartId = value;
+                              // Reset Wettkampfart when Waffenart changes
+                              _selectedWettkampfartId = null;
                             });
                           },
                           decoration: InputDecoration(
@@ -344,38 +343,85 @@ class _BeduerfnissantragStep2DialogScreenState
                     ),
                     const SizedBox(height: UIConstants.spacingL),
 
-                    // Wettkampart (optional)
-                    TextField(
-                      controller: _wettkampfartController,
-                      keyboardType: TextInputType.number,
-                      style: UIStyles.bodyTextStyle.copyWith(
-                        fontSize:
-                            UIStyles.bodyTextStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Wettkampart (optional)',
-                        hintText: 'z.B. 1',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
+                    // Wettkampfart Dropdown (dependent on Waffenart)
+                    FutureBuilder<List<BeduerfnisseAuswahl>>(
+                      future: _auswahlFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return const Text(
+                            'Fehler beim Laden der Wettkampfarten',
+                          );
+                        }
+
+                        final allWettkampfarten = snapshot.data ?? [];
+
+                        // Filter Wettkampfarten by selected Waffenart
+                        final filteredWettkampfarten =
+                            _selectedWaffenartId != null
+                                ? allWettkampfarten
+                                    .where(
+                                      (w) => w.typId == _selectedWaffenartId,
+                                    )
+                                    .toList()
+                                : [];
+
+                        return DropdownButtonFormField<int>(
+                          value: _selectedWettkampfartId,
+                          hint: const Text('Wählen Sie eine Wettkampfart'),
+                          items:
+                              filteredWettkampfarten.map((wettkampfart) {
+                                return DropdownMenuItem<int>(
+                                  value: wettkampfart.id,
+                                  child: ScaledText(
+                                    wettkampfart.beschreibung,
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedWettkampfartId = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Wettkampfart (optional)',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                                width: 2,
+                              ),
+                            ),
                           ),
-                          borderSide: const BorderSide(
-                            color: UIConstants.defaultAppColor,
+                          disabledHint: const Text(
+                            'Wählen Sie zuerst eine Waffenart',
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
-                          ),
-                          borderSide: const BorderSide(
-                            color: UIConstants.defaultAppColor,
-                            width: 2,
-                          ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                     const SizedBox(height: UIConstants.spacingL),
 
