@@ -144,6 +144,7 @@ flutter:
     - assets/images/BSSB_Wappen_dimmed.png
     - assets/images/stopHand.png
     - assets/config.json
+    - assets/config.dev.json
     - assets/config.test.json
     - assets/config.prod.json
     - assets/html/accountCreatedEmail.html

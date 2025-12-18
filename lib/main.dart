@@ -36,6 +36,7 @@ import 'screens/schulungen/schulungen_search_screen.dart';
 
 import 'services/api/oktoberfest_service.dart';
 import 'services/core/postgrest_service.dart';
+import 'services/core/http_client_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'providers/kill_switch_provider.dart';
@@ -325,15 +326,42 @@ class AppInitializer {
 
   static Future<void> init({bool isWindows = false}) async {
     LoggerService.init(); // Initialize with default (will use kReleaseMode)
-    configService = await ConfigService.load('assets/config.json');
+    
+    // Allow config file to be specified via --dart-define=CONFIG_FILE=assets/config.dev.json
+    // Defaults to assets/config.json if not specified
+    const configFile = String.fromEnvironment(
+      'CONFIG_FILE',
+      defaultValue: 'assets/config.json',
+    );
+    
+    debugPrint('📋 Loading config file: $configFile');
+    configService = await ConfigService.load(configFile);
+    
+    // Check if config loaded successfully
+    if (configService.getString('postgrestServer') == null) {
+      debugPrint('WARNING: Config file may not have loaded correctly. Check that $configFile exists in pubspec.yaml assets.');
+    } else {
+      debugPrint('Config loaded successfully. PostgREST server: ${configService.getString('postgrestServer')}');
+    }
+    
     // Re-initialize logger with config to check webServer
     LoggerService.init(configService);
 
     final serverTimeout = configService.getInt('serverTimeout', 'theme') ?? 10;
-    final apiBaseUrl = ConfigService.buildBaseUrlForServer(
-      configService,
-      name: 'apiBase',
-    );
+    
+    // Build API base URL with error handling
+    String apiBaseUrl;
+    try {
+      apiBaseUrl = ConfigService.buildBaseUrlForServer(
+        configService,
+        name: 'apiBase',
+      );
+      debugPrint('API Base URL: $apiBaseUrl');
+    } catch (e) {
+      debugPrint('ERROR: Failed to build API base URL: $e');
+      debugPrint('This usually means the config file is missing required fields.');
+      rethrow; // Re-throw to prevent app from running with invalid config
+    }
 
     final prefs = await SharedPreferences.getInstance();
 
@@ -343,10 +371,16 @@ class AppInitializer {
     // Shared underlying HTTP client used across services
     baseHttpClient = http.Client();
 
-    // Initialize PostgrestService
+    // Create a separate HTTP client for PostgREST that can ignore SSL certificate errors
+    final postgrestHttpClient = createHttpClientWithSslSupport(
+      configService,
+      configKey: 'postgrestIgnoreBadCertificate',
+    );
+
+    // Initialize PostgrestService with the SSL-aware client
     postgrestService = PostgrestService(
       configService: configService,
-      client: baseHttpClient,
+      client: postgrestHttpClient,
     );
 
     // 1. Initialize TokenService FIRST
