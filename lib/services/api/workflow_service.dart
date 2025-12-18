@@ -110,7 +110,7 @@ class WorkflowService {
   /// - The transition is not defined in the matrix (no row or column exists)
   /// - The cell is null (transition not permitted)
   /// - The user's role does not match the required role for the transition
-  bool canTransition({
+  bool canAntragChangeFromStateToState({
     required BeduerfnisAntragStatus currentState,
     required BeduerfnisAntragStatus nextState,
     required WorkflowRole userRole,

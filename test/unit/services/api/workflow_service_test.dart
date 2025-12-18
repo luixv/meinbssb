@@ -14,7 +14,7 @@ void main() {
       test(
         'Erlaubt Mitglied, von Entwurf zu Eingereicht am Verein zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.entwurf,
             nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
             userRole: WorkflowRole.mitglied,
@@ -26,7 +26,7 @@ void main() {
       test(
         'Verweigert Verein, von Entwurf zu Eingereicht am Verein zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.entwurf,
             nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
             userRole: WorkflowRole.verein,
@@ -38,7 +38,7 @@ void main() {
       test(
         'Verweigert BSSB, von Entwurf zu Eingereicht am Verein zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.entwurf,
             nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
             userRole: WorkflowRole.bssb,
@@ -52,7 +52,7 @@ void main() {
       test(
         'Erlaubt Verein, von Eingereicht am Verein zu Genehmight von Verein zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
             nextState: BeduerfnisAntragStatus.genehmightVonVerein,
             userRole: WorkflowRole.verein,
@@ -64,7 +64,7 @@ void main() {
       test(
         'Erlaubt Verein, von Eingereicht am Verein zu Zurückgewiesen an Mitglied zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
             nextState:
                 BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
@@ -77,7 +77,7 @@ void main() {
       test(
         'Erlaubt Verein, von Eingereicht am Verein zu Abgelehnt zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
             nextState: BeduerfnisAntragStatus.abgelehnt,
             userRole: WorkflowRole.verein,
@@ -89,7 +89,7 @@ void main() {
       test(
         'Verweigert BSSB, von Eingereicht am Verein zu Genehmight von Verein zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
             nextState: BeduerfnisAntragStatus.genehmightVonVerein,
             userRole: WorkflowRole.mitglied,
@@ -103,7 +103,7 @@ void main() {
       test(
         'Erlaubt BSSB, von Genehmight von Verein zu Eingereicht an BSSB zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.genehmightVonVerein,
             nextState: BeduerfnisAntragStatus.eingereichtAnBSSB,
             userRole: WorkflowRole.bssb,
@@ -115,7 +115,7 @@ void main() {
       test(
         'Verweigert Verein, von Genehmight von Verein zu Eingereicht an BSSB zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.genehmightVonVerein,
             nextState: BeduerfnisAntragStatus.eingereichtAnBSSB,
             userRole: WorkflowRole.verein,
@@ -127,7 +127,7 @@ void main() {
 
     group('Gültige Übergänge von Zurückgewiesen von BSSB an Verein', () {
       test('Erlaubt Verein, zu Genehmight zu wechseln', () {
-        final result = workflowService.canTransition(
+        final result = workflowService.canAntragChangeFromStateToState(
           currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein,
           nextState: BeduerfnisAntragStatus.genehmight,
           userRole: WorkflowRole.verein,
@@ -136,7 +136,7 @@ void main() {
       });
 
       test('Erlaubt BSSB, zu Abgelehnt zu wechseln', () {
-        final result = workflowService.canTransition(
+        final result = workflowService.canAntragChangeFromStateToState(
           currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein,
           nextState: BeduerfnisAntragStatus.abgelehnt,
           userRole: WorkflowRole.bssb,
@@ -145,7 +145,7 @@ void main() {
       });
 
       test('Verweigert Mitglied, zu Genehmight zu wechseln', () {
-        final result = workflowService.canTransition(
+        final result = workflowService.canAntragChangeFromStateToState(
           currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein,
           nextState: BeduerfnisAntragStatus.genehmight,
           userRole: WorkflowRole.mitglied,
@@ -156,7 +156,7 @@ void main() {
 
     group('Gültige Übergänge von Zurückgewiesen von BSSB an Mitglied', () {
       test('Erlaubt Mitglied, zu Genehmight zu wechseln', () {
-        final result = workflowService.canTransition(
+        final result = workflowService.canAntragChangeFromStateToState(
           currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
           nextState: BeduerfnisAntragStatus.genehmight,
           userRole: WorkflowRole.mitglied,
@@ -165,7 +165,7 @@ void main() {
       });
 
       test('Erlaubt BSSB, zu Abgelehnt zu wechseln', () {
-        final result = workflowService.canTransition(
+        final result = workflowService.canAntragChangeFromStateToState(
           currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
           nextState: BeduerfnisAntragStatus.abgelehnt,
           userRole: WorkflowRole.bssb,
@@ -179,7 +179,7 @@ void main() {
         'Verweigert alle Rollen von Entwurf zu Zurückgewiesen an Mitglied',
         () {
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.entwurf,
               nextState:
                   BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
@@ -188,7 +188,7 @@ void main() {
             isFalse,
           );
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.entwurf,
               nextState:
                   BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
@@ -197,7 +197,7 @@ void main() {
             isFalse,
           );
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.entwurf,
               nextState:
                   BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
@@ -212,7 +212,7 @@ void main() {
         'Verweigert alle Rollen von Zurückgewiesen an Mitglied zu Genehmight von Verein',
         () {
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState:
                   BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
               nextState: BeduerfnisAntragStatus.genehmightVonVerein,
@@ -221,7 +221,7 @@ void main() {
             isFalse,
           );
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState:
                   BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
               nextState: BeduerfnisAntragStatus.genehmightVonVerein,
@@ -237,7 +237,7 @@ void main() {
       test(
         'Erlaubt BSSB, von Eingereicht an BSSB zu Abgelehnt zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.eingereichtAnBSSB,
             nextState: BeduerfnisAntragStatus.abgelehnt,
             userRole: WorkflowRole.bssb,
@@ -249,7 +249,7 @@ void main() {
       test(
         'Verweigert Verein, von Eingereicht an BSSB zu Abgelehnt zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState: BeduerfnisAntragStatus.eingereichtAnBSSB,
             nextState: BeduerfnisAntragStatus.abgelehnt,
             userRole: WorkflowRole.verein,
@@ -262,7 +262,7 @@ void main() {
         'Verweigert alle Übergänge zu Genehmight von Eingereicht an BSSB',
         () {
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.eingereichtAnBSSB,
               nextState: BeduerfnisAntragStatus.genehmight,
               userRole: WorkflowRole.bssb,
@@ -275,7 +275,7 @@ void main() {
 
     group('Zurückgewiesen an Mitglied Übergänge', () {
       test('Erlaubt Mitglied, zurück zu Eingereicht am Verein zu wechseln', () {
-        final result = workflowService.canTransition(
+        final result = workflowService.canAntragChangeFromStateToState(
           currentState:
               BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
           nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
@@ -287,7 +287,7 @@ void main() {
       test(
         'Verweigert Verein, zurück zu Eingereicht am Verein zu wechseln',
         () {
-          final result = workflowService.canTransition(
+          final result = workflowService.canAntragChangeFromStateToState(
             currentState:
                 BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
             nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
@@ -303,7 +303,7 @@ void main() {
         'Mitglied kann Workflow starten: Entwurf -> Eingereicht am Verein',
         () {
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.entwurf,
               nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
               userRole: WorkflowRole.mitglied,
@@ -317,7 +317,7 @@ void main() {
         'Verein kann genehmigen: Eingereicht am Verein -> Genehmight von Verein',
         () {
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
               nextState: BeduerfnisAntragStatus.genehmightVonVerein,
               userRole: WorkflowRole.verein,
@@ -331,7 +331,7 @@ void main() {
         'BSSB kann weiterleiten: Genehmight von Verein -> Eingereicht an BSSB',
         () {
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.genehmightVonVerein,
               nextState: BeduerfnisAntragStatus.eingereichtAnBSSB,
               userRole: WorkflowRole.bssb,
@@ -345,7 +345,7 @@ void main() {
         'Kompletter Ablehnungsfluss funktioniert: Eingereicht an BSSB -> Abgelehnt',
         () {
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.eingereichtAnBSSB,
               nextState: BeduerfnisAntragStatus.abgelehnt,
               userRole: WorkflowRole.bssb,
@@ -360,7 +360,7 @@ void main() {
         () {
           // First transition: BSSB rejects to Mitglied
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState: BeduerfnisAntragStatus.eingereichtAnBSSB,
               nextState:
                   BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
@@ -372,7 +372,7 @@ void main() {
 
           // Mitglied can't transition directly from there to Genehmight
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState:
                   BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
               nextState: BeduerfnisAntragStatus.genehmight,
@@ -383,7 +383,7 @@ void main() {
 
           // But BSSB can reject the application
           expect(
-            workflowService.canTransition(
+            workflowService.canAntragChangeFromStateToState(
               currentState:
                   BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
               nextState: BeduerfnisAntragStatus.abgelehnt,
