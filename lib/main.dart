@@ -18,6 +18,7 @@ import 'services/api/bank_service.dart';
 import 'services/api/verein_service.dart';
 import 'services/api/bezirk_service.dart';
 import 'services/api/starting_rights_service.dart';
+import 'services/api/rolls_and_rights_service.dart';
 
 import 'services/core/email_service.dart';
 import 'services/core/image_service.dart';
@@ -43,6 +44,74 @@ import 'widgets/compulsory_update_gate.dart';
 import 'dart:io';
 
 import 'package:flutter/rendering.dart';
+
+enum WorkflowRole { mitglied, bssb, verein }
+
+/// States for Beduerfnis Antrag (Special Needs Application)
+/// Maps to the finite state machine defined in the workflow matrix
+enum BeduerfnisAntragStatus {
+  entwurf, // Draft
+  eingereichtAmVerein, // Submitted to Club
+  zurueckgewiesenAnMitgliedVonVerein, // Rejected to Member by Club
+  genehmightVonVerein, // Approved by Club
+  zurueckgewiesenVonBSSBAnVerein, // Rejected by BSSB to Club
+  zurueckgewiesenVonBSSBAnMitglied, // Rejected by BSSB to Member
+  eingereichtAnBSSB, // Submitted to BSSB
+  genehmight, // Approved
+  abgelehnt, // Rejected
+}
+
+extension BeduerfnisAntragStatusExtension on BeduerfnisAntragStatus {
+  /// Convert enum to German string representation for API/database
+  String toGermanString() {
+    switch (this) {
+      case BeduerfnisAntragStatus.entwurf:
+        return 'Entwurf';
+      case BeduerfnisAntragStatus.eingereichtAmVerein:
+        return 'Eingereicht am Verein';
+      case BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein:
+        return 'Zurückgewiesen an Mitglied von Verein';
+      case BeduerfnisAntragStatus.genehmightVonVerein:
+        return 'Genehmight von Verein';
+      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein:
+        return 'Zurückgewiesen von BSSB an Verein';
+      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied:
+        return 'Zurückgewiesen von BSSB an Mitglied';
+      case BeduerfnisAntragStatus.eingereichtAnBSSB:
+        return 'Eingereicht an BSSB';
+      case BeduerfnisAntragStatus.genehmight:
+        return 'Genehmight';
+      case BeduerfnisAntragStatus.abgelehnt:
+        return 'Abgelehnt';
+    }
+  }
+
+  /// Parse German string to enum
+  static BeduerfnisAntragStatus? fromGermanString(String? value) {
+    switch (value) {
+      case 'Entwurf':
+        return BeduerfnisAntragStatus.entwurf;
+      case 'Eingereicht am Verein':
+        return BeduerfnisAntragStatus.eingereichtAmVerein;
+      case 'Zurückgewiesen an Mitglied von Verein':
+        return BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein;
+      case 'Genehmight von Verein':
+        return BeduerfnisAntragStatus.genehmightVonVerein;
+      case 'Zurückgewiesen von BSSB an Verein':
+        return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein;
+      case 'Zurückgewiesen von BSSB an Mitglied':
+        return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied;
+      case 'Eingereicht an BSSB':
+        return BeduerfnisAntragStatus.eingereichtAnBSSB;
+      case 'Genehmight':
+        return BeduerfnisAntragStatus.genehmight;
+      case 'Abgelehnt':
+        return BeduerfnisAntragStatus.abgelehnt;
+      default:
+        return null;
+    }
+  }
+}
 
 Future<void> main() async {
   debugPrint('Starting main() - before any initialization');
@@ -239,6 +308,7 @@ class AppInitializer {
   static late CalendarService calendarService;
   static late BezirkService bezirkService;
   static late StartingRightsService startingRightsService;
+  static late RollsAndRights rollsAndRights;
   static late http.Client baseHttpClient;
   static bool _disposed = false;
 
@@ -344,6 +414,9 @@ class AppInitializer {
 
     vereinService = VereinService(httpClient: httpClient);
 
+    // Initialize RollsAndRights service
+    rollsAndRights = RollsAndRights(httpClient: httpClient);
+
     // Create ApiService first (with temporary StartingRightsService to break circular dependency)
     final tempStartingRightsService = StartingRightsService();
 
@@ -364,6 +437,7 @@ class AppInitializer {
       calendarService: calendarService,
       bezirkService: bezirkService,
       startingRightsService: tempStartingRightsService,
+      rollsAndRights: rollsAndRights,
     );
 
     // Now set ApiService in the temporary StartingRightsService and use it as the real one

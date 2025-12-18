@@ -6,6 +6,7 @@
 import 'dart:async' as _i14;
 import 'dart:typed_data' as _i15;
 
+import 'package:meinbssb/main.dart' as _i34;
 import 'package:meinbssb/models/bank_data.dart' as _i27;
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart' as _i11;
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart' as _i10;
@@ -1679,6 +1680,16 @@ class MockApiService extends _i1.Mock implements _i12.ApiService {
             returnValue: _i14.Future<bool>.value(false),
           )
           as _i14.Future<bool>);
+
+  @override
+  _i14.Future<_i34.WorkflowRole> getRoles(int? personId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRoles, [personId]),
+            returnValue: _i14.Future<_i34.WorkflowRole>.value(
+              _i34.WorkflowRole.mitglied,
+            ),
+          )
+          as _i14.Future<_i34.WorkflowRole>);
 }
 
 /// A class which mocks [ConfigService].

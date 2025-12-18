@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step1_screen.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 
@@ -100,31 +102,69 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: UIConstants.spacingM),
 
-                      // Bedürfnisse List
-                      _buildBeduerfnisItem(
-                        fontSizeProvider: fontSizeProvider,
-                        title: 'Bedürfnis 1',
-                        date: '01.12.2025',
-                        status: 'Genehmigt',
-                        statusColor: UIConstants.successColor,
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
+                      // Bedürfnisse List from API
+                      FutureBuilder<List<BeduerfnisseAntrag>>(
+                        future:
+                            userData?.personId != null
+                                ? Provider.of<ApiService>(
+                                  context,
+                                  listen: false,
+                                ).getBedAntragByPersonId(userData!.personId)
+                                : Future.value([]),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  UIConstants.defaultAppColor,
+                                ),
+                              ),
+                            );
+                          }
 
-                      _buildBeduerfnisItem(
-                        fontSizeProvider: fontSizeProvider,
-                        title: 'Bedürfnis 2',
-                        date: '15.11.2025',
-                        status: 'Abgelehnt',
-                        statusColor: UIConstants.errorColor,
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: ScaledText(
+                                'Fehler beim Laden: ${snapshot.error}',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.bodyTextStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                  color: UIConstants.errorColor,
+                                ),
+                              ),
+                            );
+                          }
 
-                      _buildBeduerfnisItem(
-                        fontSizeProvider: fontSizeProvider,
-                        title: 'Bedürfnis 3',
-                        date: '10.12.2025',
-                        status: 'In Bearbeitung',
-                        statusColor: UIConstants.warningColor,
+                          final beduerfnisse = snapshot.data ?? [];
+                          if (beduerfnisse.isEmpty) {
+                            return Center(
+                              child: ScaledText(
+                                'Keine Bedürfnisseanträge vorhanden',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.bodyTextStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                  color: UIConstants.mydarkGreyColor,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return Column(
+                            children: [
+                              for (int i = 0; i < beduerfnisse.length; i++) ...[
+                                _buildBeduerfnisItem(
+                                  fontSizeProvider: fontSizeProvider,
+                                  antrag: beduerfnisse[i],
+                                ),
+                                if (i < beduerfnisse.length - 1)
+                                  const SizedBox(height: UIConstants.spacingS),
+                              ],
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -139,13 +179,14 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
 
   Widget _buildBeduerfnisItem({
     required FontSizeProvider fontSizeProvider,
-    required String title,
-    required String date,
-    required String status,
-    required Color statusColor,
+    required BeduerfnisseAntrag antrag,
   }) {
+    final statusColor = _getStatusColor(antrag.statusId);
+    final statusText = _getStatusText(antrag.statusId);
+
     return Semantics(
-      label: '$title vom $date, Status: $status',
+      label:
+          '${antrag.antragsnummer} vom ${antrag.createdAt}, Status: $statusText',
       child: Container(
         padding: const EdgeInsets.all(UIConstants.spacingM),
         decoration: BoxDecoration(
@@ -160,7 +201,7 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ScaledText(
-                    title,
+                    antrag.antragsnummer,
                     style: UIStyles.formValueBoldStyle.copyWith(
                       fontSize:
                           UIStyles.formValueBoldStyle.fontSize! *
@@ -169,7 +210,9 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: UIConstants.spacingXS),
                   ScaledText(
-                    date,
+                    antrag.createdAt != null
+                        ? antrag.createdAt.toString()
+                        : 'N/A',
                     style: UIStyles.bodyTextStyle.copyWith(
                       fontSize:
                           UIStyles.bodyTextStyle.fontSize! *
@@ -191,7 +234,7 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
                 border: Border.all(color: statusColor),
               ),
               child: ScaledText(
-                status,
+                statusText,
                 style: UIStyles.bodyTextStyle.copyWith(
                   fontSize:
                       UIStyles.bodyTextStyle.fontSize! *
@@ -205,5 +248,31 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(int? statusId) {
+    switch (statusId) {
+      case 1: // Assuming 1 = Genehmigt
+        return UIConstants.successColor;
+      case 2: // Assuming 2 = Abgelehnt
+        return UIConstants.errorColor;
+      case 3: // Assuming 3 = In Bearbeitung
+        return UIConstants.warningColor;
+      default:
+        return UIConstants.labelTextColor;
+    }
+  }
+
+  String _getStatusText(int? statusId) {
+    switch (statusId) {
+      case 1:
+        return 'Genehmigt';
+      case 2:
+        return 'Abgelehnt';
+      case 3:
+        return 'In Bearbeitung';
+      default:
+        return 'Unbekannt';
+    }
   }
 }

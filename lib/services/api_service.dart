@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data'; // Import Uint8List
 
 import 'package:flutter/foundation.dart';
+import 'package:meinbssb/main.dart';
 import 'package:meinbssb/models/gewinn_data.dart';
 import 'package:meinbssb/services/api_service.dart' as network_ex;
 import 'package:meinbssb/services/api/auth_service.dart';
@@ -12,6 +13,7 @@ import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
+import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
 
 import 'package:meinbssb/models/bank_data.dart';
 import 'package:meinbssb/models/schulung_data.dart';
@@ -70,6 +72,7 @@ class ApiService {
     required CalendarService calendarService,
     required BezirkService bezirkService,
     required StartingRightsService startingRightsService,
+    required RollsAndRights rollsAndRights,
   }) : _configService = configService,
        _imageService = imageService,
        _cacheService = cacheService,
@@ -83,7 +86,8 @@ class ApiService {
        _emailService = emailService,
        _oktoberfestService = oktoberfestService,
        _bezirkService = bezirkService,
-       _startingRightsService = startingRightsService;
+       _startingRightsService = startingRightsService,
+       _rollsAndRights = rollsAndRights;
 
   final ConfigService _configService;
   final ImageService _imageService;
@@ -99,6 +103,7 @@ class ApiService {
   final OktoberfestService _oktoberfestService;
   final BezirkService _bezirkService;
   StartingRightsService _startingRightsService;
+  final RollsAndRights _rollsAndRights;
 
   /// Sets the StartingRightsService instance.
   /// This is used to break the circular dependency during initialization.
@@ -753,7 +758,10 @@ class ApiService {
     required String kuerzel,
     required String beschreibung,
   }) async {
-    return _postgrestService.createBedAuswahlTyp(kuerzel: kuerzel, beschreibung: beschreibung);
+    return _postgrestService.createBedAuswahlTyp(
+      kuerzel: kuerzel,
+      beschreibung: beschreibung,
+    );
   }
 
   Future<List<BeduerfnisseAuswahlTyp>> getBedAuswahlTypen() async {
@@ -1034,5 +1042,10 @@ class ApiService {
 
   Future<bool> deleteBedAntrag(int id) async {
     return _postgrestService.deleteBedAntrag(id);
+  }
+
+  // Rolles And Rights
+  Future<WorkflowRole> getRoles(int personId) async {
+    return _rollsAndRights.getRoles(personId);
   }
 }

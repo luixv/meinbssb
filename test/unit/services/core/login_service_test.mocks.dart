@@ -9,6 +9,7 @@ import 'dart:typed_data' as _i14;
 import 'package:flutter/foundation.dart' as _i18;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:http/http.dart' as _i7;
+import 'package:meinbssb/main.dart' as _i48;
 import 'package:meinbssb/models/bank_data.dart' as _i27;
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart' as _i11;
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart' as _i10;
@@ -37,6 +38,7 @@ import 'package:meinbssb/services/api/auth_service.dart' as _i19;
 import 'package:meinbssb/services/api/bank_service.dart' as _i34;
 import 'package:meinbssb/services/api/bezirk_service.dart' as _i43;
 import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i39;
+import 'package:meinbssb/services/api/rolls_and_rights_service.dart' as _i47;
 import 'package:meinbssb/services/api/starting_rights_service.dart' as _i45;
 import 'package:meinbssb/services/api/training_service.dart' as _i20;
 import 'package:meinbssb/services/api/user_service.dart' as _i28;
@@ -2920,4 +2922,23 @@ class MockStartingRightsService extends _i1.Mock
             returnValueForMissingStub: _i2.Future<void>.value(),
           )
           as _i2.Future<void>);
+}
+
+/// A class which mocks [RollsAndRights].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockRollsAndRights extends _i1.Mock implements _i47.RollsAndRights {
+  MockRollsAndRights() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<_i48.WorkflowRole> getRoles(int? personId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRoles, [personId]),
+            returnValue: _i2.Future<_i48.WorkflowRole>.value(
+              _i48.WorkflowRole.mitglied,
+            ),
+          )
+          as _i2.Future<_i48.WorkflowRole>);
 }

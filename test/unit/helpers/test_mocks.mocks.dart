@@ -6,9 +6,10 @@
 import 'dart:async' as _i13;
 import 'dart:typed_data' as _i19;
 
-import 'package:flutter/foundation.dart' as _i39;
+import 'package:flutter/foundation.dart' as _i40;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i14;
 import 'package:http/http.dart' as _i15;
+import 'package:meinbssb/main.dart' as _i37;
 import 'package:meinbssb/models/bank_data.dart' as _i30;
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart' as _i12;
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart' as _i11;
@@ -39,9 +40,9 @@ import 'package:meinbssb/services/api_service.dart' as _i17;
 import 'package:meinbssb/services/core/cache_service.dart' as _i7;
 import 'package:meinbssb/services/core/config_service.dart' as _i4;
 import 'package:meinbssb/services/core/email_service.dart' as _i5;
-import 'package:meinbssb/services/core/http_client.dart' as _i38;
+import 'package:meinbssb/services/core/http_client.dart' as _i39;
 import 'package:meinbssb/services/core/image_service.dart' as _i3;
-import 'package:meinbssb/services/core/network_service.dart' as _i37;
+import 'package:meinbssb/services/core/network_service.dart' as _i38;
 import 'package:meinbssb/services/core/postgrest_service.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i16;
@@ -1967,6 +1968,16 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
+
+  @override
+  _i13.Future<_i37.WorkflowRole> getRoles(int? personId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRoles, [personId]),
+            returnValue: _i13.Future<_i37.WorkflowRole>.value(
+              _i37.WorkflowRole.mitglied,
+            ),
+          )
+          as _i13.Future<_i37.WorkflowRole>);
 }
 
 /// A class which mocks [ConfigService].
@@ -2533,7 +2544,7 @@ class MockCacheService extends _i1.Mock implements _i7.CacheService {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i37.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i38.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -2561,7 +2572,7 @@ class MockNetworkService extends _i1.Mock implements _i37.NetworkService {
 /// A class which mocks [HttpClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpClient extends _i1.Mock implements _i38.HttpClient {
+class MockHttpClient extends _i1.Mock implements _i39.HttpClient {
   MockHttpClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -2726,7 +2737,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void registerListener({
     required String? key,
-    required _i39.ValueChanged<String?>? listener,
+    required _i40.ValueChanged<String?>? listener,
   }) => super.noSuchMethod(
     Invocation.method(#registerListener, [], {#key: key, #listener: listener}),
     returnValueForMissingStub: null,
@@ -2735,7 +2746,7 @@ class MockFlutterSecureStorage extends _i1.Mock
   @override
   void unregisterListener({
     required String? key,
-    required _i39.ValueChanged<String?>? listener,
+    required _i40.ValueChanged<String?>? listener,
   }) => super.noSuchMethod(
     Invocation.method(#unregisterListener, [], {
       #key: key,

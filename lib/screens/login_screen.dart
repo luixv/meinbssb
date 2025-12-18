@@ -125,6 +125,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleLogin() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
+    final email = _emailController.text;
 
     setState(() {
       _isLoading = true;
@@ -135,10 +136,7 @@ class LoginScreenState extends State<LoginScreen> {
     await _saveRememberMeState();
 
     try {
-      final response = await apiService.login(
-        _emailController.text,
-        _passwordController.text,
-      );
+      final response = await apiService.login(email, _passwordController.text);
 
       if (!mounted) return;
 
@@ -149,6 +147,7 @@ class LoginScreenState extends State<LoginScreen> {
           apiService,
           response['PersonID'],
           response['WebLoginID'],
+          email,
         );
       } else {
         setState(() => _errorMessage = Messages.loginFailed);
@@ -166,6 +165,7 @@ class LoginScreenState extends State<LoginScreen> {
     ApiService apiService,
     int personId,
     int webloginId,
+    String email,
   ) async {
     LoggerService.logInfo('Retrieving passdaten');
     var passdaten = await apiService.fetchPassdaten(personId);
@@ -174,7 +174,25 @@ class LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (passdaten != null) {
-      _userData = passdaten.copyWith(webLoginId: webloginId);
+      // Fetch the user's role
+      try {
+        final userRole = await apiService.getRoles(personId);
+        LoggerService.logInfo('User role retrieved: $userRole');
+        _userData = passdaten.copyWith(
+          webLoginId: webloginId,
+          email: email,
+          role:
+              userRole
+                  .toString()
+                  .split('.')
+                  .last, // Convert enum to string (e.g., "mitglied")
+        );
+      } catch (e) {
+        LoggerService.logError('Failed to retrieve user role: $e');
+        // Fall back to creating UserData without role on error
+        _userData = passdaten.copyWith(webLoginId: webloginId, email: email);
+      }
+
       _isLoggedIn = true;
       widget.onLoginSuccess(_userData!);
 

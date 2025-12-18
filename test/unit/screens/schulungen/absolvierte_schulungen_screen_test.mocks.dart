@@ -5,8 +5,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i14;
 import 'dart:typed_data' as _i15;
-import 'dart:ui' as _i35;
+import 'dart:ui' as _i36;
 
+import 'package:meinbssb/main.dart' as _i34;
 import 'package:meinbssb/models/bank_data.dart' as _i27;
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart' as _i11;
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart' as _i10;
@@ -31,7 +32,7 @@ import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart'
 import 'package:meinbssb/models/user_data.dart' as _i17;
 import 'package:meinbssb/models/verein_data.dart' as _i29;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i20;
-import 'package:meinbssb/providers/font_size_provider.dart' as _i34;
+import 'package:meinbssb/providers/font_size_provider.dart' as _i35;
 import 'package:meinbssb/services/api/auth_service.dart' as _i5;
 import 'package:meinbssb/services/api/starting_rights_service.dart' as _i13;
 import 'package:meinbssb/services/api_service.dart' as _i12;
@@ -1681,12 +1682,22 @@ class MockApiService extends _i1.Mock implements _i12.ApiService {
             returnValue: _i14.Future<bool>.value(false),
           )
           as _i14.Future<bool>);
+
+  @override
+  _i14.Future<_i34.WorkflowRole> getRoles(int? personId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRoles, [personId]),
+            returnValue: _i14.Future<_i34.WorkflowRole>.value(
+              _i34.WorkflowRole.mitglied,
+            ),
+          )
+          as _i14.Future<_i34.WorkflowRole>);
 }
 
 /// A class which mocks [FontSizeProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFontSizeProvider extends _i1.Mock implements _i34.FontSizeProvider {
+class MockFontSizeProvider extends _i1.Mock implements _i35.FontSizeProvider {
   MockFontSizeProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -1745,13 +1756,13 @@ class MockFontSizeProvider extends _i1.Mock implements _i34.FontSizeProvider {
           as String);
 
   @override
-  void addListener(_i35.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i36.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i35.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i36.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );

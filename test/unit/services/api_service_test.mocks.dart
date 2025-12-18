@@ -7,6 +7,7 @@ import 'dart:async' as _i3;
 import 'dart:typed_data' as _i16;
 
 import 'package:http/http.dart' as _i6;
+import 'package:meinbssb/main.dart' as _i47;
 import 'package:meinbssb/models/bank_data.dart' as _i30;
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart' as _i10;
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart' as _i9;
@@ -35,6 +36,7 @@ import 'package:meinbssb/services/api/auth_service.dart' as _i11;
 import 'package:meinbssb/services/api/bank_service.dart' as _i31;
 import 'package:meinbssb/services/api/bezirk_service.dart' as _i42;
 import 'package:meinbssb/services/api/oktoberfest_service.dart' as _i38;
+import 'package:meinbssb/services/api/rolls_and_rights_service.dart' as _i46;
 import 'package:meinbssb/services/api/starting_rights_service.dart' as _i44;
 import 'package:meinbssb/services/api/training_service.dart' as _i24;
 import 'package:meinbssb/services/api/user_service.dart' as _i17;
@@ -2669,4 +2671,23 @@ class MockStartingRightsService extends _i1.Mock
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
+}
+
+/// A class which mocks [RollsAndRights].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockRollsAndRights extends _i1.Mock implements _i46.RollsAndRights {
+  MockRollsAndRights() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<_i47.WorkflowRole> getRoles(int? personId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRoles, [personId]),
+            returnValue: _i3.Future<_i47.WorkflowRole>.value(
+              _i47.WorkflowRole.mitglied,
+            ),
+          )
+          as _i3.Future<_i47.WorkflowRole>);
 }

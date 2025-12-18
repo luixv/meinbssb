@@ -36,6 +36,20 @@ VALUES
 (6,	'1', '1', now()),
 (6,	'2', '2', now());
 
+insert into bed_antrag_status (id, status, beschreibung)
+values
+(1, 1, 'Entwurf'),
+(2, 2, 'Gelöscht'),
+(3, 3, 'Eingereicht am Verein'),
+(4, 4, 'Zurückgewiesen an Mitglied von Verein'),
+(5, 5, 'Genehmight von Verein'),
+(6, 6, 'Zurückgewiesen von BSSB an Verein'),
+(7, 7, 'Zurückgewiesen von BSSB an Mitglied'),
+(8, 8, 'Eingereicht an BSSB'),	
+(9, 9, 'Genehmight'),	
+(10, 10, 'Abgelehnt');
+
 SELECT * FROM bed_auswahl_typ;
 SELECT * FROM bed_auswahl;
+SELECT * FROM bed_antrag_status;
 
