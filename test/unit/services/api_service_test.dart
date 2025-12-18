@@ -3033,11 +3033,24 @@ void main() {
 
     group('bed_antrag Service Tests', () {
       test('createBedAntrag delegates to postgrest service', () async {
+        const testUserData = UserData(
+          personId: 100,
+          webLoginId: 123,
+          passnummer: '12345678',
+          vereinNr: 401051,
+          namen: 'Testuser',
+          vorname: 'Test',
+          vereinName: 'Test Club',
+          passdatenId: 1,
+          mitgliedschaftId: 100,
+          email: 'test@example.com',
+        );
+
         final expectedResult = BeduerfnisseAntrag(
           id: 1,
           antragsnummer: 'A123',
           personId: 100,
-          statusId: 1,
+          statusId: BeduerfnisAntragStatus.entwurf,
         );
         when(
           mockPostgrestService.createBedAntrag(
@@ -3059,7 +3072,7 @@ void main() {
         final result = await apiService.createBedAntrag(
           antragsnummer: 'A123',
           personId: 100,
-          statusId: 1,
+          statusId: BeduerfnisAntragStatus.entwurf,
         );
 
         expect(result, equals(expectedResult));
@@ -3067,13 +3080,13 @@ void main() {
           mockPostgrestService.createBedAntrag(
             antragsnummer: 'A123',
             personId: 100,
-            statusId: 1,
+            statusId: BeduerfnisAntragStatus.entwurf,
             wbkNeu: null,
             wbkArt: null,
             beduerfnisart: null,
             anzahlWaffen: null,
             vereinGenehmigt: null,
-            email: null,
+            email: testUserData.email,
             bankdaten: null,
             abbuchungErfolgt: null,
             bemerkung: null,
@@ -3132,7 +3145,7 @@ void main() {
             id: 1,
             antragsnummer: 'A123',
             personId: 100,
-            statusId: 1,
+            statusId: BeduerfnisAntragStatus.entwurf,
           ),
         ];
         when(

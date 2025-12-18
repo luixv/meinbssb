@@ -1911,7 +1911,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
   _i3.Future<_i10.BeduerfnisseAntrag> createBedAntrag({
     required String? antragsnummer,
     required int? personId,
-    int? statusId,
+    _i9.BeduerfnisAntragStatus? statusId,
     bool? wbkNeu,
     String? wbkArt,
     String? beduerfnisart,

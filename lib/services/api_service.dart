@@ -991,7 +991,7 @@ class ApiService {
   Future<BeduerfnisseAntrag> createBedAntrag({
     required String antragsnummer,
     required int personId,
-    int? statusId,
+    BeduerfnisAntragStatus? statusId,
     bool? wbkNeu,
     String? wbkArt,
     String? beduerfnisart,

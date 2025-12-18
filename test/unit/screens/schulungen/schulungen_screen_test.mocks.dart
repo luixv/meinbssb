@@ -1568,7 +1568,7 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
   _i12.Future<_i11.BeduerfnisseAntrag> createBedAntrag({
     required String? antragsnummer,
     required int? personId,
-    int? statusId,
+    _i10.BeduerfnisAntragStatus? statusId,
     bool? wbkNeu,
     String? wbkArt,
     String? beduerfnisart,

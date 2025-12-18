@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step1_screen.dart';
@@ -182,7 +184,7 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
     required BeduerfnisseAntrag antrag,
   }) {
     final statusColor = _getStatusColor(antrag.statusId);
-    final statusText = _getStatusText(antrag.statusId);
+    final statusText = antrag.statusId?.toGermanString() ?? 'Unbekannt';
 
     return Semantics(
       label:
@@ -211,7 +213,7 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
                   const SizedBox(height: UIConstants.spacingXS),
                   ScaledText(
                     antrag.createdAt != null
-                        ? antrag.createdAt.toString()
+                        ? DateFormat('dd.MM.yyyy').format(antrag.createdAt!)
                         : 'N/A',
                     style: UIStyles.bodyTextStyle.copyWith(
                       fontSize:
@@ -250,29 +252,28 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(int? statusId) {
-    switch (statusId) {
-      case 1: // Assuming 1 = Genehmigt
-        return UIConstants.successColor;
-      case 2: // Assuming 2 = Abgelehnt
-        return UIConstants.errorColor;
-      case 3: // Assuming 3 = In Bearbeitung
-        return UIConstants.warningColor;
+  Color _getStatusColor(BeduerfnisAntragStatus? status) {
+    switch (status) {
+      case BeduerfnisAntragStatus.entwurf:
+        return UIConstants.labelTextColor; // Draft - grey
+      case BeduerfnisAntragStatus.eingereichtAmVerein:
+        return UIConstants.warningColor; // Submitted to club - orange
+      case BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein:
+        return UIConstants.errorColor; // Rejected by club to member - red
+      case BeduerfnisAntragStatus.genehmightVonVerein:
+        return UIConstants.successColor; // Approved by club - green
+      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein:
+        return UIConstants.errorColor; // Rejected by BSSB to club - red
+      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied:
+        return UIConstants.errorColor; // Rejected by BSSB to member - red
+      case BeduerfnisAntragStatus.eingereichtAnBSSB:
+        return UIConstants.warningColor; // Submitted to BSSB - orange
+      case BeduerfnisAntragStatus.genehmight:
+        return UIConstants.successColor; // Approved by BSSB - green
+      case BeduerfnisAntragStatus.abgelehnt:
+        return UIConstants.errorColor; // Rejected - red
       default:
         return UIConstants.labelTextColor;
-    }
-  }
-
-  String _getStatusText(int? statusId) {
-    switch (statusId) {
-      case 1:
-        return 'Genehmigt';
-      case 2:
-        return 'Abgelehnt';
-      case 3:
-        return 'In Bearbeitung';
-      default:
-        return 'Unbekannt';
     }
   }
 }

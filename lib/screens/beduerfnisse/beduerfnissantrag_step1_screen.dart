@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 
@@ -74,7 +77,7 @@ class _BeduerfnissantragStep1ScreenState
                     semanticLabel: 'Weiter Button',
                     semanticHint: 'Weiter zum nächsten Schritt',
                     onPressed: () {
-                      // TODO: Navigate to next step
+                      _createBedAntrag();
                     },
                     icon: Icons.arrow_forward,
                   ),
@@ -384,7 +387,7 @@ class _BeduerfnissantragStep1ScreenState
                                 border: OutlineInputBorder(),
                               ),
                               items: [
-                                // TODO: Load from ZMI - Erst- und Zweitvereine
+                                // TODO: Load from ZMI? - Erst- und Zweitvereine
                                 DropdownMenuItem(
                                   value: 'verein1',
                                   child: ScaledText(
@@ -446,5 +449,76 @@ class _BeduerfnissantragStep1ScreenState
         );
       },
     );
+  }
+
+  Future<void> _createBedAntrag() async {
+    if (widget.userData?.personId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fehler: PersonId nicht verfügbar')),
+      );
+      return;
+    }
+
+    if (_anzahlController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fehler: Anzahl muss ausgefüllt sein')),
+      );
+      return;
+    }
+
+    try {
+      // Generate a unique Antragsnummer (e.g., "BED-20231218-001")
+      final timestamp = DateTime.now();
+      final antragsnummer =
+          'BED-${timestamp.year}${timestamp.month.toString().padLeft(2, '0')}${timestamp.day.toString().padLeft(2, '0')}-${timestamp.millisecond}';
+
+      // Create BeduerfnisseAntrag with available form data
+      final newAntrag = BeduerfnisseAntrag(
+        antragsnummer: antragsnummer,
+        personId: widget.userData!.personId,
+        statusId: BeduerfnisAntragStatus.entwurf,
+        wbkNeu: _wbkType == 'neu',
+        wbkArt: _wbkColor, // 'gelb' or 'gruen'
+        beduerfnisart: _weaponType, // 'kurz' or 'lang'
+        anzahlWaffen: int.tryParse(_anzahlController.text) ?? 0,
+        vereinGenehmigt: false,
+        email: widget.userData?.email,
+        abbuchungErfolgt: false,
+      );
+
+      // Save the antrag via ApiService
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      await apiService.createBedAntrag(
+        antragsnummer: newAntrag.antragsnummer,
+        personId: newAntrag.personId,
+        statusId: newAntrag.statusId,
+        wbkNeu: newAntrag.wbkNeu,
+        wbkArt: newAntrag.wbkArt,
+        beduerfnisart: newAntrag.beduerfnisart,
+        anzahlWaffen: newAntrag.anzahlWaffen,
+        vereinGenehmigt: newAntrag.vereinGenehmigt,
+        email: newAntrag.email,
+        abbuchungErfolgt: newAntrag.abbuchungErfolgt,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Bedürfnisantrag erstellt: ${newAntrag.antragsnummer}',
+            ),
+          ),
+        );
+
+        // Navigate back to the list screen
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler beim Erstellen: $e')));
+      }
+    }
   }
 }

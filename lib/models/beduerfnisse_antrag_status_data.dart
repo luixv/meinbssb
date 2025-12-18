@@ -64,6 +64,35 @@ extension BeduerfnisAntragStatusExtension on BeduerfnisAntragStatus {
         return null;
     }
   }
+
+  /// Get German status text by status ID
+  static String getStatusTextById(int? statusId) {
+    switch (statusId) {
+      case 1:
+        return BeduerfnisAntragStatus.entwurf.toGermanString();
+      case 2:
+        return BeduerfnisAntragStatus.eingereichtAmVerein.toGermanString();
+      case 3:
+        return BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein
+            .toGermanString();
+      case 4:
+        return BeduerfnisAntragStatus.genehmightVonVerein.toGermanString();
+      case 5:
+        return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein
+            .toGermanString();
+      case 6:
+        return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied
+            .toGermanString();
+      case 7:
+        return BeduerfnisAntragStatus.eingereichtAnBSSB.toGermanString();
+      case 8:
+        return BeduerfnisAntragStatus.genehmight.toGermanString();
+      case 9:
+        return BeduerfnisAntragStatus.abgelehnt.toGermanString();
+      default:
+        return 'Unbekannt';
+    }
+  }
 }
 
 /// Represents an application status (bed_antrag_status) in the BSSB system.

@@ -1851,7 +1851,7 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
   _i13.Future<_i12.BeduerfnisseAntrag> createBedAntrag({
     required String? antragsnummer,
     required int? personId,
-    int? statusId,
+    _i11.BeduerfnisAntragStatus? statusId,
     bool? wbkNeu,
     String? wbkArt,
     String? beduerfnisart,
@@ -3590,7 +3590,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
   _i13.Future<_i12.BeduerfnisseAntrag> createBedAntrag({
     required String? antragsnummer,
     required int? personId,
-    int? statusId,
+    _i11.BeduerfnisAntragStatus? statusId,
     bool? wbkNeu,
     String? wbkArt,
     String? beduerfnisart,

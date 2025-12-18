@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 
 void main() {
   group('BeduerfnisseAntrag', () {
@@ -89,11 +90,7 @@ void main() {
     });
 
     test('fromJson handles null id', () {
-      final json = {
-        'id': null,
-        'antragsnummer': 'A127',
-        'person_id': 104,
-      };
+      final json = {'id': null, 'antragsnummer': 'A127', 'person_id': 104};
       final antrag = BeduerfnisseAntrag.fromJson(json);
       expect(antrag.id, isNull);
       expect(antrag.antragsnummer, 'A127');
@@ -101,10 +98,7 @@ void main() {
     });
 
     test('constructor creates correct object with required fields', () {
-      const antrag = BeduerfnisseAntrag(
-        antragsnummer: 'A123',
-        personId: 100,
-      );
+      const antrag = BeduerfnisseAntrag(antragsnummer: 'A123', personId: 100);
       expect(antrag.antragsnummer, 'A123');
       expect(antrag.personId, 100);
       expect(antrag.id, isNull);
@@ -119,7 +113,7 @@ void main() {
         deletedAt: null,
         antragsnummer: 'A123',
         personId: 100,
-        statusId: 1,
+        statusId: BeduerfnisAntragStatus.entwurf,
         wbkNeu: true,
         wbkArt: 'yellow',
         beduerfnisart: 'langwaffe',
@@ -133,7 +127,7 @@ void main() {
       expect(antrag.id, 1);
       expect(antrag.antragsnummer, 'A123');
       expect(antrag.personId, 100);
-      expect(antrag.statusId, 1);
+      expect(antrag.statusId, BeduerfnisAntragStatus.entwurf);
       expect(antrag.wbkNeu, true);
       expect(antrag.wbkArt, 'yellow');
       expect(antrag.beduerfnisart, 'langwaffe');
@@ -157,7 +151,7 @@ void main() {
         deletedAt: deletedAt,
         antragsnummer: 'A123',
         personId: 100,
-        statusId: 1,
+        statusId: BeduerfnisAntragStatus.entwurf,
         wbkNeu: true,
         wbkArt: 'yellow',
         beduerfnisart: 'langwaffe',
