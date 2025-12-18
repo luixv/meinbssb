@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -325,12 +326,12 @@ class _BeduerfnissantragStep1ScreenState
                       // Anzahl TextField
                       Semantics(
                         label:
-                            'Ich besitze bereits Kurzwaffen/Langwaffen: Anzahl eingeben',
+                            'Ich besitze bereits ${_weaponType == 'kurz' ? 'Kurzwaffen' : 'Langwaffen'}: Anzahl eingeben',
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ScaledText(
-                              'Ich besitze bereits Kurzwaffen/Langwaffen:',
+                              'Ich besitze bereits ${_weaponType == 'kurz' ? 'Kurzwaffen' : 'Langwaffen'}:',
                               style: UIStyles.bodyTextStyle.copyWith(
                                 fontSize:
                                     UIStyles.bodyTextStyle.fontSize! *
@@ -341,6 +342,11 @@ class _BeduerfnissantragStep1ScreenState
                             TextField(
                               controller: _anzahlController,
                               keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9]'),
+                                ),
+                              ],
                               decoration: const InputDecoration(
                                 labelText: 'Anzahl',
                                 border: OutlineInputBorder(),
