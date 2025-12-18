@@ -1695,8 +1695,8 @@ class MockApiService extends _i1.Mock implements _i12.ApiService {
 
   @override
   bool canAntragChangeFromStateToState({
-    required _i34.BeduerfnisAntragStatus? currentState,
-    required _i34.BeduerfnisAntragStatus? nextState,
+    required _i10.BeduerfnisAntragStatus? currentState,
+    required _i10.BeduerfnisAntragStatus? nextState,
     required _i34.WorkflowRole? userRole,
   }) =>
       (super.noSuchMethod(

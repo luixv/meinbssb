@@ -49,72 +49,6 @@ import 'package:flutter/rendering.dart';
 
 enum WorkflowRole { mitglied, bssb, verein }
 
-/// States for Beduerfnis Antrag (Special Needs Application)
-/// Maps to the finite state machine defined in the workflow matrix
-enum BeduerfnisAntragStatus {
-  entwurf, // Draft
-  eingereichtAmVerein, // Submitted to Club
-  zurueckgewiesenAnMitgliedVonVerein, // Rejected to Member by Club
-  genehmightVonVerein, // Approved by Club
-  zurueckgewiesenVonBSSBAnVerein, // Rejected by BSSB to Club
-  zurueckgewiesenVonBSSBAnMitglied, // Rejected by BSSB to Member
-  eingereichtAnBSSB, // Submitted to BSSB
-  genehmight, // Approved
-  abgelehnt, // Rejected
-}
-
-extension BeduerfnisAntragStatusExtension on BeduerfnisAntragStatus {
-  /// Convert enum to German string representation for API/database
-  String toGermanString() {
-    switch (this) {
-      case BeduerfnisAntragStatus.entwurf:
-        return 'Entwurf';
-      case BeduerfnisAntragStatus.eingereichtAmVerein:
-        return 'Eingereicht am Verein';
-      case BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein:
-        return 'Zurückgewiesen an Mitglied von Verein';
-      case BeduerfnisAntragStatus.genehmightVonVerein:
-        return 'Genehmight von Verein';
-      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein:
-        return 'Zurückgewiesen von BSSB an Verein';
-      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied:
-        return 'Zurückgewiesen von BSSB an Mitglied';
-      case BeduerfnisAntragStatus.eingereichtAnBSSB:
-        return 'Eingereicht an BSSB';
-      case BeduerfnisAntragStatus.genehmight:
-        return 'Genehmight';
-      case BeduerfnisAntragStatus.abgelehnt:
-        return 'Abgelehnt';
-    }
-  }
-
-  /// Parse German string to enum
-  static BeduerfnisAntragStatus? fromGermanString(String? value) {
-    switch (value) {
-      case 'Entwurf':
-        return BeduerfnisAntragStatus.entwurf;
-      case 'Eingereicht am Verein':
-        return BeduerfnisAntragStatus.eingereichtAmVerein;
-      case 'Zurückgewiesen an Mitglied von Verein':
-        return BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein;
-      case 'Genehmight von Verein':
-        return BeduerfnisAntragStatus.genehmightVonVerein;
-      case 'Zurückgewiesen von BSSB an Verein':
-        return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein;
-      case 'Zurückgewiesen von BSSB an Mitglied':
-        return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied;
-      case 'Eingereicht an BSSB':
-        return BeduerfnisAntragStatus.eingereichtAnBSSB;
-      case 'Genehmight':
-        return BeduerfnisAntragStatus.genehmight;
-      case 'Abgelehnt':
-        return BeduerfnisAntragStatus.abgelehnt;
-      default:
-        return null;
-    }
-  }
-}
-
 Future<void> main() async {
   debugPrint('Starting main() - before any initialization');
   bool isWindows = false;
@@ -326,29 +260,33 @@ class AppInitializer {
 
   static Future<void> init({bool isWindows = false}) async {
     LoggerService.init(); // Initialize with default (will use kReleaseMode)
-    
+
     // Allow config file to be specified via --dart-define=CONFIG_FILE=assets/config.dev.json
     // Defaults to assets/config.json if not specified
     const configFile = String.fromEnvironment(
       'CONFIG_FILE',
       defaultValue: 'assets/config.json',
     );
-    
+
     debugPrint('📋 Loading config file: $configFile');
     configService = await ConfigService.load(configFile);
-    
+
     // Check if config loaded successfully
     if (configService.getString('postgrestServer') == null) {
-      debugPrint('WARNING: Config file may not have loaded correctly. Check that $configFile exists in pubspec.yaml assets.');
+      debugPrint(
+        'WARNING: Config file may not have loaded correctly. Check that $configFile exists in pubspec.yaml assets.',
+      );
     } else {
-      debugPrint('Config loaded successfully. PostgREST server: ${configService.getString('postgrestServer')}');
+      debugPrint(
+        'Config loaded successfully. PostgREST server: ${configService.getString('postgrestServer')}',
+      );
     }
-    
+
     // Re-initialize logger with config to check webServer
     LoggerService.init(configService);
 
     final serverTimeout = configService.getInt('serverTimeout', 'theme') ?? 10;
-    
+
     // Build API base URL with error handling
     String apiBaseUrl;
     try {
@@ -359,7 +297,9 @@ class AppInitializer {
       debugPrint('API Base URL: $apiBaseUrl');
     } catch (e) {
       debugPrint('ERROR: Failed to build API base URL: $e');
-      debugPrint('This usually means the config file is missing required fields.');
+      debugPrint(
+        'This usually means the config file is missing required fields.',
+      );
       rethrow; // Re-throw to prevent app from running with invalid config
     }
 

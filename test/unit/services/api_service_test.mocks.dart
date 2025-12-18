@@ -2703,8 +2703,8 @@ class MockWorkflowService extends _i1.Mock implements _i48.WorkflowService {
 
   @override
   bool canAntragChangeFromStateToState({
-    required _i47.BeduerfnisAntragStatus? currentState,
-    required _i47.BeduerfnisAntragStatus? nextState,
+    required _i9.BeduerfnisAntragStatus? currentState,
+    required _i9.BeduerfnisAntragStatus? nextState,
     required _i47.WorkflowRole? userRole,
   }) =>
       (super.noSuchMethod(
@@ -2718,8 +2718,8 @@ class MockWorkflowService extends _i1.Mock implements _i48.WorkflowService {
           as bool);
 
   @override
-  List<_i47.BeduerfnisAntragStatus> getAvailableTransitions({
-    required _i47.BeduerfnisAntragStatus? currentState,
+  List<_i9.BeduerfnisAntragStatus> getAvailableTransitions({
+    required _i9.BeduerfnisAntragStatus? currentState,
     required _i47.WorkflowRole? userRole,
   }) =>
       (super.noSuchMethod(
@@ -2727,14 +2727,14 @@ class MockWorkflowService extends _i1.Mock implements _i48.WorkflowService {
               #currentState: currentState,
               #userRole: userRole,
             }),
-            returnValue: <_i47.BeduerfnisAntragStatus>[],
+            returnValue: <_i9.BeduerfnisAntragStatus>[],
           )
-          as List<_i47.BeduerfnisAntragStatus>);
+          as List<_i9.BeduerfnisAntragStatus>);
 
   @override
   _i47.WorkflowRole? getRequiredRoleForTransition({
-    required _i47.BeduerfnisAntragStatus? fromState,
-    required _i47.BeduerfnisAntragStatus? toState,
+    required _i9.BeduerfnisAntragStatus? fromState,
+    required _i9.BeduerfnisAntragStatus? toState,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getRequiredRoleForTransition, [], {
