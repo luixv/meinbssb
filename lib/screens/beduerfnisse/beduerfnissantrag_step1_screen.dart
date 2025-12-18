@@ -8,6 +8,7 @@ import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step2_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
@@ -488,6 +489,7 @@ class _BeduerfnissantragStep1ScreenState
 
       // Save the antrag via ApiService
       final apiService = Provider.of<ApiService>(context, listen: false);
+      /*
       await apiService.createBedAntrag(
         antragsnummer: newAntrag.antragsnummer,
         personId: newAntrag.personId,
@@ -500,7 +502,7 @@ class _BeduerfnissantragStep1ScreenState
         email: newAntrag.email,
         abbuchungErfolgt: newAntrag.abbuchungErfolgt,
       );
-
+*/
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -510,8 +512,19 @@ class _BeduerfnissantragStep1ScreenState
           ),
         );
 
-        // Navigate back to the list screen
-        Navigator.pop(context);
+        // Navigate to step 2 screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => BeduerfnissantragStep2Screen(
+                  userData: widget.userData,
+                  antrag: newAntrag,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
