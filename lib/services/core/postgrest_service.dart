@@ -987,12 +987,9 @@ class PostgrestService {
       }
       if (bemerkung != null) data['bemerkung'] = bemerkung;
 
-      // Get headers with JWT token if available
-      final headers = await _getAuthHeaders();
-
       final response = await _httpClient.post(
         Uri.parse('${_baseUrl}bed_sport'),
-        headers: headers,
+        headers: _headers,
         body: jsonEncode(data),
       );
 
