@@ -947,6 +947,10 @@ class ApiService {
     return _postgrestService.deleteBedWaffeBesitz(id);
   }
 
+  Future<bool> deleteBedAntrag(int id) async {
+    return _postgrestService.deleteBedAntrag(id);
+  }
+
   //
   // --- bed_antrag_status Service Methods ---
   //
@@ -1041,10 +1045,6 @@ class ApiService {
 
   Future<bool> updateBedAntrag(int id, Map<String, dynamic> data) async {
     return _postgrestService.updateBedAntrag(id, data);
-  }
-
-  Future<bool> deleteBedAntrag(int id) async {
-    return _postgrestService.deleteBedAntrag(id);
   }
 
   //
