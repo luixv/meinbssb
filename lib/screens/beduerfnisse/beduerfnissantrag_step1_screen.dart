@@ -18,12 +18,14 @@ class BeduerfnissantragStep1Screen extends StatefulWidget {
     this.userData,
     required this.isLoggedIn,
     required this.onLogout,
+    this.onBack,
     super.key,
   });
 
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
+  final VoidCallback? onBack;
 
   @override
   State<BeduerfnissantragStep1Screen> createState() =>
@@ -70,6 +72,7 @@ class _BeduerfnissantragStep1ScreenState
                     semanticLabel: 'Zurück Button',
                     semanticHint: 'Zurück zur vorherigen Seite',
                     onPressed: () {
+                      widget.onBack?.call();
                       Navigator.pop(context);
                     },
                     icon: Icons.arrow_back,

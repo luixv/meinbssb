@@ -13,7 +13,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 
-class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
+class MeineBeduerfnisseantraegeScreen extends StatefulWidget {
   const MeineBeduerfnisseantraegeScreen({
     this.userData,
     required this.isLoggedIn,
@@ -26,6 +26,84 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
   final Function() onLogout;
 
   @override
+  State<MeineBeduerfnisseantraegeScreen> createState() =>
+      _MeineBeduerfnisseantraegeScreenState();
+}
+
+class _MeineBeduerfnisseantraegeScreenState
+    extends State<MeineBeduerfnisseantraegeScreen> {
+  late Future<List<BeduerfnisseAntrag>> _antragsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _antragsFuture = _loadAntrags();
+  }
+
+  Future<List<BeduerfnisseAntrag>> _loadAntrags() async {
+    if (widget.userData?.personId != null) {
+      return Provider.of<ApiService>(
+        context,
+        listen: false,
+      ).getBedAntragByPersonId(widget.userData!.personId);
+    }
+    return [];
+  }
+
+  Future<void> _deleteAntrag(BeduerfnisseAntrag antrag) async {
+    if (antrag.id == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Bestätigung'),
+            content: const Text(
+              'Möchten Sie diesen Antrag wirklich löschen? Dies kann nicht rückgängig gemacht werden.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Abbrechen'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Löschen'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final success = await apiService.deleteBedAntrag(antrag.id!);
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Antrag erfolgreich gelöscht')),
+          );
+          // Reload the list
+          setState(() {
+            _antragsFuture = _loadAntrags();
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Fehler beim Löschen des Antrags')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
@@ -35,9 +113,9 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
           label: 'Bedürfnisbescheinigung - Meine Bedürfnisseanträge',
           child: BaseScreenLayout(
             title: 'Bedürfnisbescheinigung',
-            userData: userData,
-            isLoggedIn: isLoggedIn,
-            onLogout: onLogout,
+            userData: widget.userData,
+            isLoggedIn: widget.isLoggedIn,
+            onLogout: widget.onLogout,
             floatingActionButton: SizedBox(
               width: MediaQuery.of(context).size.width - 32,
               child: Row(
@@ -65,9 +143,14 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
                         MaterialPageRoute(
                           builder:
                               (context) => BeduerfnissantragStep1Screen(
-                                userData: userData,
-                                isLoggedIn: isLoggedIn,
-                                onLogout: onLogout,
+                                userData: widget.userData,
+                                isLoggedIn: widget.isLoggedIn,
+                                onLogout: widget.onLogout,
+                                onBack: () {
+                                  setState(() {
+                                    _antragsFuture = _loadAntrags();
+                                  });
+                                },
                               ),
                         ),
                       );
@@ -106,13 +189,7 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
 
                       // Bedürfnisse List from API
                       FutureBuilder<List<BeduerfnisseAntrag>>(
-                        future:
-                            userData?.personId != null
-                                ? Provider.of<ApiService>(
-                                  context,
-                                  listen: false,
-                                ).getBedAntragByPersonId(userData!.personId)
-                                : Future.value([]),
+                        future: _antragsFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -246,6 +323,16 @@ class MeineBeduerfnisseantraegeScreen extends StatelessWidget {
                 ),
               ),
             ),
+            // Delete button for draft antrags
+            if (antrag.statusId == BeduerfnisAntragStatus.entwurf)
+              IconButton(
+                icon: const Icon(
+                  Icons.delete,
+                  color: UIConstants.defaultAppColor,
+                ),
+                onPressed: () => _deleteAntrag(antrag),
+                tooltip: 'Antrag löschen',
+              ),
           ],
         ),
       ),
