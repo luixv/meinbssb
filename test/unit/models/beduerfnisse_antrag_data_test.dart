@@ -12,7 +12,7 @@ void main() {
         'deleted_at': '2024-01-03T10:00:00.000Z',
         'antragsnummer': 'A124',
         'person_id': 101,
-        'status_id': BeduerfnisAntragStatus.eingereichtAmVerein,
+        'status_id': 2,
         'wbk_neu': false,
         'wbk_art': 'green',
         'beduerfnisart': 'kurzwaffe',
@@ -30,7 +30,7 @@ void main() {
       expect(antrag.deletedAt, DateTime.parse('2024-01-03T10:00:00.000Z'));
       expect(antrag.antragsnummer, 'A124');
       expect(antrag.personId, 101);
-      expect(antrag.statusId, 2);
+      expect(antrag.statusId, BeduerfnisAntragStatus.eingereichtAmVerein);
       expect(antrag.wbkNeu, false);
       expect(antrag.wbkArt, 'green');
       expect(antrag.beduerfnisart, 'kurzwaffe');

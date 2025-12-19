@@ -3073,6 +3073,7 @@ void main() {
           antragsnummer: 'A123',
           personId: 100,
           statusId: BeduerfnisAntragStatus.entwurf,
+          email: 'test.antrag@example.com',
         );
 
         expect(result, equals(expectedResult));
@@ -3086,7 +3087,7 @@ void main() {
             beduerfnisart: null,
             anzahlWaffen: null,
             vereinGenehmigt: null,
-            email: testUserData.email,
+            email: 'test.antrag@example.com',
             bankdaten: null,
             abbuchungErfolgt: null,
             bemerkung: null,
