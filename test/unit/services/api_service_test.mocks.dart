@@ -1873,40 +1873,6 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<List<_i9.BeduerfnisseAntragStatus>>);
 
   @override
-  _i3.Future<_i9.BeduerfnisseAntragStatus?> getBedAntragStatusById(int? id) =>
-      (super.noSuchMethod(
-            Invocation.method(#getBedAntragStatusById, [id]),
-            returnValue: _i3.Future<_i9.BeduerfnisseAntragStatus?>.value(),
-          )
-          as _i3.Future<_i9.BeduerfnisseAntragStatus?>);
-
-  @override
-  _i3.Future<_i9.BeduerfnisseAntragStatus?> getBedAntragStatusByStatus(
-    String? status,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#getBedAntragStatusByStatus, [status]),
-            returnValue: _i3.Future<_i9.BeduerfnisseAntragStatus?>.value(),
-          )
-          as _i3.Future<_i9.BeduerfnisseAntragStatus?>);
-
-  @override
-  _i3.Future<bool> updateBedAntragStatus(int? id, Map<String, dynamic>? data) =>
-      (super.noSuchMethod(
-            Invocation.method(#updateBedAntragStatus, [id, data]),
-            returnValue: _i3.Future<bool>.value(false),
-          )
-          as _i3.Future<bool>);
-
-  @override
-  _i3.Future<bool> deleteBedAntragStatus(int? id) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedAntragStatus, [id]),
-            returnValue: _i3.Future<bool>.value(false),
-          )
-          as _i3.Future<bool>);
-
-  @override
   _i3.Future<_i10.BeduerfnisseAntrag> createBedAntrag({
     required String? antragsnummer,
     required int? personId,
