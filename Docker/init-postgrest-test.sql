@@ -489,7 +489,11 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON bed_waffe_besitz TO web_anon;
 -- Grant access to bed_antrag_status table
 GRANT SELECT, INSERT, UPDATE, DELETE ON bed_antrag_status TO bssbuser;
 GRANT SELECT, INSERT, UPDATE ON bed_antrag_status TO web_anon;
+GRANT USAGE ON SEQUENCE bed_antrag_status_id_seq TO bssbuser;
+GRANT USAGE ON SEQUENCE bed_antrag_status_id_seq TO web_anon;
 
 -- Grant access to bed_antrag table
 GRANT SELECT, INSERT, UPDATE, DELETE ON bed_antrag TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON bed_antrag TO web_anon;
+GRANT USAGE ON SEQUENCE bed_antrag_id_seq TO bssbuser;
+GRANT USAGE ON SEQUENCE bed_antrag_id_seq TO web_anon;

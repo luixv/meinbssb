@@ -477,13 +477,20 @@ class _BeduerfnissantragStep1ScreenState
 
       // Create BeduerfnisseAntrag with available form data
 
+      // Map weapon type to database values: 'kurz' -> 'kurzwaffe', 'lang' -> 'langwaffe'
+      final beduerfnisartValue =
+          _weaponType == 'kurz' ? 'kurzwaffe' : 'langwaffe';
+
+      // Map wbk color to database values: 'gelb' -> 'yellow', 'gruen' -> 'green'
+      final wbkArtValue = _wbkColor == 'gelb' ? 'yellow' : 'green';
+
       final newAntrag = BeduerfnisseAntrag(
         antragsnummer: antragsnummer,
         personId: widget.userData!.personId,
         statusId: BeduerfnisAntragStatus.entwurf,
         wbkNeu: _wbkType == 'neu',
-        wbkArt: _wbkColor, // 'gelb' or 'gruen'
-        beduerfnisart: _weaponType, // 'kurz' or 'lang'
+        wbkArt: wbkArtValue, // 'yellow' or 'green'
+        beduerfnisart: beduerfnisartValue, // 'kurzwaffe' or 'langwaffe'
         anzahlWaffen: int.tryParse(_anzahlController.text) ?? 0,
         vereinGenehmigt: false,
         email: widget.userData?.email,
@@ -492,7 +499,7 @@ class _BeduerfnissantragStep1ScreenState
 
       // Save the antrag via ApiService
       final apiService = Provider.of<ApiService>(context, listen: false);
-      /*
+
       await apiService.createBedAntrag(
         antragsnummer: newAntrag.antragsnummer,
         personId: newAntrag.personId,
@@ -505,7 +512,7 @@ class _BeduerfnissantragStep1ScreenState
         email: newAntrag.email,
         abbuchungErfolgt: newAntrag.abbuchungErfolgt,
       );
-*/
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
