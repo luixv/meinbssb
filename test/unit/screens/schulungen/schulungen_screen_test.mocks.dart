@@ -1465,12 +1465,9 @@ class MockApiService extends _i1.Mock implements _i10.ApiService {
           as _i9.Future<List<_i8.BeduerfnisseAntrag>>);
 
   @override
-  _i9.Future<bool> updateBedAntrag(
-    int? antragsnummer,
-    _i8.BeduerfnisseAntrag? antrag,
-  ) =>
+  _i9.Future<bool> updateBedAntrag(_i8.BeduerfnisseAntrag? antrag) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedAntrag, [antragsnummer, antrag]),
+            Invocation.method(#updateBedAntrag, [antrag]),
             returnValue: _i9.Future<bool>.value(false),
           )
           as _i9.Future<bool>);

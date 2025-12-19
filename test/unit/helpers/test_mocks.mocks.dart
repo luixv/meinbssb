@@ -1759,12 +1759,9 @@ class MockApiService extends _i1.Mock implements _i15.ApiService {
           as _i10.Future<List<_i9.BeduerfnisseAntrag>>);
 
   @override
-  _i10.Future<bool> updateBedAntrag(
-    int? antragsnummer,
-    _i9.BeduerfnisseAntrag? antrag,
-  ) =>
+  _i10.Future<bool> updateBedAntrag(_i9.BeduerfnisseAntrag? antrag) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedAntrag, [antragsnummer, antrag]),
+            Invocation.method(#updateBedAntrag, [antrag]),
             returnValue: _i10.Future<bool>.value(false),
           )
           as _i10.Future<bool>);
@@ -3337,12 +3334,9 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i10.Future<List<_i9.BeduerfnisseAntrag>>);
 
   @override
-  _i10.Future<bool> updateBedAntrag(
-    int? antragsnummer,
-    _i9.BeduerfnisseAntrag? antrag,
-  ) =>
+  _i10.Future<bool> updateBedAntrag(_i9.BeduerfnisseAntrag? antrag) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedAntrag, [antragsnummer, antrag]),
+            Invocation.method(#updateBedAntrag, [antrag]),
             returnValue: _i10.Future<bool>.value(false),
           )
           as _i10.Future<bool>);

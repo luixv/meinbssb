@@ -1331,7 +1331,7 @@ void main() {
           personId: 100,
           vereinGenehmigt: true,
         );
-        final result = await service.updateBedAntrag(100000, antrag);
+        final result = await service.updateBedAntrag(antrag);
         expect(result, isTrue);
         verify(
           mockClient.patch(
@@ -1357,7 +1357,7 @@ void main() {
           personId: 100,
           vereinGenehmigt: true,
         );
-        final result = await service.updateBedAntrag(100000, antrag);
+        final result = await service.updateBedAntrag(antrag);
         expect(result, isFalse);
       });
 

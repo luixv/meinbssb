@@ -961,8 +961,8 @@ class ApiService {
   }
 
 
-  Future<bool> updateBedAntrag(int antragsnummer, BeduerfnisseAntrag antrag) async {
-    return _postgrestService.updateBedAntrag(antragsnummer, antrag);
+  Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
+    return _postgrestService.updateBedAntrag(antrag);
   }
 
   Future<bool> deleteBedAntrag(int antragsnummer) async {

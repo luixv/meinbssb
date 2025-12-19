@@ -2947,13 +2947,13 @@ void main() {
           vereinGenehmigt: true,
         );
         when(
-          mockPostgrestService.updateBedAntrag(100000, antrag),
+          mockPostgrestService.updateBedAntrag(antrag),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedAntrag(100000, antrag);
+        final result = await apiService.updateBedAntrag(antrag);
         expect(result, isTrue);
         verify(
-          mockPostgrestService.updateBedAntrag(100000, antrag),
+          mockPostgrestService.updateBedAntrag(antrag),
         ).called(1);
       });
 

@@ -2094,12 +2094,9 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
           as _i2.Future<List<_i9.BeduerfnisseAntrag>>);
 
   @override
-  _i2.Future<bool> updateBedAntrag(
-    int? antragsnummer,
-    _i9.BeduerfnisseAntrag? antrag,
-  ) =>
+  _i2.Future<bool> updateBedAntrag(_i9.BeduerfnisseAntrag? antrag) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedAntrag, [antragsnummer, antrag]),
+            Invocation.method(#updateBedAntrag, [antrag]),
             returnValue: _i2.Future<bool>.value(false),
           )
           as _i2.Future<bool>);

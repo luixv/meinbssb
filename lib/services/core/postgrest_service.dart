@@ -17,9 +17,7 @@ class PostgrestService {
     required this.configService,
     http.Client? client,
     TokenService? tokenService,
-  }) : _httpClient = client ?? http.Client(),
-       _tokenService = tokenService;
-
+  }) : _httpClient = client ?? http.Client();
   // Expose cache for testing
   Map<String, Uint8List> get profilePhotoCache => _profilePhotoCache;
   // Simple in-memory cache for profile photos
@@ -27,7 +25,6 @@ class PostgrestService {
 
   final ConfigService configService;
   final http.Client _httpClient;
-  final TokenService? _tokenService;
 
   String get _baseUrl {
     final baseUrl = ConfigService.buildBaseUrlForServer(
@@ -38,30 +35,6 @@ class PostgrestService {
     // Add trailing slash to ensure proper endpoint concatenation
     // (e.g., /api + users = /api/users, not /apiusers)
     return baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
-  }
-
-  /// Get headers with JWT token if TokenService is available
-  Future<Map<String, String>> _getAuthHeaders() async {
-    final apiKey = configService.getString('postgrestApiKey');
-    final headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Prefer':
-          'return=representation', // This tells PostgREST to return the affected rows
-      if (apiKey != null && apiKey.isNotEmpty) 'X-API-Key': apiKey,
-    };
-
-    // Add JWT token if available
-    if (_tokenService != null) {
-      try {
-        final token = await _tokenService.getAuthToken();
-        headers['Authorization'] = 'Bearer $token';
-      } catch (e) {
-        LoggerService.logWarning('Failed to get auth token: $e');
-      }
-    }
-
-    return headers;
   }
 
   Map<String, String> get _headers {
@@ -1465,8 +1438,13 @@ class PostgrestService {
 
 
   /// Update a bed_antrag entry by antragsnummer
-  Future<bool> updateBedAntrag(int antragsnummer, BeduerfnisseAntrag antrag) async {
+  Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
     try {
+      // Validate that antragsnummer is present
+      if (antrag.antragsnummer == null) {
+        LoggerService.logError('Cannot update bed_antrag: antragsnummer is null');
+        return false;
+      }
       // Convert model to JSON, using lowercase field names for PostgREST
       final updateData = {
         'changed_at': DateTime.now().toIso8601String(),
@@ -1483,7 +1461,7 @@ class PostgrestService {
       };
 
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_antrag?antragsnummer=eq.$antragsnummer'),
+        Uri.parse('${_baseUrl}bed_antrag?antragsnummer=eq.${antrag.antragsnummer}'),
         headers: _headers,
         body: jsonEncode(updateData),
       );
