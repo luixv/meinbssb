@@ -315,7 +315,7 @@ class AppInitializer {
       configKey: 'postgrestIgnoreBadCertificate',
     );
 
-    // Initialize PostgrestService with the SSL-aware client
+    // Initialize PostgrestService with the SSL-aware client (TokenService will be set later)
     postgrestService = PostgrestService(
       configService: configService,
       client: postgrestHttpClient,
@@ -328,7 +328,13 @@ class AppInitializer {
       client: baseHttpClient,
     );
 
-    // 2. Then, initialize HttpClient for main API
+    // Now that TokenService is initialized, update PostgrestService to use it
+    // This allows PostgrestService to add JWT tokens to authenticated requests
+    postgrestService = PostgrestService(
+      configService: configService,
+      client: postgrestHttpClient,
+      tokenService: tokenService,
+    ); // 2. Then, initialize HttpClient for main API
     httpClient = HttpClient(
       baseUrl: apiBaseUrl,
       serverTimeout: serverTimeout,

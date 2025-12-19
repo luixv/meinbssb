@@ -109,13 +109,40 @@ class _BeduerfnissantragStep2ScreenState
                                   antragsnummer:
                                       widget.antrag?.antragsnummer ?? '',
                                   onSaved: (savedData) {
-                                    setState(() {
-                                      _bedSportFuture = _fetchBedSportData();
-                                    });
-                                    Navigator.pop(context);
+                                    // Small delay to ensure data is persisted
+                                    Future.delayed(
+                                      const Duration(milliseconds: 500),
+                                      () {
+                                        if (mounted) {
+                                          setState(() {
+                                            _bedSportFuture =
+                                                _fetchBedSportData();
+                                          });
+                                        }
+                                      },
+                                    );
                                   },
                                 ),
-                          );
+                          ).then((result) {
+                            if (result != null &&
+                                result is Map<String, dynamic>) {
+                              if (result.containsKey('error')) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(result['error'] as String),
+                                  ),
+                                );
+                              } else if (result.containsKey('success')) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Schießaktivität hinzugefügt',
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          });
                         },
                         icon: Icons.add,
                       ),
@@ -342,7 +369,7 @@ class _BeduerfnissantragStep2ScreenState
   }
 
   Future<void> _continueToNextStep() async {
-    // TODO: Implement step 3 
+    // TODO: Implement step 3
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Funktionalität wird noch implementiert')),

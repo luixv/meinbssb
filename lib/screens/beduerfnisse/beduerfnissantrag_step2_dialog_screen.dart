@@ -63,7 +63,7 @@ class _BeduerfnissantragStep2DialogScreenState
 
     if (pickedDate != null) {
       _datumController.text =
-          '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+          '${pickedDate.day.toString().padLeft(2, '0')}.${pickedDate.month.toString().padLeft(2, '0')}.${pickedDate.year}';
     }
   }
 
@@ -71,11 +71,11 @@ class _BeduerfnissantragStep2DialogScreenState
     if (_datumController.text.isEmpty ||
         _selectedWaffenartId == null ||
         _disziplinController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bitte füllen Sie alle erforderlichen Felder aus'),
-        ),
-      );
+      if (mounted) {
+        Navigator.of(
+          context,
+        ).pop({'error': 'Bitte füllen Sie alle erforderlichen Felder aus'});
+      }
       return;
     }
 
@@ -86,9 +86,14 @@ class _BeduerfnissantragStep2DialogScreenState
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
 
+      // Convert DD.MM.YYYY format to YYYY-MM-DD for database
+      final dateParts = _datumController.text.split('.');
+      final schiessdatumForDb =
+          '${dateParts[2]}-${dateParts[1]}-${dateParts[0]}';
+
       await apiService.createBedSport(
         antragsnummer: widget.antragsnummer,
-        schiessdatum: _datumController.text,
+        schiessdatum: schiessdatumForDb,
         waffenartId: _selectedWaffenartId!,
         disziplinId: int.parse(_disziplinController.text),
         training: _training,
@@ -111,13 +116,11 @@ class _BeduerfnissantragStep2DialogScreenState
                   ? double.parse(_wettkampfergebnisController.text)
                   : null,
         });
-        Navigator.of(context).pop();
+        Navigator.of(context).pop({'success': true});
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Speichern: $e')));
+        Navigator.of(context).pop({'error': 'Fehler beim Speichern: $e'});
       }
     } finally {
       if (mounted) {

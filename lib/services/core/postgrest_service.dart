@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'logger_service.dart';
 import 'config_service.dart';
+import 'token_service.dart';
 import 'dart:typed_data'; // Import Uint8List
 import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
@@ -9,16 +10,21 @@ import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 
 class PostgrestService {
-  PostgrestService({required this.configService, http.Client? client})
-    : _httpClient = client ?? http.Client();
+  PostgrestService({
+    required this.configService,
+    http.Client? client,
+    TokenService? tokenService,
+  }) : _httpClient = client ?? http.Client(),
+       _tokenService = tokenService;
+
   // Expose cache for testing
   Map<String, Uint8List> get profilePhotoCache => _profilePhotoCache;
   // Simple in-memory cache for profile photos
   final Map<String, Uint8List> _profilePhotoCache = {};
 
   final ConfigService configService;
-
   final http.Client _httpClient;
+  final TokenService? _tokenService;
 
   String get _baseUrl {
     final baseUrl = ConfigService.buildBaseUrlForServer(
@@ -29,6 +35,30 @@ class PostgrestService {
     // Add trailing slash to ensure proper endpoint concatenation
     // (e.g., /api + users = /api/users, not /apiusers)
     return baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
+  }
+
+  /// Get headers with JWT token if TokenService is available
+  Future<Map<String, String>> _getAuthHeaders() async {
+    final apiKey = configService.getString('postgrestApiKey');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Prefer':
+          'return=representation', // This tells PostgREST to return the affected rows
+      if (apiKey != null && apiKey.isNotEmpty) 'X-API-Key': apiKey,
+    };
+
+    // Add JWT token if available
+    if (_tokenService != null) {
+      try {
+        final token = await _tokenService.getAuthToken();
+        headers['Authorization'] = 'Bearer $token';
+      } catch (e) {
+        LoggerService.logWarning('Failed to get auth token: $e');
+      }
+    }
+
+    return headers;
   }
 
   Map<String, String> get _headers {
@@ -1128,13 +1158,16 @@ class PostgrestService {
         data['wettkampfergebnis'] = wettkampfergebnis;
       }
 
+      // Get headers with JWT token if available
+      final headers = await _getAuthHeaders();
+
       final response = await _httpClient.post(
         Uri.parse('${_baseUrl}bed_sport'),
-        headers: _headers,
+        headers: headers,
         body: jsonEncode(data),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         LoggerService.logInfo('bed_sport created successfully');
         final List<dynamic> result = jsonDecode(response.body);
         return result.isNotEmpty ? result[0] : {};
