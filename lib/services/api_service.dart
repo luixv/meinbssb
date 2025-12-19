@@ -955,36 +955,8 @@ class ApiService {
   // --- bed_antrag_status Service Methods ---
   //
 
-  Future<BeduerfnisseAntragStatus> createBedAntragStatus({
-    required String status,
-    String? beschreibung,
-  }) async {
-    return _postgrestService.createBedAntragStatus(
-      status: status,
-      beschreibung: beschreibung,
-    );
-  }
-
   Future<List<BeduerfnisseAntragStatus>> getBedAntragStatusList() async {
     return _postgrestService.getBedAntragStatusList();
-  }
-
-  Future<BeduerfnisseAntragStatus?> getBedAntragStatusById(int id) async {
-    return _postgrestService.getBedAntragStatusById(id);
-  }
-
-  Future<BeduerfnisseAntragStatus?> getBedAntragStatusByStatus(
-    String status,
-  ) async {
-    return _postgrestService.getBedAntragStatusByStatus(status);
-  }
-
-  Future<bool> updateBedAntragStatus(int id, Map<String, dynamic> data) async {
-    return _postgrestService.updateBedAntragStatus(id, data);
-  }
-
-  Future<bool> deleteBedAntragStatus(int id) async {
-    return _postgrestService.deleteBedAntragStatus(id);
   }
 
   //

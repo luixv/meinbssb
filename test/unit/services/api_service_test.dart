@@ -2918,33 +2918,7 @@ void main() {
     });
 
     group('bed_antrag_status Service Tests', () {
-      test('createBedAntragStatus delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseAntragStatus(
-          id: 1,
-          status: 'offen',
-          beschreibung: 'Antrag eingegangen',
-        );
-        when(
-          mockPostgrestService.createBedAntragStatus(
-            status: anyNamed('status'),
-            beschreibung: anyNamed('beschreibung'),
-          ),
-        ).thenAnswer((_) async => expectedResult);
-
-        final result = await apiService.createBedAntragStatus(
-          status: 'offen',
-          beschreibung: 'Antrag eingegangen',
-        );
-
-        expect(result, equals(expectedResult));
-        verify(
-          mockPostgrestService.createBedAntragStatus(
-            status: 'offen',
-            beschreibung: 'Antrag eingegangen',
-          ),
-        ).called(1);
-      });
-
+    
       test('getBedAntragStatusList delegates to postgrest service', () async {
         final expectedList = [
           BeduerfnisseAntragStatus(
@@ -2967,84 +2941,10 @@ void main() {
         verify(mockPostgrestService.getBedAntragStatusList()).called(1);
       });
 
-      test('getBedAntragStatusById delegates to postgrest service', () async {
-        final expectedStatus = BeduerfnisseAntragStatus(
-          id: 1,
-          status: 'offen',
-          beschreibung: 'Antrag eingegangen',
-        );
-        when(
-          mockPostgrestService.getBedAntragStatusById(1),
-        ).thenAnswer((_) async => expectedStatus);
-
-        final result = await apiService.getBedAntragStatusById(1);
-        expect(result, equals(expectedStatus));
-        verify(mockPostgrestService.getBedAntragStatusById(1)).called(1);
-      });
-
-      test(
-        'getBedAntragStatusByStatus delegates to postgrest service',
-        () async {
-          final expectedStatus = BeduerfnisseAntragStatus(
-            id: 1,
-            status: 'offen',
-            beschreibung: 'Antrag eingegangen',
-          );
-          when(
-            mockPostgrestService.getBedAntragStatusByStatus('offen'),
-          ).thenAnswer((_) async => expectedStatus);
-
-          final result = await apiService.getBedAntragStatusByStatus('offen');
-          expect(result, equals(expectedStatus));
-          verify(
-            mockPostgrestService.getBedAntragStatusByStatus('offen'),
-          ).called(1);
-        },
-      );
-
-      test('updateBedAntragStatus delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.updateBedAntragStatus(1, {
-            'beschreibung': 'Updated',
-          }),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.updateBedAntragStatus(1, {
-          'beschreibung': 'Updated',
-        });
-        expect(result, isTrue);
-        verify(
-          mockPostgrestService.updateBedAntragStatus(1, {
-            'beschreibung': 'Updated',
-          }),
-        ).called(1);
-      });
-
-      test('deleteBedAntragStatus delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.deleteBedAntragStatus(1),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.deleteBedAntragStatus(1);
-        expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedAntragStatus(1)).called(1);
-      });
     });
 
     group('bed_antrag Service Tests', () {
       test('createBedAntrag delegates to postgrest service', () async {
-        const testUserData = UserData(
-          personId: 100,
-          webLoginId: 123,
-          passnummer: '12345678',
-          vereinNr: 401051,
-          namen: 'Testuser',
-          vorname: 'Test',
-          vereinName: 'Test Club',
-          passdatenId: 1,
-          mitgliedschaftId: 100,
-          email: 'test@example.com',
-        );
 
         final expectedResult = BeduerfnisseAntrag(
           id: 1,
