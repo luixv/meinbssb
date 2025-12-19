@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS bed_datei (
     created_at      TIMESTAMP DEFAULT now(),
     changed_at      TIMESTAMP,
     deleted_at      TIMESTAMP,
-    antragsnummer   TEXT NOT NULL,
+    antragsnummer   BIGINT NOT NULL,
     dateiname       TEXT NOT NULL,
     file_bytes      BYTEA NOT NULL
 );
@@ -93,13 +93,14 @@ CREATE TABLE IF NOT EXISTS bed_sport (
     created_at          TIMESTAMP DEFAULT now(),
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT NOT NULL,
+    antragsnummer       BIGINT NOT NULL,
     schiessdatum         DATE NOT NULL,
     waffenart_id         INT NOT NULL REFERENCES bed_auswahl(id),
     disziplin_id         INT NOT NULL REFERENCES bed_auswahl(id),
     training             BOOLEAN NOT NULL DEFAULT false,
     wettkampfart_id      INT REFERENCES bed_auswahl(id),
-    wettkampfergebnis    NUMERIC(7,1)
+    wettkampfergebnis    NUMERIC(7,1),
+    bemerkung            TEXT
 );
 
 -- Create bed_waffe_besitz table (Weapon Ownership Records)
@@ -108,7 +109,7 @@ CREATE TABLE IF NOT EXISTS bed_waffe_besitz (
     created_at          TIMESTAMP DEFAULT now(),
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT NOT NULL,
+    antragsnummer       BIGINT NOT NULL,
     wbk_nr              VARCHAR(25) NOT NULL,
     lfd_wbk             VARCHAR(3) NOT NULL,
     waffenart_id        INT NOT NULL REFERENCES bed_auswahl(id),
@@ -121,6 +122,9 @@ CREATE TABLE IF NOT EXISTS bed_waffe_besitz (
     verband_id          INT REFERENCES bed_auswahl(id),
     bemerkung           VARCHAR(500)
 );
+
+-- Create sequence for antragsnummer starting at 100000
+CREATE SEQUENCE IF NOT EXISTS seq_antragsnummer START WITH 100000;
 
 -- Create bed_antrag_status table (Application Status)
 CREATE TABLE IF NOT EXISTS bed_antrag_status (
@@ -137,18 +141,19 @@ CREATE TABLE IF NOT EXISTS bed_antrag (
     created_at          TIMESTAMP DEFAULT now(),
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT NOT NULL,
+    antragsnummer       BIGINT NOT NULL DEFAULT nextval('seq_antragsnummer'),
     person_id           INT NOT NULL,
     status_id           INT REFERENCES bed_antrag_status(id),
     wbk_neu             BOOLEAN DEFAULT false,
-    wbk_art             TEXT CHECK (wbk_art IN ('yellow', 'green')),
+    wbk_art             TEXT CHECK (wbk_art IN ('gelb', 'gruen')),
     beduerfnisart       TEXT CHECK (beduerfnisart IN ('langwaffe', 'kurzwaffe')),
     anzahl_waffen       INTEGER,
     verein_genehmigt    BOOLEAN DEFAULT false,
     email               TEXT,
     bankdaten           JSONB,
     abbuchung_erfolgt   BOOLEAN DEFAULT false,
-    bemerkung           TEXT
+    bemerkung           TEXT,
+    CONSTRAINT uq_bed_antrag_antragsnummer UNIQUE (antragsnummer)
 );
 
 -- History tables for bed_* entities
@@ -176,7 +181,7 @@ CREATE TABLE IF NOT EXISTS his_bed_datei (
     created_at      TIMESTAMP,
     changed_at      TIMESTAMP,
     deleted_at      TIMESTAMP,
-    antragsnummer   TEXT,
+    antragsnummer   BIGINT,
     dateiname       TEXT,
     file_bytes      BYTEA,
     action          TEXT NOT NULL
@@ -187,13 +192,14 @@ CREATE TABLE IF NOT EXISTS his_bed_sport (
     created_at          TIMESTAMP,
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT,
+    antragsnummer       BIGINT,
     schiessdatum        DATE,
     waffenart_id        INT,
     disziplin_id        INT,
     training            BOOLEAN,
     wettkampfart_id     INT,
     wettkampfergebnis   NUMERIC(7,1),
+    bemerkung           TEXT,
     action              TEXT NOT NULL
 );
 
@@ -202,7 +208,7 @@ CREATE TABLE IF NOT EXISTS his_bed_waffe_besitz (
     created_at          TIMESTAMP,
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT,
+    antragsnummer       BIGINT,
     wbk_nr              VARCHAR(25),
     lfd_wbk             VARCHAR(3),
     waffenart_id        INT,
@@ -230,7 +236,7 @@ CREATE TABLE IF NOT EXISTS his_bed_antrag (
     created_at          TIMESTAMP,
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT,
+    antragsnummer       BIGINT,
     person_id           INT,
     status_id           INT,
     wbk_neu             BOOLEAN,
@@ -297,13 +303,13 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_his_bed_sport() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        INSERT INTO his_bed_sport VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.schiessdatum, NEW.waffenart_id, NEW.disziplin_id, NEW.training, NEW.wettkampfart_id, NEW.wettkampfergebnis, 'insert');
+        INSERT INTO his_bed_sport VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.schiessdatum, NEW.waffenart_id, NEW.disziplin_id, NEW.training, NEW.wettkampfart_id, NEW.wettkampfergebnis, NEW.bemerkung, 'insert');
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
-        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, 'update');
+        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, OLD.bemerkung, 'update');
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
-        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, 'delete');
+        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, OLD.bemerkung, 'delete');
         RETURN OLD;
     END IF;
     RETURN NULL;
@@ -497,3 +503,5 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON bed_antrag TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON bed_antrag TO web_anon;
 GRANT USAGE ON SEQUENCE bed_antrag_id_seq TO bssbuser;
 GRANT USAGE ON SEQUENCE bed_antrag_id_seq TO web_anon;
+GRANT USAGE ON SEQUENCE seq_antragsnummer TO bssbuser;
+GRANT USAGE ON SEQUENCE seq_antragsnummer TO web_anon;

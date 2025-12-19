@@ -35,6 +35,9 @@ class AuthService {
              iOptions: IOSOptions(
                accessibility: KeychainAccessibility.first_unlock_this_device,
              ),
+             mOptions: MacOsOptions(
+               accessibility: KeychainAccessibility.first_unlock_this_device,
+             ),
            ),
        _emailService = emailService;
 
@@ -162,11 +165,27 @@ class AuthService {
         LoggerService.logError('Invalid server response.');
         return {};
       }
-    } on Exception catch (e) {
+    } catch (e, stackTrace) {
       LoggerService.logError('Login exception occurred: $e');
+      LoggerService.logError('Exception type: ${e.runtimeType}');
+      LoggerService.logError('Stack trace: $stackTrace');
+      
+      // Check for SSL/TLS errors
+      final errorString = e.toString().toLowerCase();
+      if (errorString.contains('certificate') || 
+          errorString.contains('tls') || 
+          errorString.contains('ssl') ||
+          errorString.contains('handshake')) {
+        LoggerService.logError('SSL/TLS error detected. Check if apiIgnoreBadCertificate is enabled in config.');
+        return {
+          'ResultType': 0,
+          'ResultMessage': 'SSL-Fehler: ${e.toString()}. Bitte überprüfen Sie die Konfiguration (apiIgnoreBadCertificate).',
+        };
+      }
 
       if (e is http.ClientException) {
         LoggerService.logError('http.ClientException occurred: ${e.message}');
+        LoggerService.logError('ClientException originalUri: ${e.uri}');
 
         // Check if this is an authentication error from server
         if (e.message.contains('Benutzername oder Passwort') ||

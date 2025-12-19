@@ -10,11 +10,11 @@ void main() {
         'created_at': '2024-01-01T10:00:00.000Z',
         'changed_at': null,
         'deleted_at': '2024-01-03T10:00:00.000Z',
-        'antragsnummer': 'A124',
+        'antragsnummer': 100000,
         'person_id': 101,
         'status_id': 2,
         'wbk_neu': false,
-        'wbk_art': 'green',
+        'wbk_art': 'gruen',
         'beduerfnisart': 'kurzwaffe',
         'anzahl_waffen': 1,
         'verein_genehmigt': true,
@@ -28,11 +28,11 @@ void main() {
       expect(antrag.createdAt, DateTime.parse('2024-01-01T10:00:00.000Z'));
       expect(antrag.changedAt, isNull);
       expect(antrag.deletedAt, DateTime.parse('2024-01-03T10:00:00.000Z'));
-      expect(antrag.antragsnummer, 'A124');
+      expect(antrag.antragsnummer, 100000);
       expect(antrag.personId, 101);
       expect(antrag.statusId, BeduerfnisAntragStatus.eingereichtAmVerein);
       expect(antrag.wbkNeu, false);
-      expect(antrag.wbkArt, 'green');
+      expect(antrag.wbkArt, 'gruen');
       expect(antrag.beduerfnisart, 'kurzwaffe');
       expect(antrag.anzahlWaffen, 1);
       expect(antrag.vereinGenehmigt, true);
@@ -45,7 +45,7 @@ void main() {
     test('fromJson handles null optional fields', () {
       final json = {
         'id': 3,
-        'antragsnummer': 'A125',
+        'antragsnummer': 100001,
         'person_id': 102,
         'status_id': null,
         'wbk_neu': null,
@@ -60,7 +60,7 @@ void main() {
       };
       final antrag = BeduerfnisseAntrag.fromJson(json);
       expect(antrag.id, 3);
-      expect(antrag.antragsnummer, 'A125');
+      expect(antrag.antragsnummer, 100001);
       expect(antrag.personId, 102);
       expect(antrag.statusId, isNull);
       expect(antrag.wbkNeu, false); // Default value
@@ -77,7 +77,7 @@ void main() {
     test('fromJson handles default values for boolean fields', () {
       final json = {
         'id': 4,
-        'antragsnummer': 'A126',
+        'antragsnummer': 100002,
         'person_id': 103,
         'wbk_neu': null,
         'verein_genehmigt': null,
@@ -90,16 +90,16 @@ void main() {
     });
 
     test('fromJson handles null id', () {
-      final json = {'id': null, 'antragsnummer': 'A127', 'person_id': 104};
+      final json = {'id': null, 'antragsnummer': 100003, 'person_id': 104};
       final antrag = BeduerfnisseAntrag.fromJson(json);
       expect(antrag.id, isNull);
-      expect(antrag.antragsnummer, 'A127');
+      expect(antrag.antragsnummer, 100003);
       expect(antrag.personId, 104);
     });
 
     test('constructor creates correct object with required fields', () {
-      const antrag = BeduerfnisseAntrag(antragsnummer: 'A123', personId: 100);
-      expect(antrag.antragsnummer, 'A123');
+      const antrag = BeduerfnisseAntrag(antragsnummer: 100000, personId: 100);
+      expect(antrag.antragsnummer, 100000);
       expect(antrag.personId, 100);
       expect(antrag.id, isNull);
       expect(antrag.statusId, isNull);
@@ -111,11 +111,11 @@ void main() {
         createdAt: null,
         changedAt: null,
         deletedAt: null,
-        antragsnummer: 'A123',
+        antragsnummer: 100000,
         personId: 100,
         statusId: BeduerfnisAntragStatus.entwurf,
         wbkNeu: true,
-        wbkArt: 'yellow',
+        wbkArt: 'gelb',
         beduerfnisart: 'langwaffe',
         anzahlWaffen: 2,
         vereinGenehmigt: false,
@@ -125,11 +125,11 @@ void main() {
         bemerkung: 'Test',
       );
       expect(antrag.id, 1);
-      expect(antrag.antragsnummer, 'A123');
+      expect(antrag.antragsnummer, 100000);
       expect(antrag.personId, 100);
       expect(antrag.statusId, BeduerfnisAntragStatus.entwurf);
       expect(antrag.wbkNeu, true);
-      expect(antrag.wbkArt, 'yellow');
+      expect(antrag.wbkArt, 'gelb');
       expect(antrag.beduerfnisart, 'langwaffe');
       expect(antrag.anzahlWaffen, 2);
       expect(antrag.vereinGenehmigt, false);
@@ -149,11 +149,11 @@ void main() {
         createdAt: createdAt,
         changedAt: changedAt,
         deletedAt: deletedAt,
-        antragsnummer: 'A123',
+        antragsnummer: 100000,
         personId: 100,
         statusId: BeduerfnisAntragStatus.entwurf,
         wbkNeu: true,
-        wbkArt: 'yellow',
+        wbkArt: 'gelb',
         beduerfnisart: 'langwaffe',
         anzahlWaffen: 2,
         vereinGenehmigt: false,
@@ -167,11 +167,11 @@ void main() {
       expect(json['CREATED_AT'], createdAt.toIso8601String());
       expect(json['CHANGED_AT'], changedAt.toIso8601String());
       expect(json['DELETED_AT'], deletedAt.toIso8601String());
-      expect(json['ANTRAGSNUMMER'], 'A123');
+      expect(json['ANTRAGSNUMMER'], 100000);
       expect(json['PERSON_ID'], 100);
       expect(json['STATUS_ID'], 1);
       expect(json['WBK_NEU'], true);
-      expect(json['WBK_ART'], 'yellow');
+      expect(json['WBK_ART'], 'gelb');
       expect(json['BEDUERFNISART'], 'langwaffe');
       expect(json['ANZAHL_WAFFEN'], 2);
       expect(json['VEREIN_GENEHMIGT'], false);
@@ -184,7 +184,7 @@ void main() {
     test('toJson handles null values', () {
       const antrag = BeduerfnisseAntrag(
         id: null,
-        antragsnummer: 'A123',
+        antragsnummer: 100000,
         personId: 100,
         statusId: null,
         wbkArt: null,
@@ -199,7 +199,7 @@ void main() {
       expect(json['CREATED_AT'], isNull);
       expect(json['CHANGED_AT'], isNull);
       expect(json['DELETED_AT'], isNull);
-      expect(json['ANTRAGSNUMMER'], 'A123');
+      expect(json['ANTRAGSNUMMER'], 100000);
       expect(json['PERSON_ID'], 100);
       expect(json['STATUS_ID'], isNull);
       expect(json['WBK_ART'], isNull);
@@ -213,12 +213,12 @@ void main() {
     test('inequality with different antragsnummer', () {
       const antrag1 = BeduerfnisseAntrag(
         id: 1,
-        antragsnummer: 'A123',
+        antragsnummer: 100000,
         personId: 100,
       );
       const antrag2 = BeduerfnisseAntrag(
         id: 1,
-        antragsnummer: 'A124',
+        antragsnummer: 100001,
         personId: 100,
       );
       expect(antrag1, isNot(equals(antrag2)));
@@ -227,12 +227,12 @@ void main() {
     test('inequality with different personId', () {
       const antrag1 = BeduerfnisseAntrag(
         id: 1,
-        antragsnummer: 'A123',
+        antragsnummer: 100000,
         personId: 100,
       );
       const antrag2 = BeduerfnisseAntrag(
         id: 1,
-        antragsnummer: 'A123',
+        antragsnummer: 100000,
         personId: 101,
       );
       expect(antrag1, isNot(equals(antrag2)));
@@ -241,13 +241,13 @@ void main() {
     test('inequality with different bankdaten', () {
       const antrag1 = BeduerfnisseAntrag(
         id: 1,
-        antragsnummer: 'A123',
+        antragsnummer: 100000,
         personId: 100,
         bankdaten: {'iban': 'DE1234567890'},
       );
       const antrag2 = BeduerfnisseAntrag(
         id: 1,
-        antragsnummer: 'A123',
+        antragsnummer: 100000,
         personId: 100,
         bankdaten: {'iban': 'DE0987654321'},
       );

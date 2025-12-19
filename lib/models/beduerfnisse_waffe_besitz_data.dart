@@ -6,31 +6,31 @@ class BeduerfnisseWaffeBesitz {
   /// Creates a [BeduerfnisseWaffeBesitz] instance from a JSON map.
   factory BeduerfnisseWaffeBesitz.fromJson(Map<String, dynamic> json) {
     return BeduerfnisseWaffeBesitz(
-      id: json['ID'] as int?,
+      id: (json['ID'] ?? json['id']) as int?,
       createdAt:
-          json['CREATED_AT'] == null
+          (json['CREATED_AT'] ?? json['created_at']) == null
               ? null
-              : DateTime.parse(json['CREATED_AT'] as String),
+              : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
       changedAt:
-          json['CHANGED_AT'] == null
+          (json['CHANGED_AT'] ?? json['changed_at']) == null
               ? null
-              : DateTime.parse(json['CHANGED_AT'] as String),
+              : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
       deletedAt:
-          json['DELETED_AT'] == null
+          (json['DELETED_AT'] ?? json['deleted_at']) == null
               ? null
-              : DateTime.parse(json['DELETED_AT'] as String),
-      antragsnummer: json['ANTRAGSNUMMER'] as String,
-      wbkNr: json['WBK_NR'] as String,
-      lfdWbk: json['LFD_WBK'] as String,
-      waffenartId: json['WAFFENART_ID'] as int,
-      hersteller: json['HERSTELLER'] as String?,
-      kaliberId: json['KALIBER_ID'] as int,
-      lauflaengeId: json['LAUFLAENGE_ID'] as int?,
-      gewicht: json['GEWICHT'] as String?,
-      kompensator: json['KOMPENSATOR'] as bool,
-      beduerfnisgrundId: json['BEDUERFNISGRUND_ID'] as int?,
-      verbandId: json['VERBAND_ID'] as int?,
-      bemerkung: json['BEMERKUNG'] as String?,
+              : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+      antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
+      wbkNr: (json['WBK_NR'] ?? json['wbk_nr']) as String,
+      lfdWbk: (json['LFD_WBK'] ?? json['lfd_wbk']) as String,
+      waffenartId: (json['WAFFENART_ID'] ?? json['waffenart_id']) as int,
+      hersteller: (json['HERSTELLER'] ?? json['hersteller']) as String?,
+      kaliberId: (json['KALIBER_ID'] ?? json['kaliber_id']) as int,
+      lauflaengeId: (json['LAUFLAENGE_ID'] ?? json['lauflaenge_id']) as int?,
+      gewicht: (json['GEWICHT'] ?? json['gewicht']) as String?,
+      kompensator: (json['KOMPENSATOR'] ?? json['kompensator']) as bool,
+      beduerfnisgrundId: (json['BEDUERFNISGRUND_ID'] ?? json['beduerfnisgrund_id']) as int?,
+      verbandId: (json['VERBAND_ID'] ?? json['verband_id']) as int?,
+      bemerkung: (json['BEMERKUNG'] ?? json['bemerkung']) as String?,
     );
   }
 
@@ -67,7 +67,7 @@ class BeduerfnisseWaffeBesitz {
   final DateTime? deletedAt;
 
   /// The application number.
-  final String antragsnummer;
+  final int antragsnummer;
 
   /// The WBK number.
   final String wbkNr;

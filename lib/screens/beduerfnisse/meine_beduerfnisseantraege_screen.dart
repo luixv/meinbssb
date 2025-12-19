@@ -78,7 +78,17 @@ class _MeineBeduerfnisseantraegeScreenState
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final success = await apiService.deleteBedAntrag(antrag.id!);
+      if (antrag.antragsnummer == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler: Antragsnummer fehlt'),
+            ),
+          );
+        }
+        return;
+      }
+      final success = await apiService.deleteBedAntrag(antrag.antragsnummer!);
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -265,7 +275,7 @@ class _MeineBeduerfnisseantraegeScreenState
 
     return Semantics(
       label:
-          '${antrag.antragsnummer} vom ${antrag.createdAt}, Status: $statusText',
+          '${antrag.antragsnummer ?? 'N/A'} vom ${antrag.createdAt}, Status: $statusText',
       child: Container(
         padding: const EdgeInsets.all(UIConstants.spacingM),
         decoration: BoxDecoration(
@@ -280,7 +290,7 @@ class _MeineBeduerfnisseantraegeScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ScaledText(
-                    antrag.antragsnummer,
+                    '${antrag.antragsnummer ?? 'N/A'}',
                     style: UIStyles.formValueBoldStyle.copyWith(
                       fontSize:
                           UIStyles.formValueBoldStyle.fontSize! *

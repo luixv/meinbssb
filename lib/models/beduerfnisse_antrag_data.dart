@@ -53,7 +53,7 @@ class BeduerfnisseAntrag {
               : DateTime.parse(
                 (json['DELETED_AT'] ?? json['deleted_at']) as String,
               ),
-      antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as String,
+      antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
       personId: (json['PERSON_ID'] ?? json['person_id']) as int,
       statusId: parseStatusId(json['STATUS_ID'] ?? json['status_id']),
       wbkNeu: (json['WBK_NEU'] ?? json['wbk_neu']) as bool? ?? false,
@@ -80,7 +80,7 @@ class BeduerfnisseAntrag {
     this.createdAt,
     this.changedAt,
     this.deletedAt,
-    required this.antragsnummer,
+    this.antragsnummer,
     required this.personId,
     this.statusId,
     this.wbkNeu,
@@ -106,8 +106,8 @@ class BeduerfnisseAntrag {
   /// The deletion timestamp (nullable).
   final DateTime? deletedAt;
 
-  /// The application number.
-  final String antragsnummer;
+  /// The application number (auto-generated, starts at 100000).
+  final int? antragsnummer;
 
   /// The person ID (foreign key to person table).
   final int personId;
@@ -118,7 +118,7 @@ class BeduerfnisseAntrag {
   /// Whether this is a new weapon permit (WBK neu).
   final bool? wbkNeu;
 
-  /// The weapon permit type ('yellow' or 'green').
+  /// The weapon permit type ('gelb' or 'gruen').
   final String? wbkArt;
 
   /// The need type ('langwaffe' or 'kurzwaffe').

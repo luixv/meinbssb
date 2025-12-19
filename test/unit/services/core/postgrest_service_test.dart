@@ -11,6 +11,9 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
+import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
+import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
 
 @GenerateMocks([ConfigService, http.Client])
 import 'postgrest_service_test.mocks.dart';
@@ -732,53 +735,6 @@ void main() {
     });
 
     group('bed_auswahl_typ Service Methods', () {
-      test('createBedAuswahlTyp creates entry successfully', () async {
-        final mockResponse = [
-          {'id': 1, 'kuerzel': 'WA', 'beschreibung': 'Waffenart'},
-        ];
-        when(
-          mockClient.post(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
-
-        final result = await service.createBedAuswahlTyp(
-          kuerzel: 'WA',
-          beschreibung: 'Waffenart',
-        );
-
-        expect(result, isA<BeduerfnisseAuswahlTyp>());
-        expect(result.id, equals(1));
-        expect(result.kuerzel, equals('WA'));
-        expect(result.beschreibung, equals('Waffenart'));
-        verify(
-          mockClient.post(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).called(1);
-      });
-
-      test('createBedAuswahlTyp throws exception on failure', () async {
-        when(
-          mockClient.post(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('Error', 400));
-
-        expect(
-          () => service.createBedAuswahlTyp(
-            kuerzel: 'WA',
-            beschreibung: 'Waffenart',
-          ),
-          throwsException,
-        );
-      });
 
       test('getBedAuswahlTypen returns list of types', () async {
         final mockResponse = [
@@ -819,95 +775,9 @@ void main() {
         expect(result, isNull);
       });
 
-      test('updateBedAuswahlTyp updates entry successfully', () async {
-        when(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('[]', 200));
-
-        final result = await service.updateBedAuswahlTyp(1, {
-          'beschreibung': 'Weapon Type',
-        });
-        expect(result, isTrue);
-        verify(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).called(1);
-      });
-
-      test('updateBedAuswahlTyp returns false on error', () async {
-        when(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('Error', 500));
-
-        final result = await service.updateBedAuswahlTyp(1, {
-          'beschreibung': 'Weapon Type',
-        });
-        expect(result, isFalse);
-      });
-
-      test('deleteBedAuswahlTyp soft deletes entry successfully', () async {
-        when(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('[]', 200));
-
-        final result = await service.deleteBedAuswahlTyp(1);
-        expect(result, isTrue);
-        verify(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).called(1);
-      });
     });
 
     group('bed_auswahl Service Methods', () {
-      test('createBedAuswahl creates entry successfully', () async {
-        final mockResponse = [
-          {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
-        ];
-        when(
-          mockClient.post(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
-
-        final result = await service.createBedAuswahl(
-          typId: 1,
-          kuerzel: 'PIS',
-          beschreibung: 'Pistole',
-        );
-
-        expect(result, isA<BeduerfnisseAuswahl>());
-        expect(result.id, equals(1));
-        expect(result.kuerzel, equals('PIS'));
-        expect(result.beschreibung, equals('Pistole'));
-        verify(
-          mockClient.post(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).called(1);
-      });
 
       test('getBedAuswahlList returns list of entries', () async {
         final mockResponse = [
@@ -952,39 +822,12 @@ void main() {
         expect(result!.kuerzel, equals('PIS'));
       });
 
-      test('updateBedAuswahl updates entry successfully', () async {
-        when(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('[]', 200));
-
-        final result = await service.updateBedAuswahl(1, {
-          'beschreibung': 'Handgun',
-        });
-        expect(result, isTrue);
-      });
-
-      test('deleteBedAuswahl soft deletes entry successfully', () async {
-        when(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('[]', 200));
-
-        final result = await service.deleteBedAuswahl(1);
-        expect(result, isTrue);
-      });
     });
 
     group('bed_datei Service Methods', () {
       test('createBedDatei creates file entry successfully', () async {
         final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'dateiname': 'doc.pdf'},
+          {'id': 1, 'antragsnummer': 100000, 'dateiname': 'doc.pdf'},
         ];
         when(
           mockClient.post(
@@ -995,7 +838,7 @@ void main() {
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedDatei(
-          antragsnummer: 'A123',
+          antragsnummer: 100000,
           dateiname: 'doc.pdf',
           fileBytes: [1, 2, 3, 4, 5],
         );
@@ -1012,30 +855,19 @@ void main() {
 
       test('getBedDateiByAntragsnummer returns list of files', () async {
         final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'dateiname': 'doc1.pdf'},
-          {'id': 2, 'antragsnummer': 'A123', 'dateiname': 'doc2.pdf'},
+          {'id': 1, 'antragsnummer': 100000, 'dateiname': 'doc1.pdf', 'file_bytes': []},
+          {'id': 2, 'antragsnummer': 100000, 'dateiname': 'doc2.pdf', 'file_bytes': []},
         ];
         when(
           mockClient.get(any, headers: anyNamed('headers')),
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
-        final result = await service.getBedDateiByAntragsnummer('A123');
+        final result = await service.getBedDateiByAntragsnummer(100000);
         expect(result, hasLength(2));
-        expect(result[0]['dateiname'], equals('doc1.pdf'));
+        expect(result[0].dateiname, equals('doc1.pdf'));
+        expect(result[0].antragsnummer, equals(100000));
       });
 
-      test('getBedDateiById returns file when found', () async {
-        final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'dateiname': 'doc.pdf'},
-        ];
-        when(
-          mockClient.get(any, headers: anyNamed('headers')),
-        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
-
-        final result = await service.getBedDateiById(1);
-        expect(result, isNotNull);
-        expect(result!['dateiname'], equals('doc.pdf'));
-      });
 
       test('updateBedDatei updates file entry successfully', () async {
         when(
@@ -1046,9 +878,13 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.updateBedDatei(1, {
-          'dateiname': 'new.pdf',
-        });
+        final datei = BeduerfnisseDatei(
+          id: 1,
+          antragsnummer: 100000,
+          dateiname: 'new.pdf',
+          fileBytes: [],
+        );
+        final result = await service.updateBedDatei(100000, datei);
         expect(result, isTrue);
       });
 
@@ -1061,7 +897,7 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.deleteBedDatei(1);
+        final result = await service.deleteBedDatei(100000);
         expect(result, isTrue);
       });
     });
@@ -1071,7 +907,7 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': 'A123',
+            'antragsnummer': 100000,
             'schiessdatum': '2024-01-01',
             'waffenart_id': 1,
             'disziplin_id': 2,
@@ -1087,7 +923,7 @@ void main() {
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedSport(
-          antragsnummer: 'A123',
+          antragsnummer: 100000,
           schiessdatum: '2024-01-01',
           waffenartId: 1,
           disziplinId: 2,
@@ -1108,7 +944,7 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': 'A123',
+            'antragsnummer': 100000,
             'wettkampfart_id': 5,
             'wettkampfergebnis': 95.5,
           },
@@ -1122,7 +958,7 @@ void main() {
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedSport(
-          antragsnummer: 'A123',
+          antragsnummer: 100000,
           schiessdatum: '2024-01-01',
           waffenartId: 1,
           disziplinId: 2,
@@ -1137,29 +973,33 @@ void main() {
 
       test('getBedSportByAntragsnummer returns list of records', () async {
         final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'training': true},
-          {'id': 2, 'antragsnummer': 'A123', 'training': false},
+          {
+            'id': 1,
+            'antragsnummer': 100000,
+            'schiessdatum': '2024-01-01T00:00:00Z',
+            'waffenart_id': 1,
+            'disziplin_id': 2,
+            'training': true,
+          },
+          {
+            'id': 2,
+            'antragsnummer': 100000,
+            'schiessdatum': '2024-01-02T00:00:00Z',
+            'waffenart_id': 1,
+            'disziplin_id': 2,
+            'training': false,
+          },
         ];
         when(
           mockClient.get(any, headers: anyNamed('headers')),
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
-        final result = await service.getBedSportByAntragsnummer('A123');
+        final result = await service.getBedSportByAntragsnummer(100000);
         expect(result, hasLength(2));
+        expect(result[0].antragsnummer, equals(100000));
+        expect(result[0].training, equals(true));
       });
 
-      test('getBedSportById returns record when found', () async {
-        final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'training': true},
-        ];
-        when(
-          mockClient.get(any, headers: anyNamed('headers')),
-        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
-
-        final result = await service.getBedSportById(1);
-        expect(result, isNotNull);
-        expect(result!['training'], equals(true));
-      });
 
       test('updateBedSport updates record successfully', () async {
         when(
@@ -1170,22 +1010,18 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.updateBedSport(1, {'training': false});
+        final sport = BeduerfnisseSport(
+          id: 1,
+          antragsnummer: 100000,
+          schiessdatum: DateTime.now(),
+          waffenartId: 1,
+          disziplinId: 2,
+          training: false,
+        );
+        final result = await service.updateBedSport(100000, sport);
         expect(result, isTrue);
       });
 
-      test('deleteBedSport soft deletes record successfully', () async {
-        when(
-          mockClient.patch(
-            any,
-            headers: anyNamed('headers'),
-            body: anyNamed('body'),
-          ),
-        ).thenAnswer((_) async => http.Response('[]', 200));
-
-        final result = await service.deleteBedSport(1);
-        expect(result, isTrue);
-      });
     });
 
     group('bed_waffe_besitz Service Methods', () {
@@ -1193,7 +1029,7 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': 'A123',
+            'antragsnummer': 100000,
             'wbk_nr': 'WBK001',
             'lfd_wbk': '001',
             'waffenart_id': 1,
@@ -1210,7 +1046,7 @@ void main() {
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedWaffeBesitz(
-          antragsnummer: 'A123',
+          antragsnummer: 100000,
           wbkNr: 'WBK001',
           lfdWbk: '001',
           waffenartId: 1,
@@ -1232,7 +1068,7 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': 'A123',
+            'antragsnummer': 100000,
             'hersteller': 'TestManufacturer',
             'gewicht': '1.5kg',
             'bemerkung': 'Test note',
@@ -1247,7 +1083,7 @@ void main() {
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedWaffeBesitz(
-          antragsnummer: 'A123',
+          antragsnummer: 100000,
           wbkNr: 'WBK001',
           lfdWbk: '001',
           waffenartId: 1,
@@ -1266,31 +1102,36 @@ void main() {
         'getBedWaffeBesitzByAntragsnummer returns list of weapons',
         () async {
           final mockResponse = [
-            {'id': 1, 'antragsnummer': 'A123', 'wbk_nr': 'WBK001'},
-            {'id': 2, 'antragsnummer': 'A123', 'wbk_nr': 'WBK002'},
+            {
+              'id': 1,
+              'antragsnummer': 100000,
+              'wbk_nr': 'WBK001',
+              'lfd_wbk': '001',
+              'waffenart_id': 1,
+              'kaliber_id': 2,
+              'kompensator': false,
+            },
+            {
+              'id': 2,
+              'antragsnummer': 100000,
+              'wbk_nr': 'WBK002',
+              'lfd_wbk': '002',
+              'waffenart_id': 1,
+              'kaliber_id': 2,
+              'kompensator': false,
+            },
           ];
           when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
             (_) async => http.Response(jsonEncode(mockResponse), 200),
           );
 
-          final result = await service.getBedWaffeBesitzByAntragsnummer('A123');
+          final result = await service.getBedWaffeBesitzByAntragsnummer(100000);
           expect(result, hasLength(2));
-          expect(result[0]['wbk_nr'], equals('WBK001'));
+          expect(result[0].antragsnummer, equals(100000));
+          expect(result[0].wbkNr, equals('WBK001'));
         },
       );
 
-      test('getBedWaffeBesitzById returns weapon when found', () async {
-        final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'wbk_nr': 'WBK001'},
-        ];
-        when(
-          mockClient.get(any, headers: anyNamed('headers')),
-        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
-
-        final result = await service.getBedWaffeBesitzById(1);
-        expect(result, isNotNull);
-        expect(result!['wbk_nr'], equals('WBK001'));
-      });
 
       test('updateBedWaffeBesitz updates weapon record successfully', () async {
         when(
@@ -1301,27 +1142,19 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.updateBedWaffeBesitz(1, {
-          'kompensator': true,
-        });
+        final waffeBesitz = BeduerfnisseWaffeBesitz(
+          id: 1,
+          antragsnummer: 100000,
+          wbkNr: 'WBK001',
+          lfdWbk: '001',
+          waffenartId: 1,
+          kaliberId: 2,
+          kompensator: true,
+        );
+        final result = await service.updateBedWaffeBesitz(100000, waffeBesitz);
         expect(result, isTrue);
       });
 
-      test(
-        'deleteBedWaffeBesitz soft deletes weapon record successfully',
-        () async {
-          when(
-            mockClient.patch(
-              any,
-              headers: anyNamed('headers'),
-              body: anyNamed('body'),
-            ),
-          ).thenAnswer((_) async => http.Response('[]', 200));
-
-          final result = await service.deleteBedWaffeBesitz(1);
-          expect(result, isTrue);
-        },
-      );
     });
 
     group('bed_antrag_status Service Methods', () {
@@ -1395,11 +1228,11 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': 'A123',
+            'antragsnummer': 100000,
             'person_id': 100,
             'status_id': 1,
             'wbk_neu': true,
-            'wbk_art': 'yellow',
+            'wbk_art': 'gelb',
             'beduerfnisart': 'langwaffe',
             'anzahl_waffen': 2,
             'verein_genehmigt': false,
@@ -1416,11 +1249,10 @@ void main() {
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedAntrag(
-          antragsnummer: 'A123',
           personId: 100,
           statusId: BeduerfnisAntragStatus.entwurf,
           wbkNeu: true,
-          wbkArt: 'yellow',
+          wbkArt: 'gelb',
           beduerfnisart: 'langwaffe',
           anzahlWaffen: 2,
           email: 'test@example.com',
@@ -1428,7 +1260,7 @@ void main() {
 
         expect(result, isA<BeduerfnisseAntrag>());
         expect(result.id, equals(1));
-        expect(result.antragsnummer, equals('A123'));
+        expect(result.antragsnummer, equals(100000));
         expect(result.personId, equals(100));
         verify(
           mockClient.post(
@@ -1449,45 +1281,30 @@ void main() {
         ).thenAnswer((_) async => http.Response('Error', 400));
 
         expect(
-          () => service.createBedAntrag(antragsnummer: 'A123', personId: 100),
+          () => service.createBedAntrag(personId: 100),
           throwsException,
         );
       });
 
-      test('getBedAntragList returns list of entries', () async {
-        final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
-          {'id': 2, 'antragsnummer': 'A124', 'person_id': 101},
-        ];
-        when(
-          mockClient.get(any, headers: anyNamed('headers')),
-        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
-
-        final result = await service.getBedAntragList();
-        expect(result, hasLength(2));
-        expect(result[0], isA<BeduerfnisseAntrag>());
-        expect(result[0].antragsnummer, equals('A123'));
-        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
-      });
 
       test('getBedAntragByAntragsnummer returns filtered list', () async {
         final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
+          {'id': 1, 'antragsnummer': 100000, 'person_id': 100},
         ];
         when(
           mockClient.get(any, headers: anyNamed('headers')),
         ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
-        final result = await service.getBedAntragByAntragsnummer('A123');
+        final result = await service.getBedAntragByAntragsnummer(100000);
         expect(result, hasLength(1));
         expect(result[0], isA<BeduerfnisseAntrag>());
-        expect(result[0].antragsnummer, equals('A123'));
+        expect(result[0].antragsnummer, equals(100000));
       });
 
       test('getBedAntragByPersonId returns filtered list', () async {
         final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
-          {'id': 2, 'antragsnummer': 'A124', 'person_id': 100},
+          {'id': 1, 'antragsnummer': 100000, 'person_id': 100},
+          {'id': 2, 'antragsnummer': 100001, 'person_id': 100},
         ];
         when(
           mockClient.get(any, headers: anyNamed('headers')),
@@ -1499,43 +1316,6 @@ void main() {
         expect(result[0].personId, equals(100));
       });
 
-      test('getBedAntragByStatusId returns filtered list', () async {
-        final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100, 'status_id': 1},
-        ];
-        when(
-          mockClient.get(any, headers: anyNamed('headers')),
-        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
-
-        final result = await service.getBedAntragByStatusId(1);
-        expect(result, hasLength(1));
-        expect(result[0], isA<BeduerfnisseAntrag>());
-        expect(result[0].statusId, equals(BeduerfnisAntragStatus.entwurf));
-      });
-
-      test('getBedAntragById returns entry when found', () async {
-        final mockResponse = [
-          {'id': 1, 'antragsnummer': 'A123', 'person_id': 100},
-        ];
-        when(
-          mockClient.get(any, headers: anyNamed('headers')),
-        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
-
-        final result = await service.getBedAntragById(1);
-        expect(result, isNotNull);
-        expect(result, isA<BeduerfnisseAntrag>());
-        expect(result!.antragsnummer, equals('A123'));
-      });
-
-      test('getBedAntragById returns null when not found', () async {
-        when(
-          mockClient.get(any, headers: anyNamed('headers')),
-        ).thenAnswer((_) async => http.Response('[]', 200));
-
-        final result = await service.getBedAntragById(999);
-        expect(result, isNull);
-      });
-
       test('updateBedAntrag updates entry successfully', () async {
         when(
           mockClient.patch(
@@ -1545,9 +1325,13 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.updateBedAntrag(1, {
-          'verein_genehmigt': true,
-        });
+        final antrag = BeduerfnisseAntrag(
+          id: 1,
+          antragsnummer: 100000,
+          personId: 100,
+          vereinGenehmigt: true,
+        );
+        final result = await service.updateBedAntrag(100000, antrag);
         expect(result, isTrue);
         verify(
           mockClient.patch(
@@ -1567,9 +1351,13 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('Error', 500));
 
-        final result = await service.updateBedAntrag(1, {
-          'verein_genehmigt': true,
-        });
+        final antrag = BeduerfnisseAntrag(
+          id: 1,
+          antragsnummer: 100000,
+          personId: 100,
+          vereinGenehmigt: true,
+        );
+        final result = await service.updateBedAntrag(100000, antrag);
         expect(result, isFalse);
       });
 
@@ -1582,7 +1370,7 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.deleteBedAntrag(1);
+        final result = await service.deleteBedAntrag(100000);
         expect(result, isTrue);
         verify(
           mockClient.patch(

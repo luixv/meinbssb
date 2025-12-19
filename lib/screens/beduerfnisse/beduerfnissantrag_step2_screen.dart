@@ -4,6 +4,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -32,7 +33,7 @@ class BeduerfnissantragStep2Screen extends StatefulWidget {
 
 class _BeduerfnissantragStep2ScreenState
     extends State<BeduerfnissantragStep2Screen> {
-  late Future<List<Map<String, dynamic>>> _bedSportFuture;
+  late Future<List<BeduerfnisseSport>> _bedSportFuture;
 
   @override
   void initState() {
@@ -40,14 +41,18 @@ class _BeduerfnissantragStep2ScreenState
     _bedSportFuture = _fetchBedSportData();
   }
 
-  Future<List<Map<String, dynamic>>> _fetchBedSportData() async {
+  Future<List<BeduerfnisseSport>> _fetchBedSportData() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
     if (widget.antrag?.antragsnummer == null) {
       return [];
     }
     try {
+      final antragsnummer = widget.antrag!.antragsnummer;
+      if (antragsnummer == null) {
+        return [];
+      }
       return await apiService.getBedSportByAntragsnummer(
-        widget.antrag!.antragsnummer,
+        antragsnummer,
       );
     } catch (e) {
       if (mounted) {
@@ -106,8 +111,7 @@ class _BeduerfnissantragStep2ScreenState
                             context: context,
                             builder:
                                 (context) => BeduerfnissantragStep2DialogScreen(
-                                  antragsnummer:
-                                      widget.antrag?.antragsnummer ?? '',
+                                  antragsnummer: widget.antrag?.antragsnummer,
                                   onSaved: (savedData) {
                                     // Small delay to ensure data is persisted
                                     Future.delayed(
@@ -190,7 +194,7 @@ class _BeduerfnissantragStep2ScreenState
                       const SizedBox(height: UIConstants.spacingM),
 
                       // Bed Sport Data
-                      FutureBuilder<List<Map<String, dynamic>>>(
+                      FutureBuilder<List<BeduerfnisseSport>>(
                         future: _bedSportFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -247,7 +251,7 @@ class _BeduerfnissantragStep2ScreenState
                                           CrossAxisAlignment.start,
                                       children: [
                                         ScaledText(
-                                          'Schießdatum: ${sport['schiessdatum'] ?? 'N/A'}',
+                                          'Schießdatum: ${sport.schiessdatum.toString().split(' ')[0]}',
                                           style: UIStyles.bodyTextStyle
                                               .copyWith(
                                                 fontSize:
@@ -262,7 +266,7 @@ class _BeduerfnissantragStep2ScreenState
                                           height: UIConstants.spacingS,
                                         ),
                                         ScaledText(
-                                          'Waffenart ID: ${sport['waffenartId'] ?? 'N/A'}',
+                                          'Waffenart ID: ${sport.waffenartId}',
                                           style: UIStyles.bodyTextStyle
                                               .copyWith(
                                                 fontSize:
@@ -277,7 +281,7 @@ class _BeduerfnissantragStep2ScreenState
                                           height: UIConstants.spacingS,
                                         ),
                                         ScaledText(
-                                          'Disziplin ID: ${sport['disziplinId'] ?? 'N/A'}',
+                                          'Disziplin ID: ${sport.disziplinId}',
                                           style: UIStyles.bodyTextStyle
                                               .copyWith(
                                                 fontSize:
@@ -292,7 +296,7 @@ class _BeduerfnissantragStep2ScreenState
                                           height: UIConstants.spacingS,
                                         ),
                                         ScaledText(
-                                          'Training: ${sport['training'] == true ? 'Ja' : 'Nein'}',
+                                          'Training: ${sport.training ? 'Ja' : 'Nein'}',
                                           style: UIStyles.bodyTextStyle
                                               .copyWith(
                                                 fontSize:
@@ -303,7 +307,7 @@ class _BeduerfnissantragStep2ScreenState
                                                         .scaleFactor,
                                               ),
                                         ),
-                                        if (sport['wettkampfartId'] != null)
+                                        if (sport.wettkampfartId != null)
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -312,7 +316,7 @@ class _BeduerfnissantragStep2ScreenState
                                                 height: UIConstants.spacingS,
                                               ),
                                               ScaledText(
-                                                'Wettkampfart ID: ${sport['wettkampfartId']}',
+                                                'Wettkampfart ID: ${sport.wettkampfartId}',
                                                 style: UIStyles.bodyTextStyle
                                                     .copyWith(
                                                       fontSize:
@@ -325,7 +329,7 @@ class _BeduerfnissantragStep2ScreenState
                                               ),
                                             ],
                                           ),
-                                        if (sport['wettkampfergebnis'] != null)
+                                        if (sport.wettkampfergebnis != null)
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -334,7 +338,29 @@ class _BeduerfnissantragStep2ScreenState
                                                 height: UIConstants.spacingS,
                                               ),
                                               ScaledText(
-                                                'Wettkampfergebnis: ${sport['wettkampfergebnis']}',
+                                                'Wettkampfergebnis: ${sport.wettkampfergebnis}',
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        if (sport.bemerkung != null)
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              ScaledText(
+                                                'Bemerkung: ${sport.bemerkung}',
                                                 style: UIStyles.bodyTextStyle
                                                     .copyWith(
                                                       fontSize:

@@ -16,7 +16,7 @@ class BeduerfnissantragStep2DialogScreen extends StatefulWidget {
     super.key,
   });
 
-  final String antragsnummer;
+  final int? antragsnummer;
   final Function(Map<String, dynamic>) onSaved;
 
   @override
@@ -91,8 +91,17 @@ class _BeduerfnissantragStep2DialogScreenState
       final schiessdatumForDb =
           '${dateParts[2]}-${dateParts[1]}-${dateParts[0]}';
 
+      if (widget.antragsnummer == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fehler: Antragsnummer fehlt'),
+          ),
+        );
+        return;
+      }
+
       await apiService.createBedSport(
-        antragsnummer: widget.antragsnummer,
+        antragsnummer: widget.antragsnummer!,
         schiessdatum: schiessdatumForDb,
         waffenartId: _selectedWaffenartId!,
         disziplinId: int.parse(_disziplinController.text),

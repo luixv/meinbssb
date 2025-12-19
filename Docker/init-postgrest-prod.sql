@@ -99,13 +99,16 @@ CREATE TABLE IF NOT EXISTS bed_auswahl (
     CONSTRAINT uq_typ_kurz UNIQUE (typ_id, kurz)
 );
 
+-- Create sequence for antragsnummer starting at 100000
+CREATE SEQUENCE IF NOT EXISTS seq_antragsnummer START WITH 100000;
+
 -- Create bed_datei table (File Storage)
 CREATE TABLE IF NOT EXISTS bed_datei (
     id              SERIAL PRIMARY KEY,
     created_at      TIMESTAMP DEFAULT now(),
     changed_at      TIMESTAMP,
     deleted_at      TIMESTAMP,
-    antragsnummer   TEXT NOT NULL,
+    antragsnummer   BIGINT NOT NULL,
     dateiname       TEXT NOT NULL,
     file_bytes      BYTEA NOT NULL
 );
@@ -116,13 +119,14 @@ CREATE TABLE IF NOT EXISTS bed_sport (
     created_at          TIMESTAMP DEFAULT now(),
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT NOT NULL,
+    antragsnummer       BIGINT NOT NULL,
     schiessdatum         DATE NOT NULL,
     waffenart_id         INT NOT NULL REFERENCES bed_auswahl(id),
     disziplin_id         INT NOT NULL REFERENCES bed_auswahl(id),
     training             BOOLEAN NOT NULL DEFAULT false,
     wettkampfart_id      INT REFERENCES bed_auswahl(id),
-    wettkampfergebnis    NUMERIC(7,1)
+    wettkampfergebnis    NUMERIC(7,1),
+    bemerkung            TEXT
 );
 
 -- Create bed_waffe_besitz table (Weapon Ownership Records)
@@ -131,7 +135,7 @@ CREATE TABLE IF NOT EXISTS bed_waffe_besitz (
     created_at          TIMESTAMP DEFAULT now(),
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT NOT NULL,
+    antragsnummer       BIGINT NOT NULL,
     wbk_nr              VARCHAR(25) NOT NULL,
     lfd_wbk             VARCHAR(3) NOT NULL,
     waffenart_id        INT NOT NULL REFERENCES bed_auswahl(id),
@@ -170,7 +174,7 @@ CREATE TABLE IF NOT EXISTS his_bed_datei (
     created_at      TIMESTAMP,
     changed_at      TIMESTAMP,
     deleted_at      TIMESTAMP,
-    antragsnummer   TEXT,
+    antragsnummer   BIGINT,
     dateiname       TEXT,
     file_bytes      BYTEA,
     action          TEXT NOT NULL
@@ -181,13 +185,14 @@ CREATE TABLE IF NOT EXISTS his_bed_sport (
     created_at          TIMESTAMP,
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT,
+    antragsnummer       BIGINT,
     schiessdatum        DATE,
     waffenart_id        INT,
     disziplin_id        INT,
     training            BOOLEAN,
     wettkampfart_id     INT,
     wettkampfergebnis   NUMERIC(7,1),
+    bemerkung           TEXT,
     action              TEXT NOT NULL
 );
 
@@ -196,7 +201,7 @@ CREATE TABLE IF NOT EXISTS his_bed_waffe_besitz (
     created_at          TIMESTAMP,
     changed_at          TIMESTAMP,
     deleted_at          TIMESTAMP,
-    antragsnummer       TEXT,
+    antragsnummer       BIGINT,
     wbk_nr              VARCHAR(25),
     lfd_wbk             VARCHAR(3),
     waffenart_id        INT,
@@ -263,13 +268,13 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_his_bed_sport() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        INSERT INTO his_bed_sport VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.schiessdatum, NEW.waffenart_id, NEW.disziplin_id, NEW.training, NEW.wettkampfart_id, NEW.wettkampfergebnis, 'insert');
+        INSERT INTO his_bed_sport VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.schiessdatum, NEW.waffenart_id, NEW.disziplin_id, NEW.training, NEW.wettkampfart_id, NEW.wettkampfergebnis, NEW.bemerkung, 'insert');
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
-        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, 'update');
+        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, OLD.bemerkung, 'update');
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
-        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, 'delete');
+        INSERT INTO his_bed_sport VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.waffenart_id, OLD.disziplin_id, OLD.training, OLD.wettkampfart_id, OLD.wettkampfergebnis, OLD.bemerkung, 'delete');
         RETURN OLD;
     END IF;
     RETURN NULL;
