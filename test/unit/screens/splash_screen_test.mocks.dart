@@ -6,7 +6,6 @@
 import 'dart:async' as _i14;
 import 'dart:typed_data' as _i15;
 
-import 'package:meinbssb/main.dart' as _i34;
 import 'package:meinbssb/models/bank_data.dart' as _i27;
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart' as _i11;
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart' as _i10;
@@ -33,6 +32,7 @@ import 'package:meinbssb/models/verein_data.dart' as _i29;
 import 'package:meinbssb/models/zweitmitgliedschaft_data.dart' as _i20;
 import 'package:meinbssb/services/api/auth_service.dart' as _i5;
 import 'package:meinbssb/services/api/starting_rights_service.dart' as _i13;
+import 'package:meinbssb/services/api/workflow_service.dart' as _i34;
 import 'package:meinbssb/services/api_service.dart' as _i12;
 import 'package:meinbssb/services/core/cache_service.dart' as _i6;
 import 'package:meinbssb/services/core/config_service.dart' as _i3;

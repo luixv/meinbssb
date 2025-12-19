@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:typed_data'; // Import Uint8List
 
 import 'package:flutter/foundation.dart';
-import 'package:meinbssb/main.dart';
 import 'package:meinbssb/models/gewinn_data.dart';
 import 'package:meinbssb/services/api_service.dart' as network_ex;
 import 'package:meinbssb/services/api/auth_service.dart';

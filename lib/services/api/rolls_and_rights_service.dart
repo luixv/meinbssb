@@ -1,5 +1,5 @@
 import 'package:meinbssb/services/core/http_client.dart';
-import 'package:meinbssb/main.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 
 class RollsAndRights {
   RollsAndRights({required HttpClient httpClient});

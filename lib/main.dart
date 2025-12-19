@@ -47,8 +47,6 @@ import 'dart:io';
 
 import 'package:flutter/rendering.dart';
 
-enum WorkflowRole { mitglied, bssb, verein }
-
 Future<void> main() async {
   debugPrint('Starting main() - before any initialization');
   bool isWindows = false;

@@ -1,5 +1,6 @@
-import 'package:meinbssb/main.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+
+enum WorkflowRole { mitglied, bssb, verein }
 
 class WorkflowService {
   WorkflowService();

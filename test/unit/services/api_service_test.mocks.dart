@@ -7,7 +7,6 @@ import 'dart:async' as _i3;
 import 'dart:typed_data' as _i16;
 
 import 'package:http/http.dart' as _i6;
-import 'package:meinbssb/main.dart' as _i47;
 import 'package:meinbssb/models/bank_data.dart' as _i30;
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart' as _i10;
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart' as _i9;
@@ -41,7 +40,7 @@ import 'package:meinbssb/services/api/starting_rights_service.dart' as _i44;
 import 'package:meinbssb/services/api/training_service.dart' as _i24;
 import 'package:meinbssb/services/api/user_service.dart' as _i17;
 import 'package:meinbssb/services/api/verein_service.dart' as _i32;
-import 'package:meinbssb/services/api/workflow_service.dart' as _i48;
+import 'package:meinbssb/services/api/workflow_service.dart' as _i47;
 import 'package:meinbssb/services/api_service.dart' as _i45;
 import 'package:meinbssb/services/core/cache_service.dart' as _i13;
 import 'package:meinbssb/services/core/calendar_service.dart' as _i41;
@@ -2696,7 +2695,7 @@ class MockRollsAndRights extends _i1.Mock implements _i46.RollsAndRights {
 /// A class which mocks [WorkflowService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWorkflowService extends _i1.Mock implements _i48.WorkflowService {
+class MockWorkflowService extends _i1.Mock implements _i47.WorkflowService {
   MockWorkflowService() {
     _i1.throwOnMissingStub(this);
   }
