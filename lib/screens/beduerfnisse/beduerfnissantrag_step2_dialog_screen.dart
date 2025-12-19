@@ -5,6 +5,7 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:meinbssb/widgets/dialog_fabs.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 
@@ -139,404 +140,400 @@ class _BeduerfnissantragStep2DialogScreenState
           child: Semantics(
             container: true,
             label: 'Dialog - Schießaktivität hinzufügen',
-            child: Padding(
-              padding: const EdgeInsets.all(UIConstants.spacingL),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    Semantics(
-                      header: true,
-                      label: 'Schießaktivität hinzufügen',
-                      child: ScaledText(
-                        'Schießaktivität hinzufügen',
-                        style: UIStyles.titleStyle.copyWith(
-                          fontSize:
-                              UIStyles.titleStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                          color: UIConstants.defaultAppColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: UIConstants.spacingL),
-
-                    // Datum
-                    TextField(
-                      controller: _datumController,
-                      readOnly: true,
-                      onTap: _selectDate,
-                      style: UIStyles.bodyTextStyle.copyWith(
-                        fontSize:
-                            UIStyles.bodyTextStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Datum *',
-                        hintText: 'Wählen Sie ein Datum',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
-                          ),
-                          borderSide: const BorderSide(
-                            color: UIConstants.defaultAppColor,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
-                          ),
-                          borderSide: const BorderSide(
-                            color: UIConstants.defaultAppColor,
-                            width: 2,
-                          ),
-                        ),
-                        suffixIcon: const Icon(
-                          Icons.calendar_today,
-                          color: UIConstants.defaultAppColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: UIConstants.spacingL),
-
-                    // Waffenart Dropdown
-                    FutureBuilder<List<BeduerfnisseAuswahlTyp>>(
-                      future: _waffenartFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          return const Text(
-                            'Fehler beim Laden der Waffenarten',
-                          );
-                        }
-
-                        final waffenarten = snapshot.data ?? [];
-
-                        return DropdownButtonFormField<int>(
-                          value: _selectedWaffenartId,
-                          hint: const Text('Wählen Sie eine Waffenart'),
-                          isExpanded: true,
-                          items:
-                              waffenarten.map((waffenart) {
-                                return DropdownMenuItem<int>(
-                                  value: waffenart.id,
-                                  child: ScaledText(
-                                    '${waffenart.id} - ${waffenart.beschreibung}',
-                                    style: UIStyles.bodyTextStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.bodyTextStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedWaffenartId = value;
-                              // Reset Wettkampfart when Waffenart changes
-                              _selectedWettkampfartId = null;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Waffenart *',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
-                              ),
-                              borderSide: const BorderSide(
-                                color: UIConstants.defaultAppColor,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
-                              ),
-                              borderSide: const BorderSide(
-                                color: UIConstants.defaultAppColor,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: UIConstants.spacingL),
-
-                    // Disziplinnummer lt. SPO
-                    TextField(
-                      controller: _disziplinController,
-                      keyboardType: TextInputType.number,
-                      style: UIStyles.bodyTextStyle.copyWith(
-                        fontSize:
-                            UIStyles.bodyTextStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Disziplinnummer lt. SPO *',
-                        hintText: 'z.B. 1',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
-                          ),
-                          borderSide: const BorderSide(
-                            color: UIConstants.defaultAppColor,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
-                          ),
-                          borderSide: const BorderSide(
-                            color: UIConstants.defaultAppColor,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: UIConstants.spacingL),
-
-                    // Training Checkbox
-                    Semantics(
-                      checked: _training,
-                      enabled: true,
-                      label: 'Training',
-                      onTap: () {
-                        setState(() {
-                          _training = !_training;
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          Checkbox(
-                            value: _training,
-                            activeColor: UIConstants.defaultAppColor,
-                            onChanged: (value) {
-                              setState(() {
-                                _training = value ?? false;
-                              });
-                            },
-                          ),
-                          ScaledText(
-                            'Training',
-                            style: UIStyles.bodyTextStyle.copyWith(
-                              fontSize:
-                                  UIStyles.bodyTextStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: UIConstants.spacingL),
-
-                    // Wettkampfart Dropdown (dependent on Waffenart)
-                    FutureBuilder<List<BeduerfnisseAuswahl>>(
-                      future: _auswahlFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (snapshot.hasError) {
-                          return const Text(
-                            'Fehler beim Laden der Wettkampfarten',
-                          );
-                        }
-
-                        final allWettkampfarten = snapshot.data ?? [];
-
-                        // Filter Wettkampfarten by selected Waffenart
-                        final filteredWettkampfarten =
-                            _selectedWaffenartId != null
-                                ? allWettkampfarten
-                                    .where(
-                                      (w) => w.typId == _selectedWaffenartId,
-                                    )
-                                    .toList()
-                                : [];
-
-                        return DropdownButtonFormField<int>(
-                          value: _selectedWettkampfartId,
-                          hint: const Text('Wählen Sie eine Wettkampfart'),
-                          items:
-                              filteredWettkampfarten.map((wettkampfart) {
-                                return DropdownMenuItem<int>(
-                                  value: wettkampfart.id,
-                                  child: ScaledText(
-                                    wettkampfart.beschreibung,
-                                    style: UIStyles.bodyTextStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.bodyTextStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedWettkampfartId = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Wettkampfart (optional)',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
-                              ),
-                              borderSide: const BorderSide(
-                                color: UIConstants.defaultAppColor,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
-                              ),
-                              borderSide: const BorderSide(
-                                color: UIConstants.defaultAppColor,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          disabledHint: const Text(
-                            'Wählen Sie zuerst eine Waffenart',
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: UIConstants.spacingL),
-
-                    // Wettkampfergebnis (optional)
-                    TextField(
-                      controller: _wettkampfergebnisController,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      style: UIStyles.bodyTextStyle.copyWith(
-                        fontSize:
-                            UIStyles.bodyTextStyle.fontSize! *
-                            fontSizeProvider.scaleFactor,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Wettkampfergebnis (optional)',
-                        hintText: 'z.B. 95.5',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
-                          ),
-                          borderSide: const BorderSide(
-                            color: UIConstants.defaultAppColor,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
-                          ),
-                          borderSide: const BorderSide(
-                            color: UIConstants.defaultAppColor,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: UIConstants.spacingXXL),
-
-                    // Action Buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(UIConstants.spacingL),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton(
-                          onPressed:
-                              _isLoading
-                                  ? null
-                                  : () {
-                                    Navigator.of(context).pop();
-                                  },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: UIConstants.cancelButtonBackground,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: UIConstants.spacingL,
-                              vertical: UIConstants.spacingM,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
-                              ),
-                            ),
-                          ),
+                        // Title
+                        Semantics(
+                          header: true,
+                          label: 'Schießaktivität hinzufügen',
                           child: ScaledText(
-                            'Abbrechen',
-                            style: UIStyles.buttonStyle.copyWith(
+                            'Schießaktivität hinzufügen',
+                            style: UIStyles.titleStyle.copyWith(
                               fontSize:
-                                  UIStyles.buttonStyle.fontSize! *
+                                  UIStyles.titleStyle.fontSize! *
                                   fontSizeProvider.scaleFactor,
-                              color: UIConstants.buttonTextColor,
+                              color: UIConstants.defaultAppColor,
                             ),
                           ),
                         ),
-                        const SizedBox(width: UIConstants.spacingM),
-                        ElevatedButton(
-                          onPressed: _isLoading ? null : _saveBedSport,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: UIConstants.submitButtonBackground,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: UIConstants.spacingL,
-                              vertical: UIConstants.spacingM,
-                            ),
-                            shape: RoundedRectangleBorder(
+                        const SizedBox(height: UIConstants.spacingL),
+
+                        // Datum
+                        TextField(
+                          controller: _datumController,
+                          readOnly: true,
+                          onTap: _selectDate,
+                          style: UIStyles.bodyTextStyle.copyWith(
+                            fontSize:
+                                UIStyles.bodyTextStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Datum *',
+                            hintText: 'Wählen Sie ein Datum',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(
                                 UIConstants.cornerRadius,
                               ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                                width: 2,
+                              ),
+                            ),
+                            suffixIcon: const Icon(
+                              Icons.calendar_today,
+                              color: UIConstants.defaultAppColor,
                             ),
                           ),
-                          child:
-                              _isLoading
-                                  ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                  : ScaledText(
-                                    'Speichern',
-                                    style: UIStyles.buttonStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.buttonStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
-                                      color: UIConstants.buttonTextColor,
-                                    ),
-                                  ),
                         ),
+                        const SizedBox(height: UIConstants.spacingL),
+
+                        // Waffenart Dropdown
+                        FutureBuilder<List<BeduerfnisseAuswahlTyp>>(
+                          future: _waffenartFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return const Text(
+                                'Fehler beim Laden der Waffenarten',
+                              );
+                            }
+
+                            final waffenarten = snapshot.data ?? [];
+
+                            return DropdownButtonFormField<int>(
+                              value: _selectedWaffenartId,
+                              hint: const Text('Wählen Sie eine Waffenart'),
+                              isExpanded: true,
+                              items:
+                                  waffenarten.map((waffenart) {
+                                    return DropdownMenuItem<int>(
+                                      value: waffenart.id,
+                                      child: ScaledText(
+                                        '${waffenart.id} - ${waffenart.beschreibung}',
+                                        style: UIStyles.bodyTextStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyTextStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedWaffenartId = value;
+                                  // Reset Wettkampfart when Waffenart changes
+                                  _selectedWettkampfartId = null;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Waffenart *',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                  borderSide: const BorderSide(
+                                    color: UIConstants.defaultAppColor,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                  borderSide: const BorderSide(
+                                    color: UIConstants.defaultAppColor,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: UIConstants.spacingL),
+
+                        // Disziplinnummer lt. SPO
+                        TextField(
+                          controller: _disziplinController,
+                          keyboardType: TextInputType.number,
+                          style: UIStyles.bodyTextStyle.copyWith(
+                            fontSize:
+                                UIStyles.bodyTextStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Disziplinnummer lt. SPO *',
+                            hintText: 'z.B. 1',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingL),
+
+                        // Training Checkbox
+                        Semantics(
+                          checked: _training,
+                          enabled: true,
+                          label: 'Training',
+                          onTap: () {
+                            setState(() {
+                              _training = !_training;
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: _training,
+                                activeColor: UIConstants.defaultAppColor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _training = value ?? false;
+                                  });
+                                },
+                              ),
+                              ScaledText(
+                                'Training',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.bodyTextStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingL),
+
+                        // Wettkampfart Dropdown (dependent on Waffenart)
+                        FutureBuilder<List<BeduerfnisseAuswahl>>(
+                          future: _auswahlFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return const Text(
+                                'Fehler beim Laden der Wettkampfarten',
+                              );
+                            }
+
+                            final allWettkampfarten = snapshot.data ?? [];
+
+                            // Filter Wettkampfarten by selected Waffenart
+                            final filteredWettkampfarten =
+                                _selectedWaffenartId != null
+                                    ? allWettkampfarten
+                                        .where(
+                                          (w) =>
+                                              w.typId == _selectedWaffenartId,
+                                        )
+                                        .toList()
+                                    : [];
+
+                            return DropdownButtonFormField<int>(
+                              value: _selectedWettkampfartId,
+                              hint: const Text('Wählen Sie eine Wettkampfart'),
+                              items:
+                                  filteredWettkampfarten.map((wettkampfart) {
+                                    return DropdownMenuItem<int>(
+                                      value: wettkampfart.id,
+                                      child: ScaledText(
+                                        wettkampfart.beschreibung,
+                                        style: UIStyles.bodyTextStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyTextStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedWettkampfartId = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Wettkampfart (optional)',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                  borderSide: const BorderSide(
+                                    color: UIConstants.defaultAppColor,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                  borderSide: const BorderSide(
+                                    color: UIConstants.defaultAppColor,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              disabledHint: const Text(
+                                'Wählen Sie zuerst eine Waffenart',
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: UIConstants.spacingL),
+
+                        // Wettkampfergebnis (optional)
+                        TextField(
+                          controller: _wettkampfergebnisController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          style: UIStyles.bodyTextStyle.copyWith(
+                            fontSize:
+                                UIStyles.bodyTextStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Wettkampfergebnis (optional)',
+                            hintText: 'z.B. 95.5',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.cornerRadius,
+                              ),
+                              borderSide: const BorderSide(
+                                color: UIConstants.defaultAppColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingL),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                // FABs positioned at bottom-right
+                Positioned(
+                  bottom: UIConstants.dialogFabTightBottom,
+                  right: UIConstants.dialogFabTightRight,
+                  child: DialogFABs(
+                    children: [
+                      FloatingActionButton(
+                        heroTag: 'cancelBedSportFab',
+                        mini: true,
+                        tooltip: 'Abbrechen',
+                        backgroundColor: UIConstants.defaultAppColor,
+                        onPressed:
+                            _isLoading
+                                ? null
+                                : () => Navigator.of(context).pop(),
+                        child: const Icon(
+                          Icons.close,
+                          color: UIConstants.whiteColor,
+                        ),
+                      ),
+                      FloatingActionButton(
+                        key: const ValueKey('saveBedSportFab'),
+                        heroTag: 'saveBedSportFab',
+                        mini: true,
+                        tooltip: 'Speichern',
+                        backgroundColor: UIConstants.defaultAppColor,
+                        onPressed: _isLoading ? null : _saveBedSport,
+                        child:
+                            _isLoading
+                                ? const SizedBox(
+                                  width: UIConstants.loadingIndicatorSize,
+                                  height: UIConstants.loadingIndicatorSize,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      UIConstants.whiteColor,
+                                    ),
+                                  ),
+                                )
+                                : const Icon(
+                                  Icons.check,
+                                  color: UIConstants.whiteColor,
+                                ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Loading overlay
+                if (_isLoading)
+                  Positioned.fill(
+                    child: AbsorbPointer(
+                      absorbing: true,
+                      child: Container(
+                        color: UIConstants.overlayColor,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              UIConstants.circularProgressIndicator,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         );
