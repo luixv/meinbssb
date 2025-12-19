@@ -1593,12 +1593,9 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<List<_i37.BeduerfnisseDatei>>);
 
   @override
-  _i3.Future<bool> updateBedDatei(
-    int? antragsnummer,
-    _i37.BeduerfnisseDatei? datei,
-  ) =>
+  _i3.Future<bool> updateBedDatei(_i37.BeduerfnisseDatei? datei) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedDatei, [antragsnummer, datei]),
+            Invocation.method(#updateBedDatei, [datei]),
             returnValue: _i3.Future<bool>.value(false),
           )
           as _i3.Future<bool>);
@@ -1652,12 +1649,9 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<List<_i38.BeduerfnisseSport>>);
 
   @override
-  _i3.Future<bool> updateBedSport(
-    int? antragsnummer,
-    _i38.BeduerfnisseSport? sport,
-  ) =>
+  _i3.Future<bool> updateBedSport(_i38.BeduerfnisseSport? sport) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedSport, [antragsnummer, sport]),
+            Invocation.method(#updateBedSport, [sport]),
             returnValue: _i3.Future<bool>.value(false),
           )
           as _i3.Future<bool>);
@@ -1713,14 +1707,10 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
 
   @override
   _i3.Future<bool> updateBedWaffeBesitz(
-    int? antragsnummer,
     _i39.BeduerfnisseWaffeBesitz? waffeBesitz,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedWaffeBesitz, [
-              antragsnummer,
-              waffeBesitz,
-            ]),
+            Invocation.method(#updateBedWaffeBesitz, [waffeBesitz]),
             returnValue: _i3.Future<bool>.value(false),
           )
           as _i3.Future<bool>);

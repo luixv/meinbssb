@@ -2470,13 +2470,13 @@ void main() {
           fileBytes: [],
         );
         when(
-          mockPostgrestService.updateBedDatei(100000, datei),
+          mockPostgrestService.updateBedDatei(datei),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedDatei(100000, datei);
+        final result = await apiService.updateBedDatei(datei);
         expect(result, isTrue);
         verify(
-          mockPostgrestService.updateBedDatei(100000, datei),
+          mockPostgrestService.updateBedDatei(datei),
         ).called(1);
       });
 
@@ -2625,13 +2625,13 @@ void main() {
           training: false,
         );
         when(
-          mockPostgrestService.updateBedSport(100000, sport),
+          mockPostgrestService.updateBedSport(sport),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedSport(100000, sport);
+        final result = await apiService.updateBedSport(sport);
         expect(result, isTrue);
         verify(
-          mockPostgrestService.updateBedSport(100000, sport),
+          mockPostgrestService.updateBedSport(sport),
         ).called(1);
       });
 
@@ -2801,13 +2801,13 @@ void main() {
           kompensator: true,
         );
         when(
-          mockPostgrestService.updateBedWaffeBesitz(100000, waffeBesitz),
+          mockPostgrestService.updateBedWaffeBesitz(waffeBesitz),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedWaffeBesitz(100000, waffeBesitz);
+        final result = await apiService.updateBedWaffeBesitz(waffeBesitz);
         expect(result, isTrue);
         verify(
-          mockPostgrestService.updateBedWaffeBesitz(100000, waffeBesitz),
+          mockPostgrestService.updateBedWaffeBesitz(waffeBesitz),
         ).called(1);
       });
 

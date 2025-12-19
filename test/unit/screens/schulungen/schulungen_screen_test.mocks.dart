@@ -1237,12 +1237,9 @@ class MockApiService extends _i1.Mock implements _i10.ApiService {
           as _i9.Future<List<_i33.BeduerfnisseDatei>>);
 
   @override
-  _i9.Future<bool> updateBedDatei(
-    int? antragsnummer,
-    _i33.BeduerfnisseDatei? datei,
-  ) =>
+  _i9.Future<bool> updateBedDatei(_i33.BeduerfnisseDatei? datei) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedDatei, [antragsnummer, datei]),
+            Invocation.method(#updateBedDatei, [datei]),
             returnValue: _i9.Future<bool>.value(false),
           )
           as _i9.Future<bool>);
@@ -1296,12 +1293,9 @@ class MockApiService extends _i1.Mock implements _i10.ApiService {
           as _i9.Future<List<_i34.BeduerfnisseSport>>);
 
   @override
-  _i9.Future<bool> updateBedSport(
-    int? antragsnummer,
-    _i34.BeduerfnisseSport? sport,
-  ) =>
+  _i9.Future<bool> updateBedSport(_i34.BeduerfnisseSport? sport) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedSport, [antragsnummer, sport]),
+            Invocation.method(#updateBedSport, [sport]),
             returnValue: _i9.Future<bool>.value(false),
           )
           as _i9.Future<bool>);
@@ -1357,14 +1351,10 @@ class MockApiService extends _i1.Mock implements _i10.ApiService {
 
   @override
   _i9.Future<bool> updateBedWaffeBesitz(
-    int? antragsnummer,
     _i35.BeduerfnisseWaffeBesitz? waffeBesitz,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#updateBedWaffeBesitz, [
-              antragsnummer,
-              waffeBesitz,
-            ]),
+            Invocation.method(#updateBedWaffeBesitz, [waffeBesitz]),
             returnValue: _i9.Future<bool>.value(false),
           )
           as _i9.Future<bool>);

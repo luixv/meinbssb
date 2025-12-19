@@ -813,8 +813,8 @@ class ApiService {
   }
 
 
-  Future<bool> updateBedDatei(int antragsnummer, BeduerfnisseDatei datei) async {
-    return _postgrestService.updateBedDatei(antragsnummer, datei);
+  Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
+    return _postgrestService.updateBedDatei(datei);
   }
 
   Future<bool> deleteBedDatei(int antragsnummer) async {
@@ -854,8 +854,8 @@ class ApiService {
   }
 
 
-  Future<bool> updateBedSport(int antragsnummer, BeduerfnisseSport sport) async {
-    return _postgrestService.updateBedSport(antragsnummer, sport);
+  Future<bool> updateBedSport(BeduerfnisseSport sport) async {
+    return _postgrestService.updateBedSport(sport);
   }
 
 
@@ -893,15 +893,13 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
-    int antragsnummer,
-  ) async {
+  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(int antragsnummer) async {
     return _postgrestService.getBedWaffeBesitzByAntragsnummer(antragsnummer);
   }
 
 
-  Future<bool> updateBedWaffeBesitz(int antragsnummer, BeduerfnisseWaffeBesitz waffeBesitz) async {
-    return _postgrestService.updateBedWaffeBesitz(antragsnummer, waffeBesitz);
+  Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
+    return _postgrestService.updateBedWaffeBesitz(waffeBesitz);
   }
 
 

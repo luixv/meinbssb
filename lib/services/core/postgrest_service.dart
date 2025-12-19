@@ -873,7 +873,7 @@ class PostgrestService {
 
 
   /// Update bed_datei by antragsnummer
-  Future<bool> updateBedDatei(int antragsnummer, BeduerfnisseDatei datei) async {
+  Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
     try {
       // Convert model to JSON, using lowercase field names for PostgREST
       final data = {
@@ -886,7 +886,7 @@ class PostgrestService {
       };
 
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_datei?antragsnummer=eq.$antragsnummer'),
+        Uri.parse('${_baseUrl}bed_datei?antragsnummer=eq.${datei.antragsnummer}'),
         headers: _headers,
         body: jsonEncode(data),
       );
@@ -1016,7 +1016,7 @@ class PostgrestService {
 
 
   /// Update bed_sport by antragsnummer
-  Future<bool> updateBedSport(int antragsnummer, BeduerfnisseSport sport) async {
+  Future<bool> updateBedSport(BeduerfnisseSport sport) async {
     try {
       // Convert model to JSON, using lowercase field names for PostgREST
       final data = {
@@ -1031,7 +1031,7 @@ class PostgrestService {
       };
 
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_sport?antragsnummer=eq.$antragsnummer'),
+        Uri.parse('${_baseUrl}bed_sport?antragsnummer=eq.${sport.antragsnummer}'),
         headers: _headers,
         body: jsonEncode(data),
       );
@@ -1148,7 +1148,7 @@ class PostgrestService {
 
 
   /// Update bed_waffe_besitz by antragsnummer
-  Future<bool> updateBedWaffeBesitz(int antragsnummer, BeduerfnisseWaffeBesitz waffeBesitz) async {
+  Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
     try {
       // Convert model to JSON, using lowercase field names for PostgREST
       final data = {
@@ -1167,7 +1167,7 @@ class PostgrestService {
       };
 
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_waffe_besitz?antragsnummer=eq.$antragsnummer'),
+        Uri.parse('${_baseUrl}bed_waffe_besitz?antragsnummer=eq.${waffeBesitz.antragsnummer}'),
         headers: _headers,
         body: jsonEncode(data),
       );

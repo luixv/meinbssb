@@ -884,7 +884,7 @@ void main() {
           dateiname: 'new.pdf',
           fileBytes: [],
         );
-        final result = await service.updateBedDatei(100000, datei);
+        final result = await service.updateBedDatei(datei);
         expect(result, isTrue);
       });
 
@@ -1018,7 +1018,7 @@ void main() {
           disziplinId: 2,
           training: false,
         );
-        final result = await service.updateBedSport(100000, sport);
+        final result = await service.updateBedSport(sport);
         expect(result, isTrue);
       });
 
@@ -1151,7 +1151,7 @@ void main() {
           kaliberId: 2,
           kompensator: true,
         );
-        final result = await service.updateBedWaffeBesitz(100000, waffeBesitz);
+        final result = await service.updateBedWaffeBesitz(waffeBesitz);
         expect(result, isTrue);
       });
 
