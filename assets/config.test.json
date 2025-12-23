@@ -21,7 +21,6 @@
   "api1BaseServer": "webintern.bssb.bayern",
   "api1BasePath": "rest/zmi/api1",
   "api1BasePort": "56400",
-  "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
   "serverTimeout": 40,
   "cacheExpirationHours": "24",
   "testEmails": true,
