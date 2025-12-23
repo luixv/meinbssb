@@ -35,22 +35,14 @@ class TokenService {
         protocolKey: 'webProtocol',
       );
 
-      final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
-      final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
-
       final uri = Uri.parse('${loginServiceBase}bssb-token');
 
       LoggerService.logInfo(
-        'TokenService: Fetching token via login service: $uri',
+        'TokenService: Fetching token via bssb-token service: $uri',
       );
 
       final response = await _httpClient.post(
         uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': usernameWebUser,
-          'password': passwordWebUser,
-        }),
       );
 
       LoggerService.logInfo(

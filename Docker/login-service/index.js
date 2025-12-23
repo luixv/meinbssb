@@ -7,11 +7,11 @@ const app = express();
 app.use(express.json());
 
 // Configuration from environment variables with sensible defaults
-const TOKEN_SERVER_URL = process.env.TOKEN_SERVER_URL || 'https://webintern.bssb.bayern:56400/rest/zmi/token';
+const TOKEN_SERVER_URL =
+  process.env.TOKEN_SERVER_URL ||
+  'https://webintern.bssb.bayern:56400/rest/zmi/token';
 const USERNAME_WEB_USER = process.env.USERNAME_WEB_USER || 'webUser';
 const PASSWORD_WEB_USER = process.env.PASSWORD_WEB_USER || '';
-const API1_BASE_URL = process.env.API1_BASE_URL || 'https://webintern.bssb.bayern:56400/rest/zmi/api1';
-const LOGIN_ENDPOINT = 'LoginMeinBSSBApp';
 
 // Simple in-memory cache for the token
 let cachedToken = null;
@@ -46,78 +46,16 @@ async function getToken() {
   return fetchToken();
 }
 
-app.post('/bssb-token', async (req, res) => {
-  const { email, password } = req.body || {};
-  if (!email || !password) {
-    return res.status(400).json({
-      ResultType: 0,
-      ResultMessage: 'Email und Passwort sind erforderlich',
-    });
-  }
-
+// Public endpoint for returning the current service token
+app.post('/bssb-token', async (_req, res) => {
   try {
     const token = await getToken();
-    const loginData = { Email: email, Passwort: password };
-
-    const loginResponse = await axios.post(
-      `${API1_BASE_URL}/${LOGIN_ENDPOINT}`,
-      loginData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        httpsAgent,
-        timeout: 40000,
-      },
-    );
-
-    return res.status(200).json(loginResponse.data);
+    return res.status(200).json({ Token: token });
   } catch (error) {
-    // If unauthorized, try to refresh token once
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      try {
-        cachedToken = null;
-        const newToken = await fetchToken();
-        const loginData = { Email: email, Passwort: password };
-        const retryResponse = await axios.post(
-          `${API1_BASE_URL}/${LOGIN_ENDPOINT}`,
-          loginData,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${newToken}`,
-            },
-            httpsAgent,
-            timeout: 40000,
-          },
-        );
-        return res.status(200).json(retryResponse.data);
-      } catch (retryError) {
-        return res.status(error.response.status).json(retryError.response?.data || {
-          ResultType: 0,
-          ResultMessage: 'Anmeldung fehlgeschlagen',
-        });
-      }
-    }
-
-    if (error.response) {
-      return res.status(error.response.status).json(error.response.data || {
-        ResultType: 0,
-        ResultMessage: 'Anmeldung fehlgeschlagen',
-      });
-    }
-
-    if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT' || `${error.message}`.includes('timeout')) {
-      return res.status(500).json({
-        ResultType: 0,
-        ResultMessage: 'Netzwerkfehler: Bitte überprüfen Sie Ihre Internetverbindung.',
-      });
-    }
-
+    console.error('Error in /bssb-token:', error);
     return res.status(500).json({
       ResultType: 0,
-      ResultMessage: error.message || 'Anmeldung fehlgeschlagen',
+      ResultMessage: 'Tokenabruf fehlgeschlagen',
     });
   }
 });

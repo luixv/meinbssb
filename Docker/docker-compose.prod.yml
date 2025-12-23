@@ -26,7 +26,6 @@ services:
       - TOKEN_SERVER_URL=${TOKEN_SERVER_URL:-https://webintern.bssb.bayern:56400/rest/zmi/token}
       - USERNAME_WEB_USER=${USERNAME_WEB_USER:-webUser}
       - PASSWORD_WEB_USER=${PASSWORD_WEB_USER:-}
-      - API1_BASE_URL=${API1_BASE_URL:-https://webintern.bssb.bayern:56400/rest/zmi/api1}
 
   postfix-relay:
     image: boky/postfix

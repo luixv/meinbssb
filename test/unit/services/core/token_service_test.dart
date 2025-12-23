@@ -38,9 +38,6 @@ void main() {
       when(mockConfigService.getString('webServer')).thenReturn('example.com');
       when(mockConfigService.getString('webPort')).thenReturn('443');
       when(mockConfigService.getString('webPath')).thenReturn('');
-      when(mockConfigService.getString('usernameWebUser')).thenReturn('user1');
-      when(mockConfigService.getString('passwordWebUser')).thenReturn('pass1');
-
       final responseBody = jsonEncode({'Token': 'faketoken123'});
       when(
         mockHttpClient.post(
@@ -74,9 +71,6 @@ void main() {
       when(mockConfigService.getString('webServer')).thenReturn('example.com');
       when(mockConfigService.getString('webPort')).thenReturn('443');
       when(mockConfigService.getString('webPath')).thenReturn('');
-      when(mockConfigService.getString('usernameWebUser')).thenReturn('user1');
-      when(mockConfigService.getString('passwordWebUser')).thenReturn('pass1');
-
       when(
         mockHttpClient.post(
           any,
@@ -123,9 +117,6 @@ void main() {
       when(mockConfigService.getString('webServer')).thenReturn('example.com');
       when(mockConfigService.getString('webPort')).thenReturn('443');
       when(mockConfigService.getString('webPath')).thenReturn('');
-      when(mockConfigService.getString('usernameWebUser')).thenReturn('user1');
-      when(mockConfigService.getString('passwordWebUser')).thenReturn('pass1');
-
       final responseBody = jsonEncode({'Token': 'newtoken123'});
       when(
         mockHttpClient.post(
