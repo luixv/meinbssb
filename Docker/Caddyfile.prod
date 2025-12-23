@@ -65,6 +65,16 @@ https://mein.bssb.de {
     }
   }
 
+  # Handle login service requests on /bssb-token path
+  handle /bssb-token {
+    reverse_proxy login-service:3002
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Authorization, Content-Type"
+    }
+  }
+
   # Serve Flutter Web App (default handler)
   handle {
     root * /web
