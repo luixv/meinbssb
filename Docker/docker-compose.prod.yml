@@ -23,7 +23,7 @@ services:
     container_name: login-service
     restart: always
     environment:
-      - TOKEN_SERVER_URL=${TOKEN_SERVER_URL:-https://webintern.bssb.bayern:56400/rest/zmi/token}
+      - TOKEN_SERVER_URL=${TOKEN_SERVER_URL:-https://webintern.bssb.bayern:50211/rest/zmi/token}
       - USERNAME_WEB_USER=${USERNAME_WEB_USER:-webUser}
       - PASSWORD_WEB_USER=${PASSWORD_WEB_USER:-}
 
