@@ -54,6 +54,17 @@ Future<void> main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
 
+    // Clear all storage on page load (cookies, SharedPreferences, etc.)
+    if (kIsWeb) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        debugPrint('Cleared all SharedPreferences on page load');
+      } catch (e) {
+        debugPrint('Failed to clear SharedPreferences: $e');
+      }
+    }
+
     // Use path-based URL strategy instead of hash-based (removes # from URLs)
     // Only available on web platform, wrapped in try-catch for test environments
     if (kIsWeb) {

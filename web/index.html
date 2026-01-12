@@ -37,6 +37,32 @@
   <script>
     // Disable service worker
     const serviceWorkerVersion = null;
+    
+    // Clear all cookies, localStorage, and sessionStorage on page load
+    (function clearAllStorage() {
+      console.log('Clearing all browser storage on page load...');
+      
+      // Clear all cookies
+      document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+      });
+      
+      // Clear localStorage
+      try {
+        localStorage.clear();
+      } catch (e) {
+        console.warn('Failed to clear localStorage:', e);
+      }
+      
+      // Clear sessionStorage
+      try {
+        sessionStorage.clear();
+      } catch (e) {
+        console.warn('Failed to clear sessionStorage:', e);
+      }
+      
+      console.log('Storage cleared successfully');
+    })();
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
