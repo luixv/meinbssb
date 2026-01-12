@@ -56,19 +56,63 @@ class _MeineBeduerfnisseantraegeScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder:
-          (context) => AlertDialog(
-            title: const Text('Bestätigung'),
-            content: const Text(
-              'Möchten Sie diesen Antrag wirklich löschen? Dies kann nicht rückgängig gemacht werden.',
+          (dialogContext) => AlertDialog(
+            backgroundColor: UIConstants.backgroundColor,
+            title: const Center(
+              child: Text('Antrag löschen', style: UIStyles.dialogTitleStyle),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Abbrechen'),
+            content: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: UIStyles.dialogContentStyle,
+                children: <TextSpan>[
+                  const TextSpan(text: 'Möchten Sie diesen Antrag wirklich '),
+                  TextSpan(
+                    text: 'Antrag Nr. ${antrag.antragsnummer ?? 'N/A'}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const TextSpan(
+                    text:
+                        ' löschen? Dies kann nicht rückgängig gemacht werden.',
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Löschen'),
+            ),
+            actions: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: UIConstants.spacingM,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(false),
+                      style: UIStyles.dialogCancelButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.close, color: UIConstants.closeIcon),
+                          UIConstants.horizontalSpacingS,
+                          const Text('Abbrechen'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(true),
+                      style: UIStyles.dialogAcceptButtonStyle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.check, color: UIConstants.checkIcon),
+                          UIConstants.horizontalSpacingS,
+                          const Text('Löschen'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -81,9 +125,7 @@ class _MeineBeduerfnisseantraegeScreenState
       if (antrag.antragsnummer == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler: Antragsnummer fehlt'),
-            ),
+            const SnackBar(content: Text('Fehler: Antragsnummer fehlt')),
           );
         }
         return;
