@@ -166,12 +166,12 @@ class ContactDataScreenState extends State<ContactDataScreen> {
     LoggerService.logInfo(
       'Network status: ${isOffline ? "offline" : "online"}',
     );
-    
+
     if (!mounted) {
       LoggerService.logWarning('Widget not mounted after network check.');
       return;
     }
-    
+
     if (isOffline) {
       LoggerService.logWarning('Cannot delete contact while offline.');
       setState(() {
@@ -568,103 +568,64 @@ class ContactDataScreenState extends State<ContactDataScreen> {
                         horizontal: UIConstants.spacingM,
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(minHeight: 40),
-                            child: ElevatedButton(
-                              onPressed:
-                                  _isAdding
-                                      ? null
-                                      : () => Navigator.of(dialogContext).pop(),
-                              style: UIStyles.dialogCancelButtonStyle.copyWith(
-                                padding: MaterialStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                    horizontal: UIConstants.spacingM,
-                                  ),
+                          ElevatedButton(
+                            onPressed:
+                                _isAdding
+                                    ? null
+                                    : () => Navigator.of(dialogContext).pop(),
+                            style: UIStyles.dialogCancelButtonStyle,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.close,
+                                  color: UIConstants.closeIcon,
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.close,
-                                    color: UIConstants.closeIcon,
-                                    size: UIConstants.defaultIconSize,
-                                  ),
-                                  const SizedBox(width: UIConstants.spacingS),
-                                  Text(
-                                    'Abbrechen',
-                                    style: UIStyles.dialogButtonTextStyle
-                                        .copyWith(
-                                          color: UIConstants.cancelButtonText,
-                                          fontSize: UIConstants.buttonFontSize,
-                                        ),
-                                  ),
-                                ],
-                              ),
+                                UIConstants.horizontalSpacingS,
+                                const Text('Abbrechen'),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 12),
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(minHeight: 40),
-                            child: ElevatedButton(
-                              onPressed:
-                                  _isAdding ||
-                                  _selectedKontaktTyp == null ||
-                                  _kontaktController.text.trim().isEmpty
-                                      ? null
-                                      : () async {
-                                        setStateDialog(() => _isAdding = true);
-                                        await _onAddContact(dialogContext);
-                                      },
-                              style: UIStyles.dialogAcceptButtonStyle.copyWith(
-                                padding: MaterialStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                    vertical: UIConstants.spacingS,
-                                  ),
-                                ),
-                              ),
-                              child:
-                                  _isAdding
-                                      ? const SizedBox(
-                                        width: UIConstants.defaultIconSize,
-                                        height: UIConstants.defaultIconSize,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                UIConstants
-                                                    .circularProgressIndicator,
-                                              ),
-                                        ),
-                                      )
-                                      : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.check,
-                                            color: UIConstants.checkIcon,
-                                            size: 20,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            'Hinzufügen',
-                                            style: UIStyles
-                                                .dialogButtonTextStyle
-                                                .copyWith(
-                                                  color:
-                                                      UIConstants
-                                                          .submitButtonText,
-                                                  fontSize:
-                                                      UIConstants
-                                                          .buttonFontSize,
-                                                ),
-                                          ),
-                                        ],
+                          ElevatedButton(
+                            onPressed:
+                                _isAdding ||
+                                        _selectedKontaktTyp == null ||
+                                        _kontaktController.text.trim().isEmpty
+                                    ? null
+                                    : () async {
+                                      setStateDialog(() => _isAdding = true);
+                                      await _onAddContact(dialogContext);
+                                    },
+                            style: UIStyles.dialogAcceptButtonStyle,
+                            child:
+                                _isAdding
+                                    ? const SizedBox(
+                                      width: UIConstants.defaultIconSize,
+                                      height: UIConstants.defaultIconSize,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              UIConstants
+                                                  .circularProgressIndicator,
+                                            ),
                                       ),
-                            ),
+                                    )
+                                    : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.check,
+                                          color: UIConstants.checkIcon,
+                                        ),
+                                        UIConstants.horizontalSpacingS,
+                                        const Text('Hinzufügen'),
+                                      ],
+                                    ),
                           ),
                         ],
                       ),
@@ -869,14 +830,17 @@ class _ContactTileWithKeyboardFocus extends StatefulWidget {
   final String displayLabel;
   final int kontaktId;
   final int rawKontaktTyp;
-  final Function(int kontaktId, int kontaktTyp, String value, String label) onDelete;
+  final Function(int kontaktId, int kontaktTyp, String value, String label)
+  onDelete;
   final FontSizeProvider fontSizeProvider;
 
   @override
-  State<_ContactTileWithKeyboardFocus> createState() => _ContactTileWithKeyboardFocusState();
+  State<_ContactTileWithKeyboardFocus> createState() =>
+      _ContactTileWithKeyboardFocusState();
 }
 
-class _ContactTileWithKeyboardFocusState extends State<_ContactTileWithKeyboardFocus> {
+class _ContactTileWithKeyboardFocusState
+    extends State<_ContactTileWithKeyboardFocus> {
   final FocusNode _focusNode = FocusNode();
   bool _hasKeyboardFocus = false;
 
@@ -895,7 +859,8 @@ class _ContactTileWithKeyboardFocusState extends State<_ContactTileWithKeyboardF
 
   void _onFocusChange() {
     // Check if focus highlight mode is traditional (keyboard navigation)
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     setState(() {
       _hasKeyboardFocus = _focusNode.hasFocus && isKeyboardMode;
     });
@@ -905,13 +870,15 @@ class _ContactTileWithKeyboardFocusState extends State<_ContactTileWithKeyboardF
   Widget build(BuildContext context) {
     return Semantics(
       label: 'Kontaktfeld: ${widget.displayLabel}',
-      hint: 'Gespeicherter Wert: ${widget.displayValue}. Löschen mit Button rechts.',
+      hint:
+          'Gespeicherter Wert: ${widget.displayValue}. Löschen mit Button rechts.',
       textField: true,
       child: Padding(
         padding: const EdgeInsets.only(bottom: UIConstants.spacingS),
         child: TextFormField(
           focusNode: _focusNode,
-          initialValue: widget.displayValue.isNotEmpty ? widget.displayValue : '-',
+          initialValue:
+              widget.displayValue.isNotEmpty ? widget.displayValue : '-',
           readOnly: true,
           style: UIStyles.formValueBoldStyle.copyWith(
             fontSize:
@@ -919,24 +886,30 @@ class _ContactTileWithKeyboardFocusState extends State<_ContactTileWithKeyboardF
                 widget.fontSizeProvider.scaleFactor,
           ),
           decoration: UIStyles.formInputDecoration.copyWith(
-            labelText: widget.displayLabel.isNotEmpty ? widget.displayLabel : 'Unbekannt',
+            labelText:
+                widget.displayLabel.isNotEmpty
+                    ? widget.displayLabel
+                    : 'Unbekannt',
             fillColor: _hasKeyboardFocus ? Colors.yellow.shade100 : null,
-            focusedBorder: _hasKeyboardFocus
-                ? OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.yellow.shade700,
-                    width: 2.0,
-                  ),
-                )
-                : null,
+            focusedBorder:
+                _hasKeyboardFocus
+                    ? OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.yellow.shade700,
+                        width: 2.0,
+                      ),
+                    )
+                    : null,
             suffixIcon: _DeleteIconButton(
-              onPressed: () => widget.onDelete(
-                widget.kontaktId,
-                widget.rawKontaktTyp,
-                widget.displayValue,
-                widget.displayLabel,
-              ),
-              iconSize: UIConstants.iconSizeS * widget.fontSizeProvider.scaleFactor,
+              onPressed:
+                  () => widget.onDelete(
+                    widget.kontaktId,
+                    widget.rawKontaktTyp,
+                    widget.displayValue,
+                    widget.displayLabel,
+                  ),
+              iconSize:
+                  UIConstants.iconSizeS * widget.fontSizeProvider.scaleFactor,
             ),
           ),
         ),
@@ -947,10 +920,7 @@ class _ContactTileWithKeyboardFocusState extends State<_ContactTileWithKeyboardF
 
 // Custom Delete Icon Button with keyboard-only focus highlighting
 class _DeleteIconButton extends StatefulWidget {
-  const _DeleteIconButton({
-    required this.onPressed,
-    required this.iconSize,
-  });
+  const _DeleteIconButton({required this.onPressed, required this.iconSize});
 
   final VoidCallback onPressed;
   final double iconSize;
@@ -985,28 +955,27 @@ class _DeleteIconButtonState extends State<_DeleteIconButton> {
   @override
   Widget build(BuildContext context) {
     // Check if focus is from keyboard navigation
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Focus(
       focusNode: _focusNode,
       child: Container(
-        decoration: hasKeyboardFocus
-            ? BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  color: Colors.yellow.shade700,
-                  width: 3.0,
-                ),
-              )
-            : null,
+        decoration:
+            hasKeyboardFocus
+                ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Colors.yellow.shade700, width: 3.0),
+                )
+                : null,
         child: IconButton(
-          icon: Icon(
-            Icons.delete_outline,
-            size: widget.iconSize,
-          ),
+          icon: Icon(Icons.delete_outline, size: widget.iconSize),
           tooltip: 'Löschen',
-          color: hasKeyboardFocus ? Colors.yellow.shade700 : UIConstants.deleteIcon,
+          color:
+              hasKeyboardFocus
+                  ? Colors.yellow.shade700
+                  : UIConstants.deleteIcon,
           onPressed: widget.onPressed,
         ),
       ),
@@ -1017,7 +986,7 @@ class _DeleteIconButtonState extends State<_DeleteIconButton> {
 // Custom Add Contact Button widget with hover and focus support
 class _AddContactButton extends StatefulWidget {
   const _AddContactButton({required this.onPressed});
-  
+
   final VoidCallback onPressed;
 
   @override
@@ -1050,12 +1019,12 @@ class _AddContactButtonState extends State<_AddContactButton> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = (_isHovered || _isFocused) 
-        ? Colors.black 
-        : UIConstants.defaultAppColor;
-    
+    final backgroundColor =
+        (_isHovered || _isFocused) ? Colors.black : UIConstants.defaultAppColor;
+
     // Check if focus is from keyboard navigation
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -1064,7 +1033,8 @@ class _AddContactButtonState extends State<_AddContactButton> {
       button: true,
       child: Shortcuts(
         shortcuts: {
-          SingleActivator(LogicalKeyboardKey.enter): const _ButtonActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.enter):
+              const _ButtonActivateIntent(),
         },
         child: Actions(
           actions: {
@@ -1093,21 +1063,28 @@ class _AddContactButtonState extends State<_AddContactButton> {
               child: Tooltip(
                 message: 'Hinzufügen',
                 child: Padding(
-                  padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                  padding:
+                      hasKeyboardFocus
+                          ? const EdgeInsets.all(4.0)
+                          : EdgeInsets.zero,
                   child: Container(
-                    decoration: hasKeyboardFocus
-                        ? BoxDecoration(
-                            border: Border.all(
-                              color: Colors.yellow.shade700,
-                              width: 3.0,
-                            ),
-                          )
-                        : null,
+                    decoration:
+                        hasKeyboardFocus
+                            ? BoxDecoration(
+                              border: Border.all(
+                                color: Colors.yellow.shade700,
+                                width: 3.0,
+                              ),
+                            )
+                            : null,
                     child: FloatingActionButton(
                       heroTag: 'contactDataFab',
                       onPressed: widget.onPressed,
                       backgroundColor: backgroundColor,
-                      child: const Icon(Icons.add, color: UIConstants.whiteColor),
+                      child: const Icon(
+                        Icons.add,
+                        color: UIConstants.whiteColor,
+                      ),
                     ),
                   ),
                 ),
