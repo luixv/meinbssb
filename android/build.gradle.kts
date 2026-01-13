@@ -2,7 +2,7 @@
 import com.android.build.gradle.BaseExtension
 extra.apply {
     set("compileSdkVersion", 36)
-    set("minSdkVersion", 21)
+    set("minSdkVersion", 29)
     set("targetSdkVersion", 36)
     // set("kotlin_version", "1.9.22") 
 }
