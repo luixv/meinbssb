@@ -63,11 +63,7 @@ Future<void> main() async {
       } catch (e) {
         debugPrint('Failed to clear SharedPreferences: $e');
       }
-    }
-
-    // Use path-based URL strategy instead of hash-based (removes # from URLs)
-    // Only available on web platform, wrapped in try-catch for test environments
-    if (kIsWeb) {
+   
       try {
         usePathUrlStrategy();
       } catch (e) {
