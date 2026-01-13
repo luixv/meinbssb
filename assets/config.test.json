@@ -1,4 +1,6 @@
 {
+  "usernameWebUser": "webUser",
+  "passwordWebUser": "90A32B110B76D3DF25CD675929E67868E70A361FFDB2DE244515FFED4AE8395C",
   "apiProtocol": "https",
   "emailProtocol": "https",
   "emailServer": "meintest.bssb.de",
@@ -21,6 +23,7 @@
   "api1BaseServer": "webintern.bssb.bayern",
   "api1BasePath": "rest/zmi/api1",
   "api1BasePort": "56400",
+  "tokenServerURL": "https://webintern.bssb.bayern:56400/rest/zmi/token",
   "serverTimeout": 40,
   "cacheExpirationHours": "24",
   "testEmails": true,
