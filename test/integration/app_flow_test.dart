@@ -16,7 +16,7 @@ void main() {
 
   group('App Flow Integration Tests', () {
     // These late initializations will now get their values from AppInitializer
-// Declare networkService
+    // Declare networkService
 
     setUpAll(() async {
       // Initialize mock for SharedPreferences to avoid MissingPluginException
@@ -24,7 +24,8 @@ void main() {
 
       // Initialize the app's service providers.
       // This will set the static variables in AppInitializer.
-      await AppInitializer.init();
+      final prefs = await SharedPreferences.getInstance();
+      await AppInitializer.init(prefs: prefs);
       // Assign the initialized services from AppInitializer's static getters
     });
 

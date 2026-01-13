@@ -51,19 +51,20 @@ Future<void> main() async {
     isWindows = Platform.isWindows;
   } catch (_) {}
 
+  // Get SharedPreferences once for use throughout initialization
+  final prefs = await SharedPreferences.getInstance();
+
   try {
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Clear all storage on page load (cookies, SharedPreferences, etc.)
     if (kIsWeb) {
       try {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await clearSomeCookies(prefs);
         debugPrint('Cleared all SharedPreferences on page load');
       } catch (e) {
         debugPrint('Failed to clear SharedPreferences: $e');
       }
-   
+
       try {
         usePathUrlStrategy();
       } catch (e) {
@@ -89,34 +90,17 @@ Future<void> main() async {
   };
 
   try {
-    await AppInitializer.init(isWindows: isWindows);
-
-    // Get SharedPreferences for caching
-    final prefs = await SharedPreferences.getInstance();
+    await AppInitializer.init(isWindows: isWindows, prefs: prefs);
 
     FirebaseRemoteConfig? remoteConfig;
     CompulsoryUpdateProvider? compulsoryUpdateProvider;
     bool remoteConfigSet = true;
     if (!isWindows) {
-      // Only perform Remote Config if online
+      // Firebase Remote Config is supported on web and mobile platforms, but not on Windows desktop
       try {
-        // You can use a simple connectivity check, e.g. via NetworkService or similar
-        // For demonstration, assume always online. Replace with your own check if needed.
+
         remoteConfig = FirebaseRemoteConfig.instance;
-        await remoteConfig.setDefaults(<String, dynamic>{
-          'minimum_required_version': '',
-          'update_message':
-              'Es ist eine neue Version von MeinBSSB verfügbar. Bitte installieren Sie die neue Version. Ihr MeinBSSB Support.',
-          'kill_switch_enabled': false,
-          'kill_switch_message': '',
-        });
-        await remoteConfig.setConfigSettings(
-          RemoteConfigSettings(
-            fetchTimeout: const Duration(seconds: 30),
-            minimumFetchInterval: const Duration(seconds: 10),
-          ),
-        );
-        await remoteConfig.fetchAndActivate();
+        await getRemoteConfig(remoteConfig);
 
         final minimumVersion = remoteConfig.getString(
           'minimum_required_version',
@@ -145,8 +129,7 @@ Future<void> main() async {
         await killSwitchProvider.fetchRemoteConfig();
       } catch (e) {
         debugPrint('Remote Config not set. Error: $e');
-
-        // Continue without remote config
+        remoteConfigSet = false;
       }
     }
 
@@ -244,6 +227,28 @@ Future<void> main() async {
   }
 }
 
+Future<void> getRemoteConfig(FirebaseRemoteConfig remoteConfig) async {
+  await remoteConfig.setDefaults(<String, dynamic>{
+    'minimum_required_version': '',
+    'update_message':
+        'Es ist eine neue Version von MeinBSSB verfügbar. Bitte installieren Sie die neue Version. Ihr MeinBSSB Support.',
+    'kill_switch_enabled': false,
+    'kill_switch_message': '',
+  });
+  await remoteConfig.setConfigSettings(
+    RemoteConfigSettings(
+      fetchTimeout: const Duration(seconds: 30),
+      minimumFetchInterval: const Duration(seconds: 10),
+    ),
+  );
+  await remoteConfig.fetchAndActivate();
+}
+
+Future<void> clearSomeCookies(SharedPreferences prefs) async {
+  // TODO : Clear only specific cookies if needed
+  await prefs.clear();
+}
+
 class AppInitializer {
   static late ConfigService configService;
   static late ApiService apiService;
@@ -275,7 +280,10 @@ class AppInitializer {
     }
   }
 
-  static Future<void> init({bool isWindows = false}) async {
+  static Future<void> init({
+    bool isWindows = false,
+    required SharedPreferences prefs,
+  }) async {
     LoggerService.init(); // Initialize with default (will use kReleaseMode)
     configService = await ConfigService.load('assets/config.json');
     // Re-initialize logger with config to check webServer
@@ -286,8 +294,6 @@ class AppInitializer {
       configService,
       name: 'apiBase',
     );
-
-    final prefs = await SharedPreferences.getInstance();
 
     cacheService = CacheService(prefs: prefs, configService: configService);
     networkService = NetworkService(configService: configService);
