@@ -28,22 +28,32 @@ class TokenService {
   /// This method is responsible for making the actual HTTP request
   /// to the token endpoint.
   Future<String> _fetchToken() async {
+    final String tokenServerURL =
+        _configService.getString('tokenServerURL') ?? '';
+
+    final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
+    final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
+
+    final Map<String, String> body = {
+      'username': usernameWebUser,
+      'password': passwordWebUser,
+    };
+
+    var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
+    body.forEach((key, value) {
+      request.fields[key] = value;
+    });
+
+    LoggerService.logInfo(
+      'TokenService: Fetching new token from: $tokenServerURL',
+    );
+
     try {
-      final loginServiceBase = ConfigService.buildBaseUrlForServer(
-        _configService,
-        name: 'web',
-        protocolKey: 'webProtocol',
-      );
-
-      final uri = Uri.parse('${loginServiceBase}bssb-token');
-
-      LoggerService.logInfo(
-        'TokenService: Fetching token via bssb-token service: $uri',
-      );
-
-      final response = await _httpClient.post(
-        uri,
-      );
+      // Use the injected _client to send the request
+      final http.StreamedResponse streamedResponse =
+          await _httpClient.send(request);
+      final http.Response response =
+          await http.Response.fromStream(streamedResponse);
 
       LoggerService.logInfo(
         'TokenService: Response Status Code: ${response.statusCode}',
@@ -52,14 +62,12 @@ class TokenService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        final String token = jsonResponse['Token'] ?? '';
-        if (token.isNotEmpty) {
-          await _cacheService.setString(_tokenCacheKey, token);
-          LoggerService.logInfo(
-            'TokenService: Successfully fetched and cached new token',
-          );
-          return token;
-        }
+        final String token = jsonResponse['Token'];
+        await _cacheService.setString(_tokenCacheKey, token);
+        LoggerService.logInfo(
+          'TokenService: Successfully fetched and cached new token',
+        );
+        return token;
       }
     } catch (e) {
       LoggerService.logError('TokenService: Error fetching token: $e');
