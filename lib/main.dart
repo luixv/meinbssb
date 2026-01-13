@@ -95,6 +95,9 @@ Future<void> main() async {
   try {
     await AppInitializer.init(isWindows: isWindows);
 
+    // Get SharedPreferences for caching
+    final prefs = await SharedPreferences.getInstance();
+
     FirebaseRemoteConfig? remoteConfig;
     CompulsoryUpdateProvider? compulsoryUpdateProvider;
     bool remoteConfigSet = true;
@@ -119,8 +122,23 @@ Future<void> main() async {
         );
         await remoteConfig.fetchAndActivate();
 
+        final minimumVersion = remoteConfig.getString(
+          'minimum_required_version',
+        );
+        debugPrint('✓ Fetched minimum_required_version: $minimumVersion');
+
+        // Save to SharedPreferences for offline use
+        if (minimumVersion.isNotEmpty) {
+          await prefs.setString(
+            'cached_minimum_required_version',
+            minimumVersion,
+          );
+          debugPrint('✓ Cached minimum_required_version to SharedPreferences');
+        }
+
         compulsoryUpdateProvider = CompulsoryUpdateProvider(
           remoteConfig: remoteConfig,
+          prefs: prefs,
         );
         await compulsoryUpdateProvider.processRemoteConfig();
 
@@ -130,7 +148,6 @@ Future<void> main() async {
         );
         await killSwitchProvider.fetchRemoteConfig();
       } catch (e) {
-        remoteConfigSet = false;
         debugPrint('Remote Config not set. Error: $e');
 
         // Continue without remote config

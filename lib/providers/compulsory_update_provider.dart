@@ -1,14 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 
 class CompulsoryUpdateProvider extends ChangeNotifier {
-  CompulsoryUpdateProvider({required this.remoteConfig});
+  CompulsoryUpdateProvider({required this.remoteConfig, required this.prefs});
   // Test-only setters
   set testUpdateRequired(bool value) => _updateRequired = value;
   set testUpdateMessage(String? value) => _updateMessage = value;
   final FirebaseRemoteConfig remoteConfig;
+  final SharedPreferences prefs;
   String? _minimumRequiredVersion;
   bool _updateRequired = false;
   String? _updateMessage;
@@ -29,8 +31,16 @@ class CompulsoryUpdateProvider extends ChangeNotifier {
     }
     try {
       remoteConfig.getAll();
-      final minVer = remoteConfig.getString('minimum_required_version');
+      var minVer = remoteConfig.getString('minimum_required_version');
       final updMsg = remoteConfig.getString('update_message');
+
+      // If empty from Firebase, try to use cached value
+      if (minVer.isEmpty) {
+        minVer = prefs.getString('cached_minimum_required_version') ?? '';
+        if (minVer.isNotEmpty) {
+          debugPrint('ℹ️ Using cached minimum_required_version: $minVer');
+        }
+      }
 
       _minimumRequiredVersion = minVer.isEmpty ? null : minVer;
       _updateMessage = updMsg.isEmpty ? null : updMsg;
