@@ -30,6 +30,18 @@ http://:8081 {
   }
 }
 
+# Serve Token Service
+http://:8082 {
+  handle /get-token {
+    reverse_proxy token-service:3002
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Content-Type"
+    }
+  }
+}
+
 # Serve ZMI Monitoring Dashboard
 http://:8083 {
   reverse_proxy zmi-monitor:80

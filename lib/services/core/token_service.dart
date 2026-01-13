@@ -26,34 +26,30 @@ class TokenService {
 
   /// Fetches a new authentication token from the server.
   /// This method is responsible for making the actual HTTP request
-  /// to the token endpoint.
+  /// to the token endpoint via the local token service.
+  /// The token service handles the ZMI credentials securely via environment variables.
   Future<String> _fetchToken() async {
-    final String tokenServerURL =
-        _configService.getString('tokenServerURL') ?? '';
-
-    final usernameWebUser = _configService.getString('usernameWebUser') ?? '';
-    final passwordWebUser = _configService.getString('passwordWebUser') ?? '';
-
-    final Map<String, String> body = {
-      'username': usernameWebUser,
-      'password': passwordWebUser,
-    };
-
-    var request = http.MultipartRequest('POST', Uri.parse(tokenServerURL));
-    body.forEach((key, value) {
-      request.fields[key] = value;
-    });
+    // Build the token service URL from config
+    final String protocol = _configService.getString('apiProtocol') ?? 'https';
+    final String server = _configService.getString('webServer') ?? '';
+    final String port = _configService.getString('webPort') ?? '443';
+    
+    // Construct the token service URL
+    final String tokenServiceURL = '$protocol://$server:$port/zmitoken/get-token';
 
     LoggerService.logInfo(
-      'TokenService: Fetching new token from: $tokenServerURL',
+      'TokenService: Fetching new token from: $tokenServiceURL',
     );
 
     try {
-      // Use the injected _client to send the request
-      final http.StreamedResponse streamedResponse =
-          await _httpClient.send(request);
-      final http.Response response =
-          await http.Response.fromStream(streamedResponse);
+      // Make a simple POST request to the token service
+      // No credentials needed in the request - they're stored server-side
+      final http.Response response = await _httpClient.post(
+        Uri.parse(tokenServiceURL),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
 
       LoggerService.logInfo(
         'TokenService: Response Status Code: ${response.statusCode}',

@@ -31,12 +31,22 @@ services:
       PGRST_SERVER_PROXY_URI: http://localhost:3000
       PGRST_OPENAPI_SERVER_PROXY_URI: http://localhost:3000
 
+  token-service:
+    build: ./token-service
+    container_name: token-service
+    restart: always
+    environment:
+      - ZMI_USERNAME=${ZMI_USERNAME:-webUser}
+      - ZMI_PASSWORD=${ZMI_PASSWORD:-90A32B110B76D3DF25CD675929E67868E70A361FFDB2DE244515FFED4AE8395C}
+      - ZMI_TOKEN_URL=${ZMI_TOKEN_URL:-https://webintern.bssb.bayern:50211/rest/zmi/token}
+
   caddy:
     image: caddy:2
     container_name: caddy
     ports:
       - "8080:8080" #Flutter Web
       - "8081:8081" #Postgrest API
+      - "8082:8082" #Token Service
       - "8083:8083" #ZMI Monitor
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
@@ -44,6 +54,7 @@ services:
     depends_on:
       - postgrest
       - zmi-monitor
+      - token-service
 
   mailhog:
     image: mailhog/mailhog

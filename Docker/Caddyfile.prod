@@ -58,6 +58,17 @@ https://mein.bssb.de {
     }
   }
 
+  # Handle token service requests on /zmitoken path
+  handle /zmitoken/* {
+    uri strip_prefix /zmitoken
+    reverse_proxy token-service:3002
+    header {
+      Access-Control-Allow-Origin "*"
+      Access-Control-Allow-Methods "POST, OPTIONS"
+      Access-Control-Allow-Headers "Content-Type"
+    }
+  }
+
   # Serve Flutter Web App (default handler)
   handle {
     root * /web

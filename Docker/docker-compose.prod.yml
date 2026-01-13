@@ -18,6 +18,15 @@ services:
     depends_on:
       - postfix-relay
 
+  token-service:
+    build: ./token-service
+    container_name: token-service
+    restart: always
+    environment:
+      - ZMI_USERNAME=${ZMI_USERNAME}
+      - ZMI_PASSWORD=${ZMI_PASSWORD}
+      - ZMI_TOKEN_URL=${ZMI_TOKEN_URL:-https://webintern.bssb.bayern:50211/rest/zmi/token}
+
   postfix-relay:
     image: boky/postfix
     container_name: postfix-relay
@@ -42,3 +51,4 @@ services:
       - ./caddy-config:/config
     depends_on:
       - postgrest
+      - token-service
