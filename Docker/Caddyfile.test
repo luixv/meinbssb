@@ -1,6 +1,6 @@
 {
-  # Global options – use Let's Encrypt STAGING for all automatic HTTPS
-  acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+  # Global options – use Let's Encrypt production for all automatic HTTPS
+  # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 }
 
 # Redirect HTTP to HTTPS

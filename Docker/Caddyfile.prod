@@ -1,6 +1,9 @@
 # Redirect HTTP from old domain to new domain
 http://meinprod.bssb.de {
-  redir https://meinprod.bssb.de{uri} permanent
+  redir https://mein.bssb.de{uri} permanent
+}
+https://meinprod.bssb.de {
+  redir https://mein.bssb.de{uri} permanent
 }
 
 # Redirect HTTP to HTTPS
@@ -8,73 +11,7 @@ http://mein.bssb.de {
   redir https://mein.bssb.de{uri} permanent
 }
 
-# Redirect old port 8080 (HTTP) on meinprod.bssb.de to HTTPS /email endpoint
-https://meinprod.bssb.de:8080 {
-  redir https://mein.bssb.de/email{uri} permanent
-}
-
-# Redirect old port 8081 (HTTP) on meinprod.bssb.de to HTTPS /api endpoint
-https://meinprod.bssb.de:8081 {
-  redir https://mein.bssb.de/api{uri} permanent
-}
-
 https://mein.bssb.de {
- # Handle PostgREST API requests on /api path
-  handle /api/* {
-    uri strip_prefix /api
-    
-    @cors_preflight {
-      method OPTIONS
-    }
-
-    handle @cors_preflight {
-      respond "" 204
-      header {
-        Access-Control-Allow-Origin "*"
-        Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-        Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
-        Access-Control-Allow-Credentials "false"
-      }
-    }
-
-    handle {
-      reverse_proxy postgrest:3000 {
-        header_up Host {upstream_hostport}
-        header_down -Access-Control-Allow-Origin
-        header_down -Access-Control-Allow-Methods
-        header_down -Access-Control-Allow-Headers
-        header_down -Access-Control-Allow-Credentials
-      }
-      header {
-        Access-Control-Allow-Origin "*"
-        Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-        Access-Control-Allow-Headers "Authorization, Content-Type, Accept, Prefer"
-        Access-Control-Allow-Credentials "false"
-      }
-    }
-  }
-
-  # Handle email service requests on /email path
-  handle /email/* {
-    uri strip_prefix /email
-    reverse_proxy email-service:3001
-    header {
-      Access-Control-Allow-Origin "*"
-      Access-Control-Allow-Methods "POST, OPTIONS"
-      Access-Control-Allow-Headers "Authorization, Content-Type"
-    }
-  }
-
-  # Serve Flutter Web App (default handler)
-  handle {
-    root * /web
-    file_server
-    try_files {path} /index.html
-  }
-}
-
-
-https://meinprod.bssb.de {
  # Handle PostgREST API requests on /api path
   handle /api/* {
     uri strip_prefix /api
