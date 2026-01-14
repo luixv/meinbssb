@@ -33,7 +33,7 @@ class _BeduerfnissantragStep2DialogScreenState
   bool _training = false;
   bool _isLoading = false;
   int? _selectedWaffenartId;
-  late Future<List<BeduerfnisseAuswahlTyp>> _waffenartFuture;
+  late Future<BeduerfnisseAuswahlTyp?> _waffenartFuture;
   late Future<List<BeduerfnisseAuswahl>> _auswahlFuture;
   int? _selectedWettkampfartId;
 
@@ -41,8 +41,16 @@ class _BeduerfnissantragStep2DialogScreenState
   void initState() {
     super.initState();
     final apiService = Provider.of<ApiService>(context, listen: false);
-    _waffenartFuture = apiService.getBedAuswahlTypen();
+    _waffenartFuture = apiService.getBedAuswahlTypById(1);
     _auswahlFuture = apiService.getBedAuswahlList();
+
+    // Add listeners to update UI when fields change
+    _datumController.addListener(() {
+      setState(() {});
+    });
+    _disziplinController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -53,18 +61,291 @@ class _BeduerfnissantragStep2DialogScreenState
     super.dispose();
   }
 
+  bool _areAllCompulsoryFieldsFilled() {
+    return _datumController.text.isNotEmpty &&
+        _selectedWaffenartId != null &&
+        _disziplinController.text.isNotEmpty;
+  }
+
   Future<void> _selectDate() async {
-    final pickedDate = await showDatePicker(
+    final pickedDate = await showDialog<DateTime>(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      builder: (BuildContext context) => _buildCustomCalendarDialog(),
     );
 
     if (pickedDate != null) {
-      _datumController.text =
-          '${pickedDate.day.toString().padLeft(2, '0')}.${pickedDate.month.toString().padLeft(2, '0')}.${pickedDate.year}';
+      setState(() {
+        _datumController.text =
+            '${pickedDate.day.toString().padLeft(2, '0')}.${pickedDate.month.toString().padLeft(2, '0')}.${pickedDate.year}';
+      });
     }
+  }
+
+  Widget _buildCustomCalendarDialog() {
+    DateTime selectedDate = DateTime.now();
+    DateTime displayMonth = DateTime.now();
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: UIConstants.backgroundColor,
+              borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+            ),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(UIConstants.spacingL),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Header with month/year and navigation
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.chevron_left),
+                            color: UIConstants.defaultAppColor,
+                            onPressed: () {
+                              setState(() {
+                                displayMonth = DateTime(
+                                  displayMonth.year,
+                                  displayMonth.month - 1,
+                                );
+                              });
+                            },
+                          ),
+                          Text(
+                            '${_getMonthName(displayMonth.month)} ${displayMonth.year}',
+                            style: UIStyles.titleStyle.copyWith(
+                              color: UIConstants.defaultAppColor,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.chevron_right),
+                            color: UIConstants.defaultAppColor,
+                            onPressed: () {
+                              setState(() {
+                                displayMonth = DateTime(
+                                  displayMonth.year,
+                                  displayMonth.month + 1,
+                                );
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+
+                      // Weekday headers
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: _getWeekdayHeaders(),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+
+                      // Calendar grid
+                      _buildCalendarGrid(displayMonth, selectedDate, (date) {
+                        setState(() {
+                          selectedDate = date;
+                        });
+                      }),
+                      const SizedBox(height: UIConstants.spacingL),
+
+                      // Selected date display
+                      Container(
+                        padding: const EdgeInsets.all(UIConstants.spacingM),
+                        decoration: BoxDecoration(
+                          color: UIConstants.cardColor,
+                          border: Border.all(
+                            color: UIConstants.defaultAppColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            UIConstants.cornerRadius,
+                          ),
+                        ),
+                        child: Text(
+                          'Gewähltes Datum: ${selectedDate.day.toString().padLeft(2, '0')}.${selectedDate.month.toString().padLeft(2, '0')}.${selectedDate.year}',
+                          style: UIStyles.bodyTextStyle.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingL),
+                    ],
+                  ),
+                ),
+                // FAB Cancel and OK buttons positioned at bottom-right
+                Positioned(
+                  bottom: UIConstants.dialogFabTightBottom,
+                  right: UIConstants.dialogFabTightRight,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FloatingActionButton(
+                        heroTag: 'fab_cancel_calendar',
+                        mini: true,
+                        backgroundColor: UIConstants.submitButtonBackground,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Icon(
+                          Icons.close,
+                          color: UIConstants.buttonTextColor,
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      FloatingActionButton(
+                        heroTag: 'fab_ok_calendar',
+                        mini: true,
+                        backgroundColor: UIConstants.submitButtonBackground,
+                        onPressed: () {
+                          Navigator.of(context).pop(selectedDate);
+                        },
+                        child: const Icon(
+                          Icons.check,
+                          color: UIConstants.buttonTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<Widget> _getWeekdayHeaders() {
+    final weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+    return weekdays
+        .map(
+          (day) => SizedBox(
+            width: 40,
+            child: Text(
+              day,
+              textAlign: TextAlign.center,
+              style: UIStyles.bodyTextStyle.copyWith(
+                fontWeight: FontWeight.bold,
+                color: UIConstants.defaultAppColor,
+              ),
+            ),
+          ),
+        )
+        .toList();
+  }
+
+  Widget _buildCalendarGrid(
+    DateTime displayMonth,
+    DateTime selectedDate,
+    Function(DateTime) onDateSelected,
+  ) {
+    final firstDay = DateTime(displayMonth.year, displayMonth.month, 1);
+    final lastDay = DateTime(displayMonth.year, displayMonth.month + 1, 0);
+    final daysInMonth = lastDay.day;
+    final firstWeekday = firstDay.weekday; // 1=Monday, 7=Sunday
+
+    final days = <Widget>[];
+
+    // Empty cells for days before month starts
+    for (int i = 1; i < firstWeekday; i++) {
+      days.add(SizedBox(width: 40, height: 40, child: Container()));
+    }
+
+    // Days of the month
+    for (int day = 1; day <= daysInMonth; day++) {
+      final date = DateTime(displayMonth.year, displayMonth.month, day);
+      final isSelected =
+          selectedDate.year == date.year &&
+          selectedDate.month == date.month &&
+          selectedDate.day == date.day;
+      final isToday =
+          DateTime.now().year == date.year &&
+          DateTime.now().month == date.month &&
+          DateTime.now().day == date.day;
+
+      days.add(
+        GestureDetector(
+          onTap: () => onDateSelected(date),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color:
+                  isSelected
+                      ? UIConstants.defaultAppColor
+                      : isToday
+                      ? UIConstants.backgroundColor
+                      : Colors.transparent,
+              border:
+                  isToday
+                      ? Border.all(color: UIConstants.defaultAppColor, width: 2)
+                      : null,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Center(
+              child: Text(
+                day.toString(),
+                style: UIStyles.bodyTextStyle.copyWith(
+                  color: isSelected ? Colors.white : Colors.black,
+                  fontWeight:
+                      isSelected || isToday
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Fill remaining cells in last week
+    while (days.length % 7 != 0) {
+      days.add(SizedBox(width: 40, height: 40, child: Container()));
+    }
+
+    // Build rows of 7 days
+    final rows = <Widget>[];
+    for (int i = 0; i < days.length; i += 7) {
+      final rowDays = days.sublist(i, i + 7);
+      rows.add(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: rowDays,
+        ),
+      );
+      if (i + 7 < days.length) {
+        rows.add(const SizedBox(height: UIConstants.spacingS));
+      }
+    }
+
+    return Column(children: rows);
+  }
+
+  String _getMonthName(int month) {
+    const monthNames = [
+      'Januar',
+      'Februar',
+      'März',
+      'April',
+      'Mai',
+      'Juni',
+      'Juli',
+      'August',
+      'September',
+      'Oktober',
+      'November',
+      'Dezember',
+    ];
+    return monthNames[month - 1];
   }
 
   Future<void> _saveBedSport() async {
@@ -93,9 +374,7 @@ class _BeduerfnissantragStep2DialogScreenState
 
       if (widget.antragsnummer == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Fehler: Antragsnummer fehlt'),
-          ),
+          const SnackBar(content: Text('Fehler: Antragsnummer fehlt')),
         );
         return;
       }
@@ -218,7 +497,7 @@ class _BeduerfnissantragStep2DialogScreenState
                         const SizedBox(height: UIConstants.spacingL),
 
                         // Waffenart Dropdown
-                        FutureBuilder<List<BeduerfnisseAuswahlTyp>>(
+                        FutureBuilder<BeduerfnisseAuswahlTyp?>(
                           future: _waffenartFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -229,32 +508,38 @@ class _BeduerfnissantragStep2DialogScreenState
                             }
                             if (snapshot.hasError) {
                               return const Text(
-                                'Fehler beim Laden der Waffenarten',
+                                'Fehler beim Laden der Waffenart',
                               );
                             }
 
-                            final waffenarten = snapshot.data ?? [];
+                            final waffenart = snapshot.data;
 
                             return DropdownButtonFormField<int>(
                               value: _selectedWaffenartId,
                               hint: const Text('Wählen Sie eine Waffenart'),
                               isExpanded: true,
                               items:
-                                  waffenarten.map((waffenart) {
-                                    return DropdownMenuItem<int>(
-                                      value: waffenart.id,
-                                      child: ScaledText(
-                                        '${waffenart.id} - ${waffenart.beschreibung}',
-                                        style: UIStyles.bodyTextStyle.copyWith(
-                                          fontSize:
-                                              UIStyles.bodyTextStyle.fontSize! *
-                                              fontSizeProvider.scaleFactor,
+                                  waffenart != null
+                                      ? [
+                                        DropdownMenuItem<int>(
+                                          value: waffenart.id,
+                                          child: ScaledText(
+                                            '${waffenart.id} - ${waffenart.beschreibung}',
+                                            style: UIStyles.bodyTextStyle
+                                                .copyWith(
+                                                  fontSize:
+                                                      UIStyles
+                                                          .bodyTextStyle
+                                                          .fontSize! *
+                                                      fontSizeProvider
+                                                          .scaleFactor,
+                                                ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    );
-                                  }).toList(),
+                                      ]
+                                      : [],
                               onChanged: (value) {
                                 setState(() {
                                   _selectedWaffenartId = value;
@@ -506,8 +791,14 @@ class _BeduerfnissantragStep2DialogScreenState
                         heroTag: 'saveBedSportFab',
                         mini: true,
                         tooltip: 'Speichern',
-                        backgroundColor: UIConstants.defaultAppColor,
-                        onPressed: _isLoading ? null : _saveBedSport,
+                        backgroundColor:
+                            _isLoading || !_areAllCompulsoryFieldsFilled()
+                                ? UIConstants.disabledBackgroundColor
+                                : UIConstants.defaultAppColor,
+                        onPressed:
+                            _isLoading || !_areAllCompulsoryFieldsFilled()
+                                ? null
+                                : _saveBedSport,
                         child:
                             _isLoading
                                 ? const SizedBox(
