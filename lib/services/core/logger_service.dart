@@ -18,7 +18,7 @@ class LoggerService {
     }
 
     // Set the log level based on environment
-    // In production (webServer is meinprod.bssb.de), only show WARNING and above (hide INFO and DEBUG)
+    // In production (webServer is mein.bssb.de), only show WARNING and above (hide INFO and DEBUG)
     // Otherwise, show all logs
     bool isProduction = false;
 
