@@ -9,6 +9,7 @@ import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step1_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step2_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
@@ -374,6 +375,25 @@ class _MeineBeduerfnisseantraegeScreenState
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            ),
+            // Edit button for all antrags (to add more Nachweis der Sportschützengemeinschaft)
+            IconButton(
+              icon: const Icon(Icons.edit, color: UIConstants.defaultAppColor),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => BeduerfnissantragStep2Screen(
+                          userData: widget.userData,
+                          antrag: antrag,
+                          isLoggedIn: widget.isLoggedIn,
+                          onLogout: widget.onLogout,
+                        ),
+                  ),
+                );
+              },
+              tooltip: 'Antrag bearbeiten',
             ),
             // Delete button for draft antrags
             if (antrag.statusId == BeduerfnisAntragStatus.entwurf)
