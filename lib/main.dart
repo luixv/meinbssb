@@ -101,7 +101,6 @@ Future<void> main() async {
     if (!isWindows) {
       // Firebase Remote Config is supported on web and mobile platforms, but not on Windows desktop
       try {
-
         remoteConfig = FirebaseRemoteConfig.instance;
         await getRemoteConfig(remoteConfig);
 
@@ -209,13 +208,7 @@ Future<void> main() async {
     runApp(
       MultiProvider(
         providers: providers,
-        child:
-            kDebugMode && kIsWeb
-                ? SemanticsDebugger(
-                  // ✅ overlay to visualize accessibility
-                  child: MaterialApp(theme: theme, home: wrappedApp),
-                )
-                : MaterialApp(theme: theme, home: wrappedApp),
+        child: MaterialApp(theme: theme, home: wrappedApp),
       ),
     );
 
