@@ -42,14 +42,56 @@
     (function clearAllStorage() {
       console.log('Clearing all browser storage on page load...');
       
-      // Clear all cookies
-      document.cookie.split(";").forEach(function(c) { 
-        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
-      });
+      // Clear all cookies - more thorough approach
+      function clearAllCookies() {
+        // Get all cookies
+        const cookies = document.cookie.split(";");
+        console.log(`Found ${cookies.length} cookie(s) to clear`);
+        
+        // Clear cookies with different path and domain combinations
+        const paths = ['/', '/bssb-token', '/api', '/email'];
+        const domains = [window.location.hostname, '.' + window.location.hostname];
+        
+        cookies.forEach(function(cookie) {
+          const cookieName = cookie.split("=")[0].trim();
+          if (cookieName) {
+            // Try clearing with different paths and domains
+            paths.forEach(function(path) {
+              domains.forEach(function(domain) {
+                // Clear with domain
+                document.cookie = cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=" + path + ";domain=" + domain;
+                // Clear without domain (for current domain)
+                document.cookie = cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=" + path;
+              });
+            });
+            // Also try clearing with secure flag if on HTTPS
+            if (window.location.protocol === 'https:') {
+              paths.forEach(function(path) {
+                document.cookie = cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=" + path + ";secure";
+              });
+            }
+          }
+        });
+        
+        // Also clear cookies by setting them to expire in the past
+        document.cookie.split(";").forEach(function(c) { 
+          const cookieName = c.replace(/^ +/, "").split("=")[0];
+          if (cookieName) {
+            document.cookie = cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+            document.cookie = cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=" + window.location.hostname;
+            document.cookie = cookieName + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=." + window.location.hostname;
+          }
+        });
+        
+        console.log('Cookies cleared');
+      }
+      
+      clearAllCookies();
       
       // Clear localStorage
       try {
         localStorage.clear();
+        console.log('localStorage cleared');
       } catch (e) {
         console.warn('Failed to clear localStorage:', e);
       }
@@ -57,11 +99,12 @@
       // Clear sessionStorage
       try {
         sessionStorage.clear();
+        console.log('sessionStorage cleared');
       } catch (e) {
         console.warn('Failed to clear sessionStorage:', e);
       }
       
-      console.log('Storage cleared successfully');
+      console.log('All storage cleared successfully');
     })();
   </script>
   <!-- This script adds the flutter initialization JS code -->
