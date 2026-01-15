@@ -397,29 +397,33 @@ class _MeineBeduerfnisseantraegeScreenState
                 ),
               ),
             ),
-            // Edit button for all antrags (to add more Nachweis der Sportschützengemeinschaft)
-            IconButton(
-              icon: const Icon(Icons.edit, color: UIConstants.defaultAppColor),
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => BeduerfnissantragStep1Screen(
-                          userData: widget.userData,
-                          antrag: antrag,
-                          isLoggedIn: widget.isLoggedIn,
-                          onLogout: widget.onLogout,
-                        ),
-                  ),
-                );
-                // If antrag was updated, refresh the list
-                if (result == true) {
-                  _loadAntragsFuture();
-                }
-              },
-              tooltip: 'Antrag bearbeiten',
-            ),
+            // Edit button for draft antrags only
+            if (antrag.statusId == BeduerfnisAntragStatus.entwurf)
+              IconButton(
+                icon: const Icon(
+                  Icons.edit,
+                  color: UIConstants.defaultAppColor,
+                ),
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => BeduerfnissantragStep1Screen(
+                            userData: widget.userData,
+                            antrag: antrag,
+                            isLoggedIn: widget.isLoggedIn,
+                            onLogout: widget.onLogout,
+                          ),
+                    ),
+                  );
+                  // If antrag was updated, refresh the list
+                  if (result == true) {
+                    _loadAntragsFuture();
+                  }
+                },
+                tooltip: 'Antrag bearbeiten',
+              ),
             // Delete button for draft antrags
             if (antrag.statusId == BeduerfnisAntragStatus.entwurf)
               IconButton(

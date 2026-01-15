@@ -142,6 +142,45 @@ class BeduerfnisseAntrag {
   /// Additional remarks.
   final String? bemerkung;
 
+  /// Creates a copy of this [BeduerfnisseAntrag] with the given fields replaced by new values.
+  BeduerfnisseAntrag copyWith({
+    int? id,
+    DateTime? createdAt,
+    DateTime? changedAt,
+    DateTime? deletedAt,
+    int? antragsnummer,
+    int? personId,
+    BeduerfnisAntragStatus? statusId,
+    bool? wbkNeu,
+    String? wbkArt,
+    String? beduerfnisart,
+    int? anzahlWaffen,
+    bool? vereinGenehmigt,
+    String? email,
+    Map<String, dynamic>? bankdaten,
+    bool? abbuchungErfolgt,
+    String? bemerkung,
+  }) {
+    return BeduerfnisseAntrag(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      changedAt: changedAt ?? this.changedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      antragsnummer: antragsnummer ?? this.antragsnummer,
+      personId: personId ?? this.personId,
+      statusId: statusId ?? this.statusId,
+      wbkNeu: wbkNeu ?? this.wbkNeu,
+      wbkArt: wbkArt ?? this.wbkArt,
+      beduerfnisart: beduerfnisart ?? this.beduerfnisart,
+      anzahlWaffen: anzahlWaffen ?? this.anzahlWaffen,
+      vereinGenehmigt: vereinGenehmigt ?? this.vereinGenehmigt,
+      email: email ?? this.email,
+      bankdaten: bankdaten ?? this.bankdaten,
+      abbuchungErfolgt: abbuchungErfolgt ?? this.abbuchungErfolgt,
+      bemerkung: bemerkung ?? this.bemerkung,
+    );
+  }
+
   /// Converts the [BeduerfnisseAntrag] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {

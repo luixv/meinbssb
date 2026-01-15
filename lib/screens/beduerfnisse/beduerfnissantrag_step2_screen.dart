@@ -4,9 +4,12 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step3_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
@@ -18,6 +21,7 @@ class BeduerfnissantragStep2Screen extends StatefulWidget {
     this.antrag,
     required this.isLoggedIn,
     required this.onLogout,
+    required this.userRole,
     super.key,
   });
 
@@ -25,6 +29,7 @@ class BeduerfnissantragStep2Screen extends StatefulWidget {
   final BeduerfnisseAntrag? antrag;
   final bool isLoggedIn;
   final Function() onLogout;
+  final WorkflowRole userRole;
 
   @override
   State<BeduerfnissantragStep2Screen> createState() =>
@@ -51,9 +56,7 @@ class _BeduerfnissantragStep2ScreenState
       if (antragsnummer == null) {
         return [];
       }
-      return await apiService.getBedSportByAntragsnummer(
-        antragsnummer,
-      );
+      return await apiService.getBedSportByAntragsnummer(antragsnummer);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -92,7 +95,7 @@ class _BeduerfnissantragStep2ScreenState
                         semanticLabel: 'Zurück Button',
                         semanticHint: 'Zurück zur vorherigen Seite',
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(context, true);
                         },
                         icon: Icons.arrow_back,
                       ),
@@ -395,11 +398,68 @@ class _BeduerfnissantragStep2ScreenState
   }
 
   Future<void> _continueToNextStep() async {
-    // TODO: Implement step 3
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Funktionalität wird noch implementiert')),
-      );
+    // Check if antrag exists
+    if (widget.antrag == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fehler: Antrag nicht gefunden')),
+        );
+      }
+      return;
+    }
+
+    // Get current antrag status
+    final currentStatus =
+        widget.antrag!.statusId ?? BeduerfnisAntragStatus.entwurf;
+    final nextStatus = BeduerfnisAntragStatus.eingereichtAmVerein;
+
+    // Check if workflow transition is allowed
+    final workflowService = WorkflowService();
+    final canTransition = workflowService.canAntragChangeFromStateToState(
+      currentState: currentStatus,
+      nextState: nextStatus,
+      userRole: widget.userRole,
+    );
+
+    if (!canTransition) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sie haben keine Berechtigung für diese Aktion'),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Update antrag status
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final updatedAntrag = widget.antrag!.copyWith(statusId: nextStatus);
+
+      await apiService.updateBedAntrag(updatedAntrag);
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => BeduerfnissantragStep3Screen(
+                  userData: widget.userData,
+                  antrag: updatedAntrag,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                  userRole: widget.userRole,
+                ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler beim Aktualisieren: $e')),
+        );
+      }
     }
   }
 }
