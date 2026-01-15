@@ -6,7 +6,6 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/widgets/dialog_fabs.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 
 class BeduerfnissantragStep2DialogScreen extends StatefulWidget {
@@ -33,7 +32,7 @@ class _BeduerfnissantragStep2DialogScreenState
   bool _training = false;
   bool _isLoading = false;
   int? _selectedWaffenartId;
-  late Future<BeduerfnisseAuswahlTyp?> _waffenartFuture;
+  late Future<List<BeduerfnisseAuswahl>> _waffenartFuture;
   late Future<List<BeduerfnisseAuswahl>> _auswahlFuture;
   int? _selectedWettkampfartId;
 
@@ -41,8 +40,8 @@ class _BeduerfnissantragStep2DialogScreenState
   void initState() {
     super.initState();
     final apiService = Provider.of<ApiService>(context, listen: false);
-    _waffenartFuture = apiService.getBedAuswahlTypById(1);
-    _auswahlFuture = apiService.getBedAuswahlList();
+    _waffenartFuture = apiService.getBedAuswahlByTypId(1);
+    _auswahlFuture = apiService.getBedAuswahlByTypId(2);
 
     // Add listeners to update UI when fields change
     _datumController.addListener(() {
@@ -270,16 +269,19 @@ class _BeduerfnissantragStep2DialogScreenState
           DateTime.now().year == date.year &&
           DateTime.now().month == date.month &&
           DateTime.now().day == date.day;
+      final isFuture = date.isAfter(DateTime.now());
 
       days.add(
         GestureDetector(
-          onTap: () => onDateSelected(date),
+          onTap: isFuture ? null : () => onDateSelected(date),
           child: Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
               color:
-                  isSelected
+                  isFuture
+                      ? Colors.grey.withOpacity(0.3)
+                      : isSelected
                       ? UIConstants.defaultAppColor
                       : isToday
                       ? UIConstants.backgroundColor
@@ -294,7 +296,12 @@ class _BeduerfnissantragStep2DialogScreenState
               child: Text(
                 day.toString(),
                 style: UIStyles.bodyTextStyle.copyWith(
-                  color: isSelected ? Colors.white : Colors.black,
+                  color:
+                      isFuture
+                          ? Colors.grey
+                          : isSelected
+                          ? Colors.white
+                          : Colors.black,
                   fontWeight:
                       isSelected || isToday
                           ? FontWeight.bold
@@ -497,7 +504,7 @@ class _BeduerfnissantragStep2DialogScreenState
                         const SizedBox(height: UIConstants.spacingL),
 
                         // Waffenart Dropdown
-                        FutureBuilder<BeduerfnisseAuswahlTyp?>(
+                        FutureBuilder<List<BeduerfnisseAuswahl>>(
                           future: _waffenartFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -508,43 +515,38 @@ class _BeduerfnissantragStep2DialogScreenState
                             }
                             if (snapshot.hasError) {
                               return const Text(
-                                'Fehler beim Laden der Waffenart',
+                                'Fehler beim Laden der Waffenarten',
                               );
                             }
 
-                            final waffenart = snapshot.data;
+                            final waffenarten = snapshot.data ?? [];
 
                             return DropdownButtonFormField<int>(
                               value: _selectedWaffenartId,
                               hint: const Text('Wählen Sie eine Waffenart'),
                               isExpanded: true,
                               items:
-                                  waffenart != null
-                                      ? [
-                                        DropdownMenuItem<int>(
-                                          value: waffenart.id,
-                                          child: ScaledText(
-                                            '${waffenart.id} - ${waffenart.beschreibung}',
-                                            style: UIStyles.bodyTextStyle
-                                                .copyWith(
-                                                  fontSize:
-                                                      UIStyles
-                                                          .bodyTextStyle
-                                                          .fontSize! *
-                                                      fontSizeProvider
-                                                          .scaleFactor,
-                                                ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                  waffenarten.map((waffenart) {
+                                    return DropdownMenuItem<int>(
+                                      value: waffenart.id,
+                                      child: ScaledText(
+                                        '${waffenart.id} - ${waffenart.beschreibung}',
+                                        style: UIStyles.bodyTextStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyTextStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
                                         ),
-                                      ]
-                                      : [],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
                               onChanged: (value) {
                                 setState(() {
                                   _selectedWaffenartId = value;
                                   // Reset Wettkampfart when Waffenart changes
                                   _selectedWettkampfartId = null;
+                                  // Trigger rebuild to update FAB state
                                 });
                               },
                               decoration: InputDecoration(
@@ -643,7 +645,7 @@ class _BeduerfnissantragStep2DialogScreenState
                         ),
                         const SizedBox(height: UIConstants.spacingL),
 
-                        // Wettkampfart Dropdown (dependent on Waffenart)
+                        // Wettkampfart Dropdown (independent of Waffenart)
                         FutureBuilder<List<BeduerfnisseAuswahl>>(
                           future: _auswahlFuture,
                           builder: (context, snapshot) {
@@ -659,24 +661,13 @@ class _BeduerfnissantragStep2DialogScreenState
                               );
                             }
 
-                            final allWettkampfarten = snapshot.data ?? [];
-
-                            // Filter Wettkampfarten by selected Waffenart
-                            final filteredWettkampfarten =
-                                _selectedWaffenartId != null
-                                    ? allWettkampfarten
-                                        .where(
-                                          (w) =>
-                                              w.typId == _selectedWaffenartId,
-                                        )
-                                        .toList()
-                                    : [];
+                            final wettkampfarten = snapshot.data ?? [];
 
                             return DropdownButtonFormField<int>(
                               value: _selectedWettkampfartId,
                               hint: const Text('Wählen Sie eine Wettkampfart'),
                               items:
-                                  filteredWettkampfarten.map((wettkampfart) {
+                                  wettkampfarten.map((wettkampfart) {
                                     return DropdownMenuItem<int>(
                                       value: wettkampfart.id,
                                       child: ScaledText(
@@ -717,9 +708,6 @@ class _BeduerfnissantragStep2DialogScreenState
                                     width: 2,
                                   ),
                                 ),
-                              ),
-                              disabledHint: const Text(
-                                'Wählen Sie zuerst eine Waffenart',
                               ),
                             );
                           },
@@ -796,9 +784,11 @@ class _BeduerfnissantragStep2DialogScreenState
                                 ? UIConstants.disabledBackgroundColor
                                 : UIConstants.defaultAppColor,
                         onPressed:
-                            _isLoading || !_areAllCompulsoryFieldsFilled()
+                            _isLoading
                                 ? null
-                                : _saveBedSport,
+                                : (_areAllCompulsoryFieldsFilled()
+                                    ? _saveBedSport
+                                    : null),
                         child:
                             _isLoading
                                 ? const SizedBox(
