@@ -232,7 +232,7 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
 
     return _makeRequest(
       'POST',
