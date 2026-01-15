@@ -34,6 +34,7 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_person.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -1034,5 +1035,45 @@ class ApiService {
 
   Future<bool> deleteBedAntrag(int id) async {
     return _postgrestService.deleteBedAntrag(id);
+  }
+
+  //
+  // --- bed_antrag_person Service Methods ---
+  //
+
+  Future<BeduerfnisseAntragPerson> createBedAntragPerson({
+    required String antragsnummer,
+    required int personId,
+    int? statusId,
+    String? vorname,
+    String? nachname,
+    String? vereinsname,
+  }) async {
+    return _postgrestService.createBedAntragPerson(
+      antragsnummer: antragsnummer,
+      personId: personId,
+      statusId: statusId,
+      name: vorname,
+      nachname: nachname,
+      vereinsname: vereinsname,
+    );
+  }
+
+  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByAntragsnummer(
+    String antragsnummer,
+  ) async {
+    return _postgrestService.getBedAntragPersonByAntragsnummer(antragsnummer);
+  }
+
+  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByPersonId(
+    int personId,
+  ) async {
+    return _postgrestService.getBedAntragPersonByPersonId(personId);
+  }
+
+  Future<bool> updateBedAntragPerson(
+    BeduerfnisseAntragPerson bedAntragPerson,
+  ) async {
+    return _postgrestService.updateBedAntragPerson(bedAntragPerson);
   }
 }

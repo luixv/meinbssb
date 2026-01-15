@@ -11,6 +11,7 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_person.dart';
 
 @GenerateMocks([
   ConfigService,
@@ -1581,6 +1582,239 @@ void main() {
           headers: anyNamed('headers'),
           body: anyNamed('body'),
         )).called(1);
+      });
+    });
+
+    group('bed_antrag_person Service Methods', () {
+      test('createBedAntragPerson creates entry successfully', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': 'A123',
+            'person_id': 100,
+            'status_id': 1,
+            'vorname': 'Max',
+            'nachname': 'Mustermann',
+            'vereinsname': 'SV Test',
+          },
+        ];
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+
+        final result = await service.createBedAntragPerson(
+          antragsnummer: 'A123',
+          personId: 100,
+          statusId: 1,
+          name: 'Max',
+          nachname: 'Mustermann',
+          vereinsname: 'SV Test',
+        );
+
+        expect(result, isA<BeduerfnisseAntragPerson>());
+        expect(result.id, equals(1));
+        expect(result.antragsnummer, equals('A123'));
+        expect(result.personId, equals(100));
+        expect(result.statusId, equals(1));
+        expect(result.vorname, equals('Max'));
+        expect(result.nachname, equals('Mustermann'));
+        expect(result.vereinsname, equals('SV Test'));
+        verify(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('createBedAntragPerson throws exception on failure', () async {
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 400));
+
+        expect(
+          () => service.createBedAntragPerson(
+            antragsnummer: 'A123',
+            personId: 100,
+          ),
+          throwsException,
+        );
+      });
+
+      test('createBedAntragPerson throws exception on empty response', () async {
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 201));
+
+        expect(
+          () => service.createBedAntragPerson(
+            antragsnummer: 'A123',
+            personId: 100,
+          ),
+          throwsException,
+        );
+      });
+
+      test('getBedAntragPersonByAntragsnummer returns filtered list', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': 'A123',
+            'person_id': 100,
+            'vorname': 'Max',
+            'nachname': 'Mustermann',
+          },
+          {
+            'id': 2,
+            'antragsnummer': 'A123',
+            'person_id': 101,
+            'vorname': 'Maria',
+            'nachname': 'Muster',
+          },
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragPersonByAntragsnummer('A123');
+        expect(result, hasLength(2));
+        expect(result[0], isA<BeduerfnisseAntragPerson>());
+        expect(result[0].antragsnummer, equals('A123'));
+        expect(result[0].vorname, equals('Max'));
+        expect(result[1].vorname, equals('Maria'));
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+      });
+
+      test('getBedAntragPersonByAntragsnummer returns empty list on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.getBedAntragPersonByAntragsnummer('A123');
+        expect(result, isEmpty);
+      });
+
+      test('getBedAntragPersonByPersonId returns filtered list', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': 'A123',
+            'person_id': 100,
+            'vorname': 'Max',
+          },
+          {
+            'id': 2,
+            'antragsnummer': 'A124',
+            'person_id': 100,
+            'vorname': 'Max',
+          },
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedAntragPersonByPersonId(100);
+        expect(result, hasLength(2));
+        expect(result[0], isA<BeduerfnisseAntragPerson>());
+        expect(result[0].personId, equals(100));
+        expect(result[0].antragsnummer, equals('A123'));
+        expect(result[1].antragsnummer, equals('A124'));
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+      });
+
+      test('getBedAntragPersonByPersonId returns empty list on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.getBedAntragPersonByPersonId(100);
+        expect(result, isEmpty);
+      });
+
+      test('updateBedAntragPerson updates entry successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        const antragPerson = BeduerfnisseAntragPerson(
+          id: 1,
+          antragsnummer: 'A123',
+          personId: 100,
+          vorname: 'Max Updated',
+        );
+
+        final result = await service.updateBedAntragPerson(antragPerson);
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('updateBedAntragPerson returns false when id is null', () async {
+        const antragPerson = BeduerfnisseAntragPerson(
+          antragsnummer: 'A123',
+          personId: 100,
+        );
+
+        final result = await service.updateBedAntragPerson(antragPerson);
+        expect(result, isFalse);
+        verifyNever(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ));
+      });
+
+      test('updateBedAntragPerson returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        const antragPerson = BeduerfnisseAntragPerson(
+          id: 1,
+          antragsnummer: 'A123',
+          personId: 100,
+        );
+
+        final result = await service.updateBedAntragPerson(antragPerson);
+        expect(result, isFalse);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('updateBedAntragPerson handles exception gracefully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenThrow(Exception('Network error'));
+
+        const antragPerson = BeduerfnisseAntragPerson(
+          id: 1,
+          antragsnummer: 'A123',
+          personId: 100,
+        );
+
+        final result = await service.updateBedAntragPerson(antragPerson);
+        expect(result, isFalse);
       });
     });
   });
