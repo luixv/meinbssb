@@ -40,5 +40,6 @@
   "dart.onlyAnalyzeProjectsWithOpenFiles": false,
   "dart.allowTestsOutsideTestFolder": false,
   "dart.previewLsp": true,
-  "dart.useLegacyAnalyzerProtocol": false
+  "dart.useLegacyAnalyzerProtocol": false,
+  "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable"
 }

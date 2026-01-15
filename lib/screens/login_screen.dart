@@ -51,6 +51,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint('LoginScreen: initState');
     _initRememberMe();
     _loginButtonFocusNode.addListener(_onLoginButtonFocusChange);
     _checkboxFocusNode.addListener(_onCheckboxFocusChange);
@@ -492,6 +493,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('LoginScreen: build called');
     Theme.of(context);
 
     return Scaffold(
