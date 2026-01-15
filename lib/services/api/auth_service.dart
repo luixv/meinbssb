@@ -119,12 +119,30 @@ class AuthService {
       const endpoint = 'LoginMeinBSSBApp';
       LoggerService.logInfo('Calling endpoint: $endpoint');
 
-      final response = await _httpClient.post(endpoint, {
+      // Prepare request body
+      final requestBody = {
         'Email': email,
         'Passwort': password,
-      }, overrideBaseUrl: baseUrl);
+      };
+      
+      // Build full request URL
+      final fullUrl = '$baseUrl/$endpoint';
+      
+      // Log request details (mask password for security)
+      LoggerService.logInfo('=== Login Request Details ===');
+      LoggerService.logInfo('Request URL: $fullUrl');
+      LoggerService.logInfo('Request Body: {');
+      LoggerService.logInfo('  Email: $email');
+      LoggerService.logInfo('  Passwort: $password');
+      LoggerService.logInfo('}');
+      LoggerService.logInfo('=============================');
 
-      LoggerService.logInfo('Received response type: ${response.runtimeType}');
+      final response = await _httpClient.post(endpoint, requestBody, overrideBaseUrl: baseUrl);
+
+      LoggerService.logInfo('=== Login Response Details ===');
+      LoggerService.logInfo('Response type: ${response.runtimeType}');
+      LoggerService.logInfo('Response data: $response');
+      LoggerService.logInfo('==============================');
 
       if (response is Map<String, dynamic>) {
         if (response['ResultType'] == 1) {
