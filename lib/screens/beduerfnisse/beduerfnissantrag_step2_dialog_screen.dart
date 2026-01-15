@@ -7,6 +7,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/widgets/dialog_fabs.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
 
 class BeduerfnissantragStep2DialogScreen extends StatefulWidget {
   const BeduerfnissantragStep2DialogScreen({
@@ -26,14 +27,15 @@ class BeduerfnissantragStep2DialogScreen extends StatefulWidget {
 class _BeduerfnissantragStep2DialogScreenState
     extends State<BeduerfnissantragStep2DialogScreen> {
   final TextEditingController _datumController = TextEditingController();
-  final TextEditingController _disziplinController = TextEditingController();
   final TextEditingController _wettkampfergebnisController =
       TextEditingController();
   bool _training = false;
   bool _isLoading = false;
   int? _selectedWaffenartId;
+  int? _selectedDisziplinId;
   late Future<List<BeduerfnisseAuswahl>> _waffenartFuture;
   late Future<List<BeduerfnisseAuswahl>> _auswahlFuture;
+  late Future<List<Disziplin>> _disziplinenFuture;
   int? _selectedWettkampfartId;
 
   @override
@@ -42,12 +44,10 @@ class _BeduerfnissantragStep2DialogScreenState
     final apiService = Provider.of<ApiService>(context, listen: false);
     _waffenartFuture = apiService.getBedAuswahlByTypId(1);
     _auswahlFuture = apiService.getBedAuswahlByTypId(2);
+    _disziplinenFuture = apiService.fetchDisziplinen();
 
-    // Add listeners to update UI when fields change
+    // Add listener to update UI when datum changes
     _datumController.addListener(() {
-      setState(() {});
-    });
-    _disziplinController.addListener(() {
       setState(() {});
     });
   }
@@ -55,15 +55,18 @@ class _BeduerfnissantragStep2DialogScreenState
   @override
   void dispose() {
     _datumController.dispose();
-    _disziplinController.dispose();
     _wettkampfergebnisController.dispose();
     super.dispose();
   }
 
   bool _areAllCompulsoryFieldsFilled() {
+    // Wettkampfart is required only if training is NOT checked
+    final wettkampfartRequired = !_training && _selectedWettkampfartId == null;
+
     return _datumController.text.isNotEmpty &&
         _selectedWaffenartId != null &&
-        _disziplinController.text.isNotEmpty;
+        _selectedDisziplinId != null &&
+        !wettkampfartRequired;
   }
 
   Future<void> _selectDate() async {
@@ -274,6 +277,7 @@ class _BeduerfnissantragStep2DialogScreenState
       days.add(
         GestureDetector(
           onTap: isFuture ? null : () => onDateSelected(date),
+          onDoubleTap: isFuture ? null : () => Navigator.of(context).pop(date),
           child: Container(
             width: 40,
             height: 40,
@@ -290,7 +294,7 @@ class _BeduerfnissantragStep2DialogScreenState
                   isToday
                       ? Border.all(color: UIConstants.defaultAppColor, width: 2)
                       : null,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Center(
               child: Text(
@@ -358,7 +362,7 @@ class _BeduerfnissantragStep2DialogScreenState
   Future<void> _saveBedSport() async {
     if (_datumController.text.isEmpty ||
         _selectedWaffenartId == null ||
-        _disziplinController.text.isEmpty) {
+        _selectedDisziplinId == null) {
       if (mounted) {
         Navigator.of(
           context,
@@ -390,7 +394,7 @@ class _BeduerfnissantragStep2DialogScreenState
         antragsnummer: widget.antragsnummer!,
         schiessdatum: schiessdatumForDb,
         waffenartId: _selectedWaffenartId!,
-        disziplinId: int.parse(_disziplinController.text),
+        disziplinId: _selectedDisziplinId!,
         training: _training,
         wettkampfartId: _selectedWettkampfartId,
         wettkampfergebnis:
@@ -403,7 +407,7 @@ class _BeduerfnissantragStep2DialogScreenState
         widget.onSaved({
           'schiessdatum': _datumController.text,
           'waffenartId': _selectedWaffenartId!,
-          'disziplinId': int.parse(_disziplinController.text),
+          'disziplinId': _selectedDisziplinId!,
           'training': _training,
           'wettkampfartId': _selectedWettkampfartId,
           'wettkampfergebnis':
@@ -544,9 +548,6 @@ class _BeduerfnissantragStep2DialogScreenState
                               onChanged: (value) {
                                 setState(() {
                                   _selectedWaffenartId = value;
-                                  // Reset Wettkampfart when Waffenart changes
-                                  _selectedWettkampfartId = null;
-                                  // Trigger rebuild to update FAB state
                                 });
                               },
                               decoration: InputDecoration(
@@ -577,37 +578,72 @@ class _BeduerfnissantragStep2DialogScreenState
                         const SizedBox(height: UIConstants.spacingL),
 
                         // Disziplinnummer lt. SPO
-                        TextField(
-                          controller: _disziplinController,
-                          keyboardType: TextInputType.number,
-                          style: UIStyles.bodyTextStyle.copyWith(
-                            fontSize:
-                                UIStyles.bodyTextStyle.fontSize! *
-                                fontSizeProvider.scaleFactor,
-                          ),
-                          decoration: InputDecoration(
-                            labelText: 'Disziplinnummer lt. SPO *',
-                            hintText: 'z.B. 1',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
+                        FutureBuilder<List<Disziplin>>(
+                          future: _disziplinenFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return const Text(
+                                'Fehler beim Laden der Disziplinen',
+                              );
+                            }
+
+                            final disziplinen = snapshot.data ?? [];
+
+                            return DropdownButtonFormField<int>(
+                              value: _selectedDisziplinId,
+                              hint: const Text('Wählen Sie eine Disziplin'),
+                              isExpanded: true,
+                              items:
+                                  disziplinen.map((disziplin) {
+                                    return DropdownMenuItem<int>(
+                                      value: disziplin.disziplinId,
+                                      child: ScaledText(
+                                        '${disziplin.disziplinNr} - ${disziplin.disziplin}',
+                                        style: UIStyles.bodyTextStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyTextStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedDisziplinId = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Disziplinnummer lt. SPO *',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                  borderSide: const BorderSide(
+                                    color: UIConstants.defaultAppColor,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                  borderSide: const BorderSide(
+                                    color: UIConstants.defaultAppColor,
+                                    width: 2,
+                                  ),
+                                ),
                               ),
-                              borderSide: const BorderSide(
-                                color: UIConstants.defaultAppColor,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                UIConstants.cornerRadius,
-                              ),
-                              borderSide: const BorderSide(
-                                color: UIConstants.defaultAppColor,
-                                width: 2,
-                              ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
                         const SizedBox(height: UIConstants.spacingL),
 
@@ -688,7 +724,10 @@ class _BeduerfnissantragStep2DialogScreenState
                                 });
                               },
                               decoration: InputDecoration(
-                                labelText: 'Wettkampfart (optional)',
+                                labelText:
+                                    _training
+                                        ? 'Wettkampfart (optional)'
+                                        : 'Wettkampfart *',
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: OutlineInputBorder(

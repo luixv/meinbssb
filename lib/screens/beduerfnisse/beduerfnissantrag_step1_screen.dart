@@ -5,6 +5,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step2_screen.dart';
@@ -18,6 +19,7 @@ class BeduerfnissantragStep1Screen extends StatefulWidget {
     required this.isLoggedIn,
     required this.onLogout,
     this.onBack,
+    this.antrag,
     super.key,
   });
 
@@ -25,6 +27,7 @@ class BeduerfnissantragStep1Screen extends StatefulWidget {
   final bool isLoggedIn;
   final Function() onLogout;
   final VoidCallback? onBack;
+  final BeduerfnisseAntrag? antrag;
 
   @override
   State<BeduerfnissantragStep1Screen> createState() =>
@@ -40,6 +43,38 @@ class _BeduerfnissantragStep1ScreenState
     text: '0',
   );
   String? _selectedVerein;
+  bool _antragCreated = false; // Tracks if new antrag has been created/saved
+  BeduerfnisseAntrag?
+  _createdAntrag; // Stores the created antrag in create mode
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.antrag != null) {
+      _initializeEditMode();
+    }
+  }
+
+  void _initializeEditMode() async {
+    final antrag = widget.antrag!;
+    // Fetch fresh antrag data from API to ensure we have the latest values
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final antragsList = await apiService.getBedAntragByAntragsnummer(
+      antrag.antragsnummer!,
+    );
+
+    if (antragsList.isNotEmpty && mounted) {
+      final freshAntrag = antragsList.first;
+      setState(() {
+        _wbkType = freshAntrag.wbkNeu == true ? 'neu' : 'bestehend';
+        _wbkColor = freshAntrag.wbkArt ?? 'gelb';
+        // Map database values ('kurzwaffe', 'langwaffe') back to radio button values ('kurz', 'lang')
+        final beduerfnisart = freshAntrag.beduerfnisart ?? 'kurzwaffe';
+        _weaponType = beduerfnisart == 'kurzwaffe' ? 'kurz' : 'lang';
+        _anzahlController.text = (freshAntrag.anzahlWaffen ?? 0).toString();
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -64,6 +99,7 @@ class _BeduerfnissantragStep1ScreenState
               width: MediaQuery.of(context).size.width - 32,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   KeyboardFocusFAB(
                     heroTag: 'backFromErfassenFab',
@@ -76,15 +112,33 @@ class _BeduerfnissantragStep1ScreenState
                     },
                     icon: Icons.arrow_back,
                   ),
-                  KeyboardFocusFAB(
-                    heroTag: 'nextFromErfassenFab',
-                    tooltip: 'Weiter',
-                    semanticLabel: 'Weiter Button',
-                    semanticHint: 'Weiter zum nächsten Schritt',
-                    onPressed: () {
-                      _createBedAntrag();
-                    },
-                    icon: Icons.arrow_forward,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Save FAB (diskette icon) - aligned right, above forward arrow
+                      KeyboardFocusFAB(
+                        heroTag: 'saveFromErfassenFab',
+                        tooltip: 'Speichern',
+                        semanticLabel: 'Speichern Button',
+                        semanticHint: 'Bedürfnisantrag speichern',
+                        onPressed: () => _saveAntrag(),
+                        icon: Icons.save,
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                      KeyboardFocusFAB(
+                        heroTag: 'nextFromErfassenFab',
+                        tooltip: 'Weiter',
+                        semanticLabel: 'Weiter Button',
+                        semanticHint: 'Weiter zum nächsten Schritt',
+                        onPressed:
+                            (widget.antrag == null && !_antragCreated)
+                                ? null
+                                : () {
+                                  _proceedToStep2();
+                                },
+                        icon: Icons.arrow_forward,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -456,62 +510,152 @@ class _BeduerfnissantragStep1ScreenState
     );
   }
 
-  Future<void> _createBedAntrag() async {
-    if (widget.userData?.personId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Fehler: PersonId nicht verfügbar')),
-      );
-      return;
-    }
-
-    if (_anzahlController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Fehler: Anzahl muss ausgefüllt sein')),
-      );
-      return;
-    }
+  /// Saves the current form data without navigating away
+  Future<void> _saveAntrag() async {
+    if (!mounted) return;
 
     try {
-      // Create BeduerfnisseAntrag with available form data
-      // Note: antragsnummer will be auto-generated by the database starting at 100000
-
-      // Map weapon type to database values: 'kurz' -> 'kurzwaffe', 'lang' -> 'langwaffe'
-      // wbk_art values: 'gelb' or 'gruen' (stored directly, no mapping needed)
       final beduerfnisartValue =
           _weaponType == 'kurz' ? 'kurzwaffe' : 'langwaffe';
-
-      // Save the antrag via ApiService
       final apiService = Provider.of<ApiService>(context, listen: false);
 
-      final newAntrag = await apiService.createBedAntrag(
-        personId: widget.userData!.personId,
-        statusId: BeduerfnisAntragStatus.entwurf,
-        wbkNeu: _wbkType == 'neu',
-        wbkArt: _wbkColor, // 'gelb' or 'gruen'
-        beduerfnisart: beduerfnisartValue, // 'kurzwaffe' or 'langwaffe'
-        anzahlWaffen: int.tryParse(_anzahlController.text) ?? 0,
-        vereinGenehmigt: false,
-        email: widget.userData?.email,
-        abbuchungErfolgt: false,
-      );
+      // Edit mode: Update existing antrag (either from widget or newly created)
+      if (widget.antrag != null || _createdAntrag != null) {
+        try {
+          final antrag = widget.antrag ?? _createdAntrag!;
+          final updatedAntrag = BeduerfnisseAntrag(
+            id: antrag.id,
+            createdAt: antrag.createdAt,
+            changedAt: DateTime.now(),
+            deletedAt: antrag.deletedAt,
+            antragsnummer: antrag.antragsnummer,
+            personId: antrag.personId,
+            statusId: antrag.statusId,
+            wbkNeu: _wbkType == 'neu',
+            wbkArt: _wbkColor,
+            beduerfnisart: beduerfnisartValue,
+            anzahlWaffen: int.tryParse(_anzahlController.text) ?? 0,
+            vereinGenehmigt: antrag.vereinGenehmigt,
+            email: antrag.email,
+            bankdaten: antrag.bankdaten,
+            abbuchungErfolgt: antrag.abbuchungErfolgt,
+            bemerkung: antrag.bemerkung,
+          );
 
+          final success = await apiService.updateBedAntrag(updatedAntrag);
+
+          if (mounted) {
+            if (success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bedürfnisantrag aktualisiert')),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Fehler beim Aktualisieren des Antrags'),
+                ),
+              );
+            }
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Fehler beim Aktualisieren: $e')),
+            );
+          }
+        }
+      } else {
+        // Create mode: Create new antrag
+        try {
+          debugPrint(
+            'Creating new antrag with personId: ${widget.userData?.personId}',
+          );
+          debugPrint('wbkNeu: ${_wbkType == 'neu'}');
+          debugPrint('wbkArt: $_wbkColor');
+          debugPrint('beduerfnisart: $beduerfnisartValue');
+          debugPrint(
+            'anzahlWaffen: ${int.tryParse(_anzahlController.text) ?? 0}',
+          );
+
+          final newAntrag = await apiService.createBedAntrag(
+            personId: widget.userData!.personId,
+            statusId: BeduerfnisAntragStatus.entwurf,
+            wbkNeu: _wbkType == 'neu',
+            wbkArt: _wbkColor, // 'gelb' or 'gruen'
+            beduerfnisart: beduerfnisartValue, // 'kurzwaffe' or 'langwaffe'
+            anzahlWaffen: int.tryParse(_anzahlController.text) ?? 0,
+            vereinGenehmigt: false,
+            email: widget.userData?.email,
+            abbuchungErfolgt: false,
+          );
+
+          debugPrint('Antrag created successfully: ${newAntrag.antragsnummer}');
+
+          if (mounted) {
+            setState(() {
+              _antragCreated = true; // Mark antrag as created
+              _createdAntrag = newAntrag; // Store the created antrag
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Bedürfnisantrag erstellt: ${newAntrag.antragsnummer ?? 'N/A'}',
+                ),
+              ),
+            );
+          }
+        } catch (e, stackTrace) {
+          debugPrint('Error creating antrag: $e');
+          debugPrint('Stack trace: $stackTrace');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Fehler beim Erstellen: $e')),
+            );
+          }
+        }
+      }
+    } catch (e) {
       if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler beim Speichern: $e')));
+      }
+    }
+  }
+
+  /// Proceeds to Step 2 (for both create and edit modes)
+  Future<void> _proceedToStep2() async {
+    if (!mounted) return;
+
+    try {
+      // Get the antrag to pass to Step 2
+      late BeduerfnisseAntrag antragForStep2;
+
+      if (widget.antrag != null) {
+        // Edit mode: Use existing antrag
+        antragForStep2 = widget.antrag!;
+      } else if (_createdAntrag != null) {
+        // Create mode: Use previously created antrag
+        antragForStep2 = _createdAntrag!;
+      } else {
+        // Should not happen if button is disabled, but as a fallback
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Bedürfnisantrag erstellt: ${newAntrag.antragsnummer ?? 'N/A'}',
-            ),
+          const SnackBar(
+            content: Text('Bitte speichern Sie zuerst das Formular'),
           ),
         );
+        return;
+      }
 
-        // Navigate to step 2 screen
+      // Navigate to step 2 screen
+      if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder:
                 (context) => BeduerfnissantragStep2Screen(
                   userData: widget.userData,
-                  antrag: newAntrag,
+                  antrag: antragForStep2,
                   isLoggedIn: widget.isLoggedIn,
                   onLogout: widget.onLogout,
                 ),
@@ -522,7 +666,7 @@ class _BeduerfnissantragStep1ScreenState
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Erstellen: $e')));
+        ).showSnackBar(SnackBar(content: Text('Fehler beim Fortfahren: $e')));
       }
     }
   }

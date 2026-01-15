@@ -9,7 +9,6 @@ import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step1_screen.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step2_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
@@ -38,15 +37,37 @@ class _MeineBeduerfnisseantraegeScreenState
   @override
   void initState() {
     super.initState();
+    _loadAntragsFuture();
+    // Also refresh when the screen resumes (when returning from another screen)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshList();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reload the antrag list whenever this screen's dependencies change
+    _refreshList();
+  }
+
+  void _refreshList() {
+    if (mounted) {
+      setState(() {
+        _loadAntragsFuture();
+      });
+    }
+  }
+
+  void _loadAntragsFuture() {
     _antragsFuture = _loadAntrags();
   }
 
   Future<List<BeduerfnisseAntrag>> _loadAntrags() async {
     if (widget.userData?.personId != null) {
-      return Provider.of<ApiService>(
-        context,
-        listen: false,
-      ).getBedAntragByPersonId(widget.userData!.personId);
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      // Force refresh by always fetching fresh data from the server
+      return apiService.getBedAntragByPersonId(widget.userData!.personId);
     }
     return [];
   }
@@ -379,12 +400,12 @@ class _MeineBeduerfnisseantraegeScreenState
             // Edit button for all antrags (to add more Nachweis der Sportschützengemeinschaft)
             IconButton(
               icon: const Icon(Icons.edit, color: UIConstants.defaultAppColor),
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder:
-                        (context) => BeduerfnissantragStep2Screen(
+                        (context) => BeduerfnissantragStep1Screen(
                           userData: widget.userData,
                           antrag: antrag,
                           isLoggedIn: widget.isLoggedIn,
@@ -392,6 +413,10 @@ class _MeineBeduerfnisseantraegeScreenState
                         ),
                   ),
                 );
+                // If antrag was updated, refresh the list
+                if (result == true) {
+                  _loadAntragsFuture();
+                }
               },
               tooltip: 'Antrag bearbeiten',
             ),

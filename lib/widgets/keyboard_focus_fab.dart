@@ -15,7 +15,10 @@ class KeyboardFocusFAB extends StatefulWidget {
     this.backgroundColor,
     this.iconColor,
     this.mini = false,
-  }) : assert(icon != null || child != null, 'Either icon or child must be provided');
+  }) : assert(
+         icon != null || child != null,
+         'Either icon or child must be provided',
+       );
 
   final String heroTag;
   final VoidCallback? onPressed;
@@ -57,39 +60,43 @@ class _KeyboardFocusFABState extends State<KeyboardFocusFAB> {
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
+    final isDisabled = widget.onPressed == null;
 
     Widget button = FloatingActionButton(
       focusNode: _focusNode,
       heroTag: widget.heroTag,
       onPressed: widget.onPressed,
-      backgroundColor: widget.backgroundColor ?? UIConstants.defaultAppColor,
+      backgroundColor:
+          isDisabled
+              ? UIConstants.disabledBackgroundColor
+              : (widget.backgroundColor ?? UIConstants.defaultAppColor),
       mini: widget.mini,
-      child: widget.child ??
+      child:
+          widget.child ??
           (widget.icon != null
-              ? Icon(widget.icon, color: widget.iconColor ?? UIConstants.whiteColor)
+              ? Icon(
+                widget.icon,
+                color: widget.iconColor ?? UIConstants.whiteColor,
+              )
               : null),
     );
 
     if (widget.tooltip != null) {
-      button = Tooltip(
-        message: widget.tooltip!,
-        child: button,
-      );
+      button = Tooltip(message: widget.tooltip!, child: button);
     }
 
     Widget result = Padding(
       padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
       child: Container(
-        decoration: hasKeyboardFocus
-            ? BoxDecoration(
-                border: Border.all(
-                  color: Colors.yellow.shade700,
-                  width: 3.0,
-                ),
-              )
-            : null,
+        decoration:
+            hasKeyboardFocus
+                ? BoxDecoration(
+                  border: Border.all(color: Colors.yellow.shade700, width: 3.0),
+                )
+                : null,
         child: button,
       ),
     );
@@ -106,4 +113,3 @@ class _KeyboardFocusFABState extends State<KeyboardFocusFAB> {
     return result;
   }
 }
-

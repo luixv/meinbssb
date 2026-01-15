@@ -654,7 +654,6 @@ class PostgrestService {
   // --- bed_auswahl_typ Service Methods ---
   //
 
-
   /// Get all bed_auswahl_typ entries (excludes deleted)
   Future<List<BeduerfnisseAuswahlTyp>> getBedAuswahlTypen() async {
     try {
@@ -711,11 +710,9 @@ class PostgrestService {
     }
   }
 
-
   //
   // --- bed_auswahl Service Methods ---
   //
-
 
   /// Get all bed_auswahl entries (excludes deleted)
   Future<List<BeduerfnisseAuswahl>> getBedAuswahlList() async {
@@ -799,7 +796,6 @@ class PostgrestService {
     }
   }
 
-
   //
   // --- bed_datei Service Methods ---
   //
@@ -871,7 +867,6 @@ class PostgrestService {
     }
   }
 
-
   /// Update bed_datei by antragsnummer
   Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
     try {
@@ -886,7 +881,9 @@ class PostgrestService {
       };
 
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_datei?antragsnummer=eq.${datei.antragsnummer}'),
+        Uri.parse(
+          '${_baseUrl}bed_datei?antragsnummer=eq.${datei.antragsnummer}',
+        ),
         headers: _headers,
         body: jsonEncode(data),
       );
@@ -1014,7 +1011,6 @@ class PostgrestService {
     }
   }
 
-
   /// Update bed_sport by antragsnummer
   Future<bool> updateBedSport(BeduerfnisseSport sport) async {
     try {
@@ -1025,13 +1021,17 @@ class PostgrestService {
         'waffenart_id': sport.waffenartId,
         'disziplin_id': sport.disziplinId,
         'training': sport.training,
-        if (sport.wettkampfartId != null) 'wettkampfart_id': sport.wettkampfartId,
-        if (sport.wettkampfergebnis != null) 'wettkampfergebnis': sport.wettkampfergebnis,
+        if (sport.wettkampfartId != null)
+          'wettkampfart_id': sport.wettkampfartId,
+        if (sport.wettkampfergebnis != null)
+          'wettkampfergebnis': sport.wettkampfergebnis,
         if (sport.bemerkung != null) 'bemerkung': sport.bemerkung,
       };
 
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_sport?antragsnummer=eq.${sport.antragsnummer}'),
+        Uri.parse(
+          '${_baseUrl}bed_sport?antragsnummer=eq.${sport.antragsnummer}',
+        ),
         headers: _headers,
         body: jsonEncode(data),
       );
@@ -1050,7 +1050,6 @@ class PostgrestService {
       return false;
     }
   }
-
 
   //
   // --- bed_waffe_besitz Service Methods ---
@@ -1128,8 +1127,9 @@ class PostgrestService {
         final List<dynamic> records = jsonDecode(response.body);
         return records
             .map(
-              (json) =>
-                  BeduerfnisseWaffeBesitz.fromJson(json as Map<String, dynamic>),
+              (json) => BeduerfnisseWaffeBesitz.fromJson(
+                json as Map<String, dynamic>,
+              ),
             )
             .toList();
       } else {
@@ -1146,7 +1146,6 @@ class PostgrestService {
     }
   }
 
-
   /// Update bed_waffe_besitz by antragsnummer
   Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
     try {
@@ -1158,16 +1157,21 @@ class PostgrestService {
         'waffenart_id': waffeBesitz.waffenartId,
         'kaliber_id': waffeBesitz.kaliberId,
         'kompensator': waffeBesitz.kompensator,
-        if (waffeBesitz.hersteller != null) 'hersteller': waffeBesitz.hersteller,
-        if (waffeBesitz.lauflaengeId != null) 'lauflaenge_id': waffeBesitz.lauflaengeId,
+        if (waffeBesitz.hersteller != null)
+          'hersteller': waffeBesitz.hersteller,
+        if (waffeBesitz.lauflaengeId != null)
+          'lauflaenge_id': waffeBesitz.lauflaengeId,
         if (waffeBesitz.gewicht != null) 'gewicht': waffeBesitz.gewicht,
-        if (waffeBesitz.beduerfnisgrundId != null) 'beduerfnisgrund_id': waffeBesitz.beduerfnisgrundId,
+        if (waffeBesitz.beduerfnisgrundId != null)
+          'beduerfnisgrund_id': waffeBesitz.beduerfnisgrundId,
         if (waffeBesitz.verbandId != null) 'verband_id': waffeBesitz.verbandId,
         if (waffeBesitz.bemerkung != null) 'bemerkung': waffeBesitz.bemerkung,
       };
 
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_waffe_besitz?antragsnummer=eq.${waffeBesitz.antragsnummer}'),
+        Uri.parse(
+          '${_baseUrl}bed_waffe_besitz?antragsnummer=eq.${waffeBesitz.antragsnummer}',
+        ),
         headers: _headers,
         body: jsonEncode(data),
       );
@@ -1186,7 +1190,6 @@ class PostgrestService {
       return false;
     }
   }
-
 
   //
   // --- bed_antrag_status Service Methods ---
@@ -1257,7 +1260,7 @@ class PostgrestService {
       LoggerService.logError('Error fetching bed_antrag_status list: $e');
       return [];
     }
-  } 
+  }
 
   //
   // --- bed_antrag Service Methods ---
@@ -1342,7 +1345,6 @@ class PostgrestService {
       rethrow;
     }
   }
-
 
   /// Get bed_antrag entries by antragsnummer
   Future<List<BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
@@ -1436,37 +1438,80 @@ class PostgrestService {
     }
   }
 
-
   /// Update a bed_antrag entry by antragsnummer
   Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
     try {
       // Validate that antragsnummer is present
       if (antrag.antragsnummer == null) {
-        LoggerService.logError('Cannot update bed_antrag: antragsnummer is null');
+        LoggerService.logError(
+          'Cannot update bed_antrag: antragsnummer is null',
+        );
         return false;
       }
+
+      // Convert enum to status_id (int)
+      int? statusId;
+      if (antrag.statusId != null) {
+        switch (antrag.statusId) {
+          case BeduerfnisAntragStatus.entwurf:
+            statusId = 1;
+            break;
+          case BeduerfnisAntragStatus.eingereichtAmVerein:
+            statusId = 2;
+            break;
+          case BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein:
+            statusId = 3;
+            break;
+          case BeduerfnisAntragStatus.genehmightVonVerein:
+            statusId = 4;
+            break;
+          case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein:
+            statusId = 5;
+            break;
+          case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied:
+            statusId = 6;
+            break;
+          case BeduerfnisAntragStatus.eingereichtAnBSSB:
+            statusId = 7;
+            break;
+          case BeduerfnisAntragStatus.genehmight:
+            statusId = 8;
+            break;
+          case BeduerfnisAntragStatus.abgelehnt:
+            statusId = 9;
+            break;
+          default:
+            statusId = null;
+        }
+      }
+
       // Convert model to JSON, using lowercase field names for PostgREST
       final updateData = {
         'changed_at': DateTime.now().toIso8601String(),
-        if (antrag.statusId != null) 'status_id': antrag.statusId,
+        if (statusId != null) 'status_id': statusId,
         if (antrag.wbkNeu != null) 'wbk_neu': antrag.wbkNeu,
         if (antrag.wbkArt != null) 'wbk_art': antrag.wbkArt,
         if (antrag.beduerfnisart != null) 'beduerfnisart': antrag.beduerfnisart,
         if (antrag.anzahlWaffen != null) 'anzahl_waffen': antrag.anzahlWaffen,
-        if (antrag.vereinGenehmigt != null) 'verein_genehmigt': antrag.vereinGenehmigt,
+        if (antrag.vereinGenehmigt != null)
+          'verein_genehmigt': antrag.vereinGenehmigt,
         if (antrag.email != null) 'email': antrag.email,
         if (antrag.bankdaten != null) 'bankdaten': antrag.bankdaten,
-        if (antrag.abbuchungErfolgt != null) 'abbuchung_erfolgt': antrag.abbuchungErfolgt,
+        if (antrag.abbuchungErfolgt != null)
+          'abbuchung_erfolgt': antrag.abbuchungErfolgt,
         if (antrag.bemerkung != null) 'bemerkung': antrag.bemerkung,
       };
 
+      final url =
+          '${_baseUrl}bed_antrag?antragsnummer=eq.${antrag.antragsnummer}';
+
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_antrag?antragsnummer=eq.${antrag.antragsnummer}'),
+        Uri.parse(url),
         headers: _headers,
         body: jsonEncode(updateData),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
         LoggerService.logInfo('bed_antrag updated successfully');
         return true;
       } else {
@@ -1504,5 +1549,4 @@ class PostgrestService {
       return false;
     }
   }
-
 }
