@@ -8,6 +8,7 @@ import 'package:meinbssb/screens/password/password_reset_fail_screen.dart';
 import 'package:meinbssb/screens/password/password_reset_success_screen.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:meinbssb/helpers/utils.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({
@@ -91,38 +92,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     _failAndExit('Ungültiger oder abgelaufener Link.');
   }
 
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Bitte Passwort eingeben';
-    if (value.length < 8) return 'Mindestens 8 Zeichen';
-    if (!RegExp(r'[A-Z]').hasMatch(value)) return 'Mind. 1 Großbuchstabe';
-    if (!RegExp(r'[a-z]').hasMatch(value)) return 'Mind. 1 Kleinbuchstabe';
-    if (!RegExp(r'[0-9]').hasMatch(value)) return 'Mind. 1 Zahl';
-    if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
-      return 'Mind. 1 Sonderzeichen';
-    }
-    return null;
-  }
-
   void _checkStrength(String value) {
-    double strength = 0;
-    if (value.length >= 8) strength += 0.25;
-    if (RegExp(r'[A-Z]').hasMatch(value)) strength += 0.25;
-    if (RegExp(r'[a-z]').hasMatch(value)) strength += 0.15;
-    if (RegExp(r'[0-9]').hasMatch(value)) strength += 0.15;
-    if (RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) strength += 0.2;
-    setState(() => _strength = strength);
-  }
-
-  String _strengthLabel(double value) {
-    if (value < 0.4) return 'Schwach';
-    if (value < 0.7) return 'Mittel';
-    return 'Stark';
-  }
-
-  Color _strengthColor(double value) {
-    if (value < 0.4) return UIConstants.errorColor;
-    if (value < 0.7) return UIConstants.warningColor;
-    return UIConstants.successColor;
+    setState(() => _strength = calculatePasswordStrength(value));
   }
 
   Future<void> _submit() async {
@@ -228,7 +199,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: Semantics(
                     label: 'Eingabefeld für neues Passwort',
                     hint:
-                        'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
+                        'Mindestens 8 Zeichen, 1 Großbuchstabe (A...Z, Ä, Ö, Ü), 1 Kleinbuchstabe (a...z, ä, ö, ü), 1 Zahl (0...9), 1 Sonderzeichen (! # \$ % & * ( ) - + = { } [ ] : ; , . ?)',
                     textField: true,
                     child: TextFormField(
                       controller: _passwordController,
@@ -253,7 +224,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                         ),
                       ),
-                      validator: _validatePassword,
+                      validator: validatePassword,
                       onChanged: _checkStrength,
                     ),
                   ),
@@ -264,7 +235,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     bottom: UIConstants.spacingS,
                   ),
                   child: ScaledText(
-                    'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
+                    'Mindestens 8 Zeichen, 1 Großbuchstabe (A...Z, Ä, Ö, Ü), 1 Kleinbuchstabe (a...z, ä, ö, ü), 1 Zahl (0...9), 1 Sonderzeichen (! # \$ % & * ( ) - + = { } [ ] : ; , . ?)',
                     style: UIStyles.formLabelStyle,
                   ),
                 ),
@@ -276,15 +247,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         minHeight: 6,
                         backgroundColor: UIConstants.greySubtitleTextColor,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          _strengthColor(_strength),
+                          getPasswordStrengthColor(_strength),
                         ),
                       ),
                     ),
                     const SizedBox(width: UIConstants.spacingS),
                     ScaledText(
-                      _strengthLabel(_strength),
+                      getPasswordStrengthLabel(_strength),
                       style: UIStyles.bodyStyle.copyWith(
-                        color: _strengthColor(_strength),
+                        color: getPasswordStrengthColor(_strength),
                       ),
                     ),
                   ],

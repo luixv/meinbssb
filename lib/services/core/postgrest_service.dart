@@ -558,16 +558,15 @@ class PostgrestService {
     required String apiBaseServer,
     required String apiBasePath,
     required String apiBasePort,
-    required String endpoint,
-    String? body,
+    required String endpoint
   }) async {
     try {
       final logData = {
+        'person_id': personId,
         'apiBaseServer': apiBaseServer,
         'apiBasePath': apiBasePath,
         'apiBasePort': apiBasePort,
-        'endpoint': endpoint,
-        if (body != null) 'requestBody': body,
+        'endpoint': endpoint
       };
 
       final response = await _httpClient.post(

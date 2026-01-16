@@ -29,7 +29,12 @@ class HttpClient {
   final TokenService _tokenService;
   final ConfigService _configService;
   final CacheService _cacheService;
-  final PostgrestService? _postgrestService;
+  PostgrestService? _postgrestService;
+  
+  /// Set the PostgrestService instance (used to break circular dependency)
+  void setPostgrestService(PostgrestService postgrestService) {
+    _postgrestService = postgrestService;
+  }
 
   // Method to make HTTP requests with token handling and retry logic
   Future<dynamic> _makeRequest(
@@ -232,7 +237,7 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
 
     return _makeRequest(
       'POST',
@@ -256,7 +261,7 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
 
     return _makeRequest(
       'PUT',
@@ -282,7 +287,7 @@ class HttpClient {
     }
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
 
     return _makeRequest(
       'DELETE',
@@ -316,7 +321,7 @@ class HttpClient {
   }
 
   /// Helper method to log API requests to oktoberFestBaseServer, apiBaseServer, and api1BaseServer
-  void _logApiRequest(String requestBaseUrl, String endpoint, [String? body]) {
+  void _logApiRequest(String requestBaseUrl, String endpoint) {
     // Only log if PostgrestService is available
     if (_postgrestService == null) {
       return;
@@ -415,13 +420,12 @@ class HttpClient {
       // Get personId from cache (async operation, fire-and-forget)
       _cacheService.getInt('personId').then((personId) {
         // Log the request asynchronously (don't await to avoid blocking)
-        _postgrestService.logApiRequest(
+        _postgrestService?.logApiRequest(
           personId: personId,
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
           apiBasePort: matchedConfig['port']!,
           endpoint: endpoint,
-          body: body,
         ).catchError((error) {
           // Silently handle errors - logging failures shouldn't break the app
           LoggerService.logError(
@@ -430,13 +434,12 @@ class HttpClient {
         });
       }).catchError((error) {
         // If personId retrieval fails, log without personId
-        _postgrestService.logApiRequest(
+        _postgrestService?.logApiRequest(
           personId: null,
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
           apiBasePort: matchedConfig['port']!,
           endpoint: endpoint,
-          body: body,
         ).catchError((logError) {
           LoggerService.logError(
             'HttpClient: Failed to log API request: $logError',

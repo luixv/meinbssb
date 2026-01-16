@@ -141,7 +141,10 @@ void main() {
     testWidgets('initially no error message is shown', (tester) async {
       await tester.pumpWidget(createLoginScreen());
       await tester.pumpAndSettle();
+      // Verify no error messages are displayed initially
       expect(find.textContaining('Fehler'), findsNothing);
+      expect(find.text(Messages.loginFailed), findsNothing);
+      expect(find.textContaining('Error:'), findsNothing);
     });
   });
 
@@ -160,12 +163,16 @@ void main() {
       when(mockApiService.fetchPassdaten(10)).thenAnswer((_) async => null);
 
       await tester.pumpWidget(createLoginScreen());
+      await tester.pumpAndSettle();
       await tester.enterText(find.byKey(const Key('usernameField')), 'x@x.de');
       await tester.enterText(find.byKey(const Key('passwordField')), 'pw');
       await tester.tap(find.byKey(const Key('loginButton')));
       await tester.pumpAndSettle();
 
+      // Verify the error message is shown
       expect(find.text('Fehler beim Laden der Passdaten.'), findsOneWidget);
+      // Verify API calls were made
+      verify(mockApiService.login(any, any)).called(1);
       verify(mockApiService.fetchPassdaten(10)).called(1);
     });
   });
@@ -213,6 +220,9 @@ void main() {
       ).thenAnswer((_) async => Uint8List(0));
 
       await tester.pumpWidget(createLoginScreen());
+      await tester.pumpAndSettle();
+      
+      // First attempt - should fail
       await tester.enterText(
         find.byKey(const Key('usernameField')),
         'bad@test.de',
@@ -222,13 +232,20 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(Messages.loginFailed), findsOneWidget);
 
+      // Second attempt - should succeed and clear error message
       await tester.enterText(
         find.byKey(const Key('usernameField')),
         'good@test.de',
       );
+      // Password field still has 'pw' from previous attempt
       await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pumpAndSettle();
+      // Wait for error message to be cleared (happens at start of _handleLogin)
+      await tester.pump();
+      // Error should be cleared immediately when new login starts
       expect(find.text(Messages.loginFailed), findsNothing);
+      // Wait for navigation to complete
+      await tester.pumpAndSettle();
+      // Verify navigation to home screen occurred
       expect(find.byType(Placeholder), findsOneWidget);
     });
   });
