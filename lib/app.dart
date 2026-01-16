@@ -127,7 +127,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    debugPrint('MyAppState: initState');
     _apiService = Provider.of<ApiService>(context, listen: false);
 
     // Configure system UI for edge-to-edge display on Android 15+
@@ -143,7 +142,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _startSplashAndAuthCheck() {
-    debugPrint('MyAppState: _startSplashAndAuthCheck');
     // Start both splash and auth check in parallel
     _checkLoginStatus();
     Future.delayed(const Duration(seconds: 3)).then((_) {
@@ -235,8 +233,6 @@ class _MyAppState extends State<MyApp> {
         _navigatorKey.currentState!.pushReplacementNamed('/login');
       }
     } catch (e) {
-      // debugPrint('Error during logout: $e');
-      // Even if there's an error, still update state and navigate
       setState(() {
         _isLoggedIn = false;
         _userData = null;
@@ -468,7 +464,6 @@ class _MyAppState extends State<MyApp> {
             }
             // Handle login route specifically
             if (settings.name == '/login') {
-              debugPrint('MyApp: Generating /login route');
               return MaterialPageRoute(
                 builder: (_) => LoginScreen(onLoginSuccess: _handleLogin),
                 settings: settings,
