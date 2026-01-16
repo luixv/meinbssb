@@ -8,6 +8,10 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
+import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
+import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
 
 class PostgrestService {
   PostgrestService({
@@ -1036,13 +1040,37 @@ class PostgrestService {
   }
 
   /// Update bed_datei by ID
-  Future<bool> updateBedDatei(int id, Map<String, dynamic> data) async {
+  Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
     try {
-      data['changed_at'] = DateTime.now().toIso8601String();
+      if (datei.id == null) {
+        LoggerService.logError('Cannot update bed_datei without an ID');
+        return false;
+      }
+
+      // Convert to JSON and add changed_at timestamp
+      final updateData = {
+        ...datei.toJson(),
+        'changed_at': DateTime.now().toIso8601String(),
+      };
+
+      // Remove id, created_at, deleted_at, antragsnummer from update data
+      updateData.remove('ID');
+      updateData.remove('CREATED_AT');
+      updateData.remove('DELETED_AT');
+      updateData.remove('ANTRAGSNUMMER');
+
+      // Convert keys to snake_case for PostgREST
+      final snakeCaseData = {
+        if (updateData['DATEINAME'] != null) 'dateiname': updateData['DATEINAME'],
+        if (updateData['FILE_BYTES'] != null) 
+          'file_bytes': '\\x${(updateData['FILE_BYTES'] as List<int>).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('')}',
+        'changed_at': updateData['changed_at'],
+      };
+
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_datei?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_datei?id=eq.${datei.id}'),
         headers: _headers,
-        body: jsonEncode(data),
+        body: jsonEncode(snakeCaseData),
       );
 
       if (response.statusCode == 200) {
@@ -1183,13 +1211,40 @@ class PostgrestService {
   }
 
   /// Update bed_sport by ID
-  Future<bool> updateBedSport(int id, Map<String, dynamic> data) async {
+  Future<bool> updateBedSport(BeduerfnisseSport sport) async {
     try {
-      data['changed_at'] = DateTime.now().toIso8601String();
+      if (sport.id == null) {
+        LoggerService.logError('Cannot update bed_sport without an ID');
+        return false;
+      }
+
+      // Convert to JSON and add changed_at timestamp
+      final updateData = {
+        ...sport.toJson(),
+        'changed_at': DateTime.now().toIso8601String(),
+      };
+
+      // Remove id, created_at, deleted_at, antragsnummer from update data
+      updateData.remove('ID');
+      updateData.remove('CREATED_AT');
+      updateData.remove('DELETED_AT');
+      updateData.remove('ANTRAGSNUMMER');
+
+      // Convert keys to snake_case for PostgREST
+      final snakeCaseData = {
+        if (updateData['SCHIESSDATUM'] != null) 'schiessdatum': updateData['SCHIESSDATUM'],
+        if (updateData['WAFFENART_ID'] != null) 'waffenart_id': updateData['WAFFENART_ID'],
+        if (updateData['DISZIPLIN_ID'] != null) 'disziplin_id': updateData['DISZIPLIN_ID'],
+        if (updateData['TRAINING'] != null) 'training': updateData['TRAINING'],
+        if (updateData['WETTKAMPFART_ID'] != null) 'wettkampfart_id': updateData['WETTKAMPFART_ID'],
+        if (updateData['WETTKAMPFERGEBNIS'] != null) 'wettkampfergebnis': updateData['WETTKAMPFERGEBNIS'],
+        'changed_at': updateData['changed_at'],
+      };
+
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_sport?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_sport?id=eq.${sport.id}'),
         headers: _headers,
-        body: jsonEncode(data),
+        body: jsonEncode(snakeCaseData),
       );
 
       if (response.statusCode == 200) {
@@ -1292,7 +1347,7 @@ class PostgrestService {
   }
 
   /// Get bed_waffe_besitz entries by antragsnummer (excludes deleted)
-  Future<List<Map<String, dynamic>>> getBedWaffeBesitzByAntragsnummer(
+  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
     String antragsnummer,
   ) async {
     try {
@@ -1303,7 +1358,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> records = jsonDecode(response.body);
-        return records.cast<Map<String, dynamic>>();
+        return records
+            .map((json) => BeduerfnisseWaffeBesitz.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to get bed_waffe_besitz by antragsnummer. Status: ${response.statusCode}, Body: ${response.body}',
@@ -1317,7 +1374,7 @@ class PostgrestService {
   }
 
   /// Get bed_waffe_besitz by ID
-  Future<Map<String, dynamic>?> getBedWaffeBesitzById(int id) async {
+  Future<BeduerfnisseWaffeBesitz?> getBedWaffeBesitzById(int id) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_waffe_besitz?id=eq.$id&deleted_at=is.null'),
@@ -1326,7 +1383,10 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> records = jsonDecode(response.body);
-        return records.isNotEmpty ? records[0] : null;
+        if (records.isNotEmpty) {
+          return BeduerfnisseWaffeBesitz.fromJson(records[0] as Map<String, dynamic>);
+        }
+        return null;
       } else {
         LoggerService.logError(
           'Failed to get bed_waffe_besitz by ID. Status: ${response.statusCode}, Body: ${response.body}',
@@ -1340,13 +1400,45 @@ class PostgrestService {
   }
 
   /// Update bed_waffe_besitz by ID
-  Future<bool> updateBedWaffeBesitz(int id, Map<String, dynamic> data) async {
+  Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
     try {
-      data['changed_at'] = DateTime.now().toIso8601String();
+      if (waffeBesitz.id == null) {
+        LoggerService.logError('Cannot update bed_waffe_besitz without an ID');
+        return false;
+      }
+
+      // Convert to JSON and add changed_at timestamp
+      final updateData = {
+        ...waffeBesitz.toJson(),
+        'changed_at': DateTime.now().toIso8601String(),
+      };
+
+      // Remove id, created_at, deleted_at, antragsnummer from update data
+      updateData.remove('ID');
+      updateData.remove('CREATED_AT');
+      updateData.remove('DELETED_AT');
+      updateData.remove('ANTRAGSNUMMER');
+
+      // Convert keys to snake_case for PostgREST
+      final snakeCaseData = {
+        if (updateData['WBK_NR'] != null) 'wbk_nr': updateData['WBK_NR'],
+        if (updateData['LFD_WBK'] != null) 'lfd_wbk': updateData['LFD_WBK'],
+        if (updateData['WAFFENART_ID'] != null) 'waffenart_id': updateData['WAFFENART_ID'],
+        if (updateData['HERSTELLER'] != null) 'hersteller': updateData['HERSTELLER'],
+        if (updateData['KALIBER_ID'] != null) 'kaliber_id': updateData['KALIBER_ID'],
+        if (updateData['LAUFLAENGE_ID'] != null) 'lauflaenge_id': updateData['LAUFLAENGE_ID'],
+        if (updateData['GEWICHT'] != null) 'gewicht': updateData['GEWICHT'],
+        if (updateData['KOMPENSATOR'] != null) 'kompensator': updateData['KOMPENSATOR'],
+        if (updateData['BEDUERFNISGRUND_ID'] != null) 'beduerfnisgrund_id': updateData['BEDUERFNISGRUND_ID'],
+        if (updateData['VERBAND_ID'] != null) 'verband_id': updateData['VERBAND_ID'],
+        if (updateData['BEMERKUNG'] != null) 'bemerkung': updateData['BEMERKUNG'],
+        'changed_at': updateData['changed_at'],
+      };
+
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_waffe_besitz?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_waffe_besitz?id=eq.${waffeBesitz.id}'),
         headers: _headers,
-        body: jsonEncode(data),
+        body: jsonEncode(snakeCaseData),
       );
 
       if (response.statusCode == 200) {
@@ -1512,15 +1604,30 @@ class PostgrestService {
   }
 
   /// Update a bed_antrag_status entry
-  Future<bool> updateBedAntragStatus(
-    int id,
-    Map<String, dynamic> data,
-  ) async {
+  Future<bool> updateBedAntragStatus(BeduerfnisseAntragStatus antragStatus) async {
     try {
+      if (antragStatus.id == null) {
+        LoggerService.logError('Cannot update bed_antrag_status without an ID');
+        return false;
+      }
+
+      // Convert to JSON
+      final updateData = antragStatus.toJson();
+
+      // Remove id and deleted_at from update data
+      updateData.remove('ID');
+      updateData.remove('DELETED_AT');
+
+      // Convert keys to snake_case for PostgREST
+      final snakeCaseData = {
+        if (updateData['STATUS'] != null) 'status': updateData['STATUS'],
+        if (updateData['BESCHREIBUNG'] != null) 'beschreibung': updateData['BESCHREIBUNG'],
+      };
+
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_antrag_status?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_antrag_status?id=eq.${antragStatus.id}'),
         headers: _headers,
-        body: jsonEncode(data),
+        body: jsonEncode(snakeCaseData),
       );
 
       if (response.statusCode == 200) {
@@ -1759,18 +1866,45 @@ class PostgrestService {
   }
 
   /// Update a bed_antrag entry
-  Future<bool> updateBedAntrag(int id, Map<String, dynamic> data) async {
+  Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
     try {
-      // Always update changed_at when updating
+      if (antrag.id == null) {
+        LoggerService.logError('Cannot update bed_antrag without an ID');
+        return false;
+      }
+
+      // Convert to JSON and add changed_at timestamp
       final updateData = {
-        ...data,
+        ...antrag.toJson(),
         'changed_at': DateTime.now().toIso8601String(),
       };
 
+      // Remove id, created_at, deleted_at, antragsnummer from update data
+      updateData.remove('ID');
+      updateData.remove('CREATED_AT');
+      updateData.remove('DELETED_AT');
+      updateData.remove('ANTRAGSNUMMER');
+
+      // Convert keys to snake_case for PostgREST
+      final snakeCaseData = {
+        if (updateData['PERSON_ID'] != null) 'person_id': updateData['PERSON_ID'],
+        if (updateData['STATUS_ID'] != null) 'status_id': updateData['STATUS_ID'],
+        if (updateData['WBK_NEU'] != null) 'wbk_neu': updateData['WBK_NEU'],
+        if (updateData['WBK_ART'] != null) 'wbk_art': updateData['WBK_ART'],
+        if (updateData['BEDUERFNISART'] != null) 'beduerfnisart': updateData['BEDUERFNISART'],
+        if (updateData['ANZAHL_WAFFEN'] != null) 'anzahl_waffen': updateData['ANZAHL_WAFFEN'],
+        if (updateData['VEREIN_GENEHMIGT'] != null) 'verein_genehmigt': updateData['VEREIN_GENEHMIGT'],
+        if (updateData['EMAIL'] != null) 'email': updateData['EMAIL'],
+        if (updateData['BANKDATEN'] != null) 'bankdaten': updateData['BANKDATEN'],
+        if (updateData['ABBUCHUNG_ERFOLGT'] != null) 'abbuchung_erfolgt': updateData['ABBUCHUNG_ERFOLGT'],
+        if (updateData['BEMERKUNG'] != null) 'bemerkung': updateData['BEMERKUNG'],
+        'changed_at': updateData['changed_at'],
+      };
+
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_antrag?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_antrag?id=eq.${antrag.id}'),
         headers: _headers,
-        body: jsonEncode(updateData),
+        body: jsonEncode(snakeCaseData),
       );
 
       if (response.statusCode == 200) {
@@ -1965,6 +2099,126 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError('Error updating bed_antrag_person: $e');
+      return false;
+    }
+  }
+
+  //
+  // --- bed_datei_zuord Service Methods ---
+  //
+
+  /// Create a new bed_datei_zuord entry
+  Future<BeduerfnisseDateiZuord> createBedDateiZuord({
+    required String antragsnummer,
+    required int dateiId,
+    required String dateiArt,
+    int? bedSportId,
+  }) async {
+    try {
+      final body = {
+        'antragsnummer': antragsnummer,
+        'datei_id': dateiId,
+        'datei_art': dateiArt,
+        'created_at': DateTime.now().toIso8601String(),
+        if (bedSportId != null) 'bed_sport_id': bedSportId,
+      };
+
+      final response = await _httpClient.post(
+        Uri.parse('${_baseUrl}bed_datei_zuord'),
+        headers: _headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201) {
+        final List<dynamic> data = jsonDecode(response.body);
+        LoggerService.logInfo('bed_datei_zuord created successfully');
+        if (data.isNotEmpty) {
+          return BeduerfnisseDateiZuord.fromJson(data[0] as Map<String, dynamic>);
+        }
+        throw Exception('Empty response from create bed_datei_zuord');
+      } else {
+        LoggerService.logError(
+          'Failed to create bed_datei_zuord. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        throw Exception('Failed to create bed_datei_zuord');
+      }
+    } catch (e) {
+      LoggerService.logError('Error creating bed_datei_zuord: $e');
+      rethrow;
+    }
+  }
+
+  /// Update a bed_datei_zuord entry
+  Future<bool> updateBedDateiZuord(BeduerfnisseDateiZuord dateiZuord) async {
+    try {
+      if (dateiZuord.id == null) {
+        LoggerService.logError('Cannot update bed_datei_zuord without an ID');
+        return false;
+      }
+
+      // Convert to JSON and add changed_at timestamp
+      final updateData = {
+        ...dateiZuord.toJson(),
+        'changed_at': DateTime.now().toIso8601String(),
+      };
+
+      // Remove id, created_at, deleted_at, antragsnummer from update data
+      updateData.remove('ID');
+      updateData.remove('CREATED_AT');
+      updateData.remove('DELETED_AT');
+      updateData.remove('ANTRAGSNUMMER');
+
+      // Convert keys to snake_case for PostgREST
+      final snakeCaseData = {
+        if (updateData['DATEI_ID'] != null) 'datei_id': updateData['DATEI_ID'],
+        if (updateData['DATEI_ART'] != null) 'datei_art': updateData['DATEI_ART'],
+        if (updateData['BED_SPORT_ID'] != null) 'bed_sport_id': updateData['BED_SPORT_ID'],
+        'changed_at': updateData['changed_at'],
+      };
+
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_datei_zuord?id=eq.${dateiZuord.id}'),
+        headers: _headers,
+        body: jsonEncode(snakeCaseData),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_datei_zuord updated successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to update bed_datei_zuord. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error updating bed_datei_zuord: $e');
+      return false;
+    }
+  }
+
+  /// Soft delete a bed_datei_zuord entry
+  Future<bool> deleteBedDateiZuord(int id) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_datei_zuord?id=eq.$id'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_datei_zuord deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_datei_zuord. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_datei_zuord: $e');
       return false;
     }
   }

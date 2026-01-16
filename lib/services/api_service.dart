@@ -35,6 +35,10 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
+import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
+import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -835,8 +839,8 @@ class ApiService {
     return _postgrestService.getBedDateiById(id);
   }
 
-  Future<bool> updateBedDatei(int id, Map<String, dynamic> data) async {
-    return _postgrestService.updateBedDatei(id, data);
+  Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
+    return _postgrestService.updateBedDatei(datei);
   }
 
   Future<bool> deleteBedDatei(int id) async {
@@ -877,8 +881,8 @@ class ApiService {
     return _postgrestService.getBedSportById(id);
   }
 
-  Future<bool> updateBedSport(int id, Map<String, dynamic> data) async {
-    return _postgrestService.updateBedSport(id, data);
+  Future<bool> updateBedSport(BeduerfnisseSport sport) async {
+    return _postgrestService.updateBedSport(sport);
   }
 
   Future<bool> deleteBedSport(int id) async {
@@ -919,18 +923,18 @@ class ApiService {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getBedWaffeBesitzByAntragsnummer(
+  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
     String antragsnummer,
   ) async {
     return _postgrestService.getBedWaffeBesitzByAntragsnummer(antragsnummer);
   }
 
-  Future<Map<String, dynamic>?> getBedWaffeBesitzById(int id) async {
+  Future<BeduerfnisseWaffeBesitz?> getBedWaffeBesitzById(int id) async {
     return _postgrestService.getBedWaffeBesitzById(id);
   }
 
-  Future<bool> updateBedWaffeBesitz(int id, Map<String, dynamic> data) async {
-    return _postgrestService.updateBedWaffeBesitz(id, data);
+  Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
+    return _postgrestService.updateBedWaffeBesitz(waffeBesitz);
   }
 
   Future<bool> deleteBedWaffeBesitz(int id) async {
@@ -965,8 +969,8 @@ class ApiService {
     return _postgrestService.getBedAntragStatusByStatus(status);
   }
 
-  Future<bool> updateBedAntragStatus(int id, Map<String, dynamic> data) async {
-    return _postgrestService.updateBedAntragStatus(id, data);
+  Future<bool> updateBedAntragStatus(BeduerfnisseAntragStatus antragStatus) async {
+    return _postgrestService.updateBedAntragStatus(antragStatus);
   }
 
   Future<bool> deleteBedAntragStatus(int id) async {
@@ -1029,8 +1033,8 @@ class ApiService {
     return _postgrestService.getBedAntragById(id);
   }
 
-  Future<bool> updateBedAntrag(int id, Map<String, dynamic> data) async {
-    return _postgrestService.updateBedAntrag(id, data);
+  Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
+    return _postgrestService.updateBedAntrag(antrag);
   }
 
   Future<bool> deleteBedAntrag(int id) async {
@@ -1075,5 +1079,31 @@ class ApiService {
     BeduerfnisseAntragPerson bedAntragPerson,
   ) async {
     return _postgrestService.updateBedAntragPerson(bedAntragPerson);
+  }
+
+  //
+  // --- bed_datei_zuord Service Methods ---
+  //
+
+  Future<BeduerfnisseDateiZuord> createBedDateiZuord({
+    required String antragsnummer,
+    required int dateiId,
+    required String dateiArt,
+    int? bedSportId,
+  }) async {
+    return _postgrestService.createBedDateiZuord(
+      antragsnummer: antragsnummer,
+      dateiId: dateiId,
+      dateiArt: dateiArt,
+      bedSportId: bedSportId,
+    );
+  }
+
+  Future<bool> updateBedDateiZuord(BeduerfnisseDateiZuord dateiZuord) async {
+    return _postgrestService.updateBedDateiZuord(dateiZuord);
+  }
+
+  Future<bool> deleteBedDateiZuord(int id) async {
+    return _postgrestService.deleteBedDateiZuord(id);
   }
 }
