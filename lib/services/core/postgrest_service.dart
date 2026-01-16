@@ -1051,6 +1051,30 @@ class PostgrestService {
     }
   }
 
+  /// Soft delete bed_sport by id
+  Future<bool> deleteBedSport(int id) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_sport?id=eq.$id'),
+        headers: _headers,
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_sport deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_sport. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_sport: $e');
+      return false;
+    }
+  }
+
   //
   // --- bed_waffe_besitz Service Methods ---
   //

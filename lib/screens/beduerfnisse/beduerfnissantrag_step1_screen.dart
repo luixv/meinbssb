@@ -21,6 +21,7 @@ class BeduerfnissantragStep1Screen extends StatefulWidget {
     required this.onLogout,
     this.onBack,
     this.antrag,
+    this.readOnly = false,
     super.key,
   });
 
@@ -29,6 +30,7 @@ class BeduerfnissantragStep1Screen extends StatefulWidget {
   final Function() onLogout;
   final VoidCallback? onBack;
   final BeduerfnisseAntrag? antrag;
+  final bool readOnly;
 
   @override
   State<BeduerfnissantragStep1Screen> createState() =>
@@ -44,7 +46,7 @@ class _BeduerfnissantragStep1ScreenState
     text: '0',
   );
   String? _selectedVerein;
-  bool _antragCreated = false; // Tracks if new antrag has been created/saved
+// Tracks if new antrag has been created/saved
   BeduerfnisseAntrag?
   _createdAntrag; // Stores the created antrag in create mode
 
@@ -116,27 +118,27 @@ class _BeduerfnissantragStep1ScreenState
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // Save FAB (diskette icon) - aligned right, above forward arrow
-                      KeyboardFocusFAB(
-                        heroTag: 'saveFromErfassenFab',
-                        tooltip: 'Speichern',
-                        semanticLabel: 'Speichern Button',
-                        semanticHint: 'Bedürfnisantrag speichern',
-                        onPressed: () => _saveAntrag(),
-                        icon: Icons.save,
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
+                      // Save FAB (diskette icon) - only show when not read-only
+                      if (!widget.readOnly)
+                        KeyboardFocusFAB(
+                          heroTag: 'saveFromErfassenFab',
+                          tooltip: 'Speichern',
+                          semanticLabel: 'Speichern Button',
+                          semanticHint: 'Bedürfnisantrag speichern',
+                          onPressed: () => _saveAntrag(),
+                          icon: Icons.save,
+                        ),
+                      if (!widget.readOnly)
+                        const SizedBox(height: UIConstants.spacingM),
+                      // Forward arrow - always visible for navigation
                       KeyboardFocusFAB(
                         heroTag: 'nextFromErfassenFab',
                         tooltip: 'Weiter',
                         semanticLabel: 'Weiter Button',
                         semanticHint: 'Weiter zum nächsten Schritt',
-                        onPressed:
-                            (widget.antrag == null && !_antragCreated)
-                                ? null
-                                : () {
-                                  _proceedToStep2();
-                                },
+                        onPressed: () {
+                          _proceedToStep2();
+                        },
                         icon: Icons.arrow_forward,
                       ),
                     ],
@@ -212,11 +214,14 @@ class _BeduerfnissantragStep1ScreenState
                                 ),
                                 value: 'neu',
                                 groupValue: _wbkType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _wbkType = value;
-                                  });
-                                },
+                                onChanged:
+                                    widget.readOnly
+                                        ? null
+                                        : (value) {
+                                          setState(() {
+                                            _wbkType = value;
+                                          });
+                                        },
                               ),
                             ),
                             Transform.translate(
@@ -238,11 +243,14 @@ class _BeduerfnissantragStep1ScreenState
                                 ),
                                 value: 'bestehend',
                                 groupValue: _wbkType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _wbkType = value;
-                                  });
-                                },
+                                onChanged:
+                                    widget.readOnly
+                                        ? null
+                                        : (value) {
+                                          setState(() {
+                                            _wbkType = value;
+                                          });
+                                        },
                               ),
                             ),
                           ],
@@ -275,11 +283,14 @@ class _BeduerfnissantragStep1ScreenState
                                 ),
                                 value: 'gelb',
                                 groupValue: _wbkColor,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _wbkColor = value;
-                                  });
-                                },
+                                onChanged:
+                                    widget.readOnly
+                                        ? null
+                                        : (value) {
+                                          setState(() {
+                                            _wbkColor = value;
+                                          });
+                                        },
                               ),
                             ),
                             Transform.translate(
@@ -301,11 +312,14 @@ class _BeduerfnissantragStep1ScreenState
                                 ),
                                 value: 'gruen',
                                 groupValue: _wbkColor,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _wbkColor = value;
-                                  });
-                                },
+                                onChanged:
+                                    widget.readOnly
+                                        ? null
+                                        : (value) {
+                                          setState(() {
+                                            _wbkColor = value;
+                                          });
+                                        },
                               ),
                             ),
                           ],
@@ -348,11 +362,14 @@ class _BeduerfnissantragStep1ScreenState
                                 ),
                                 value: 'kurz',
                                 groupValue: _weaponType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _weaponType = value;
-                                  });
-                                },
+                                onChanged:
+                                    widget.readOnly
+                                        ? null
+                                        : (value) {
+                                          setState(() {
+                                            _weaponType = value;
+                                          });
+                                        },
                               ),
                             ),
                             Transform.translate(
@@ -374,11 +391,14 @@ class _BeduerfnissantragStep1ScreenState
                                 ),
                                 value: 'lang',
                                 groupValue: _weaponType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _weaponType = value;
-                                  });
-                                },
+                                onChanged:
+                                    widget.readOnly
+                                        ? null
+                                        : (value) {
+                                          setState(() {
+                                            _weaponType = value;
+                                          });
+                                        },
                               ),
                             ),
                           ],
@@ -404,6 +424,7 @@ class _BeduerfnissantragStep1ScreenState
                             const SizedBox(height: UIConstants.spacingS),
                             TextField(
                               controller: _anzahlController,
+                              enabled: !widget.readOnly,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
@@ -442,6 +463,14 @@ class _BeduerfnissantragStep1ScreenState
                             const SizedBox(height: UIConstants.spacingS),
                             DropdownButtonFormField<String>(
                               value: _selectedVerein,
+                              onChanged:
+                                  widget.readOnly
+                                      ? null
+                                      : (value) {
+                                        setState(() {
+                                          _selectedVerein = value;
+                                        });
+                                      },
                               decoration: const InputDecoration(
                                 labelText: 'Verein auswählen',
                                 border: OutlineInputBorder(),
@@ -471,11 +500,6 @@ class _BeduerfnissantragStep1ScreenState
                                   ),
                                 ),
                               ],
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedVerein = value;
-                                });
-                              },
                               style: UIStyles.bodyTextStyle.copyWith(
                                 fontSize:
                                     UIStyles.bodyTextStyle.fontSize! *
@@ -594,7 +618,7 @@ class _BeduerfnissantragStep1ScreenState
 
           if (mounted) {
             setState(() {
-              _antragCreated = true; // Mark antrag as created
+// Mark antrag as created
               _createdAntrag = newAntrag; // Store the created antrag
             });
             ScaffoldMessenger.of(context).showSnackBar(
@@ -663,6 +687,7 @@ class _BeduerfnissantragStep1ScreenState
                   isLoggedIn: widget.isLoggedIn,
                   onLogout: widget.onLogout,
                   userRole: userRole,
+                  readOnly: widget.readOnly,
                 ),
           ),
         );

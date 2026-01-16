@@ -397,6 +397,30 @@ class _MeineBeduerfnisseantraegeScreenState
                 ),
               ),
             ),
+            // View button for non-draft antrags
+            if (antrag.statusId != BeduerfnisAntragStatus.entwurf)
+              IconButton(
+                icon: const Icon(
+                  Icons.visibility,
+                  color: UIConstants.defaultAppColor,
+                ),
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => BeduerfnissantragStep1Screen(
+                            userData: widget.userData,
+                            antrag: antrag,
+                            isLoggedIn: widget.isLoggedIn,
+                            onLogout: widget.onLogout,
+                            readOnly: true,
+                          ),
+                    ),
+                  );
+                },
+                tooltip: 'Antrag ansehen',
+              ),
             // Edit button for draft antrags only
             if (antrag.statusId == BeduerfnisAntragStatus.entwurf)
               IconButton(
@@ -428,7 +452,7 @@ class _MeineBeduerfnisseantraegeScreenState
             if (antrag.statusId == BeduerfnisAntragStatus.entwurf)
               IconButton(
                 icon: const Icon(
-                  Icons.delete,
+                  Icons.delete_outline,
                   color: UIConstants.defaultAppColor,
                 ),
                 onPressed: () => _deleteAntrag(antrag),

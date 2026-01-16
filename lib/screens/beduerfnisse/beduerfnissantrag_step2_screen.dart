@@ -25,6 +25,7 @@ class BeduerfnissantragStep2Screen extends StatefulWidget {
     required this.isLoggedIn,
     required this.onLogout,
     required this.userRole,
+    this.readOnly = false,
     super.key,
   });
 
@@ -33,6 +34,7 @@ class BeduerfnissantragStep2Screen extends StatefulWidget {
   final bool isLoggedIn;
   final Function() onLogout;
   final WorkflowRole userRole;
+  final bool readOnly;
 
   @override
   State<BeduerfnissantragStep2Screen> createState() =>
@@ -77,6 +79,104 @@ class _BeduerfnissantragStep2ScreenState
     }
   }
 
+  Future<void> _deleteBedSport(int? sportId) async {
+    if (sportId == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fehler: ID nicht gefunden')),
+        );
+      }
+      return;
+    }
+
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: UIConstants.backgroundColor,
+          title: const Center(
+            child: Text('Nachweis löschen', style: UIStyles.dialogTitleStyle),
+          ),
+          content: RichText(
+            textAlign: TextAlign.center,
+            text: const TextSpan(
+              style: UIStyles.dialogContentStyle,
+              children: <TextSpan>[
+                TextSpan(text: 'Möchten Sie diesen Nachweis wirklich löschen?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingS,
+                        const Text('Abbrechen'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.check, color: UIConstants.checkIcon),
+                        UIConstants.horizontalSpacingS,
+                        const Text('Löschen'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final success = await apiService.deleteBedSport(sportId);
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Nachweis erfolgreich gelöscht')),
+          );
+          setState(() {
+            _bedSportFuture = _fetchBedSportData();
+          });
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Fehler beim Löschen')));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler beim Löschen: $e')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<FontSizeProvider>(
@@ -95,6 +195,7 @@ class _BeduerfnissantragStep2ScreenState
               width: MediaQuery.of(context).size.width - 32,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -113,57 +214,63 @@ class _BeduerfnissantragStep2ScreenState
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      KeyboardFocusFAB(
-                        heroTag: 'addBedSportFab',
-                        tooltip: 'Hinzufügen',
-                        semanticLabel: 'Hinzufügen Button',
-                        semanticHint: 'Neue Schießaktivität hinzufügen',
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder:
-                                (context) => BeduerfnissantragStep2DialogScreen(
-                                  antragsnummer: widget.antrag?.antragsnummer,
-                                  onSaved: (savedData) {
-                                    // Small delay to ensure data is persisted
-                                    Future.delayed(
-                                      const Duration(milliseconds: 500),
-                                      () {
-                                        if (mounted) {
-                                          setState(() {
-                                            _bedSportFuture =
-                                                _fetchBedSportData();
-                                          });
-                                        }
-                                      },
-                                    );
-                                  },
-                                ),
-                          ).then((result) {
-                            if (result != null &&
-                                result is Map<String, dynamic>) {
-                              if (result.containsKey('error')) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(result['error'] as String),
+                      // Only show add button when not in read-only mode
+                      if (!widget.readOnly)
+                        KeyboardFocusFAB(
+                          heroTag: 'addBedSportFab',
+                          tooltip: 'Hinzufügen',
+                          semanticLabel: 'Hinzufügen Button',
+                          semanticHint: 'Neue Schießaktivität hinzufügen',
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (
+                                    context,
+                                  ) => BeduerfnissantragStep2DialogScreen(
+                                    antragsnummer: widget.antrag?.antragsnummer,
+                                    onSaved: (savedData) {
+                                      // Small delay to ensure data is persisted
+                                      Future.delayed(
+                                        const Duration(milliseconds: 500),
+                                        () {
+                                          if (mounted) {
+                                            setState(() {
+                                              _bedSportFuture =
+                                                  _fetchBedSportData();
+                                            });
+                                          }
+                                        },
+                                      );
+                                    },
                                   ),
-                                );
-                              } else if (result.containsKey('success')) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Schießaktivität hinzugefügt',
+                            ).then((result) {
+                              if (result != null &&
+                                  result is Map<String, dynamic>) {
+                                if (result.containsKey('error')) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(result['error'] as String),
                                     ),
-                                  ),
-                                );
+                                  );
+                                } else if (result.containsKey('success')) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Schießaktivität hinzugefügt',
+                                      ),
+                                    ),
+                                  );
+                                }
                               }
-                            }
-                          });
-                        },
-                        icon: Icons.add,
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
+                            });
+                          },
+                          icon: Icons.add,
+                        ),
+                      if (!widget.readOnly)
+                        const SizedBox(height: UIConstants.spacingS),
                       KeyboardFocusFAB(
                         heroTag: 'nextFromStep2Fab',
                         tooltip: 'Weiter',
@@ -306,132 +413,160 @@ class _BeduerfnissantragStep2ScreenState
                                     padding: const EdgeInsets.all(
                                       UIConstants.spacingM,
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    child: Stack(
                                       children: [
-                                        ScaledText(
-                                          'Datum: ${DateFormat('dd.MM.yyyy').format(sport.schiessdatum)}',
-                                          style: UIStyles.bodyTextStyle
-                                              .copyWith(
-                                                fontSize:
-                                                    UIStyles
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ScaledText(
+                                              'Datum: ${DateFormat('dd.MM.yyyy').format(sport.schiessdatum)}',
+                                              style: UIStyles.bodyTextStyle
+                                                  .copyWith(
+                                                    fontSize:
+                                                        UIStyles
+                                                            .bodyTextStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                            ),
+                                            const SizedBox(
+                                              height: UIConstants.spacingS,
+                                            ),
+                                            ScaledText(
+                                              'Waffenart: $waffenartName',
+                                              style: UIStyles.bodyTextStyle
+                                                  .copyWith(
+                                                    fontSize:
+                                                        UIStyles
+                                                            .bodyTextStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                            ),
+                                            const SizedBox(
+                                              height: UIConstants.spacingS,
+                                            ),
+                                            ScaledText(
+                                              'Disziplin: $disziplinName',
+                                              style: UIStyles.bodyTextStyle
+                                                  .copyWith(
+                                                    fontSize:
+                                                        UIStyles
+                                                            .bodyTextStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                            ),
+                                            const SizedBox(
+                                              height: UIConstants.spacingS,
+                                            ),
+                                            ScaledText(
+                                              'Training: ${sport.training ? 'Ja' : 'Nein'}',
+                                              style: UIStyles.bodyTextStyle
+                                                  .copyWith(
+                                                    fontSize:
+                                                        UIStyles
+                                                            .bodyTextStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                            ),
+                                            if (wettkampfartName != null)
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  ScaledText(
+                                                    'Wettkampfart: $wettkampfartName',
+                                                    style: UIStyles
                                                         .bodyTextStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
+                                                        .copyWith(
+                                                          fontSize:
+                                                              UIStyles
+                                                                  .bodyTextStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                  ),
+                                                ],
                                               ),
-                                        ),
-                                        const SizedBox(
-                                          height: UIConstants.spacingS,
-                                        ),
-                                        ScaledText(
-                                          'Waffenart: $waffenartName',
-                                          style: UIStyles.bodyTextStyle
-                                              .copyWith(
-                                                fontSize:
-                                                    UIStyles
+                                            if (sport.wettkampfergebnis != null)
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  ScaledText(
+                                                    'Wettkampfergebnis: ${sport.wettkampfergebnis}',
+                                                    style: UIStyles
                                                         .bodyTextStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
+                                                        .copyWith(
+                                                          fontSize:
+                                                              UIStyles
+                                                                  .bodyTextStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                  ),
+                                                ],
                                               ),
-                                        ),
-                                        const SizedBox(
-                                          height: UIConstants.spacingS,
-                                        ),
-                                        ScaledText(
-                                          'Disziplin: $disziplinName',
-                                          style: UIStyles.bodyTextStyle
-                                              .copyWith(
-                                                fontSize:
-                                                    UIStyles
+                                            if (sport.bemerkung != null)
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  ScaledText(
+                                                    'Bemerkung: ${sport.bemerkung}',
+                                                    style: UIStyles
                                                         .bodyTextStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
+                                                        .copyWith(
+                                                          fontSize:
+                                                              UIStyles
+                                                                  .bodyTextStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                  ),
+                                                ],
                                               ),
+                                          ],
                                         ),
-                                        const SizedBox(
-                                          height: UIConstants.spacingS,
-                                        ),
-                                        ScaledText(
-                                          'Training: ${sport.training ? 'Ja' : 'Nein'}',
-                                          style: UIStyles.bodyTextStyle
-                                              .copyWith(
-                                                fontSize:
-                                                    UIStyles
-                                                        .bodyTextStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
+                                        // Delete icon - only show if status is Entwurf and not read-only
+                                        if (!widget.readOnly &&
+                                            widget.antrag?.statusId ==
+                                                BeduerfnisAntragStatus.entwurf)
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: IconButton(
+                                              icon: const Icon(
+                                                Icons.delete_outline,
+                                                color: UIConstants.deleteIcon,
                                               ),
-                                        ),
-                                        if (wettkampfartName != null)
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              ScaledText(
-                                                'Wettkampfart: $wettkampfartName',
-                                                style: UIStyles.bodyTextStyle
-                                                    .copyWith(
-                                                      fontSize:
-                                                          UIStyles
-                                                              .bodyTextStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                              ),
-                                            ],
-                                          ),
-                                        if (sport.wettkampfergebnis != null)
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              ScaledText(
-                                                'Wettkampfergebnis: ${sport.wettkampfergebnis}',
-                                                style: UIStyles.bodyTextStyle
-                                                    .copyWith(
-                                                      fontSize:
-                                                          UIStyles
-                                                              .bodyTextStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                              ),
-                                            ],
-                                          ),
-                                        if (sport.bemerkung != null)
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              ScaledText(
-                                                'Bemerkung: ${sport.bemerkung}',
-                                                style: UIStyles.bodyTextStyle
-                                                    .copyWith(
-                                                      fontSize:
-                                                          UIStyles
-                                                              .bodyTextStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
-                                              ),
-                                            ],
+                                              tooltip: 'Löschen',
+                                              onPressed: () {
+                                                _deleteBedSport(sport.id);
+                                              },
+                                            ),
                                           ),
                                       ],
                                     ),
@@ -460,6 +595,27 @@ class _BeduerfnissantragStep2ScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Fehler: Antrag nicht gefunden')),
+        );
+      }
+      return;
+    }
+
+    // In read-only mode, just navigate without updating status
+    if (widget.readOnly) {
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => BeduerfnissantragStep3Screen(
+                  userData: widget.userData,
+                  antrag: widget.antrag,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                  userRole: widget.userRole,
+                  readOnly: widget.readOnly,
+                ),
+          ),
         );
       }
       return;
@@ -507,6 +663,7 @@ class _BeduerfnissantragStep2ScreenState
                   isLoggedIn: widget.isLoggedIn,
                   onLogout: widget.onLogout,
                   userRole: widget.userRole,
+                  readOnly: widget.readOnly,
                 ),
           ),
         );

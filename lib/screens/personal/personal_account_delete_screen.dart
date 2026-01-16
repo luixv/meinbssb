@@ -91,7 +91,7 @@ class _PersonalAccountDeleteScreenState
                       mainAxisAlignment: UIConstants.centerAlignment,
                       children: [
                         const Icon(
-                          Icons.delete_forever,
+                          Icons.delete_outline,
                           color: UIConstants.deleteIcon,
                         ),
                         UIConstants.horizontalSpacingS,
@@ -122,7 +122,7 @@ class _PersonalAccountDeleteScreenState
 
     final int? webloginId = widget.userData?.webLoginId;
     final int? personId = widget.userData?.personId;
-    
+
     if (webloginId == null) {
       setState(() {
         isLoading = false;
@@ -147,10 +147,14 @@ class _PersonalAccountDeleteScreenState
 
     // Perform both delete operations
     // 1. Delete login, bank data, and access rights in main system
-    final bool deleteLoginSuccess = await apiService.deleteMeinBSSBLogin(webloginId);
-    
+    final bool deleteLoginSuccess = await apiService.deleteMeinBSSBLogin(
+      webloginId,
+    );
+
     // 2. Soft delete in PostgreSQL (mark user as deleted)
-    final bool softDeleteSuccess = await apiService.softDeleteUser(personId.toString());
+    final bool softDeleteSuccess = await apiService.softDeleteUser(
+      personId.toString(),
+    );
 
     if (mounted) {
       setState(() {
@@ -168,9 +172,9 @@ class _PersonalAccountDeleteScreenState
         } else if (!softDeleteSuccess) {
           errorMessage = 'Fehler beim Markieren des Kontos als gelöscht.';
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     }
   }

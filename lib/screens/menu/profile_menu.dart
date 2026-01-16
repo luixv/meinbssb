@@ -157,7 +157,7 @@ class ProfileScreen extends StatelessWidget {
               _buildMenuItem(
                 context,
                 'Benutzerkonto löschen',
-                Icons.delete_forever,
+                Icons.delete_outline,
                 () {
                   Navigator.push(
                     context,

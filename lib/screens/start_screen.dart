@@ -979,7 +979,7 @@ class StartScreenState extends State<StartScreen> {
                               ),
                               IconButton(
                                 icon: const Icon(
-                                  Icons.delete_outline_outlined,
+                                  Icons.delete_outline,
                                   color: UIConstants.deleteIcon,
                                 ),
                                 tooltip: 'Von Schulung abmelden',

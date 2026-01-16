@@ -254,7 +254,7 @@ class UIConstants {
   static const IconData addIconData = Icons.add;
   static const IconData editIcon = Icons.edit;
   static const IconData saveIcon = Icons.save;
-  static const IconData deleteIconData = Icons.delete_forever;
+  static const IconData deleteIconData = Icons.delete_outline;
   static const IconData checkIconData = Icons.check;
   static const IconData calendarIcon = Icons.calendar_today;
 

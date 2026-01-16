@@ -771,11 +771,9 @@ class ApiService {
     return _postgrestService.getBedAuswahlTypById(id);
   }
 
-
   //
   // --- bed_auswahl Service Methods ---
   //
-
 
   Future<List<BeduerfnisseAuswahl>> getBedAuswahlList() async {
     return _postgrestService.getBedAuswahlList();
@@ -788,7 +786,6 @@ class ApiService {
   Future<BeduerfnisseAuswahl?> getBedAuswahlById(int id) async {
     return _postgrestService.getBedAuswahlById(id);
   }
-
 
   //
   // --- bed_datei Service Methods ---
@@ -811,7 +808,6 @@ class ApiService {
   ) async {
     return _postgrestService.getBedDateiByAntragsnummer(antragsnummer);
   }
-
 
   Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
     return _postgrestService.updateBedDatei(datei);
@@ -853,11 +849,13 @@ class ApiService {
     return _postgrestService.getBedSportByAntragsnummer(antragsnummer);
   }
 
-
   Future<bool> updateBedSport(BeduerfnisseSport sport) async {
     return _postgrestService.updateBedSport(sport);
   }
 
+  Future<bool> deleteBedSport(int id) async {
+    return _postgrestService.deleteBedSport(id);
+  }
 
   //
   // --- bed_waffe_besitz Service Methods ---
@@ -893,15 +891,15 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(int antragsnummer) async {
+  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
+    int antragsnummer,
+  ) async {
     return _postgrestService.getBedWaffeBesitzByAntragsnummer(antragsnummer);
   }
-
 
   Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
     return _postgrestService.updateBedWaffeBesitz(waffeBesitz);
   }
-
 
   //
   // --- bed_antrag_status Service Methods ---
@@ -943,7 +941,6 @@ class ApiService {
     );
   }
 
-
   Future<List<BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
     int antragsnummer,
   ) async {
@@ -957,7 +954,6 @@ class ApiService {
   Future<List<BeduerfnisseAntrag>> getBedAntragByStatusId(int statusId) async {
     return _postgrestService.getBedAntragByStatusId(statusId);
   }
-
 
   Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
     return _postgrestService.updateBedAntrag(antrag);
