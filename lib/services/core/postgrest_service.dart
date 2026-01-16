@@ -562,6 +562,7 @@ class PostgrestService {
   }) async {
     try {
       final logData = {
+        'person_id': personId,
         'apiBaseServer': apiBaseServer,
         'apiBasePath': apiBasePath,
         'apiBasePort': apiBasePort,
