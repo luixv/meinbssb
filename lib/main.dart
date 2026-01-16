@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'app.dart';
@@ -42,7 +41,6 @@ import 'widgets/kill_switch_gate.dart';
 import 'widgets/compulsory_update_gate.dart';
 import 'dart:io';
 
-import 'package:flutter/rendering.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
