@@ -248,6 +248,13 @@ void main() {
       await tester.pumpWidget(createChangePasswordScreen());
       await tester.pumpAndSettle();
 
+      // Fill in current password field first
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'OldPass123!',
+      );
+      await tester.pumpAndSettle();
+
       // Test with invalid special character (€) - password must have an allowed
       // special character first to pass the "has special character" check,
       // then the invalid character check will catch the €
@@ -273,6 +280,13 @@ void main() {
         await tester.pumpWidget(createChangePasswordScreen());
         await tester.pumpAndSettle();
 
+        // Fill in current password field first
+        await tester.enterText(
+          find.byType(TextFormField).at(0),
+          'OldPass123!',
+        );
+        await tester.pumpAndSettle();
+
         // Test with disallowed special character - password must have an allowed
         // special character first to pass the "has special character" check
         await tester.enterText(
@@ -295,6 +309,13 @@ void main() {
 
     testWidgets('rejects invalid letters', (WidgetTester tester) async {
       await tester.pumpWidget(createChangePasswordScreen());
+      await tester.pumpAndSettle();
+
+      // Fill in current password field first
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'OldPass123!',
+      );
       await tester.pumpAndSettle();
 
       // Test with invalid letter (é)
