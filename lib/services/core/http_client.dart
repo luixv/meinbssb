@@ -232,7 +232,7 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
 
     return _makeRequest(
       'POST',
@@ -256,7 +256,7 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
 
     return _makeRequest(
       'PUT',
@@ -282,7 +282,7 @@ class HttpClient {
     }
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
 
     return _makeRequest(
       'DELETE',
@@ -316,7 +316,7 @@ class HttpClient {
   }
 
   /// Helper method to log API requests to oktoberFestBaseServer, apiBaseServer, and api1BaseServer
-  void _logApiRequest(String requestBaseUrl, String endpoint) {
+  void _logApiRequest(String requestBaseUrl, String endpoint, [String? body]) {
     // Only log if PostgrestService is available
     if (_postgrestService == null) {
       return;
@@ -421,6 +421,7 @@ class HttpClient {
           apiBasePath: matchedConfig['path']!,
           apiBasePort: matchedConfig['port']!,
           endpoint: endpoint,
+          body: body,
         ).catchError((error) {
           // Silently handle errors - logging failures shouldn't break the app
           LoggerService.logError(
@@ -435,6 +436,7 @@ class HttpClient {
           apiBasePath: matchedConfig['path']!,
           apiBasePort: matchedConfig['port']!,
           endpoint: endpoint,
+          body: body,
         ).catchError((logError) {
           LoggerService.logError(
             'HttpClient: Failed to log API request: $logError',
