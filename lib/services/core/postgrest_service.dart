@@ -559,6 +559,7 @@ class PostgrestService {
     required String apiBasePath,
     required String apiBasePort,
     required String endpoint,
+    String? body,
   }) async {
     try {
       final logData = {
@@ -566,6 +567,7 @@ class PostgrestService {
         'apiBasePath': apiBasePath,
         'apiBasePort': apiBasePort,
         'endpoint': endpoint,
+        if (body != null) 'requestBody': body,
       };
 
       final response = await _httpClient.post(
