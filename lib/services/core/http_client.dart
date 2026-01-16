@@ -232,7 +232,7 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
 
     return _makeRequest(
       'POST',
@@ -256,7 +256,7 @@ class HttpClient {
     LoggerService.logInfo('HttpClient: Request body: $requestBody');
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
 
     return _makeRequest(
       'PUT',
@@ -282,7 +282,7 @@ class HttpClient {
     }
 
     // Log API request if it's to apiBaseServer
-    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint, requestBody);
+    _logApiRequest(overrideBaseUrl ?? baseUrl, endpoint);
 
     return _makeRequest(
       'DELETE',
