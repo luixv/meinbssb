@@ -145,6 +145,32 @@ CREATE TABLE IF NOT EXISTS bed_waffe_besitz (
     bemerkung           VARCHAR(500)
 );
 
+-- Create bed_datei_zuord table (File Assignment)
+CREATE TABLE IF NOT EXISTS bed_datei_zuord (
+    id              SERIAL PRIMARY KEY,
+    created_at      TIMESTAMP DEFAULT now(),
+    changed_at      TIMESTAMP,
+    deleted_at      TIMESTAMP,
+    antragsnummer   TEXT NOT NULL,
+    datei_id        INT NOT NULL,
+    datei_art       VARCHAR(50) NOT NULL CHECK (datei_art IN ('SPORT', 'WBK')),
+    bed_sport_id    INT
+);
+
+-- Create bed_antrag_person table (Application Person)
+CREATE TABLE IF NOT EXISTS bed_antrag_person (
+    id              SERIAL PRIMARY KEY,
+    created_at      TIMESTAMP DEFAULT now(),
+    changed_at      TIMESTAMP,
+    deleted_at      TIMESTAMP,
+    antragsnummer   TEXT NOT NULL,
+    person_id       BIGINT NOT NULL,
+    status_id       INT,
+    vorname         VARCHAR(255),
+    nachname        VARCHAR(255),
+    vereinsname     VARCHAR(255)
+);
+
 -- History tables for bed_* entities
 CREATE TABLE IF NOT EXISTS his_bed_auswahl_typ (
     id          INT,
@@ -209,6 +235,32 @@ CREATE TABLE IF NOT EXISTS his_bed_waffe_besitz (
     verband_id          INT,
     bemerkung           VARCHAR(500),
     action              TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS his_bed_datei_zuord (
+    id              INT,
+    created_at      TIMESTAMP,
+    changed_at      TIMESTAMP,
+    deleted_at      TIMESTAMP,
+    antragsnummer   TEXT,
+    datei_id        INT,
+    datei_art       VARCHAR(50),
+    bed_sport_id    INT,
+    action          TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS his_bed_antrag_person (
+    id              INT,
+    created_at      TIMESTAMP,
+    changed_at      TIMESTAMP,
+    deleted_at      TIMESTAMP,
+    antragsnummer   TEXT,
+    person_id       BIGINT,
+    status_id       INT,
+    vorname         VARCHAR(255),
+    nachname        VARCHAR(255),
+    vereinsname     VARCHAR(255),
+    action          TEXT NOT NULL
 );
 
 -- Trigger functions for history logging
@@ -292,6 +344,38 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION fn_his_bed_datei_zuord() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO his_bed_datei_zuord VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.datei_id, NEW.datei_art, NEW.bed_sport_id, 'insert');
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO his_bed_datei_zuord VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.datei_id, OLD.datei_art, OLD.bed_sport_id, 'update');
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO his_bed_datei_zuord VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.datei_id, OLD.datei_art, OLD.bed_sport_id, 'delete');
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_his_bed_antrag_person() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO his_bed_antrag_person VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.person_id, NEW.status_id, NEW.vorname, NEW.nachname, NEW.vereinsname, 'insert');
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO his_bed_antrag_person VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.person_id, OLD.status_id, OLD.vorname, OLD.nachname, OLD.vereinsname, 'update');
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO his_bed_antrag_person VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.person_id, OLD.status_id, OLD.vorname, OLD.nachname, OLD.vereinsname, 'delete');
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Triggers to capture changes
 DROP TRIGGER IF EXISTS trg_his_bed_auswahl_typ ON bed_auswahl_typ;
 CREATE TRIGGER trg_his_bed_auswahl_typ
@@ -317,6 +401,16 @@ DROP TRIGGER IF EXISTS trg_his_bed_waffe_besitz ON bed_waffe_besitz;
 CREATE TRIGGER trg_his_bed_waffe_besitz
 AFTER INSERT OR UPDATE OR DELETE ON bed_waffe_besitz
 FOR EACH ROW EXECUTE FUNCTION fn_his_bed_waffe_besitz();
+
+DROP TRIGGER IF EXISTS trg_his_bed_datei_zuord ON bed_datei_zuord;
+CREATE TRIGGER trg_his_bed_datei_zuord
+AFTER INSERT OR UPDATE OR DELETE ON bed_datei_zuord
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_datei_zuord();
+
+DROP TRIGGER IF EXISTS trg_his_bed_antrag_person ON bed_antrag_person;
+CREATE TRIGGER trg_his_bed_antrag_person
+AFTER INSERT OR UPDATE OR DELETE ON bed_antrag_person
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_antrag_person();
 
 -- ========== Indexes ==========
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -366,6 +460,19 @@ CREATE INDEX IF NOT EXISTS idx_bed_waffe_besitz_verband_id ON bed_waffe_besitz(v
 CREATE INDEX IF NOT EXISTS idx_bed_waffe_besitz_deleted_at ON bed_waffe_besitz(deleted_at) WHERE deleted_at IS NULL;
 CREATE INDEX IF NOT EXISTS idx_bed_waffe_besitz_wbk_nr_lfd_wbk ON bed_waffe_besitz(wbk_nr, lfd_wbk);
 
+-- Indexes for bed_datei_zuord table
+CREATE INDEX IF NOT EXISTS idx_bed_datei_zuord_antragsnummer ON bed_datei_zuord(antragsnummer);
+CREATE INDEX IF NOT EXISTS idx_bed_datei_zuord_datei_id ON bed_datei_zuord(datei_id);
+CREATE INDEX IF NOT EXISTS idx_bed_datei_zuord_datei_art ON bed_datei_zuord(datei_art);
+CREATE INDEX IF NOT EXISTS idx_bed_datei_zuord_bed_sport_id ON bed_datei_zuord(bed_sport_id);
+CREATE INDEX IF NOT EXISTS idx_bed_datei_zuord_deleted_at ON bed_datei_zuord(deleted_at) WHERE deleted_at IS NULL;
+
+-- Indexes for bed_antrag_person table
+CREATE INDEX IF NOT EXISTS idx_bed_antrag_person_antragsnummer ON bed_antrag_person(antragsnummer);
+CREATE INDEX IF NOT EXISTS idx_bed_antrag_person_person_id ON bed_antrag_person(person_id);
+CREATE INDEX IF NOT EXISTS idx_bed_antrag_person_status_id ON bed_antrag_person(status_id);
+CREATE INDEX IF NOT EXISTS idx_bed_antrag_person_deleted_at ON bed_antrag_person(deleted_at) WHERE deleted_at IS NULL;
+
 -- ========== Grants ==========
 GRANT CONNECT ON DATABASE bssbdb TO bssbuser;
 
@@ -380,6 +487,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_auswahl TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_datei TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_sport TO bssbuser;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_waffe_besitz TO bssbuser;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_datei_zuord TO bssbuser;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE bed_antrag_person TO bssbuser;
 
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO bssbuser;
 
@@ -391,6 +500,8 @@ GRANT SELECT ON bed_auswahl TO web_anon;
 GRANT SELECT, INSERT, UPDATE ON bed_datei TO web_anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON bed_sport TO web_anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON bed_waffe_besitz TO web_anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON bed_datei_zuord TO web_anon;
+GRANT SELECT, INSERT, UPDATE ON bed_antrag_person TO web_anon;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
   GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO bssbuser;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
