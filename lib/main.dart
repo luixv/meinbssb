@@ -165,6 +165,7 @@ Future<void> main() async {
       AppInitializer.tokenServiceProvider,
       AppInitializer.fontSizeProvider,
       AppInitializer.oktoberfestServiceProvider,
+      AppInitializer.calendarServiceProvider,
       if (!isWindows &&
           remoteConfig != null &&
           compulsoryUpdateProvider != null &&
