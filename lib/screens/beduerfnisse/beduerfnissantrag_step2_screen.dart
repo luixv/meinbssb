@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
@@ -6,6 +7,8 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
+import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
@@ -39,11 +42,18 @@ class BeduerfnissantragStep2Screen extends StatefulWidget {
 class _BeduerfnissantragStep2ScreenState
     extends State<BeduerfnissantragStep2Screen> {
   late Future<List<BeduerfnisseSport>> _bedSportFuture;
+  late Future<List<BeduerfnisseAuswahl>> _waffenartFuture;
+  late Future<List<BeduerfnisseAuswahl>> _wettkampfartFuture;
+  late Future<List<Disziplin>> _disziplinenFuture;
 
   @override
   void initState() {
     super.initState();
+    final apiService = Provider.of<ApiService>(context, listen: false);
     _bedSportFuture = _fetchBedSportData();
+    _waffenartFuture = apiService.getBedAuswahlByTypId(1);
+    _wettkampfartFuture = apiService.getBedAuswahlByTypId(2);
+    _disziplinenFuture = apiService.fetchDisziplinen();
   }
 
   Future<List<BeduerfnisseSport>> _fetchBedSportData() async {
@@ -197,9 +207,17 @@ class _BeduerfnissantragStep2ScreenState
                       const SizedBox(height: UIConstants.spacingM),
 
                       // Bed Sport Data
-                      FutureBuilder<List<BeduerfnisseSport>>(
-                        future: _bedSportFuture,
-                        builder: (context, snapshot) {
+                      FutureBuilder(
+                        future: Future.wait([
+                          _bedSportFuture,
+                          _waffenartFuture,
+                          _wettkampfartFuture,
+                          _disziplinenFuture,
+                        ]),
+                        builder: (
+                          context,
+                          AsyncSnapshot<List<dynamic>> snapshot,
+                        ) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const Center(
@@ -216,7 +234,33 @@ class _BeduerfnissantragStep2ScreenState
                             );
                           }
 
-                          final bedSportList = snapshot.data ?? [];
+                          final bedSportList =
+                              (snapshot.data?[0] as List<BeduerfnisseSport>?) ??
+                              [];
+                          final waffenartList =
+                              (snapshot.data?[1]
+                                  as List<BeduerfnisseAuswahl>?) ??
+                              [];
+                          final wettkampfartList =
+                              (snapshot.data?[2]
+                                  as List<BeduerfnisseAuswahl>?) ??
+                              [];
+                          final disziplinList =
+                              (snapshot.data?[3] as List<Disziplin>?) ?? [];
+
+                          // Create lookup maps
+                          final waffenartMap = {
+                            for (var w in waffenartList) w.id: w.beschreibung,
+                          };
+                          final wettkampfartMap = {
+                            for (var w in wettkampfartList)
+                              w.id: w.beschreibung,
+                          };
+                          final disziplinMap = {
+                            for (var d in disziplinList)
+                              d.disziplinId: d.disziplinNr,
+                          };
+
                           if (bedSportList.isEmpty) {
                             return ScaledText(
                               'Keine Schießdaten vorhanden.',
@@ -241,6 +285,19 @@ class _BeduerfnissantragStep2ScreenState
                               ),
                               const SizedBox(height: UIConstants.spacingM),
                               ...bedSportList.map((sport) {
+                                final waffenartName =
+                                    waffenartMap[sport.waffenartId] ??
+                                    'Unbekannt';
+                                final disziplinName =
+                                    disziplinMap[sport.disziplinId] ??
+                                    'Unbekannt';
+                                final wettkampfartName =
+                                    sport.wettkampfartId != null
+                                        ? wettkampfartMap[sport
+                                                .wettkampfartId] ??
+                                            'Unbekannt'
+                                        : null;
+
                                 return Card(
                                   margin: const EdgeInsets.only(
                                     bottom: UIConstants.spacingM,
@@ -254,7 +311,7 @@ class _BeduerfnissantragStep2ScreenState
                                           CrossAxisAlignment.start,
                                       children: [
                                         ScaledText(
-                                          'Schießdatum: ${sport.schiessdatum.toString().split(' ')[0]}',
+                                          'Datum: ${DateFormat('dd.MM.yyyy').format(sport.schiessdatum)}',
                                           style: UIStyles.bodyTextStyle
                                               .copyWith(
                                                 fontSize:
@@ -269,7 +326,7 @@ class _BeduerfnissantragStep2ScreenState
                                           height: UIConstants.spacingS,
                                         ),
                                         ScaledText(
-                                          'Waffenart ID: ${sport.waffenartId}',
+                                          'Waffenart: $waffenartName',
                                           style: UIStyles.bodyTextStyle
                                               .copyWith(
                                                 fontSize:
@@ -284,7 +341,7 @@ class _BeduerfnissantragStep2ScreenState
                                           height: UIConstants.spacingS,
                                         ),
                                         ScaledText(
-                                          'Disziplin ID: ${sport.disziplinId}',
+                                          'Disziplin: $disziplinName',
                                           style: UIStyles.bodyTextStyle
                                               .copyWith(
                                                 fontSize:
@@ -310,7 +367,7 @@ class _BeduerfnissantragStep2ScreenState
                                                         .scaleFactor,
                                               ),
                                         ),
-                                        if (sport.wettkampfartId != null)
+                                        if (wettkampfartName != null)
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -319,7 +376,7 @@ class _BeduerfnissantragStep2ScreenState
                                                 height: UIConstants.spacingS,
                                               ),
                                               ScaledText(
-                                                'Wettkampfart ID: ${sport.wettkampfartId}',
+                                                'Wettkampfart: $wettkampfartName',
                                                 style: UIStyles.bodyTextStyle
                                                     .copyWith(
                                                       fontSize:
