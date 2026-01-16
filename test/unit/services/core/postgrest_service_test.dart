@@ -11,7 +11,7 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
 
 @GenerateMocks([
   ConfigService,
