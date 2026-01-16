@@ -261,7 +261,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show error for invalid characters
-      expect(find.text('Nur erlaubte Zeichen verwenden'), findsOneWidget);
+      expect(find.text('Bitte nur erlaubte Zeichen verwenden'), findsOneWidget);
     });
 
     testWidgets('rejects previously allowed but now disallowed special characters (@, ^, _, |, \\, ", \', <, >, /)',
@@ -285,7 +285,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Should show error for invalid characters
-        expect(find.text('Nur erlaubte Zeichen verwenden'), findsOneWidget,
+        expect(find.text('Bitte nur erlaubte Zeichen verwenden'), findsOneWidget,
             reason: 'Character $char should be rejected');
         
         // Reset for next iteration
@@ -308,7 +308,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show error for invalid characters
-      expect(find.text('Nur erlaubte Zeichen verwenden'), findsOneWidget);
+      expect(find.text('Bitte nur erlaubte Zeichen verwenden'), findsOneWidget);
     });
 
     testWidgets('accepts all allowed special characters',
@@ -351,7 +351,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Should not show error for invalid characters
-        expect(find.text('Nur erlaubte Zeichen verwenden'), findsNothing);
+        expect(find.text('Bitte nur erlaubte Zeichen verwenden'), findsNothing);
 
         // Clear the field for next test
         await tester.enterText(find.byType(TextFormField).at(1), '');
