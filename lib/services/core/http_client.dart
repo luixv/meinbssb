@@ -316,7 +316,7 @@ class HttpClient {
   }
 
   /// Helper method to log API requests to oktoberFestBaseServer, apiBaseServer, and api1BaseServer
-  void _logApiRequest(String requestBaseUrl, String endpoint, [String? body]) {
+  void _logApiRequest(String requestBaseUrl, String endpoint) {
     // Only log if PostgrestService is available
     if (_postgrestService == null) {
       return;
@@ -420,8 +420,7 @@ class HttpClient {
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
           apiBasePort: matchedConfig['port']!,
-          endpoint: endpoint,
-          body: body,
+          endpoint: endpoint
         ).catchError((error) {
           // Silently handle errors - logging failures shouldn't break the app
           LoggerService.logError(
@@ -435,8 +434,7 @@ class HttpClient {
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
           apiBasePort: matchedConfig['port']!,
-          endpoint: endpoint,
-          body: body,
+          endpoint: endpoint
         ).catchError((logError) {
           LoggerService.logError(
             'HttpClient: Failed to log API request: $logError',
