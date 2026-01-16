@@ -312,6 +312,9 @@ class AppInitializer {
     // Initialize Domain Services
     final imageService = ImageService(httpClient: httpClient);
     final postgrestService = PostgrestService(configService: configService);
+    
+    // Attach PostgrestService to HttpClient (to enable API request logging)
+    httpClient.setPostgrestService(postgrestService);
 
     // Services that ApiService needs
     final bankService = BankService.withClient(httpClient: httpClient);

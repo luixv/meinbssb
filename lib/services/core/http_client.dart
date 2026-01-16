@@ -29,7 +29,12 @@ class HttpClient {
   final TokenService _tokenService;
   final ConfigService _configService;
   final CacheService _cacheService;
-  final PostgrestService? _postgrestService;
+  PostgrestService? _postgrestService;
+  
+  /// Set the PostgrestService instance (used to break circular dependency)
+  void setPostgrestService(PostgrestService postgrestService) {
+    _postgrestService = postgrestService;
+  }
 
   // Method to make HTTP requests with token handling and retry logic
   Future<dynamic> _makeRequest(
@@ -415,7 +420,7 @@ class HttpClient {
       // Get personId from cache (async operation, fire-and-forget)
       _cacheService.getInt('personId').then((personId) {
         // Log the request asynchronously (don't await to avoid blocking)
-        _postgrestService.logApiRequest(
+        _postgrestService?.logApiRequest(
           personId: personId,
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
@@ -429,7 +434,7 @@ class HttpClient {
         });
       }).catchError((error) {
         // If personId retrieval fails, log without personId
-        _postgrestService.logApiRequest(
+        _postgrestService?.logApiRequest(
           personId: null,
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
