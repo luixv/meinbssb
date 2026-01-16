@@ -67,7 +67,25 @@ class _MeineBeduerfnisseantraegeScreenState
     if (widget.userData?.personId != null) {
       final apiService = Provider.of<ApiService>(context, listen: false);
       // Force refresh by always fetching fresh data from the server
-      return apiService.getBedAntragByPersonId(widget.userData!.personId);
+      final antrags = await apiService.getBedAntragByPersonId(
+        widget.userData!.personId,
+      );
+
+      // Sort by creation date (most recent first)
+      antrags.sort((a, b) {
+        final dateA = a.createdAt;
+        final dateB = b.createdAt;
+
+        // Handle null dates - put them at the end
+        if (dateA == null && dateB == null) return 0;
+        if (dateA == null) return 1;
+        if (dateB == null) return -1;
+
+        // Sort descending (most recent first)
+        return dateB.compareTo(dateA);
+      });
+
+      return antrags;
     }
     return [];
   }
