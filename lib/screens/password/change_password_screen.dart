@@ -128,11 +128,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'Bitte Passwort eingeben';
     if (value.length < 8) return 'Mindestens 8 Zeichen';
-    if (!RegExp(r'[A-Z]').hasMatch(value)) return 'Mind. 1 Großbuchstabe';
-    if (!RegExp(r'[a-z]').hasMatch(value)) return 'Mind. 1 Kleinbuchstabe';
+    // Allowed uppercase letters: A-Z, Ä, Ö, Ü
+    if (!RegExp(r'[A-ZÄÖÜ]').hasMatch(value)) return 'Mind. 1 Großbuchstabe';
+    // Allowed lowercase letters: a-z, ä, ö, ü
+    if (!RegExp(r'[a-zäöü]').hasMatch(value)) return 'Mind. 1 Kleinbuchstabe';
     if (!RegExp(r'[0-9]').hasMatch(value)) return 'Mind. 1 Zahl';
-    if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
+    // Allowed special characters: ! # $ % & * ( ) - + = { } [ ] : ; , . ?
+    if (!RegExp('[!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) {
       return 'Mind. 1 Sonderzeichen';
+    }
+    // Check for invalid characters (only allow: A-Z, a-z, Ä, Ö, Ü, ä, ö, ü, 0-9, and allowed special chars)
+    if (RegExp('[^A-Za-zÄÖÜäöü0-9!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) {
+      return 'Nur erlaubte Zeichen verwenden';
     }
     return null;
   }
@@ -140,10 +147,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   void _checkStrength(String value) {
     double strength = 0;
     if (value.length >= 8) strength += 0.25;
-    if (RegExp(r'[A-Z]').hasMatch(value)) strength += 0.25;
-    if (RegExp(r'[a-z]').hasMatch(value)) strength += 0.15;
+    // Allowed uppercase letters: A-Z, Ä, Ö, Ü
+    if (RegExp(r'[A-ZÄÖÜ]').hasMatch(value)) strength += 0.25;
+    // Allowed lowercase letters: a-z, ä, ö, ü
+    if (RegExp(r'[a-zäöü]').hasMatch(value)) strength += 0.15;
     if (RegExp(r'[0-9]').hasMatch(value)) strength += 0.15;
-    if (RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) strength += 0.2;
+    // Allowed special characters: ! # $ % & * ( ) - + = { } [ ] : ; , . ?
+    if (RegExp('[!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) strength += 0.2;
     setState(() => _strength = strength);
   }
 
@@ -241,7 +251,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           bottom: UIConstants.spacingS,
                         ),
                         child: ScaledText(
-                          'Mindestens 8 Zeichen, 1 Großbuchstabe, 1 Kleinbuchstabe, 1 Zahl, 1 Sonderzeichen',
+                          'Mindestens 8 Zeichen, 1 Großbuchstabe (A...Z, Ä, Ö, Ü), 1 Kleinbuchstabe (a...z, ä, ö, ü), 1 Zahl (0...9), 1 Sonderzeichen (! # \$ % & * ( ) - + = { } [ ] : ; , . ?)',
                           style: UIStyles.formLabelStyle,
                         ),
                       ),

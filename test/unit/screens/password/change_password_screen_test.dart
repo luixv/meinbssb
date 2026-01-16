@@ -205,5 +205,158 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(SnackBar), findsOneWidget);
     });
+
+    testWidgets('validates password with umlauts', (WidgetTester tester) async {
+      await tester.pumpWidget(createChangePasswordScreen());
+      await tester.pumpAndSettle();
+
+      // Test with uppercase umlauts
+      await tester.enterText(
+        find.byType(TextFormField).at(1),
+        'ÄÖÜpass123!',
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.save));
+      await tester.pumpAndSettle();
+
+      // Should not show validation error for umlauts
+      expect(find.text('Mind. 1 Großbuchstabe'), findsNothing);
+    });
+
+    testWidgets('validates password with lowercase umlauts',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createChangePasswordScreen());
+      await tester.pumpAndSettle();
+
+      // Test with lowercase umlauts
+      await tester.enterText(
+        find.byType(TextFormField).at(1),
+        'Testäöü123!',
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.save));
+      await tester.pumpAndSettle();
+
+      // Should not show validation error for umlauts
+      expect(find.text('Mind. 1 Kleinbuchstabe'), findsNothing);
+    });
+
+    testWidgets('rejects invalid special characters (€)',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createChangePasswordScreen());
+      await tester.pumpAndSettle();
+
+      // Test with invalid special character (€) - password must have an allowed
+      // special character first to pass the "has special character" check,
+      // then the invalid character check will catch the €
+      await tester.enterText(
+        find.byType(TextFormField).at(1),
+        'TestPass123!€',
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.save));
+      await tester.pumpAndSettle();
+
+      // Should show error for invalid characters
+      expect(find.text('Nur erlaubte Zeichen verwenden'), findsOneWidget);
+    });
+
+    testWidgets('rejects previously allowed but now disallowed special characters (@, ^, _, |, \\, ", \', <, >, /)',
+        (WidgetTester tester) async {
+      // Test disallowed special characters: @ ^ _ | \ " ' < > /
+      final disallowedChars = ['@', '^', '_', '|', '\\\\', '"', "'", '<', '>', '/'];
+      
+      for (final char in disallowedChars) {
+        await tester.pumpWidget(createChangePasswordScreen());
+        await tester.pumpAndSettle();
+
+        // Test with disallowed special character - password must have an allowed
+        // special character first to pass the "has special character" check
+        await tester.enterText(
+          find.byType(TextFormField).at(1),
+          'TestPass123!$char',
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byIcon(Icons.save));
+        await tester.pumpAndSettle();
+
+        // Should show error for invalid characters
+        expect(find.text('Nur erlaubte Zeichen verwenden'), findsOneWidget,
+            reason: 'Character $char should be rejected');
+        
+        // Reset for next iteration
+        await tester.pumpWidget(Container());
+      }
+    });
+
+    testWidgets('rejects invalid letters', (WidgetTester tester) async {
+      await tester.pumpWidget(createChangePasswordScreen());
+      await tester.pumpAndSettle();
+
+      // Test with invalid letter (é)
+      await tester.enterText(
+        find.byType(TextFormField).at(1),
+        'TestéPass123!',
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.save));
+      await tester.pumpAndSettle();
+
+      // Should show error for invalid characters
+      expect(find.text('Nur erlaubte Zeichen verwenden'), findsOneWidget);
+    });
+
+    testWidgets('accepts all allowed special characters',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createChangePasswordScreen());
+      await tester.pumpAndSettle();
+
+      // Test with allowed special characters
+      const allowedSpecialChars = [
+        '!',
+        '#',
+        '\$',
+        '%',
+        '&',
+        '*',
+        '(',
+        ')',
+        '-',
+        '+',
+        '=',
+        '{',
+        '}',
+        '[',
+        ']',
+        ':',
+        ';',
+        ',',
+        '.',
+        '?',
+      ];
+
+      for (final char in allowedSpecialChars) {
+        await tester.enterText(
+          find.byType(TextFormField).at(1),
+          'TestPass123$char',
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byIcon(Icons.save));
+        await tester.pumpAndSettle();
+
+        // Should not show error for invalid characters
+        expect(find.text('Nur erlaubte Zeichen verwenden'), findsNothing);
+
+        // Clear the field for next test
+        await tester.enterText(find.byType(TextFormField).at(1), '');
+        await tester.pumpAndSettle();
+      }
+    });
   });
 }
