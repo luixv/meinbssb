@@ -594,16 +594,6 @@ class _BeduerfnissantragStep1ScreenState
       } else {
         // Create mode: Create new antrag
         try {
-          debugPrint(
-            'Creating new antrag with personId: ${widget.userData?.personId}',
-          );
-          debugPrint('wbkNeu: ${_wbkType == 'neu'}');
-          debugPrint('wbkArt: $_wbkColor');
-          debugPrint('beduerfnisart: $beduerfnisartValue');
-          debugPrint(
-            'anzahlWaffen: ${int.tryParse(_anzahlController.text) ?? 0}',
-          );
-
           final newAntrag = await apiService.createBedAntrag(
             personId: widget.userData!.personId,
             statusId: BeduerfnisAntragStatus.entwurf,
@@ -615,8 +605,6 @@ class _BeduerfnissantragStep1ScreenState
             email: widget.userData?.email,
             abbuchungErfolgt: false,
           );
-
-          debugPrint('Antrag created successfully: ${newAntrag.antragsnummer}');
 
           if (mounted) {
             setState(() {
