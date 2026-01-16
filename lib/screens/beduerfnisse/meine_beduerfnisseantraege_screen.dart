@@ -71,7 +71,7 @@ class _MeineBeduerfnisseantraegeScreenState
         widget.userData!.personId,
       );
 
-      // Sort by creation date (most recent first)
+      // Sort by creation date (oldest first)
       antrags.sort((a, b) {
         final dateA = a.createdAt;
         final dateB = b.createdAt;
@@ -81,8 +81,8 @@ class _MeineBeduerfnisseantraegeScreenState
         if (dateA == null) return 1;
         if (dateB == null) return -1;
 
-        // Sort descending (most recent first)
-        return dateB.compareTo(dateA);
+        // Sort ascending (oldest first)
+        return dateA.compareTo(dateB);
       });
 
       return antrags;

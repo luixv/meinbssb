@@ -522,6 +522,7 @@ class _BeduerfnissantragStep1ScreenState
                             fontSize:
                                 UIStyles.bodyTextStyle.fontSize! *
                                 fontSizeProvider.scaleFactor,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
