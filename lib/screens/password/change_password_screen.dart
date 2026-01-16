@@ -11,6 +11,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
+import 'package:meinbssb/helpers/utils.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({
@@ -125,48 +126,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
   }
 
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Bitte Passwort eingeben';
-    if (value.length < 8) return 'Mindestens 8 Zeichen';
-    // Allowed uppercase letters: A-Z, Ä, Ö, Ü
-    if (!RegExp(r'[A-ZÄÖÜ]').hasMatch(value)) return 'Mind. 1 Großbuchstabe';
-    // Allowed lowercase letters: a-z, ä, ö, ü
-    if (!RegExp(r'[a-zäöü]').hasMatch(value)) return 'Mind. 1 Kleinbuchstabe';
-    if (!RegExp(r'[0-9]').hasMatch(value)) return 'Mind. 1 Zahl';
-    // Allowed special characters: ! # $ % & * ( ) - + = { } [ ] : ; , . ?
-    if (!RegExp('[!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) {
-      return 'Mind. 1 Sonderzeichen';
-    }
-    // Check for invalid characters (only allow: A-Z, a-z, Ä, Ö, Ü, ä, ö, ü, 0-9, and allowed special chars)
-    if (RegExp('[^A-Za-zÄÖÜäöü0-9!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) {
-      return 'Bitte nur erlaubte Zeichen verwenden';
-    }
-    return null;
-  }
-
   void _checkStrength(String value) {
-    double strength = 0;
-    if (value.length >= 8) strength += 0.25;
-    // Allowed uppercase letters: A-Z, Ä, Ö, Ü
-    if (RegExp(r'[A-ZÄÖÜ]').hasMatch(value)) strength += 0.25;
-    // Allowed lowercase letters: a-z, ä, ö, ü
-    if (RegExp(r'[a-zäöü]').hasMatch(value)) strength += 0.15;
-    if (RegExp(r'[0-9]').hasMatch(value)) strength += 0.15;
-    // Allowed special characters: ! # $ % & * ( ) - + = { } [ ] : ; , . ?
-    if (RegExp('[!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) strength += 0.2;
-    setState(() => _strength = strength);
-  }
-
-  String _strengthLabel(double value) {
-    if (value < 0.4) return 'Schwach';
-    if (value < 0.7) return 'Mittel';
-    return 'Stark';
-  }
-
-  Color _strengthColor(double value) {
-    if (value < 0.4) return UIConstants.errorColor;
-    if (value < 0.7) return UIConstants.warningColor;
-    return UIConstants.successColor;
+    setState(() => _strength = calculatePasswordStrength(value));
   }
 
   @override
@@ -239,7 +200,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               _isNewPasswordVisible = !_isNewPasswordVisible;
                             });
                           },
-                          validator: _validatePassword,
+                          validator: validatePassword,
                           fontSizeProvider: fontSizeProvider,
                           eyeIconColor: UIConstants.textColor,
                           onChanged: _checkStrength,
@@ -264,15 +225,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               backgroundColor:
                                   UIConstants.greySubtitleTextColor,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                _strengthColor(_strength),
+                                getPasswordStrengthColor(_strength),
                               ),
                             ),
                           ),
                           const SizedBox(width: UIConstants.spacingS),
                           ScaledText(
-                            _strengthLabel(_strength),
+                            getPasswordStrengthLabel(_strength),
                             style: UIStyles.bodyStyle.copyWith(
-                              color: _strengthColor(_strength),
+                              color: getPasswordStrengthColor(_strength),
                             ),
                           ),
                         ],

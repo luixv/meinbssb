@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/helpers/utils.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 
 void main() {
   group('isBicRequired', () {
@@ -561,6 +562,150 @@ void main() {
       expect(result.year, 2023);
       expect(result.month, 6);
       expect(result.day, 15);
+    });
+  });
+
+  group('validatePassword', () {
+    test('returns error for null value', () {
+      expect(validatePassword(null), 'Bitte Passwort eingeben');
+    });
+
+    test('returns error for empty value', () {
+      expect(validatePassword(''), 'Bitte Passwort eingeben');
+    });
+
+    test('returns error for password less than 8 characters', () {
+      expect(validatePassword('Test1!'), 'Mindestens 8 Zeichen');
+    });
+
+    test('returns error for password without uppercase letter', () {
+      expect(validatePassword('testpass123!'), 'Mind. 1 Großbuchstabe');
+    });
+
+    test('returns error for password without lowercase letter', () {
+      expect(validatePassword('TESTPASS123!'), 'Mind. 1 Kleinbuchstabe');
+    });
+
+    test('returns error for password without number', () {
+      expect(validatePassword('TestPass!'), 'Mind. 1 Zahl');
+    });
+
+    test('returns error for password without special character', () {
+      expect(validatePassword('TestPass123'), 'Mind. 1 Sonderzeichen');
+    });
+
+    test('returns error for password with invalid special character', () {
+      expect(validatePassword('TestPass123!@'), 'Bitte nur erlaubte Zeichen verwenden');
+    });
+
+    test('returns error for password with invalid letter', () {
+      expect(validatePassword('TestéPass123!'), 'Bitte nur erlaubte Zeichen verwenden');
+    });
+
+    test('returns null for valid password with all requirements', () {
+      expect(validatePassword('TestPass123!'), null);
+    });
+
+    test('accepts password with German umlauts (uppercase)', () {
+      expect(validatePassword('ÄÖÜpass123!'), null);
+    });
+
+    test('accepts password with German umlauts (lowercase)', () {
+      expect(validatePassword('Testäöü123!'), null);
+    });
+
+    test('accepts password with all allowed special characters', () {
+      const allowedChars = '!#\$%&*()-+={}[]:;,.?';
+      for (var i = 0; i < allowedChars.length; i++) {
+        final char = allowedChars[i];
+        final password = 'TestPass123$char';
+        expect(validatePassword(password), null, 
+            reason: 'Character $char should be accepted');
+      }
+    });
+
+    test('rejects password with disallowed special characters', () {
+      const disallowedChars = ['@', '^', '_', '|', '\\', '"', "'", '<', '>', '/'];
+      for (final char in disallowedChars) {
+        final password = 'TestPass123!$char';
+        expect(validatePassword(password), 'Bitte nur erlaubte Zeichen verwenden',
+            reason: 'Character $char should be rejected');
+      }
+    });
+  });
+
+  group('calculatePasswordStrength', () {
+    test('returns 0 for empty string', () {
+      expect(calculatePasswordStrength(''), 0.0);
+    });
+
+    test('returns 0.25 for password with only length requirement', () {
+      expect(calculatePasswordStrength('abcdefgh'), 0.4); // length(0.25) + lowercase(0.15) = 0.4
+    });
+
+    test('returns 0.65 for password with length, uppercase, and lowercase', () {
+      // length(0.25) + uppercase(0.25) + lowercase(0.15) = 0.65
+      expect(calculatePasswordStrength('TestPass'), 0.65);
+    });
+
+    test('returns 0.8 for password with length, uppercase, lowercase, and number', () {
+      // length(0.25) + uppercase(0.25) + lowercase(0.15) + number(0.15) = 0.8
+      expect(calculatePasswordStrength('TestPass123'), 0.8);
+    });
+
+    test('returns 1.0 for password with all requirements', () {
+      // length(0.25) + uppercase(0.25) + lowercase(0.15) + number(0.15) + special(0.2) = 1.0
+      expect(calculatePasswordStrength('TestPass123!'), 1.0);
+    });
+
+    test('calculates strength with German uppercase umlauts', () {
+      // length(0.25) + uppercase(0.25) + lowercase(0.15) + number(0.15) + special(0.2) = 1.0
+      expect(calculatePasswordStrength('ÄÖÜpass123!'), 1.0);
+    });
+
+    test('calculates strength with German lowercase umlauts', () {
+      // length(0.25) + uppercase(0.25) + lowercase(0.15) + number(0.15) + special(0.2) = 1.0
+      expect(calculatePasswordStrength('Testäöü123!'), 1.0);
+    });
+  });
+
+  group('getPasswordStrengthLabel', () {
+    test('returns "Schwach" for strength < 0.4', () {
+      expect(getPasswordStrengthLabel(0.0), 'Schwach');
+      expect(getPasswordStrengthLabel(0.25), 'Schwach');
+      expect(getPasswordStrengthLabel(0.39), 'Schwach');
+    });
+
+    test('returns "Mittel" for strength >= 0.4 and < 0.7', () {
+      expect(getPasswordStrengthLabel(0.4), 'Mittel');
+      expect(getPasswordStrengthLabel(0.5), 'Mittel');
+      expect(getPasswordStrengthLabel(0.69), 'Mittel');
+    });
+
+    test('returns "Stark" for strength >= 0.7', () {
+      expect(getPasswordStrengthLabel(0.7), 'Stark');
+      expect(getPasswordStrengthLabel(0.8), 'Stark');
+      expect(getPasswordStrengthLabel(1.0), 'Stark');
+    });
+  });
+
+  group('getPasswordStrengthColor', () {
+    test('returns error color for strength < 0.4', () {
+      expect(getPasswordStrengthColor(0.0), UIConstants.errorColor);
+      expect(getPasswordStrengthColor(0.25), UIConstants.errorColor);
+      expect(getPasswordStrengthColor(0.39), UIConstants.errorColor);
+    });
+
+    test('returns warning color for strength >= 0.4 and < 0.7', () {
+      expect(getPasswordStrengthColor(0.4), UIConstants.warningColor);
+      expect(getPasswordStrengthColor(0.5), UIConstants.warningColor);
+      expect(getPasswordStrengthColor(0.69), UIConstants.warningColor);
+    });
+
+    test('returns success color for strength >= 0.7', () {
+      expect(getPasswordStrengthColor(0.7), UIConstants.successColor);
+      expect(getPasswordStrengthColor(0.8), UIConstants.successColor);
+      expect(getPasswordStrengthColor(1.0), UIConstants.successColor);
     });
   });
 }

@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 
 /// Checks if BIC is required based on IBAN country code
 /// Returns true if IBAN is not from Germany (DE)
@@ -116,4 +118,53 @@ DateTime parseDate(dynamic value) {
     }
   }
   return DateTime(1970, 1, 1);
+}
+
+/// Validates password according to application rules
+/// Returns null if valid, error message if invalid
+String? validatePassword(String? value) {
+  if (value == null || value.isEmpty) return 'Bitte Passwort eingeben';
+  if (value.length < 8) return 'Mindestens 8 Zeichen';
+  // Allowed uppercase letters: A-Z, Ä, Ö, Ü
+  if (!RegExp(r'[A-ZÄÖÜ]').hasMatch(value)) return 'Mind. 1 Großbuchstabe';
+  // Allowed lowercase letters: a-z, ä, ö, ü
+  if (!RegExp(r'[a-zäöü]').hasMatch(value)) return 'Mind. 1 Kleinbuchstabe';
+  if (!RegExp(r'[0-9]').hasMatch(value)) return 'Mind. 1 Zahl';
+  // Allowed special characters: ! # $ % & * ( ) - + = { } [ ] : ; , . ?
+  if (!RegExp('[!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) {
+    return 'Mind. 1 Sonderzeichen';
+  }
+  // Check for invalid characters (only allow: A-Z, a-z, Ä, Ö, Ü, ä, ö, ü, 0-9, and allowed special chars)
+  if (RegExp('[^A-Za-zÄÖÜäöü0-9!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) {
+    return 'Bitte nur erlaubte Zeichen verwenden';
+  }
+  return null;
+}
+
+/// Calculates password strength (0.0 to 1.0)
+double calculatePasswordStrength(String value) {
+  double strength = 0;
+  if (value.length >= 8) strength += 0.25;
+  // Allowed uppercase letters: A-Z, Ä, Ö, Ü
+  if (RegExp(r'[A-ZÄÖÜ]').hasMatch(value)) strength += 0.25;
+  // Allowed lowercase letters: a-z, ä, ö, ü
+  if (RegExp(r'[a-zäöü]').hasMatch(value)) strength += 0.15;
+  if (RegExp(r'[0-9]').hasMatch(value)) strength += 0.15;
+  // Allowed special characters: ! # $ % & * ( ) - + = { } [ ] : ; , . ?
+  if (RegExp('[!#\\\$%&*()\\-+=\\{\\}\\[\\]:;,.?]').hasMatch(value)) strength += 0.2;
+  return strength;
+}
+
+/// Returns label for password strength
+String getPasswordStrengthLabel(double value) {
+  if (value < 0.4) return 'Schwach';
+  if (value < 0.7) return 'Mittel';
+  return 'Stark';
+}
+
+/// Returns color for password strength
+Color getPasswordStrengthColor(double value) {
+  if (value < 0.4) return UIConstants.errorColor;
+  if (value < 0.7) return UIConstants.warningColor;
+  return UIConstants.successColor;
 }
