@@ -1494,6 +1494,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
     required String? apiBasePath,
     required String? apiBasePort,
     required String? endpoint,
+    String? body,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#logApiRequest, [], {
@@ -1502,6 +1503,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #apiBasePath: apiBasePath,
               #apiBasePort: apiBasePort,
               #endpoint: endpoint,
+              #body: body,
             }),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),

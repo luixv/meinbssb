@@ -223,8 +223,6 @@ class _MyAppState extends State<MyApp> {
         _navigatorKey.currentState!.pushReplacementNamed('/login');
       }
     } catch (e) {
-      // debugPrint('Error during logout: $e');
-      // Even if there's an error, still update state and navigate
       setState(() {
         _isLoggedIn = false;
         _userData = null;
