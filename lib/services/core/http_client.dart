@@ -420,7 +420,7 @@ class HttpClient {
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
           apiBasePort: matchedConfig['port']!,
-          endpoint: endpoint
+          endpoint: endpoint,
         ).catchError((error) {
           // Silently handle errors - logging failures shouldn't break the app
           LoggerService.logError(
@@ -434,7 +434,7 @@ class HttpClient {
           apiBaseServer: matchedConfig!['server']!,
           apiBasePath: matchedConfig['path']!,
           apiBasePort: matchedConfig['port']!,
-          endpoint: endpoint
+          endpoint: endpoint,
         ).catchError((logError) {
           LoggerService.logError(
             'HttpClient: Failed to log API request: $logError',
