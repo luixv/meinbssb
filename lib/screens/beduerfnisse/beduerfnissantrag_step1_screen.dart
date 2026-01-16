@@ -46,7 +46,7 @@ class _BeduerfnissantragStep1ScreenState
     text: '0',
   );
   String? _selectedVerein;
-// Tracks if new antrag has been created/saved
+  // Tracks if new antrag has been created/saved
   BeduerfnisseAntrag?
   _createdAntrag; // Stores the created antrag in create mode
 
@@ -419,6 +419,7 @@ class _BeduerfnissantragStep1ScreenState
                                 fontSize:
                                     UIStyles.bodyTextStyle.fontSize! *
                                     fontSizeProvider.scaleFactor,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: UIConstants.spacingS),
@@ -458,6 +459,7 @@ class _BeduerfnissantragStep1ScreenState
                                 fontSize:
                                     UIStyles.bodyTextStyle.fontSize! *
                                     fontSizeProvider.scaleFactor,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: UIConstants.spacingS),
@@ -618,7 +620,7 @@ class _BeduerfnissantragStep1ScreenState
 
           if (mounted) {
             setState(() {
-// Mark antrag as created
+              // Mark antrag as created
               _createdAntrag = newAntrag; // Store the created antrag
             });
             ScaffoldMessenger.of(context).showSnackBar(

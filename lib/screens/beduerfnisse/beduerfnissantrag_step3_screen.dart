@@ -96,7 +96,6 @@ class _BeduerfnissantragStep3ScreenState
                         semanticLabel: 'Weiter Button',
                         semanticHint: 'Weiter zum nächsten Schritt',
                         onPressed: () {
-                          // TODO: Navigate to next step if exists
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Schritt 3 abgeschlossen'),

@@ -626,6 +626,132 @@ class _BeduerfnissantragStep2ScreenState
         widget.antrag!.statusId ?? BeduerfnisAntragStatus.entwurf;
     final nextStatus = BeduerfnisAntragStatus.eingereichtAmVerein;
 
+    // If status is "Entwurf", show confirmation dialog
+    if (currentStatus == BeduerfnisAntragStatus.entwurf) {
+      bool? confirmSubmit = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            backgroundColor: UIConstants.backgroundColor,
+            title: const Center(
+              child: Text(
+                'Antrag einreichen',
+                style: UIStyles.dialogTitleStyle,
+              ),
+            ),
+            content: RichText(
+              textAlign: TextAlign.center,
+              text: const TextSpan(
+                style: UIStyles.dialogContentStyle,
+                children: <TextSpan>[
+                  TextSpan(
+                    text:
+                        'Sind Sie sicher, dass Sie diesen Antrag stellen wollen?',
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: UIConstants.spacingM,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: UIConstants.defaultButtonHeight,
+                      ),
+                      child: Semantics(
+                        label: 'Abbrechen Button',
+                        hint: 'Dialog schließen und Antrag nicht einreichen',
+                        button: true,
+                        child: ElevatedButton(
+                          onPressed:
+                              () => Navigator.of(dialogContext).pop(false),
+                          style: UIStyles.dialogCancelButtonStyle.copyWith(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                horizontal: UIConstants.spacingM,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.close,
+                                color: UIConstants.closeIcon,
+                                size: UIConstants.defaultIconSize,
+                              ),
+                              const SizedBox(width: UIConstants.spacingS),
+                              Text(
+                                'Abbrechen',
+                                style: UIStyles.dialogButtonTextStyle.copyWith(
+                                  color: UIConstants.cancelButtonText,
+                                  fontSize: UIConstants.buttonFontSize,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: UIConstants.defaultButtonHeight,
+                      ),
+                      child: Semantics(
+                        label: 'Einreichen Button',
+                        hint: 'Antrag einreichen',
+                        button: true,
+                        child: ElevatedButton(
+                          onPressed:
+                              () => Navigator.of(dialogContext).pop(true),
+                          style: UIStyles.dialogAcceptButtonStyle.copyWith(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                vertical: UIConstants.spacingS,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.check,
+                                color: UIConstants.checkIcon,
+                                size: UIConstants.defaultIconSize,
+                              ),
+                              const SizedBox(width: UIConstants.spacingS),
+                              Text(
+                                'Einreichen',
+                                style: UIStyles.dialogButtonTextStyle.copyWith(
+                                  color: UIConstants.submitButtonText,
+                                  fontSize: UIConstants.buttonFontSize,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      );
+
+      // If user cancelled, return early
+      if (confirmSubmit != true) {
+        return;
+      }
+    }
+
     // Check if workflow transition is allowed
     final workflowService = WorkflowService();
     final canTransition = workflowService.canAntragChangeFromStateToState(
