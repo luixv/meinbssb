@@ -1068,4 +1068,24 @@ class ApiService {
   Future<bool> deleteBedDateiZuord(int id) async {
     return _postgrestService.deleteBedDateiZuord(id);
   }
+
+  // --- Rolles And Rights ---
+  Future<WorkflowRole> getRoles(int personId) async {
+    return _rollsAndRights.getRoles(personId);
+  }
+
+//
+  // --- Workflow Service Methods ---
+  //
+  bool canAntragChangeFromStateToState({
+    required BeduerfnisAntragStatus currentState,
+    required BeduerfnisAntragStatus nextState,
+    required WorkflowRole userRole,
+  }) {
+    return _workflowService.canAntragChangeFromStateToState(
+      currentState: currentState,
+      nextState: nextState,
+      userRole: userRole,
+    );
+  }
 }
