@@ -3,6 +3,8 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
@@ -237,6 +239,9 @@ class AppInitializer {
   static late CalendarService calendarService;
   static late Provider<CalendarService> calendarServiceProvider;
 
+  static late RollsAndRights rollsAndRights;
+  static late WorkflowService workflowService;
+  
   static late HttpClient httpClient;
 
   static Future<void> init({
@@ -350,6 +355,12 @@ class AppInitializer {
       value: trainingService,
     );
 
+    // Initialize RollsAndRights service
+    rollsAndRights = RollsAndRights(httpClient: httpClient);
+
+    // Initialize WorkflowService
+    workflowService = WorkflowService();
+    
     authService = AuthService(
       httpClient: httpClient,
       cacheService: cacheService,
@@ -378,6 +389,8 @@ class AppInitializer {
       calendarService: calendarService,
       bezirkService: bezirkService,
       startingRightsService: startingRightsService,
+      rollsAndRights: rollsAndRights,
+      workflowService: workflowService,
     );
     apiServiceProvider = Provider<ApiService>.value(value: apiService);
 
@@ -392,3 +405,4 @@ class AppInitializer {
     //  Helper function to keep init cleaner
   }
 }
+

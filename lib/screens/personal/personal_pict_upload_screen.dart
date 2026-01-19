@@ -825,10 +825,7 @@ class _ButtonActivateIntent extends Intent {
 
 // Custom Delete Button with keyboard focus highlighting
 class _DeleteButton extends StatefulWidget {
-  const _DeleteButton({
-    required this.onPressed,
-    required this.fabKey,
-  });
+  const _DeleteButton({required this.onPressed, required this.fabKey});
 
   final VoidCallback? onPressed;
   final Key fabKey;
@@ -862,7 +859,8 @@ class _DeleteButtonState extends State<_DeleteButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -872,7 +870,8 @@ class _DeleteButtonState extends State<_DeleteButton> {
       child: Shortcuts(
         shortcuts: const <ShortcutActivator, Intent>{
           SingleActivator(LogicalKeyboardKey.enter): _ButtonActivateIntent(),
-          SingleActivator(LogicalKeyboardKey.numpadEnter): _ButtonActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.numpadEnter):
+              _ButtonActivateIntent(),
         },
         child: Actions(
           actions: <Type, Action<Intent>>{
@@ -888,22 +887,29 @@ class _DeleteButtonState extends State<_DeleteButton> {
             child: Tooltip(
               message: 'Löschen',
               child: Padding(
-                padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                padding:
+                    hasKeyboardFocus
+                        ? const EdgeInsets.all(4.0)
+                        : EdgeInsets.zero,
                 child: Container(
-                  decoration: hasKeyboardFocus
-                      ? BoxDecoration(
-                          border: Border.all(
-                            color: Colors.yellow.shade700,
-                            width: 3.0,
-                          ),
-                        )
-                      : null,
+                  decoration:
+                      hasKeyboardFocus
+                          ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                          : null,
                   child: FloatingActionButton(
                     key: widget.fabKey,
                     heroTag: 'deleteFab',
                     onPressed: widget.onPressed,
                     backgroundColor: UIConstants.defaultAppColor,
-                    child: const Icon(Icons.delete, color: Colors.white),
+                    child: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -917,10 +923,7 @@ class _DeleteButtonState extends State<_DeleteButton> {
 
 // Custom Upload Button with keyboard focus highlighting
 class _UploadButton extends StatefulWidget {
-  const _UploadButton({
-    required this.onPressed,
-    required this.fabKey,
-  });
+  const _UploadButton({required this.onPressed, required this.fabKey});
 
   final VoidCallback? onPressed;
   final Key fabKey;
@@ -954,7 +957,8 @@ class _UploadButtonState extends State<_UploadButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -964,7 +968,8 @@ class _UploadButtonState extends State<_UploadButton> {
       child: Shortcuts(
         shortcuts: const <ShortcutActivator, Intent>{
           SingleActivator(LogicalKeyboardKey.enter): _ButtonActivateIntent(),
-          SingleActivator(LogicalKeyboardKey.numpadEnter): _ButtonActivateIntent(),
+          SingleActivator(LogicalKeyboardKey.numpadEnter):
+              _ButtonActivateIntent(),
         },
         child: Actions(
           actions: <Type, Action<Intent>>{
@@ -980,16 +985,20 @@ class _UploadButtonState extends State<_UploadButton> {
             child: Tooltip(
               message: 'Hochladen',
               child: Padding(
-                padding: hasKeyboardFocus ? const EdgeInsets.all(4.0) : EdgeInsets.zero,
+                padding:
+                    hasKeyboardFocus
+                        ? const EdgeInsets.all(4.0)
+                        : EdgeInsets.zero,
                 child: Container(
-                  decoration: hasKeyboardFocus
-                      ? BoxDecoration(
-                          border: Border.all(
-                            color: Colors.yellow.shade700,
-                            width: 3.0,
-                          ),
-                        )
-                      : null,
+                  decoration:
+                      hasKeyboardFocus
+                          ? BoxDecoration(
+                            border: Border.all(
+                              color: Colors.yellow.shade700,
+                              width: 3.0,
+                            ),
+                          )
+                          : null,
                   child: FloatingActionButton(
                     key: widget.fabKey,
                     heroTag: 'saveFab',
@@ -1008,10 +1017,7 @@ class _UploadButtonState extends State<_UploadButton> {
 
 // Custom Select Image Button with keyboard focus highlighting
 class _SelectImageButton extends StatefulWidget {
-  const _SelectImageButton({
-    required this.onPressed,
-    required this.buttonKey,
-  });
+  const _SelectImageButton({required this.onPressed, required this.buttonKey});
 
   final VoidCallback onPressed;
   final Key buttonKey;
@@ -1045,7 +1051,8 @@ class _SelectImageButtonState extends State<_SelectImageButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboardMode = FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+    final isKeyboardMode =
+        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
     final hasKeyboardFocus = _isFocused && isKeyboardMode;
 
     return Semantics(
@@ -1056,15 +1063,16 @@ class _SelectImageButtonState extends State<_SelectImageButton> {
         focusNode: _focusNode,
         autofocus: true,
         child: Container(
-          decoration: hasKeyboardFocus
-              ? BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(
-                    color: Colors.yellow.shade700,
-                    width: 3.0,
-                  ),
-                )
-              : null,
+          decoration:
+              hasKeyboardFocus
+                  ? BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      color: Colors.yellow.shade700,
+                      width: 3.0,
+                    ),
+                  )
+                  : null,
           child: ElevatedButton.icon(
             key: widget.buttonKey,
             onPressed: widget.onPressed,

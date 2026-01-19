@@ -6,32 +6,33 @@ class BeduerfnisseSport {
   /// Creates a [BeduerfnisseSport] instance from a JSON map.
   factory BeduerfnisseSport.fromJson(Map<String, dynamic> json) {
     return BeduerfnisseSport(
-      id: json['ID'] as int?,
+      id: (json['ID'] ?? json['id']) as int?,
       createdAt:
-          json['CREATED_AT'] == null
+          (json['CREATED_AT'] ?? json['created_at']) == null
               ? null
-              : DateTime.parse(json['CREATED_AT'] as String),
+              : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
       changedAt:
-          json['CHANGED_AT'] == null
+          (json['CHANGED_AT'] ?? json['changed_at']) == null
               ? null
-              : DateTime.parse(json['CHANGED_AT'] as String),
+              : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
       deletedAt:
-          json['DELETED_AT'] == null
+          (json['DELETED_AT'] ?? json['deleted_at']) == null
               ? null
-              : DateTime.parse(json['DELETED_AT'] as String),
-      antragsnummer: json['ANTRAGSNUMMER'] as String,
+              : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+      antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
       schiessdatum:
-          json['SCHIESSDATUM'] == null
+          (json['SCHIESSDATUM'] ?? json['schiessdatum']) == null
               ? DateTime.now() // fallback to now if null
-              : DateTime.parse(json['SCHIESSDATUM'] as String),
-      waffenartId: json['WAFFENART_ID'] as int,
-      disziplinId: json['DISZIPLIN_ID'] as int,
-      training: json['TRAINING'] as bool,
-      wettkampfartId: json['WETTKAMPFART_ID'] as int?,
+              : DateTime.parse((json['SCHIESSDATUM'] ?? json['schiessdatum']) as String),
+      waffenartId: (json['WAFFENART_ID'] ?? json['waffenart_id']) as int,
+      disziplinId: (json['DISZIPLIN_ID'] ?? json['disziplin_id']) as int,
+      training: (json['TRAINING'] ?? json['training']) as bool,
+      wettkampfartId: (json['WETTKAMPFART_ID'] ?? json['wettkampfart_id']) as int?,
       wettkampfergebnis:
-          json['WETTKAMPFERGEBNIS'] == null
+          (json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis']) == null
               ? null
-              : (json['WETTKAMPFERGEBNIS'] as num).toDouble(),
+              : ((json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis']) as num).toDouble(),
+      bemerkung: (json['BEMERKUNG'] ?? json['bemerkung']) as String?,
     );
   }
 
@@ -48,6 +49,7 @@ class BeduerfnisseSport {
     required this.training,
     this.wettkampfartId,
     this.wettkampfergebnis,
+    this.bemerkung,
   });
 
   /// The unique identifier for the sport record.
@@ -63,7 +65,7 @@ class BeduerfnisseSport {
   final DateTime? deletedAt;
 
   /// The application number.
-  final String antragsnummer;
+  final int antragsnummer;
 
   /// The shooting date.
   final DateTime schiessdatum;
@@ -83,6 +85,9 @@ class BeduerfnisseSport {
   /// The competition result (nullable).
   final double? wettkampfergebnis;
 
+  /// Remarks/notes (nullable).
+  final String? bemerkung;
+
   /// Converts the [BeduerfnisseSport] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
@@ -97,6 +102,7 @@ class BeduerfnisseSport {
       'TRAINING': training,
       'WETTKAMPFART_ID': wettkampfartId,
       'WETTKAMPFERGEBNIS': wettkampfergebnis,
+      'BEMERKUNG': bemerkung,
     };
   }
 }

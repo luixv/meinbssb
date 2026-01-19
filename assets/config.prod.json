@@ -10,6 +10,7 @@
   "postgrestServer": "mein.bssb.de",
   "postgrestPort": "443",
   "postgrestPath": "api",
+  "postgrestIgnoreBadCertificate": false,
   "webProtocol": "https",
   "webServer": "mein.bssb.de",
   "webPort": "443",

@@ -20,6 +20,7 @@ class BaseScreenLayout extends StatelessWidget {
     this.automaticallyImplyLeading = true,
     this.leading,
     this.floatingActionButton,
+    this.floatingActionButtonLocation,
     this.showMenu = true,
     this.showConnectivityIcon = true,
   });
@@ -33,6 +34,7 @@ class BaseScreenLayout extends StatelessWidget {
   final bool automaticallyImplyLeading;
   final Widget? leading;
   final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
   final bool showMenu;
   final bool showConnectivityIcon;
 
@@ -91,6 +93,7 @@ class BaseScreenLayout extends StatelessWidget {
         builder: (context, fontSizeProvider, child) => body,
       ),
       floatingActionButton: floatingActionButton,
+      floatingActionButtonLocation: floatingActionButtonLocation,
     );
   }
 }

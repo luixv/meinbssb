@@ -15,7 +15,7 @@
          This theme determines the color of the Android Window while your Flutter UI initializes,
          as well as behind your Flutter UI while it's running. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">@android:color/holo_green_light</item>
+        <item name="android:windowBackground">?android:colorBackground</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:enforceNavigationBarContrast">false</item>
         <item name="android:enforceStatusBarContrast">false</item>

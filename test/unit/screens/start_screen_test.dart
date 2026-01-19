@@ -371,7 +371,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.description), findsOneWidget);
-      expect(find.byIcon(Icons.delete_outline_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.delete_outline), findsOneWidget);
     });
 
     testWidgets('handles empty Schulung fields gracefully', (tester) async {
@@ -513,7 +513,7 @@ void main() {
       await tester.pumpWidget(createStartScreen());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.delete_outline_outlined));
+      await tester.tap(find.byIcon(Icons.delete_outline));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Abbrechen'));
@@ -536,7 +536,7 @@ void main() {
       await tester.pumpWidget(createStartScreen());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.delete_outline_outlined));
+      await tester.tap(find.byIcon(Icons.delete_outline));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Abmelden'));
@@ -561,7 +561,7 @@ void main() {
       await tester.pumpWidget(createStartScreen());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.delete_outline_outlined));
+      await tester.tap(find.byIcon(Icons.delete_outline));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Abmelden'));
@@ -750,9 +750,9 @@ void main() {
         await tester.pumpAndSettle();
 
         // Should still show the delete button, but tapping it should do nothing
-        expect(find.byIcon(Icons.delete_outline_outlined), findsOneWidget);
+        expect(find.byIcon(Icons.delete_outline), findsOneWidget);
 
-        await tester.tap(find.byIcon(Icons.delete_outline_outlined));
+        await tester.tap(find.byIcon(Icons.delete_outline));
         await tester.pump();
 
         // No confirmation dialog should appear
@@ -772,7 +772,7 @@ void main() {
       await tester.pumpWidget(createStartScreen());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.delete_outline_outlined));
+      await tester.tap(find.byIcon(Icons.delete_outline));
       await tester.pump();
 
       // Should not show confirmation dialog for negative ID

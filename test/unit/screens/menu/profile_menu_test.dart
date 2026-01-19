@@ -92,7 +92,10 @@ void main() {
       expect(find.byIcon(Icons.task_alt), findsOneWidget);
       expect(find.byIcon(Icons.lock), findsOneWidget);
 
-      expect(find.byIcon(Icons.chevron_right), findsNWidgets(7));
+      expect(
+        find.byIcon(Icons.chevron_right),
+        findsNWidgets(8),
+      ); // One more, for the Bedürfnisse
     });
 
     testWidgets('calls onLogout when triggered', (tester) async {

@@ -17,7 +17,7 @@ class UserData {
       geburtsdatum:
           json['GEBURTSDATUM'] != null ? parseDate(json['GEBURTSDATUM']) : null,
       geschlecht: json['GESCHLECHT'] as int?,
-      vereinName: json['VEREINNAME']?.toString() ?? '',   
+      vereinName: json['VEREINNAME']?.toString() ?? '',
       passdatenId: json['PASSDATENID'] as int? ?? 0,
       mitgliedschaftId: json['MITGLIEDSCHAFTID'] as int? ?? 0,
       personId: json['PERSONID'] as int? ?? 0,
@@ -28,6 +28,8 @@ class UserData {
       isOnline: json['ONLINE'] as bool? ?? false,
       disziplin: json['DISZIPLIN']?.toString(),
       erstVereinId: json['ERSTVEREINID'] as int? ?? 0,
+      email: json['EMAIL']?.toString() ?? '',
+      role: json['ROLE']?.toString(),
     );
   }
 
@@ -60,6 +62,8 @@ class UserData {
     this.digitalerPass = 0,
     this.isOnline = false,
     this.disziplin,
+    this.email = '',
+    this.role,
   });
 
   /// The unique identifier for the person.
@@ -143,6 +147,12 @@ class UserData {
   /// The discipline of the member.
   final String? disziplin;
 
+  /// The email address of the member.
+  final String email;
+
+  /// The role of the member (e.g., 'mitglied', 'bssb', 'verein').
+  final String? role;
+
   /// Converts the [UserData] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
@@ -173,6 +183,8 @@ class UserData {
       'DIGITALERPASS': digitalerPass,
       'ONLINE': isOnline,
       'DISZIPLIN': disziplin,
+      'EMAIL': email,
+      'ROLE': role,
     };
   }
 
@@ -205,6 +217,8 @@ class UserData {
     int? digitalerPass,
     bool? isOnline,
     String? disziplin,
+    String? email,
+    String? role,
   }) {
     return UserData(
       personId: personId ?? this.personId,
@@ -234,6 +248,8 @@ class UserData {
       digitalerPass: digitalerPass ?? this.digitalerPass,
       isOnline: isOnline ?? this.isOnline,
       disziplin: disziplin ?? this.disziplin,
+      email: email ?? this.email,
+      role: role ?? this.role,
     );
   }
 
@@ -267,7 +283,9 @@ class UserData {
         other.erstVereinId == erstVereinId &&
         other.digitalerPass == digitalerPass &&
         other.isOnline == isOnline &&
-        other.disziplin == disziplin;
+        other.disziplin == disziplin &&
+        other.email == email &&
+        other.role == role;
   }
 
   @override
@@ -300,11 +318,13 @@ class UserData {
       digitalerPass,
       isOnline,
       disziplin,
+      email,
+      role,
     ]);
   }
 
   @override
   String toString() {
-    return 'UserData(personId: $personId, webLoginId: $webLoginId, passnummer: $passnummer, vereinNr: $vereinNr, namen: $namen, vorname: $vorname, titel: $titel, geburtsdatum: $geburtsdatum, geschlecht: $geschlecht, vereinName: $vereinName, strasse: $strasse, plz: $plz, ort: $ort, land: $land, nationalitaet: $nationalitaet, passStatus: $passStatus, passdatenId: $passdatenId, eintrittVerein: $eintrittVerein, austrittVerein: $austrittVerein, mitgliedschaftId: $mitgliedschaftId, telefon: $telefon, erstLandesverbandId: $erstLandesverbandId, produktionsDatum: $produktionsDatum, erstVereinId: $erstVereinId, digitalerPass: $digitalerPass, isOnline: $isOnline, disziplin: $disziplin)';
+    return 'UserData(personId: $personId, webLoginId: $webLoginId, passnummer: $passnummer, vereinNr: $vereinNr, namen: $namen, vorname: $vorname, titel: $titel, geburtsdatum: $geburtsdatum, geschlecht: $geschlecht, vereinName: $vereinName, strasse: $strasse, plz: $plz, ort: $ort, land: $land, nationalitaet: $nationalitaet, passStatus: $passStatus, passdatenId: $passdatenId, eintrittVerein: $eintrittVerein, austrittVerein: $austrittVerein, mitgliedschaftId: $mitgliedschaftId, telefon: $telefon, erstLandesverbandId: $erstLandesverbandId, produktionsDatum: $produktionsDatum, erstVereinId: $erstVereinId, digitalerPass: $digitalerPass, isOnline: $isOnline, disziplin: $disziplin, email: $email, role: $role)';
   }
 }

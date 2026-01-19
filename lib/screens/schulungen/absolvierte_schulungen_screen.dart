@@ -92,6 +92,7 @@ class AbsolvierteSchulungenScreenState
         isLoggedIn: widget.isLoggedIn,
         onLogout: _handleLogout,
         body: Stack(
+          fit: StackFit.expand,
           children: [
             Focus(
               autofocus: true,

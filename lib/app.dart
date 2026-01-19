@@ -1,6 +1,5 @@
 // lib/app.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:meinbssb/screens/password/reset_password_screen.dart';
 import 'package:meinbssb/screens/email/email_verification_screen.dart';
@@ -129,15 +128,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _apiService = Provider.of<ApiService>(context, listen: false);
 
-    // Configure system UI for edge-to-edge display on Android 15+
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarDividerColor: Colors.transparent,
-      ),
-    );
-
     _startSplashAndAuthCheck();
   }
 
@@ -233,6 +223,8 @@ class _MyAppState extends State<MyApp> {
         _navigatorKey.currentState!.pushReplacementNamed('/login');
       }
     } catch (e) {
+      // debugPrint('Error during logout: $e');
+      // Even if there's an error, still update state and navigate
       setState(() {
         _isLoggedIn = false;
         _userData = null;

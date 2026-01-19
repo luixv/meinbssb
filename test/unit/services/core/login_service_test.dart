@@ -15,6 +15,8 @@ import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
+import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 
 import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
@@ -42,6 +44,8 @@ import 'login_service_test.mocks.dart';
   CalendarService,
   BezirkService,
   StartingRightsService,
+  RollsAndRights,
+  WorkflowService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -64,6 +68,7 @@ void main() {
   late MockCalendarService mockCalendarService;
   late MockBezirkService mockBezirkService;
   late MockStartingRightsService mockStartingRightsService;
+  late MockRollsAndRights mockRollsAndRights;
 
   const int testWebLoginId = 27;
   const int testPersonId = 4711;
@@ -86,6 +91,7 @@ void main() {
     mockCalendarService = MockCalendarService();
     mockBezirkService = MockBezirkService();
     mockStartingRightsService = MockStartingRightsService();
+    mockRollsAndRights = MockRollsAndRights();
 
     apiService = ApiService(
       configService: mockConfigService,
@@ -104,6 +110,8 @@ void main() {
       calendarService: mockCalendarService,
       bezirkService: mockBezirkService,
       startingRightsService: mockStartingRightsService,
+      rollsAndRights: mockRollsAndRights,
+      workflowService: MockWorkflowService(),
     );
   });
 
@@ -126,8 +134,9 @@ void main() {
     };
 
     test('should call authService.login with correct credentials', () async {
-      when(mockAuthService.login(testUsername, testPassword))
-          .thenAnswer((_) async => successfulLoginResponse);
+      when(
+        mockAuthService.login(testUsername, testPassword),
+      ).thenAnswer((_) async => successfulLoginResponse);
 
       await apiService.login(testUsername, testPassword);
 
@@ -136,32 +145,28 @@ void main() {
     });
 
     test('should return the failed login response on failed login', () async {
-      when(mockAuthService.login(testUsername, testPassword))
-          .thenAnswer((_) async => failedLoginResponse);
+      when(
+        mockAuthService.login(testUsername, testPassword),
+      ).thenAnswer((_) async => failedLoginResponse);
 
       final result = await apiService.login(testUsername, testPassword);
 
       expect(result, failedLoginResponse);
       verifyNever(
-        mockSecureStorage.write(
-          key: anyNamed('key'),
-          value: anyNamed('value'),
-        ),
+        mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')),
       );
     });
 
     test('should handle network errors during login', () async {
-      when(mockAuthService.login(testUsername, testPassword))
-          .thenThrow(network_ex.NetworkException());
+      when(
+        mockAuthService.login(testUsername, testPassword),
+      ).thenThrow(network_ex.NetworkException());
 
       final result = await apiService.login(testUsername, testPassword);
 
       expect(result, networkErrorResponse);
       verifyNever(
-        mockSecureStorage.write(
-          key: anyNamed('key'),
-          value: anyNamed('value'),
-        ),
+        mockSecureStorage.write(key: anyNamed('key'), value: anyNamed('value')),
       );
     });
   });

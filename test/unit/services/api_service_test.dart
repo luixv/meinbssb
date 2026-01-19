@@ -37,6 +37,8 @@ import 'package:meinbssb/services/api/verein_service.dart';
 import 'package:meinbssb/services/api/oktoberfest_service.dart';
 import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
+import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 
 import 'package:meinbssb/services/core/http_client.dart';
 import 'package:meinbssb/services/core/token_service.dart';
@@ -49,6 +51,9 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
+import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
+import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
 
 @GenerateMocks([
   AuthService,
@@ -68,6 +73,8 @@ import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
   CalendarService,
   BezirkService,
   StartingRightsService,
+  RollsAndRights,
+  WorkflowService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -89,6 +96,8 @@ void main() {
   late MockCalendarService mockCalendarService;
   late MockBezirkService mockBezirkService;
   late MockStartingRightsService mockStartingRightsService;
+  late MockRollsAndRights mockRollsAndRights;
+  late MockWorkflowService mockWorkflowService;
 
   late HttpClient httpClient;
 
@@ -109,6 +118,8 @@ void main() {
     mockCalendarService = MockCalendarService();
     mockBezirkService = MockBezirkService();
     mockStartingRightsService = MockStartingRightsService();
+    mockRollsAndRights = MockRollsAndRights();
+    mockWorkflowService = MockWorkflowService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -135,6 +146,8 @@ void main() {
       calendarService: mockCalendarService,
       bezirkService: mockBezirkService,
       startingRightsService: mockStartingRightsService,
+      rollsAndRights: mockRollsAndRights,
+      workflowService: mockWorkflowService,
     );
   });
 
@@ -364,6 +377,8 @@ void main() {
             calendarService: MockCalendarService(),
             bezirkService: MockBezirkService(),
             startingRightsService: MockStartingRightsService(),
+            rollsAndRights: MockRollsAndRights(),
+            workflowService: MockWorkflowService(),
           );
         });
 
@@ -1567,6 +1582,8 @@ void main() {
           calendarService: MockCalendarService(),
           bezirkService: MockBezirkService(),
           startingRightsService: MockStartingRightsService(),
+          rollsAndRights: MockRollsAndRights(),
+          workflowService: MockWorkflowService(),
         );
       });
 
@@ -2281,37 +2298,19 @@ void main() {
     });
 
     group('bed_auswahl_typ Service Tests', () {
-      test('createBedAuswahlTyp delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseAuswahlTyp(
-          id: 1,
-          kuerzel: 'WA',
-          beschreibung: 'Waffenart',
-        );
-        when(
-          mockPostgrestService.createBedAuswahlTyp(
-            kuerzel: anyNamed('kuerzel'),
-            beschreibung: anyNamed('beschreibung'),
-          ),
-        ).thenAnswer((_) async => expectedResult);
-
-        final result = await apiService.createBedAuswahlTyp(
-          kuerzel: 'WA',
-          beschreibung: 'Waffenart',
-        );
-
-        expect(result, equals(expectedResult));
-        verify(
-          mockPostgrestService.createBedAuswahlTyp(
-            kuerzel: 'WA',
-            beschreibung: 'Waffenart',
-          ),
-        ).called(1);
-      });
 
       test('getBedAuswahlTypen delegates to postgrest service', () async {
         final expectedList = [
-          BeduerfnisseAuswahlTyp(id: 1, kuerzel: 'WA', beschreibung: 'Waffenart'),
-          BeduerfnisseAuswahlTyp(id: 2, kuerzel: 'DI', beschreibung: 'Disziplin'),
+          BeduerfnisseAuswahlTyp(
+            id: 1,
+            kuerzel: 'WA',
+            beschreibung: 'Waffenart',
+          ),
+          BeduerfnisseAuswahlTyp(
+            id: 2,
+            kuerzel: 'DI',
+            beschreibung: 'Disziplin',
+          ),
         ];
         when(
           mockPostgrestService.getBedAuswahlTypen(),
@@ -2337,63 +2336,24 @@ void main() {
         verify(mockPostgrestService.getBedAuswahlTypById(1)).called(1);
       });
 
-      test('updateBedAuswahlTyp delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.updateBedAuswahlTyp(1, {'beschreibung': 'Weapon Type'}),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.updateBedAuswahlTyp(1, {'beschreibung': 'Weapon Type'});
-        expect(result, isTrue);
-        verify(mockPostgrestService.updateBedAuswahlTyp(1, {'beschreibung': 'Weapon Type'})).called(1);
-      });
-
-      test('deleteBedAuswahlTyp delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.deleteBedAuswahlTyp(1),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.deleteBedAuswahlTyp(1);
-        expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedAuswahlTyp(1)).called(1);
-      });
     });
 
     group('bed_auswahl Service Tests', () {
-      test('createBedAuswahl delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseAuswahl(
-          id: 1,
-          typId: 1,
-          kuerzel: 'PIS',
-          beschreibung: 'Pistole',
-        );
-        when(
-          mockPostgrestService.createBedAuswahl(
-            typId: anyNamed('typId'),
-            kuerzel: anyNamed('kuerzel'),
-            beschreibung: anyNamed('beschreibung'),
-          ),
-        ).thenAnswer((_) async => expectedResult);
 
-        final result = await apiService.createBedAuswahl(
-          typId: 1,
-          kuerzel: 'PIS',
-          beschreibung: 'Pistole',
-        );
-
-        expect(result, equals(expectedResult));
-        verify(
-          mockPostgrestService.createBedAuswahl(
+      test('getBedAuswahlList delegates to postgrest service', () async {
+        final expectedList = [
+          BeduerfnisseAuswahl(
+            id: 1,
             typId: 1,
             kuerzel: 'PIS',
             beschreibung: 'Pistole',
           ),
-        ).called(1);
-      });
-
-      test('getBedAuswahlList delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseAuswahl(id: 1, typId: 1, kuerzel: 'PIS', beschreibung: 'Pistole'),
-          BeduerfnisseAuswahl(id: 2, typId: 1, kuerzel: 'REV', beschreibung: 'Revolver'),
+          BeduerfnisseAuswahl(
+            id: 2,
+            typId: 1,
+            kuerzel: 'REV',
+            beschreibung: 'Revolver',
+          ),
         ];
         when(
           mockPostgrestService.getBedAuswahlList(),
@@ -2406,7 +2366,12 @@ void main() {
 
       test('getBedAuswahlByTypId delegates to postgrest service', () async {
         final expectedList = [
-          BeduerfnisseAuswahl(id: 1, typId: 1, kuerzel: 'PIS', beschreibung: 'Pistole'),
+          BeduerfnisseAuswahl(
+            id: 1,
+            typId: 1,
+            kuerzel: 'PIS',
+            beschreibung: 'Pistole',
+          ),
         ];
         when(
           mockPostgrestService.getBedAuswahlByTypId(1),
@@ -2433,25 +2398,6 @@ void main() {
         verify(mockPostgrestService.getBedAuswahlById(1)).called(1);
       });
 
-      test('updateBedAuswahl delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.updateBedAuswahl(1, {'beschreibung': 'Handgun'}),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.updateBedAuswahl(1, {'beschreibung': 'Handgun'});
-        expect(result, isTrue);
-        verify(mockPostgrestService.updateBedAuswahl(1, {'beschreibung': 'Handgun'})).called(1);
-      });
-
-      test('deleteBedAuswahl delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.deleteBedAuswahl(1),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.deleteBedAuswahl(1);
-        expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedAuswahl(1)).called(1);
-      });
     });
 
     group('bed_datei Service Tests', () {
@@ -2459,7 +2405,7 @@ void main() {
         final fileBytes = [1, 2, 3, 4, 5];
         final expectedResult = {
           'id': 1,
-          'antragsnummer': 'A123',
+          'antragsnummer': 123,
           'dateiname': 'doc.pdf',
         };
         when(
@@ -2471,7 +2417,7 @@ void main() {
         ).thenAnswer((_) async => expectedResult);
 
         final result = await apiService.createBedDatei(
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           dateiname: 'doc.pdf',
           fileBytes: fileBytes,
         );
@@ -2479,56 +2425,69 @@ void main() {
         expect(result, equals(expectedResult));
         verify(
           mockPostgrestService.createBedDatei(
-            antragsnummer: 'A123',
+            antragsnummer: 123,
             dateiname: 'doc.pdf',
             fileBytes: fileBytes,
           ),
         ).called(1);
       });
 
-      test('getBedDateiByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = [
-          {'id': 1, 'antragsnummer': 'A123', 'dateiname': 'doc1.pdf'},
-          {'id': 2, 'antragsnummer': 'A123', 'dateiname': 'doc2.pdf'},
-        ];
-        when(
-          mockPostgrestService.getBedDateiByAntragsnummer('A123'),
-        ).thenAnswer((_) async => expectedList);
+      test(
+        'getBedDateiByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisseDatei(
+              id: 1,
+              antragsnummer: 123,
+              dateiname: 'doc1.pdf',
+              fileBytes: [],
+            ),
+            BeduerfnisseDatei(
+              id: 2,
+              antragsnummer: 123,
+              dateiname: 'doc2.pdf',
+              fileBytes: [],
+            ),
+          ];
+          when(
+            mockPostgrestService.getBedDateiByAntragsnummer(123),
+          ).thenAnswer((_) async => expectedList);
 
-        final result = await apiService.getBedDateiByAntragsnummer('A123');
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedDateiByAntragsnummer('A123')).called(1);
-      });
+          final result = await apiService.getBedDateiByAntragsnummer(123);
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedDateiByAntragsnummer(123),
+          ).called(1);
+        },
+      );
 
-      test('getBedDateiById delegates to postgrest service', () async {
-        final expectedFile = {'id': 1, 'antragsnummer': 'A123', 'dateiname': 'doc.pdf'};
-        when(
-          mockPostgrestService.getBedDateiById(1),
-        ).thenAnswer((_) async => expectedFile);
-
-        final result = await apiService.getBedDateiById(1);
-        expect(result, equals(expectedFile));
-        verify(mockPostgrestService.getBedDateiById(1)).called(1);
-      });
 
       test('updateBedDatei delegates to postgrest service', () async {
+        final datei = BeduerfnisseDatei(
+          id: 1,
+          antragsnummer: 100000,
+          dateiname: 'new.pdf',
+          fileBytes: [],
+        );
         when(
-          mockPostgrestService.updateBedDatei(1, {'dateiname': 'new.pdf'}),
+          mockPostgrestService.updateBedDatei(datei),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedDatei(1, {'dateiname': 'new.pdf'});
+        final result = await apiService.updateBedDatei(datei);
         expect(result, isTrue);
-        verify(mockPostgrestService.updateBedDatei(1, {'dateiname': 'new.pdf'})).called(1);
+        verify(
+          mockPostgrestService.updateBedDatei(datei),
+        ).called(1);
       });
 
       test('deleteBedDatei delegates to postgrest service', () async {
         when(
-          mockPostgrestService.deleteBedDatei(1),
+          mockPostgrestService.deleteBedDatei(100000),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.deleteBedDatei(1);
+        final result = await apiService.deleteBedDatei(100000);
         expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedDatei(1)).called(1);
+        verify(mockPostgrestService.deleteBedDatei(100000)).called(1);
       });
     });
 
@@ -2536,7 +2495,7 @@ void main() {
       test('createBedSport delegates to postgrest service', () async {
         final expectedResult = {
           'id': 1,
-          'antragsnummer': 'A123',
+          'antragsnummer': 123,
           'schiessdatum': '2024-01-01',
           'waffenart_id': 1,
           'disziplin_id': 2,
@@ -2555,7 +2514,7 @@ void main() {
         ).thenAnswer((_) async => expectedResult);
 
         final result = await apiService.createBedSport(
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           schiessdatum: '2024-01-01',
           waffenartId: 1,
           disziplinId: 2,
@@ -2565,7 +2524,7 @@ void main() {
         expect(result, equals(expectedResult));
         verify(
           mockPostgrestService.createBedSport(
-            antragsnummer: 'A123',
+            antragsnummer: 123,
             schiessdatum: '2024-01-01',
             waffenartId: 1,
             disziplinId: 2,
@@ -2576,100 +2535,113 @@ void main() {
         ).called(1);
       });
 
-      test('createBedSport with optional parameters delegates to postgrest service', () async {
-        final expectedResult = {
-          'id': 1,
-          'antragsnummer': 'A123',
-          'wettkampfart_id': 5,
-          'wettkampfergebnis': 95.5,
-        };
-        when(
-          mockPostgrestService.createBedSport(
-            antragsnummer: anyNamed('antragsnummer'),
-            schiessdatum: anyNamed('schiessdatum'),
-            waffenartId: anyNamed('waffenartId'),
-            disziplinId: anyNamed('disziplinId'),
-            training: anyNamed('training'),
-            wettkampfartId: anyNamed('wettkampfartId'),
-            wettkampfergebnis: anyNamed('wettkampfergebnis'),
-          ),
-        ).thenAnswer((_) async => expectedResult);
+      test(
+        'createBedSport with optional parameters delegates to postgrest service',
+        () async {
+          final expectedResult = {
+            'id': 1,
+            'antragsnummer': 123,
+            'wettkampfart_id': 5,
+            'wettkampfergebnis': 95.5,
+          };
+          when(
+            mockPostgrestService.createBedSport(
+              antragsnummer: anyNamed('antragsnummer'),
+              schiessdatum: anyNamed('schiessdatum'),
+              waffenartId: anyNamed('waffenartId'),
+              disziplinId: anyNamed('disziplinId'),
+              training: anyNamed('training'),
+              wettkampfartId: anyNamed('wettkampfartId'),
+              wettkampfergebnis: anyNamed('wettkampfergebnis'),
+            ),
+          ).thenAnswer((_) async => expectedResult);
 
-        final result = await apiService.createBedSport(
-          antragsnummer: 'A123',
-          schiessdatum: '2024-01-01',
-          waffenartId: 1,
-          disziplinId: 2,
-          training: false,
-          wettkampfartId: 5,
-          wettkampfergebnis: 95.5,
-        );
-
-        expect(result, equals(expectedResult));
-        verify(
-          mockPostgrestService.createBedSport(
-            antragsnummer: 'A123',
+          final result = await apiService.createBedSport(
+            antragsnummer: 123,
             schiessdatum: '2024-01-01',
             waffenartId: 1,
             disziplinId: 2,
             training: false,
             wettkampfartId: 5,
             wettkampfergebnis: 95.5,
-          ),
+          );
+
+          expect(result, equals(expectedResult));
+          verify(
+            mockPostgrestService.createBedSport(
+              antragsnummer: 123,
+              schiessdatum: '2024-01-01',
+              waffenartId: 1,
+              disziplinId: 2,
+              training: false,
+              wettkampfartId: 5,
+              wettkampfergebnis: 95.5,
+            ),
+          ).called(1);
+        },
+      );
+
+      test(
+        'getBedSportByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisseSport(
+              id: 1,
+              antragsnummer: 123,
+              schiessdatum: DateTime.now(),
+              waffenartId: 1,
+              disziplinId: 2,
+              training: true,
+            ),
+            BeduerfnisseSport(
+              id: 2,
+              antragsnummer: 123,
+              schiessdatum: DateTime.now(),
+              waffenartId: 1,
+              disziplinId: 2,
+              training: false,
+            ),
+          ];
+          when(
+            mockPostgrestService.getBedSportByAntragsnummer(123),
+          ).thenAnswer((_) async => expectedList);
+
+          final result = await apiService.getBedSportByAntragsnummer(123);
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedSportByAntragsnummer(123),
+          ).called(1);
+        },
+      );
+
+
+      test('updateBedSport delegates to postgrest service', () async {
+        final sport = BeduerfnisseSport(
+          id: 1,
+          antragsnummer: 100000,
+          schiessdatum: DateTime.now(),
+          waffenartId: 1,
+          disziplinId: 2,
+          training: false,
+        );
+        when(
+          mockPostgrestService.updateBedSport(sport),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.updateBedSport(sport);
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.updateBedSport(sport),
         ).called(1);
       });
 
-      test('getBedSportByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = [
-          {'id': 1, 'antragsnummer': 'A123', 'training': true},
-          {'id': 2, 'antragsnummer': 'A123', 'training': false},
-        ];
-        when(
-          mockPostgrestService.getBedSportByAntragsnummer('A123'),
-        ).thenAnswer((_) async => expectedList);
-
-        final result = await apiService.getBedSportByAntragsnummer('A123');
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedSportByAntragsnummer('A123')).called(1);
-      });
-
-      test('getBedSportById delegates to postgrest service', () async {
-        final expectedRecord = {'id': 1, 'antragsnummer': 'A123', 'training': true};
-        when(
-          mockPostgrestService.getBedSportById(1),
-        ).thenAnswer((_) async => expectedRecord);
-
-        final result = await apiService.getBedSportById(1);
-        expect(result, equals(expectedRecord));
-        verify(mockPostgrestService.getBedSportById(1)).called(1);
-      });
-
-      test('updateBedSport delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.updateBedSport(1, {'training': false}),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.updateBedSport(1, {'training': false});
-        expect(result, isTrue);
-        verify(mockPostgrestService.updateBedSport(1, {'training': false})).called(1);
-      });
-
-      test('deleteBedSport delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.deleteBedSport(1),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.deleteBedSport(1);
-        expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedSport(1)).called(1);
-      });
     });
 
     group('bed_waffe_besitz Service Tests', () {
       test('createBedWaffeBesitz delegates to postgrest service', () async {
         final expectedResult = {
           'id': 1,
-          'antragsnummer': 'A123',
+          'antragsnummer': 123,
           'wbk_nr': 'WBK001',
           'lfd_wbk': '001',
           'waffenart_id': 1,
@@ -2694,7 +2666,7 @@ void main() {
         ).thenAnswer((_) async => expectedResult);
 
         final result = await apiService.createBedWaffeBesitz(
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           wbkNr: 'WBK001',
           lfdWbk: '001',
           waffenartId: 1,
@@ -2705,7 +2677,7 @@ void main() {
         expect(result, equals(expectedResult));
         verify(
           mockPostgrestService.createBedWaffeBesitz(
-            antragsnummer: 'A123',
+            antragsnummer: 123,
             wbkNr: 'WBK001',
             lfdWbk: '001',
             waffenartId: 1,
@@ -2721,140 +2693,140 @@ void main() {
         ).called(1);
       });
 
-      test('createBedWaffeBesitz with optional parameters delegates to postgrest service', () async {
-        final expectedResult = {
-          'id': 1,
-          'antragsnummer': 'A123',
-          'hersteller': 'TestManufacturer',
-          'gewicht': '1.5kg',
-          'bemerkung': 'Test note',
-        };
-        when(
-          mockPostgrestService.createBedWaffeBesitz(
-            antragsnummer: anyNamed('antragsnummer'),
-            wbkNr: anyNamed('wbkNr'),
-            lfdWbk: anyNamed('lfdWbk'),
-            waffenartId: anyNamed('waffenartId'),
-            hersteller: anyNamed('hersteller'),
-            kaliberId: anyNamed('kaliberId'),
-            lauflaengeId: anyNamed('lauflaengeId'),
-            gewicht: anyNamed('gewicht'),
-            kompensator: anyNamed('kompensator'),
-            beduerfnisgrundId: anyNamed('beduerfnisgrundId'),
-            verbandId: anyNamed('verbandId'),
-            bemerkung: anyNamed('bemerkung'),
-          ),
-        ).thenAnswer((_) async => expectedResult);
+      test(
+        'createBedWaffeBesitz with optional parameters delegates to postgrest service',
+        () async {
+          final expectedResult = {
+            'id': 1,
+            'antragsnummer': 123,
+            'hersteller': 'TestManufacturer',
+            'gewicht': '1.5kg',
+            'bemerkung': 'Test note',
+          };
+          when(
+            mockPostgrestService.createBedWaffeBesitz(
+              antragsnummer: anyNamed('antragsnummer'),
+              wbkNr: anyNamed('wbkNr'),
+              lfdWbk: anyNamed('lfdWbk'),
+              waffenartId: anyNamed('waffenartId'),
+              hersteller: anyNamed('hersteller'),
+              kaliberId: anyNamed('kaliberId'),
+              lauflaengeId: anyNamed('lauflaengeId'),
+              gewicht: anyNamed('gewicht'),
+              kompensator: anyNamed('kompensator'),
+              beduerfnisgrundId: anyNamed('beduerfnisgrundId'),
+              verbandId: anyNamed('verbandId'),
+              bemerkung: anyNamed('bemerkung'),
+            ),
+          ).thenAnswer((_) async => expectedResult);
 
-        final result = await apiService.createBedWaffeBesitz(
-          antragsnummer: 'A123',
-          wbkNr: 'WBK001',
-          lfdWbk: '001',
-          waffenartId: 1,
-          hersteller: 'TestManufacturer',
-          kaliberId: 2,
-          gewicht: '1.5kg',
-          kompensator: false,
-          bemerkung: 'Test note',
-        );
-
-        expect(result, equals(expectedResult));
-        verify(
-          mockPostgrestService.createBedWaffeBesitz(
-            antragsnummer: 'A123',
+          final result = await apiService.createBedWaffeBesitz(
+            antragsnummer: 123,
             wbkNr: 'WBK001',
             lfdWbk: '001',
             waffenartId: 1,
             hersteller: 'TestManufacturer',
             kaliberId: 2,
-            lauflaengeId: null,
             gewicht: '1.5kg',
             kompensator: false,
-            beduerfnisgrundId: null,
-            verbandId: null,
             bemerkung: 'Test note',
-          ),
+          );
+
+          expect(result, equals(expectedResult));
+          verify(
+            mockPostgrestService.createBedWaffeBesitz(
+              antragsnummer: 123,
+              wbkNr: 'WBK001',
+              lfdWbk: '001',
+              waffenartId: 1,
+              hersteller: 'TestManufacturer',
+              kaliberId: 2,
+              lauflaengeId: null,
+              gewicht: '1.5kg',
+              kompensator: false,
+              beduerfnisgrundId: null,
+              verbandId: null,
+              bemerkung: 'Test note',
+            ),
+          ).called(1);
+        },
+      );
+
+      test(
+        'getBedWaffeBesitzByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisseWaffeBesitz(
+              id: 1,
+              antragsnummer: 123,
+              wbkNr: 'WBK001',
+              lfdWbk: '001',
+              waffenartId: 1,
+              kaliberId: 2,
+              kompensator: false,
+            ),
+            BeduerfnisseWaffeBesitz(
+              id: 2,
+              antragsnummer: 123,
+              wbkNr: 'WBK002',
+              lfdWbk: '002',
+              waffenartId: 1,
+              kaliberId: 2,
+              kompensator: false,
+            ),
+          ];
+          when(
+            mockPostgrestService.getBedWaffeBesitzByAntragsnummer(123),
+          ).thenAnswer((_) async => expectedList);
+
+          final result = await apiService.getBedWaffeBesitzByAntragsnummer(
+            123,
+          );
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedWaffeBesitzByAntragsnummer(123),
+          ).called(1);
+        },
+      );
+
+
+      test('updateBedWaffeBesitz delegates to postgrest service', () async {
+        final waffeBesitz = BeduerfnisseWaffeBesitz(
+          id: 1,
+          antragsnummer: 100000,
+          wbkNr: 'WBK001',
+          lfdWbk: '001',
+          waffenartId: 1,
+          kaliberId: 2,
+          kompensator: true,
+        );
+        when(
+          mockPostgrestService.updateBedWaffeBesitz(waffeBesitz),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.updateBedWaffeBesitz(waffeBesitz);
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.updateBedWaffeBesitz(waffeBesitz),
         ).called(1);
       });
 
-      test('getBedWaffeBesitzByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = [
-          {'id': 1, 'antragsnummer': 'A123', 'wbk_nr': 'WBK001'},
-          {'id': 2, 'antragsnummer': 'A123', 'wbk_nr': 'WBK002'},
-        ];
-        when(
-          mockPostgrestService.getBedWaffeBesitzByAntragsnummer('A123'),
-        ).thenAnswer((_) async => expectedList);
-
-        final result = await apiService.getBedWaffeBesitzByAntragsnummer('A123');
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedWaffeBesitzByAntragsnummer('A123')).called(1);
-      });
-
-      test('getBedWaffeBesitzById delegates to postgrest service', () async {
-        final expectedWeapon = {'id': 1, 'antragsnummer': 'A123', 'wbk_nr': 'WBK001'};
-        when(
-          mockPostgrestService.getBedWaffeBesitzById(1),
-        ).thenAnswer((_) async => expectedWeapon);
-
-        final result = await apiService.getBedWaffeBesitzById(1);
-        expect(result, equals(expectedWeapon));
-        verify(mockPostgrestService.getBedWaffeBesitzById(1)).called(1);
-      });
-
-      test('updateBedWaffeBesitz delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.updateBedWaffeBesitz(1, {'kompensator': true}),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.updateBedWaffeBesitz(1, {'kompensator': true});
-        expect(result, isTrue);
-        verify(mockPostgrestService.updateBedWaffeBesitz(1, {'kompensator': true})).called(1);
-      });
-
-      test('deleteBedWaffeBesitz delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.deleteBedWaffeBesitz(1),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.deleteBedWaffeBesitz(1);
-        expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedWaffeBesitz(1)).called(1);
-      });
     });
 
     group('bed_antrag_status Service Tests', () {
-      test('createBedAntragStatus delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseAntragStatus(
-          id: 1,
-          status: 'offen',
-          beschreibung: 'Antrag eingegangen',
-        );
-        when(
-          mockPostgrestService.createBedAntragStatus(
-            status: anyNamed('status'),
-            beschreibung: anyNamed('beschreibung'),
-          ),
-        ).thenAnswer((_) async => expectedResult);
-
-        final result = await apiService.createBedAntragStatus(
-          status: 'offen',
-          beschreibung: 'Antrag eingegangen',
-        );
-
-        expect(result, equals(expectedResult));
-        verify(
-          mockPostgrestService.createBedAntragStatus(
+    
+      test('getBedAntragStatusList delegates to postgrest service', () async {
+        final expectedList = [
+          BeduerfnisseAntragStatus(
+            id: 1,
             status: 'offen',
             beschreibung: 'Antrag eingegangen',
           ),
-        ).called(1);
-      });
-
-      test('getBedAntragStatusList delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseAntragStatus(id: 1, status: 'offen', beschreibung: 'Antrag eingegangen'),
-          BeduerfnisseAntragStatus(id: 2, status: 'bearbeitung', beschreibung: 'In Bearbeitung'),
+          BeduerfnisseAntragStatus(
+            id: 2,
+            status: 'bearbeitung',
+            beschreibung: 'In Bearbeitung',
+          ),
         ];
         when(
           mockPostgrestService.getBedAntragStatusList(),
@@ -2865,79 +2837,19 @@ void main() {
         verify(mockPostgrestService.getBedAntragStatusList()).called(1);
       });
 
-      test('getBedAntragStatusById delegates to postgrest service', () async {
-        final expectedStatus = BeduerfnisseAntragStatus(
-          id: 1,
-          status: 'offen',
-          beschreibung: 'Antrag eingegangen',
-        );
-        when(
-          mockPostgrestService.getBedAntragStatusById(1),
-        ).thenAnswer((_) async => expectedStatus);
-
-        final result = await apiService.getBedAntragStatusById(1);
-        expect(result, equals(expectedStatus));
-        verify(mockPostgrestService.getBedAntragStatusById(1)).called(1);
-      });
-
-      test('getBedAntragStatusByStatus delegates to postgrest service', () async {
-        final expectedStatus = BeduerfnisseAntragStatus(
-          id: 1,
-          status: 'offen',
-          beschreibung: 'Antrag eingegangen',
-        );
-        when(
-          mockPostgrestService.getBedAntragStatusByStatus('offen'),
-        ).thenAnswer((_) async => expectedStatus);
-
-        final result = await apiService.getBedAntragStatusByStatus('offen');
-        expect(result, equals(expectedStatus));
-        verify(mockPostgrestService.getBedAntragStatusByStatus('offen')).called(1);
-      });
-
-      test('updateBedAntragStatus delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.updateBedAntragStatus(
-            1,
-            {'beschreibung': 'Updated'},
-          ),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.updateBedAntragStatus(
-          1,
-          {'beschreibung': 'Updated'},
-        );
-        expect(result, isTrue);
-        verify(
-          mockPostgrestService.updateBedAntragStatus(
-            1,
-            {'beschreibung': 'Updated'},
-          ),
-        ).called(1);
-      });
-
-      test('deleteBedAntragStatus delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.deleteBedAntragStatus(1),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.deleteBedAntragStatus(1);
-        expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedAntragStatus(1)).called(1);
-      });
     });
 
     group('bed_antrag Service Tests', () {
       test('createBedAntrag delegates to postgrest service', () async {
+
         final expectedResult = BeduerfnisseAntrag(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: 100000,
           personId: 100,
-          statusId: 1,
+          statusId: BeduerfnisAntragStatus.entwurf,
         );
         when(
           mockPostgrestService.createBedAntrag(
-            antragsnummer: anyNamed('antragsnummer'),
             personId: anyNamed('personId'),
             statusId: anyNamed('statusId'),
             wbkNeu: anyNamed('wbkNeu'),
@@ -2953,23 +2865,22 @@ void main() {
         ).thenAnswer((_) async => expectedResult);
 
         final result = await apiService.createBedAntrag(
-          antragsnummer: 'A123',
           personId: 100,
-          statusId: 1,
+          statusId: BeduerfnisAntragStatus.entwurf,
+          email: 'test.antrag@example.com',
         );
 
         expect(result, equals(expectedResult));
         verify(
           mockPostgrestService.createBedAntrag(
-            antragsnummer: 'A123',
             personId: 100,
-            statusId: 1,
+            statusId: BeduerfnisAntragStatus.entwurf,
             wbkNeu: null,
             wbkArt: null,
             beduerfnisart: null,
             anzahlWaffen: null,
             vereinGenehmigt: null,
-            email: null,
+            email: 'test.antrag@example.com',
             bankdaten: null,
             abbuchungErfolgt: null,
             bemerkung: null,
@@ -2977,36 +2888,28 @@ void main() {
         ).called(1);
       });
 
-      test('getBedAntragList delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseAntrag(id: 1, antragsnummer: 'A123', personId: 100),
-          BeduerfnisseAntrag(id: 2, antragsnummer: 'A124', personId: 101),
-        ];
-        when(
-          mockPostgrestService.getBedAntragList(),
-        ).thenAnswer((_) async => expectedList);
 
-        final result = await apiService.getBedAntragList();
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedAntragList()).called(1);
-      });
+      test(
+        'getBedAntragByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisseAntrag(id: 1, antragsnummer: 123, personId: 100),
+          ];
+          when(
+            mockPostgrestService.getBedAntragByAntragsnummer(123),
+          ).thenAnswer((_) async => expectedList);
 
-      test('getBedAntragByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseAntrag(id: 1, antragsnummer: 'A123', personId: 100),
-        ];
-        when(
-          mockPostgrestService.getBedAntragByAntragsnummer('A123'),
-        ).thenAnswer((_) async => expectedList);
-
-        final result = await apiService.getBedAntragByAntragsnummer('A123');
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedAntragByAntragsnummer('A123')).called(1);
-      });
+          final result = await apiService.getBedAntragByAntragsnummer(123);
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedAntragByAntragsnummer(123),
+          ).called(1);
+        },
+      );
 
       test('getBedAntragByPersonId delegates to postgrest service', () async {
         final expectedList = [
-          BeduerfnisseAntrag(id: 1, antragsnummer: 'A123', personId: 100),
+          BeduerfnisseAntrag(id: 1, antragsnummer: 123, personId: 100),
         ];
         when(
           mockPostgrestService.getBedAntragByPersonId(100),
@@ -3019,7 +2922,12 @@ void main() {
 
       test('getBedAntragByStatusId delegates to postgrest service', () async {
         final expectedList = [
-          BeduerfnisseAntrag(id: 1, antragsnummer: 'A123', personId: 100, statusId: 1),
+          BeduerfnisseAntrag(
+            id: 1,
+            antragsnummer: 123,
+            personId: 100,
+            statusId: BeduerfnisAntragStatus.entwurf,
+          ),
         ];
         when(
           mockPostgrestService.getBedAntragByStatusId(1),
@@ -3030,42 +2938,35 @@ void main() {
         verify(mockPostgrestService.getBedAntragByStatusId(1)).called(1);
       });
 
-      test('getBedAntragById delegates to postgrest service', () async {
-        final expectedAntrag = BeduerfnisseAntrag(
-          id: 1,
-          antragsnummer: 'A123',
-          personId: 100,
-        );
-        when(
-          mockPostgrestService.getBedAntragById(1),
-        ).thenAnswer((_) async => expectedAntrag);
-
-        final result = await apiService.getBedAntragById(1);
-        expect(result, equals(expectedAntrag));
-        verify(mockPostgrestService.getBedAntragById(1)).called(1);
-      });
 
       test('updateBedAntrag delegates to postgrest service', () async {
+        final antrag = BeduerfnisseAntrag(
+          id: 1,
+          antragsnummer: 100000,
+          personId: 100,
+          vereinGenehmigt: true,
+        );
         when(
-          mockPostgrestService.updateBedAntrag(1, {'verein_genehmigt': true}),
+          mockPostgrestService.updateBedAntrag(antrag),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedAntrag(1, {'verein_genehmigt': true});
+        final result = await apiService.updateBedAntrag(antrag);
         expect(result, isTrue);
         verify(
-          mockPostgrestService.updateBedAntrag(1, {'verein_genehmigt': true}),
+          mockPostgrestService.updateBedAntrag(antrag),
         ).called(1);
       });
 
       test('deleteBedAntrag delegates to postgrest service', () async {
         when(
-          mockPostgrestService.deleteBedAntrag(1),
+          mockPostgrestService.deleteBedAntrag(100000),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.deleteBedAntrag(1);
+        final result = await apiService.deleteBedAntrag(100000);
         expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedAntrag(1)).called(1);
+        verify(mockPostgrestService.deleteBedAntrag(100000)).called(1);
       });
+
     });
   });
 }

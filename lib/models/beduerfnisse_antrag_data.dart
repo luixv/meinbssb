@@ -1,33 +1,75 @@
 import 'package:flutter/foundation.dart';
+import 'beduerfnisse_antrag_status_data.dart';
 
 /// Represents an application/request (bed_antrag) in the BSSB system.
 @immutable
 class BeduerfnisseAntrag {
-  /// Creates a [BeduerfnisseAntrag] instance from a JSON map.
-  /// Supports both snake_case (PostgREST) and uppercase formats.
   factory BeduerfnisseAntrag.fromJson(Map<String, dynamic> json) {
+    // Helper function to convert statusId (int) to enum
+    BeduerfnisAntragStatus? parseStatusId(dynamic value) {
+      if (value == null) return null;
+      final statusInt = value as int;
+      switch (statusInt) {
+        case 1:
+          return BeduerfnisAntragStatus.entwurf;
+        case 2:
+          return BeduerfnisAntragStatus.eingereichtAmVerein;
+        case 3:
+          return BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein;
+        case 4:
+          return BeduerfnisAntragStatus.genehmightVonVerein;
+        case 5:
+          return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein;
+        case 6:
+          return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied;
+        case 7:
+          return BeduerfnisAntragStatus.eingereichtAnBSSB;
+        case 8:
+          return BeduerfnisAntragStatus.genehmight;
+        case 9:
+          return BeduerfnisAntragStatus.abgelehnt;
+        default:
+          return null;
+      }
+    }
+
     return BeduerfnisseAntrag(
       id: (json['ID'] ?? json['id']) as int?,
-      createdAt: json['CREATED_AT'] ?? json['created_at'] == null
-          ? null
-          : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
-      changedAt: json['CHANGED_AT'] ?? json['changed_at'] == null
-          ? null
-          : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
-      deletedAt: json['DELETED_AT'] ?? json['deleted_at'] == null
-          ? null
-          : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
-      antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as String,
+      createdAt:
+          json['CREATED_AT'] ?? json['created_at'] == null
+              ? null
+              : DateTime.parse(
+                (json['CREATED_AT'] ?? json['created_at']) as String,
+              ),
+      changedAt:
+          json['CHANGED_AT'] ?? json['changed_at'] == null
+              ? null
+              : DateTime.parse(
+                (json['CHANGED_AT'] ?? json['changed_at']) as String,
+              ),
+      deletedAt:
+          json['DELETED_AT'] ?? json['deleted_at'] == null
+              ? null
+              : DateTime.parse(
+                (json['DELETED_AT'] ?? json['deleted_at']) as String,
+              ),
+      antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
       personId: (json['PERSON_ID'] ?? json['person_id']) as int,
-      statusId: (json['STATUS_ID'] ?? json['status_id']) as int?,
+      statusId: parseStatusId(json['STATUS_ID'] ?? json['status_id']),
       wbkNeu: (json['WBK_NEU'] ?? json['wbk_neu']) as bool? ?? false,
       wbkArt: (json['WBK_ART'] ?? json['wbk_art']) as String?,
-      beduerfnisart: (json['BEDUERFNISART'] ?? json['beduerfnisart']) as String?,
+      beduerfnisart:
+          (json['BEDUERFNISART'] ?? json['beduerfnisart']) as String?,
       anzahlWaffen: (json['ANZAHL_WAFFEN'] ?? json['anzahl_waffen']) as int?,
-      vereinGenehmigt: (json['VEREIN_GENEHMIGT'] ?? json['verein_genehmigt']) as bool? ?? false,
+      vereinGenehmigt:
+          (json['VEREIN_GENEHMIGT'] ?? json['verein_genehmigt']) as bool? ??
+          false,
       email: (json['EMAIL'] ?? json['email']) as String?,
-      bankdaten: (json['BANKDATEN'] ?? json['bankdaten']) as Map<String, dynamic>?,
-      abbuchungErfolgt: (json['ABBUCHUNG_ERFOLGT'] ?? json['abbuchung_erfolgt']) as bool? ?? false,
+      bankdaten:
+          (json['BANKDATEN'] ?? json['bankdaten']) as Map<String, dynamic>?,
+      abbuchungErfolgt:
+          (json['ABBUCHUNG_ERFOLGT'] ?? json['abbuchung_erfolgt']) as bool? ??
+          false,
       bemerkung: (json['BEMERKUNG'] ?? json['bemerkung']) as String?,
     );
   }
@@ -38,7 +80,7 @@ class BeduerfnisseAntrag {
     this.createdAt,
     this.changedAt,
     this.deletedAt,
-    required this.antragsnummer,
+    this.antragsnummer,
     required this.personId,
     this.statusId,
     this.wbkNeu,
@@ -64,19 +106,19 @@ class BeduerfnisseAntrag {
   /// The deletion timestamp (nullable).
   final DateTime? deletedAt;
 
-  /// The application number.
-  final String antragsnummer;
+  /// The application number (auto-generated, starts at 100000).
+  final int? antragsnummer;
 
   /// The person ID (foreign key to person table).
   final int personId;
 
-  /// The status ID (foreign key to bed_antrag_status table).
-  final int? statusId;
+  /// The status (application state using enum for type safety).
+  final BeduerfnisAntragStatus? statusId;
 
   /// Whether this is a new weapon permit (WBK neu).
   final bool? wbkNeu;
 
-  /// The weapon permit type ('yellow' or 'green').
+  /// The weapon permit type ('gelb' or 'gruen').
   final String? wbkArt;
 
   /// The need type ('langwaffe' or 'kurzwaffe').
@@ -100,6 +142,45 @@ class BeduerfnisseAntrag {
   /// Additional remarks.
   final String? bemerkung;
 
+  /// Creates a copy of this [BeduerfnisseAntrag] with the given fields replaced by new values.
+  BeduerfnisseAntrag copyWith({
+    int? id,
+    DateTime? createdAt,
+    DateTime? changedAt,
+    DateTime? deletedAt,
+    int? antragsnummer,
+    int? personId,
+    BeduerfnisAntragStatus? statusId,
+    bool? wbkNeu,
+    String? wbkArt,
+    String? beduerfnisart,
+    int? anzahlWaffen,
+    bool? vereinGenehmigt,
+    String? email,
+    Map<String, dynamic>? bankdaten,
+    bool? abbuchungErfolgt,
+    String? bemerkung,
+  }) {
+    return BeduerfnisseAntrag(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      changedAt: changedAt ?? this.changedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      antragsnummer: antragsnummer ?? this.antragsnummer,
+      personId: personId ?? this.personId,
+      statusId: statusId ?? this.statusId,
+      wbkNeu: wbkNeu ?? this.wbkNeu,
+      wbkArt: wbkArt ?? this.wbkArt,
+      beduerfnisart: beduerfnisart ?? this.beduerfnisart,
+      anzahlWaffen: anzahlWaffen ?? this.anzahlWaffen,
+      vereinGenehmigt: vereinGenehmigt ?? this.vereinGenehmigt,
+      email: email ?? this.email,
+      bankdaten: bankdaten ?? this.bankdaten,
+      abbuchungErfolgt: abbuchungErfolgt ?? this.abbuchungErfolgt,
+      bemerkung: bemerkung ?? this.bemerkung,
+    );
+  }
+
   /// Converts the [BeduerfnisseAntrag] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
@@ -109,7 +190,7 @@ class BeduerfnisseAntrag {
       'DELETED_AT': deletedAt?.toIso8601String(),
       'ANTRAGSNUMMER': antragsnummer,
       'PERSON_ID': personId,
-      'STATUS_ID': statusId,
+      'STATUS_ID': statusId != null ? _enumStatusToInt(statusId!) : null,
       'WBK_NEU': wbkNeu,
       'WBK_ART': wbkArt,
       'BEDUERFNISART': beduerfnisart,
@@ -120,5 +201,29 @@ class BeduerfnisseAntrag {
       'ABBUCHUNG_ERFOLGT': abbuchungErfolgt,
       'BEMERKUNG': bemerkung,
     };
+  }
+
+  /// Helper to convert enum to int for API/database.
+  static int _enumStatusToInt(BeduerfnisAntragStatus status) {
+    switch (status) {
+      case BeduerfnisAntragStatus.entwurf:
+        return 1;
+      case BeduerfnisAntragStatus.eingereichtAmVerein:
+        return 2;
+      case BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein:
+        return 3;
+      case BeduerfnisAntragStatus.genehmightVonVerein:
+        return 4;
+      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein:
+        return 5;
+      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied:
+        return 6;
+      case BeduerfnisAntragStatus.eingereichtAnBSSB:
+        return 7;
+      case BeduerfnisAntragStatus.genehmight:
+        return 8;
+      case BeduerfnisAntragStatus.abgelehnt:
+        return 9;
+    }
   }
 }
