@@ -36,9 +36,11 @@ import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
 import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
 import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
 import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -809,6 +811,10 @@ class ApiService {
     return _postgrestService.getBedDateiByAntragsnummer(antragsnummer);
   }
 
+  Future<Map<String, dynamic>?> getBedDateiById(int id) async {
+    return _postgrestService.getBedDateiById(id);
+  }
+
   Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
     return _postgrestService.updateBedDatei(datei);
   }
@@ -847,6 +853,10 @@ class ApiService {
     int antragsnummer,
   ) async {
     return _postgrestService.getBedSportByAntragsnummer(antragsnummer);
+  }
+
+  Future<Map<String, dynamic>?> getBedSportById(int id) async {
+    return _postgrestService.getBedSportById(id);
   }
 
   Future<bool> updateBedSport(BeduerfnisseSport sport) async {
@@ -892,13 +902,21 @@ class ApiService {
   }
 
   Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
-    int antragsnummer,
+    String antragsnummer,
   ) async {
     return _postgrestService.getBedWaffeBesitzByAntragsnummer(antragsnummer);
   }
 
+  Future<BeduerfnisseWaffeBesitz?> getBedWaffeBesitzById(int id) async {
+    return _postgrestService.getBedWaffeBesitzById(id);
+  }
+
   Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
     return _postgrestService.updateBedWaffeBesitz(waffeBesitz);
+  }
+
+  Future<bool> deleteBedWaffeBesitz(int id) async {
+    return _postgrestService.deleteBedWaffeBesitz(id);
   }
 
   //
@@ -907,6 +925,24 @@ class ApiService {
 
   Future<List<BeduerfnisseAntragStatus>> getBedAntragStatusList() async {
     return _postgrestService.getBedAntragStatusList();
+  }
+
+  Future<BeduerfnisseAntragStatus?> getBedAntragStatusById(int id) async {
+    return _postgrestService.getBedAntragStatusById(id);
+  }
+
+  Future<BeduerfnisseAntragStatus?> getBedAntragStatusByStatus(
+    String status,
+  ) async {
+    return _postgrestService.getBedAntragStatusByStatus(status);
+  }
+
+  Future<bool> updateBedAntragStatus(BeduerfnisseAntragStatus antragStatus) async {
+    return _postgrestService.updateBedAntragStatus(antragStatus);
+  }
+
+  Future<bool> deleteBedAntragStatus(int id) async {
+    return _postgrestService.deleteBedAntragStatus(id);
   }
 
   //
@@ -959,29 +995,77 @@ class ApiService {
     return _postgrestService.updateBedAntrag(antrag);
   }
 
-  Future<bool> deleteBedAntrag(int antragsnummer) async {
-    return _postgrestService.deleteBedAntrag(antragsnummer);
+  Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
+    return _postgrestService.updateBedAntrag(antrag);
+  }
+
+  Future<bool> deleteBedAntrag(int id) async {
+    return _postgrestService.deleteBedAntrag(id);
   }
 
   //
-  // --- Rolles And Rights ---
+  // --- bed_antrag_person Service Methods ---
   //
-  Future<WorkflowRole> getRoles(int personId) async {
-    return _rollsAndRights.getRoles(personId);
-  }
 
-  //
-  // --- Workflow Service Methods ---
-  //
-  bool canAntragChangeFromStateToState({
-    required BeduerfnisAntragStatus currentState,
-    required BeduerfnisAntragStatus nextState,
-    required WorkflowRole userRole,
-  }) {
-    return _workflowService.canAntragChangeFromStateToState(
-      currentState: currentState,
-      nextState: nextState,
-      userRole: userRole,
+  Future<BeduerfnisseAntragPerson> createBedAntragPerson({
+    required String antragsnummer,
+    required int personId,
+    int? statusId,
+    String? vorname,
+    String? nachname,
+    String? vereinsname,
+  }) async {
+    return _postgrestService.createBedAntragPerson(
+      antragsnummer: antragsnummer,
+      personId: personId,
+      statusId: statusId,
+      name: vorname,
+      nachname: nachname,
+      vereinsname: vereinsname,
     );
+  }
+
+  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByAntragsnummer(
+    String antragsnummer,
+  ) async {
+    return _postgrestService.getBedAntragPersonByAntragsnummer(antragsnummer);
+  }
+
+  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByPersonId(
+    int personId,
+  ) async {
+    return _postgrestService.getBedAntragPersonByPersonId(personId);
+  }
+
+  Future<bool> updateBedAntragPerson(
+    BeduerfnisseAntragPerson bedAntragPerson,
+  ) async {
+    return _postgrestService.updateBedAntragPerson(bedAntragPerson);
+  }
+
+  //
+  // --- bed_datei_zuord Service Methods ---
+  //
+
+  Future<BeduerfnisseDateiZuord> createBedDateiZuord({
+    required String antragsnummer,
+    required int dateiId,
+    required String dateiArt,
+    int? bedSportId,
+  }) async {
+    return _postgrestService.createBedDateiZuord(
+      antragsnummer: antragsnummer,
+      dateiId: dateiId,
+      dateiArt: dateiArt,
+      bedSportId: bedSportId,
+    );
+  }
+
+  Future<bool> updateBedDateiZuord(BeduerfnisseDateiZuord dateiZuord) async {
+    return _postgrestService.updateBedDateiZuord(dateiZuord);
+  }
+
+  Future<bool> deleteBedDateiZuord(int id) async {
+    return _postgrestService.deleteBedDateiZuord(id);
   }
 }
