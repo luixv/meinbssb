@@ -4,8 +4,8 @@
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <!-- Show a splash screen on the first activity -->
         <item name="android:windowBackground">@drawable/launch_background</item>
-        <!-- Edge-to-edge configuration for Android 15+ -->
-        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
+        <!-- Edge-to-edge configuration - shortEdges is compatible with Android 9+ (API 28+) -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:enforceNavigationBarContrast">false</item>
         <item name="android:enforceStatusBarContrast">false</item>
