@@ -64,6 +64,11 @@ class FakeHttpClient implements HttpClient {
   }) {
     throw UnimplementedError();
   }
+
+  @override
+  void setPostgrestService(dynamic postgrestService) {
+    // No-op for fake implementation
+  }
 }
 
 void main() {
