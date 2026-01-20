@@ -308,7 +308,7 @@ apksigner verify --verbose build/app/outputs/flutter-apk/app-release.apk
 
 ### Android Deployment
 In order to deploy Android version go to:
-https://play.google.com/
+https://play.google.com/console/u/2/developers
 log in
 Choose MeinBSSB
 At the left hand side menu choose "Test and Release -> Production"
