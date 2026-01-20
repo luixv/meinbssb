@@ -210,50 +210,50 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
                           width: 220,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 150),
-                            padding: _yearDropdownFocused &&
-                                    FocusManager.instance.highlightMode ==
-                                        FocusHighlightMode.traditional
-                                ? const EdgeInsets.all(4.0)
-                                : EdgeInsets.zero,
-                            decoration: _yearDropdownFocused &&
-                                    FocusManager.instance.highlightMode ==
-                                        FocusHighlightMode.traditional
-                                ? BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.yellow.shade700,
-                                      width: 2.5,
-                                    ),
-                                  )
-                                : null,
-                            child: DropdownButtonFormField<int>(
-                              focusNode: _yearDropdownFocusNode,
-                              value: _selectedYear,
-                              items: _availableYears
-                                  .map(
-                                    (year) => DropdownMenuItem<int>(
-                                      value: year,
-                                      child: Text(
-                                        '$year',
-                                        style: const TextStyle(
-                                          fontSize: UIConstants.subtitleFontSize,
-                                        ),
+                          child: DropdownButtonFormField<int>(
+                            focusNode: _yearDropdownFocusNode,
+                            value: _selectedYear,
+                            items: _availableYears
+                                .map(
+                                  (year) => DropdownMenuItem<int>(
+                                    value: year,
+                                    child: Text(
+                                      '$year',
+                                      style: const TextStyle(
+                                        fontSize: UIConstants.subtitleFontSize,
                                       ),
                                     ),
-                                  )
-                                  .toList(),
-                              onChanged: (year) {
-                                if (year != null && year != _selectedYear) {
-                                  setState(() {
-                                    _selectedYear = year;
-                                  });
-                                  _fetchGewinne();
-                                }
-                              },
-                              decoration: UIStyles.formInputDecoration.copyWith(
-                                labelText: 'Jahr',
-                              ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (year) {
+                              if (year != null && year != _selectedYear) {
+                                setState(() {
+                                  _selectedYear = year;
+                                });
+                                _fetchGewinne();
+                              }
+                            },
+                            decoration: UIStyles.formInputDecoration.copyWith(
+                              labelText: 'Jahr',
+                              fillColor: _yearDropdownFocused &&
+                                      FocusManager.instance.highlightMode ==
+                                          FocusHighlightMode.traditional
+                                  ? Colors.yellow.shade50
+                                  : UIStyles.formInputDecoration.fillColor,
+                              focusedBorder: _yearDropdownFocused &&
+                                      FocusManager.instance.highlightMode ==
+                                          FocusHighlightMode.traditional
+                                  ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        UIConstants.cornerRadius,
+                                      ),
+                                      borderSide: BorderSide(
+                                        color: Colors.yellow.shade700,
+                                        width: 2.5,
+                                      ),
+                                    )
+                                  : UIStyles.formInputDecoration.focusedBorder,
                             ),
                           ),
                         ),
