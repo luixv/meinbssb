@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
@@ -797,6 +798,111 @@ class _BeduerfnissantragStep2DialogScreenState
                           ),
                         ),
                         const SizedBox(height: UIConstants.spacingL),
+
+                        // Dokument hochladen button - always visible
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              if (widget.antragsnummer == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Fehler: Antragsnummer fehlt',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              try {
+                                final ImagePicker picker = ImagePicker();
+                                final XFile? file = await picker.pickImage(
+                                  source: ImageSource.gallery,
+                                );
+
+                                if (file == null) {
+                                  return;
+                                }
+
+                                final bytes = await file.readAsBytes();
+                                final fileName = file.name;
+
+                                if (bytes.isEmpty) {
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Fehler: Datei konnte nicht gelesen werden',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return;
+                                }
+
+                                final apiService = Provider.of<ApiService>(
+                                  context,
+                                  listen: false,
+                                );
+
+                                final uploadResult = await apiService
+                                    .createBedDatei(
+                                      antragsnummer: widget.antragsnummer!,
+                                      dateiname: fileName,
+                                      fileBytes: bytes,
+                                    );
+
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Dokument erfolgreich hochgeladen',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Fehler beim Hochladen: $e',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.upload_file,
+                              color: UIConstants.buttonTextColor,
+                            ),
+                            label: Text(
+                              'Dokument hochladen',
+                              style: UIStyles.bodyTextStyle.copyWith(
+                                color: UIConstants.buttonTextColor,
+                                fontSize:
+                                    UIStyles.bodyTextStyle.fontSize! *
+                                    fontSizeProvider.scaleFactor,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: UIConstants.defaultAppColor,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: UIConstants.spacingM,
+                                horizontal: UIConstants.spacingL,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  UIConstants.cornerRadius,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (!_training)
+                          const SizedBox(height: UIConstants.spacingL),
                       ],
                     ),
                   ),

@@ -465,17 +465,36 @@ class _BeduerfnissantragStep2ScreenState
                                               const SizedBox(
                                                 height: UIConstants.spacingS,
                                               ),
-                                              ScaledText(
-                                                'Training: ${sport.training ? 'Ja' : 'Nein'}',
-                                                style: UIStyles.bodyTextStyle
-                                                    .copyWith(
-                                                      fontSize:
-                                                          UIStyles
-                                                              .bodyTextStyle
-                                                              .fontSize! *
-                                                          fontSizeProvider
-                                                              .scaleFactor,
-                                                    ),
+                                              Row(
+                                                children: [
+                                                  ScaledText(
+                                                    'Training: ',
+                                                    style: UIStyles
+                                                        .bodyTextStyle
+                                                        .copyWith(
+                                                          fontSize:
+                                                              UIStyles
+                                                                  .bodyTextStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
+                                                  ),
+                                                  Icon(
+                                                    sport.training
+                                                        ? Icons.check
+                                                        : Icons.close,
+                                                    color:
+                                                        sport.training
+                                                            ? UIConstants
+                                                                .defaultAppColor
+                                                            : Colors.red,
+                                                    size:
+                                                        UIConstants.iconSizeS *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                                ],
                                               ),
                                               if (wettkampfartName != null)
                                                 Column(
