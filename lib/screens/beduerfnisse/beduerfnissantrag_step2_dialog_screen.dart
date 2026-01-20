@@ -46,8 +46,11 @@ class _BeduerfnissantragStep2DialogScreenState
     _auswahlFuture = apiService.getBedAuswahlByTypId(2);
     _disziplinenFuture = apiService.fetchDisziplinen();
 
-    // Add listener to update UI when datum changes
+    // Add listeners to update UI when fields change
     _datumController.addListener(() {
+      setState(() {});
+    });
+    _wettkampfergebnisController.addListener(() {
       setState(() {});
     });
   }
@@ -60,13 +63,16 @@ class _BeduerfnissantragStep2DialogScreenState
   }
 
   bool _areAllCompulsoryFieldsFilled() {
-    // Wettkampfart is required only if training is NOT checked
+    // Wettkampfart and Wettkampfergebnis are required only if training is NOT checked
     final wettkampfartRequired = !_training && _selectedWettkampfartId == null;
+    final wettkampfergebnisRequired =
+        !_training && _wettkampfergebnisController.text.isEmpty;
 
     return _datumController.text.isNotEmpty &&
         _selectedWaffenartId != null &&
         _selectedDisziplinId != null &&
-        !wettkampfartRequired;
+        !wettkampfartRequired &&
+        !wettkampfergebnisRequired;
   }
 
   Future<void> _selectDate() async {
@@ -753,7 +759,7 @@ class _BeduerfnissantragStep2DialogScreenState
                         ),
                         const SizedBox(height: UIConstants.spacingL),
 
-                        // Wettkampfergebnis (optional)
+                        // Wettkampfergebnis (required if not training)
                         TextField(
                           controller: _wettkampfergebnisController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -765,8 +771,10 @@ class _BeduerfnissantragStep2DialogScreenState
                                 fontSizeProvider.scaleFactor,
                           ),
                           decoration: InputDecoration(
-                            labelText: 'Wettkampfergebnis (optional)',
-                            hintText: 'z.B. 95.5',
+                            labelText:
+                                _training
+                                    ? 'Wettkampfergebnis (optional)'
+                                    : 'Wettkampfergebnis *',
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(

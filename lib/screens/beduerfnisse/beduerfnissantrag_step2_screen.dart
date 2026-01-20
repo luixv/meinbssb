@@ -360,8 +360,7 @@ class _BeduerfnissantragStep2ScreenState
                             for (var w in waffenartList) w.id: w.beschreibung,
                           };
                           final wettkampfartMap = {
-                            for (var w in wettkampfartList)
-                              w.id: w.beschreibung,
+                            for (var w in wettkampfartList) w.id: w.kuerzel,
                           };
                           final disziplinMap = {
                             for (var d in disziplinList)
@@ -405,170 +404,175 @@ class _BeduerfnissantragStep2ScreenState
                                             'Unbekannt'
                                         : null;
 
-                                return Card(
-                                  margin: const EdgeInsets.only(
-                                    bottom: UIConstants.spacingM,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(
-                                      UIConstants.spacingM,
+                                return SizedBox(
+                                  width: double.infinity,
+                                  child: Card(
+                                    margin: const EdgeInsets.only(
+                                      bottom: UIConstants.spacingM,
                                     ),
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ScaledText(
-                                              'Datum: ${DateFormat('dd.MM.yyyy').format(sport.schiessdatum)}',
-                                              style: UIStyles.bodyTextStyle
-                                                  .copyWith(
-                                                    fontSize:
-                                                        UIStyles
-                                                            .bodyTextStyle
-                                                            .fontSize! *
-                                                        fontSizeProvider
-                                                            .scaleFactor,
-                                                  ),
-                                            ),
-                                            const SizedBox(
-                                              height: UIConstants.spacingS,
-                                            ),
-                                            ScaledText(
-                                              'Waffenart: $waffenartName',
-                                              style: UIStyles.bodyTextStyle
-                                                  .copyWith(
-                                                    fontSize:
-                                                        UIStyles
-                                                            .bodyTextStyle
-                                                            .fontSize! *
-                                                        fontSizeProvider
-                                                            .scaleFactor,
-                                                  ),
-                                            ),
-                                            const SizedBox(
-                                              height: UIConstants.spacingS,
-                                            ),
-                                            ScaledText(
-                                              'Disziplin: $disziplinName',
-                                              style: UIStyles.bodyTextStyle
-                                                  .copyWith(
-                                                    fontSize:
-                                                        UIStyles
-                                                            .bodyTextStyle
-                                                            .fontSize! *
-                                                        fontSizeProvider
-                                                            .scaleFactor,
-                                                  ),
-                                            ),
-                                            const SizedBox(
-                                              height: UIConstants.spacingS,
-                                            ),
-                                            ScaledText(
-                                              'Training: ${sport.training ? 'Ja' : 'Nein'}',
-                                              style: UIStyles.bodyTextStyle
-                                                  .copyWith(
-                                                    fontSize:
-                                                        UIStyles
-                                                            .bodyTextStyle
-                                                            .fontSize! *
-                                                        fontSizeProvider
-                                                            .scaleFactor,
-                                                  ),
-                                            ),
-                                            if (wettkampfartName != null)
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingS,
-                                                  ),
-                                                  ScaledText(
-                                                    'Wettkampfart: $wettkampfartName',
-                                                    style: UIStyles
-                                                        .bodyTextStyle
-                                                        .copyWith(
-                                                          fontSize:
-                                                              UIStyles
-                                                                  .bodyTextStyle
-                                                                  .fontSize! *
-                                                              fontSizeProvider
-                                                                  .scaleFactor,
-                                                        ),
-                                                  ),
-                                                ],
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(
+                                        UIConstants.spacingM,
+                                      ),
+                                      child: Stack(
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              ScaledText(
+                                                'Datum: ${DateFormat('dd.MM.yyyy').format(sport.schiessdatum)}',
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
                                               ),
-                                            if (sport.wettkampfergebnis != null)
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingS,
-                                                  ),
-                                                  ScaledText(
-                                                    'Wettkampfergebnis: ${sport.wettkampfergebnis}',
-                                                    style: UIStyles
-                                                        .bodyTextStyle
-                                                        .copyWith(
-                                                          fontSize:
-                                                              UIStyles
-                                                                  .bodyTextStyle
-                                                                  .fontSize! *
-                                                              fontSizeProvider
-                                                                  .scaleFactor,
-                                                        ),
-                                                  ),
-                                                ],
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
                                               ),
-                                            if (sport.bemerkung != null)
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingS,
-                                                  ),
-                                                  ScaledText(
-                                                    'Bemerkung: ${sport.bemerkung}',
-                                                    style: UIStyles
-                                                        .bodyTextStyle
-                                                        .copyWith(
-                                                          fontSize:
-                                                              UIStyles
-                                                                  .bodyTextStyle
-                                                                  .fontSize! *
-                                                              fontSizeProvider
-                                                                  .scaleFactor,
-                                                        ),
-                                                  ),
-                                                ],
+                                              ScaledText(
+                                                'Waffenart: $waffenartName',
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
                                               ),
-                                          ],
-                                        ),
-                                        // Delete icon - only show if status is Entwurf and not read-only
-                                        if (!widget.readOnly &&
-                                            widget.antrag?.statusId ==
-                                                BeduerfnisAntragStatus.entwurf)
-                                          Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: IconButton(
-                                              icon: const Icon(
-                                                Icons.delete_outline,
-                                                color: UIConstants.deleteIcon,
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
                                               ),
-                                              tooltip: 'Löschen',
-                                              onPressed: () {
-                                                _deleteBedSport(sport.id);
-                                              },
-                                            ),
+                                              ScaledText(
+                                                'Disziplin: $disziplinName',
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              ScaledText(
+                                                'Training: ${sport.training ? 'Ja' : 'Nein'}',
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                              ),
+                                              if (wettkampfartName != null)
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SizedBox(
+                                                      height:
+                                                          UIConstants.spacingS,
+                                                    ),
+                                                    ScaledText(
+                                                      'Wettkampfart: $wettkampfartName',
+                                                      style: UIStyles
+                                                          .bodyTextStyle
+                                                          .copyWith(
+                                                            fontSize:
+                                                                UIStyles
+                                                                    .bodyTextStyle
+                                                                    .fontSize! *
+                                                                fontSizeProvider
+                                                                    .scaleFactor,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              if (sport.wettkampfergebnis !=
+                                                  null)
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SizedBox(
+                                                      height:
+                                                          UIConstants.spacingS,
+                                                    ),
+                                                    ScaledText(
+                                                      'Wettkampfergebnis: ${sport.wettkampfergebnis}',
+                                                      style: UIStyles
+                                                          .bodyTextStyle
+                                                          .copyWith(
+                                                            fontSize:
+                                                                UIStyles
+                                                                    .bodyTextStyle
+                                                                    .fontSize! *
+                                                                fontSizeProvider
+                                                                    .scaleFactor,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              if (sport.bemerkung != null)
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SizedBox(
+                                                      height:
+                                                          UIConstants.spacingS,
+                                                    ),
+                                                    ScaledText(
+                                                      'Bemerkung: ${sport.bemerkung}',
+                                                      style: UIStyles
+                                                          .bodyTextStyle
+                                                          .copyWith(
+                                                            fontSize:
+                                                                UIStyles
+                                                                    .bodyTextStyle
+                                                                    .fontSize! *
+                                                                fontSizeProvider
+                                                                    .scaleFactor,
+                                                          ),
+                                                    ),
+                                                  ],
+                                                ),
+                                            ],
                                           ),
-                                      ],
+                                          // Delete icon - only show if status is Entwurf and not read-only
+                                          if (!widget.readOnly &&
+                                              widget.antrag?.statusId ==
+                                                  BeduerfnisAntragStatus
+                                                      .entwurf)
+                                            Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: IconButton(
+                                                icon: const Icon(
+                                                  Icons.delete_outline,
+                                                  color: UIConstants.deleteIcon,
+                                                ),
+                                                tooltip: 'Löschen',
+                                                onPressed: () {
+                                                  _deleteBedSport(sport.id);
+                                                },
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
