@@ -3,10 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
-import 'dart:typed_data' as _i5;
+import 'dart:async' as _i5;
+import 'dart:typed_data' as _i6;
 
 import 'package:meinbssb/services/core/http_client.dart' as _i2;
+import 'package:meinbssb/services/core/postgrest_service.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
 
@@ -50,7 +51,14 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
           as int);
 
   @override
-  _i4.Future<dynamic> post(
+  void setPostgrestService(_i4.PostgrestService? postgrestService) =>
+      super.noSuchMethod(
+        Invocation.method(#setPostgrestService, [postgrestService]),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i5.Future<dynamic> post(
     String? endpoint,
     Map<String, dynamic>? body, {
     String? overrideBaseUrl,
@@ -61,12 +69,12 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
               [endpoint, body],
               {#overrideBaseUrl: overrideBaseUrl},
             ),
-            returnValue: _i4.Future<dynamic>.value(),
+            returnValue: _i5.Future<dynamic>.value(),
           )
-          as _i4.Future<dynamic>);
+          as _i5.Future<dynamic>);
 
   @override
-  _i4.Future<dynamic> put(
+  _i5.Future<dynamic> put(
     String? endpoint,
     Map<String, dynamic>? body, {
     String? overrideBaseUrl,
@@ -77,12 +85,12 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
               [endpoint, body],
               {#overrideBaseUrl: overrideBaseUrl},
             ),
-            returnValue: _i4.Future<dynamic>.value(),
+            returnValue: _i5.Future<dynamic>.value(),
           )
-          as _i4.Future<dynamic>);
+          as _i5.Future<dynamic>);
 
   @override
-  _i4.Future<dynamic> delete(
+  _i5.Future<dynamic> delete(
     String? endpoint, {
     Map<String, dynamic>? body,
     String? overrideBaseUrl,
@@ -93,27 +101,27 @@ class MockHttpClient extends _i1.Mock implements _i2.HttpClient {
               [endpoint],
               {#body: body, #overrideBaseUrl: overrideBaseUrl},
             ),
-            returnValue: _i4.Future<dynamic>.value(),
+            returnValue: _i5.Future<dynamic>.value(),
           )
-          as _i4.Future<dynamic>);
+          as _i5.Future<dynamic>);
 
   @override
-  _i4.Future<dynamic> get(String? endpoint, {String? overrideBaseUrl}) =>
+  _i5.Future<dynamic> get(String? endpoint, {String? overrideBaseUrl}) =>
       (super.noSuchMethod(
             Invocation.method(
               #get,
               [endpoint],
               {#overrideBaseUrl: overrideBaseUrl},
             ),
-            returnValue: _i4.Future<dynamic>.value(),
+            returnValue: _i5.Future<dynamic>.value(),
           )
-          as _i4.Future<dynamic>);
+          as _i5.Future<dynamic>);
 
   @override
-  _i4.Future<_i5.Uint8List> getBytes(String? endpoint) =>
+  _i5.Future<_i6.Uint8List> getBytes(String? endpoint) =>
       (super.noSuchMethod(
             Invocation.method(#getBytes, [endpoint]),
-            returnValue: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+            returnValue: _i5.Future<_i6.Uint8List>.value(_i6.Uint8List(0)),
           )
-          as _i4.Future<_i5.Uint8List>);
+          as _i5.Future<_i6.Uint8List>);
 }
