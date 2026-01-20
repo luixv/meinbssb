@@ -47,13 +47,28 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
   final TextEditingController _bicController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _bankDataLoading = false;
+  final FocusNode _yearDropdownFocusNode = FocusNode();
+  bool _yearDropdownFocused = false;
 
   @override
   void initState() {
     super.initState();
-    _currentYear = DateTime.now().year;
-    _availableYears = [_currentYear, _currentYear - 1];
-    _selectedYear = _currentYear;
+    final now = DateTime.now();
+    _currentYear = now.year;
+    
+    // Calculate available years: 2024 to current year (only from October onwards)
+    const startYear = 2024;
+    final isOctoberOrLater = now.month >= 10;
+    final endYear = isOctoberOrLater ? _currentYear : _currentYear - 1;
+    
+    _availableYears = List.generate(
+      endYear - startYear + 1,
+      (index) => startYear + index,
+    ).reversed.toList();
+    
+    // Set selected year to the most recent available year
+    _selectedYear = _availableYears.isNotEmpty ? _availableYears.first : _currentYear;
+    _yearDropdownFocusNode.addListener(_handleYearDropdownFocus);
     _kontoinhaberController.addListener(_updateBankDataResult);
     _ibanController.addListener(_updateBankDataResult);
     _bicController.addListener(_updateBankDataResult);
@@ -65,6 +80,9 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
 
   @override
   void dispose() {
+    _yearDropdownFocusNode
+      ..removeListener(_handleYearDropdownFocus)
+      ..dispose();
     _kontoinhaberController
       ..removeListener(_updateBankDataResult)
       ..dispose();
@@ -75,6 +93,12 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
       ..removeListener(_updateBankDataResult)
       ..dispose();
     super.dispose();
+  }
+
+  void _handleYearDropdownFocus() {
+    setState(() {
+      _yearDropdownFocused = _yearDropdownFocusNode.hasFocus;
+    });
   }
 
   void _updateBankDataResult() {
@@ -186,8 +210,8 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
                           width: 220,
-                          child: _KeyboardFocusDropdown<int>(
-                            label: 'Jahr',
+                          child: DropdownButtonFormField<int>(
+                            focusNode: _yearDropdownFocusNode,
                             value: _selectedYear,
                             items: _availableYears
                                 .map(
@@ -210,6 +234,27 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                 _fetchGewinne();
                               }
                             },
+                            decoration: UIStyles.formInputDecoration.copyWith(
+                              labelText: 'Jahr',
+                              fillColor: _yearDropdownFocused &&
+                                      FocusManager.instance.highlightMode ==
+                                          FocusHighlightMode.traditional
+                                  ? Colors.yellow.shade50
+                                  : UIStyles.formInputDecoration.fillColor,
+                              focusedBorder: _yearDropdownFocused &&
+                                      FocusManager.instance.highlightMode ==
+                                          FocusHighlightMode.traditional
+                                  ? OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        UIConstants.cornerRadius,
+                                      ),
+                                      borderSide: BorderSide(
+                                        color: Colors.yellow.shade700,
+                                        width: 2.5,
+                                      ),
+                                    )
+                                  : UIStyles.formInputDecoration.focusedBorder,
+                            ),
                           ),
                         ),
                       ),
