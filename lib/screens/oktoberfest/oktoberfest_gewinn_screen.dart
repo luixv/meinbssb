@@ -198,8 +198,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                         alignment: Alignment.centerLeft,
                         child: SizedBox(
                           width: 220,
-                          child: _KeyboardFocusDropdown<int>(
-                            label: 'Jahr',
+                          child: DropdownButtonFormField<int>(
                             value: _selectedYear,
                             items: _availableYears
                                 .map(
@@ -222,6 +221,9 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                                 _fetchGewinne();
                               }
                             },
+                            decoration: UIStyles.formInputDecoration.copyWith(
+                              labelText: 'Jahr',
+                            ),
                           ),
                         ),
                       ),
