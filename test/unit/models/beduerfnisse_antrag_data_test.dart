@@ -17,7 +17,7 @@ void main() {
         'wbk_art': 'gruen',
         'beduerfnisart': 'kurzwaffe',
         'anzahl_waffen': 1,
-        'verein_genehmigt': true,
+        'vereinsnummer': 12345,
         'email': 'test2@example.com',
         'bankdaten': {'iban': 'DE0987654321'},
         'abbuchung_erfolgt': true,
@@ -35,7 +35,7 @@ void main() {
       expect(antrag.wbkArt, 'gruen');
       expect(antrag.beduerfnisart, 'kurzwaffe');
       expect(antrag.anzahlWaffen, 1);
-      expect(antrag.vereinGenehmigt, true);
+      expect(antrag.vereinsnummer, 12345);
       expect(antrag.email, 'test2@example.com');
       expect(antrag.bankdaten, {'iban': 'DE0987654321'});
       expect(antrag.abbuchungErfolgt, true);
@@ -52,7 +52,7 @@ void main() {
         'wbk_art': null,
         'beduerfnisart': null,
         'anzahl_waffen': null,
-        'verein_genehmigt': null,
+        'vereinsnummer': null,
         'email': null,
         'bankdaten': null,
         'abbuchung_erfolgt': null,
@@ -67,7 +67,7 @@ void main() {
       expect(antrag.wbkArt, isNull);
       expect(antrag.beduerfnisart, isNull);
       expect(antrag.anzahlWaffen, isNull);
-      expect(antrag.vereinGenehmigt, false); // Default value
+      expect(antrag.vereinsnummer, isNull);
       expect(antrag.email, isNull);
       expect(antrag.bankdaten, isNull);
       expect(antrag.abbuchungErfolgt, false); // Default value
@@ -80,12 +80,10 @@ void main() {
         'antragsnummer': 100002,
         'person_id': 103,
         'wbk_neu': null,
-        'verein_genehmigt': null,
         'abbuchung_erfolgt': null,
       };
       final antrag = BeduerfnisseAntrag.fromJson(json);
       expect(antrag.wbkNeu, false);
-      expect(antrag.vereinGenehmigt, false);
       expect(antrag.abbuchungErfolgt, false);
     });
 
@@ -118,7 +116,7 @@ void main() {
         wbkArt: 'gelb',
         beduerfnisart: 'langwaffe',
         anzahlWaffen: 2,
-        vereinGenehmigt: false,
+        vereinsnummer: 67890,
         email: 'test@example.com',
         bankdaten: null,
         abbuchungErfolgt: false,
@@ -132,7 +130,7 @@ void main() {
       expect(antrag.wbkArt, 'gelb');
       expect(antrag.beduerfnisart, 'langwaffe');
       expect(antrag.anzahlWaffen, 2);
-      expect(antrag.vereinGenehmigt, false);
+      expect(antrag.vereinsnummer, 67890);
       expect(antrag.email, 'test@example.com');
       expect(antrag.bankdaten, isNull);
       expect(antrag.abbuchungErfolgt, false);
@@ -156,7 +154,7 @@ void main() {
         wbkArt: 'gelb',
         beduerfnisart: 'langwaffe',
         anzahlWaffen: 2,
-        vereinGenehmigt: false,
+        vereinsnummer: 67890,
         email: 'test@example.com',
         bankdaten: bankdaten,
         abbuchungErfolgt: false,
@@ -174,7 +172,7 @@ void main() {
       expect(json['WBK_ART'], 'gelb');
       expect(json['BEDUERFNISART'], 'langwaffe');
       expect(json['ANZAHL_WAFFEN'], 2);
-      expect(json['VEREIN_GENEHMIGT'], false);
+      expect(json['VEREINSNUMMER'], 67890);
       expect(json['EMAIL'], 'test@example.com');
       expect(json['BANKDATEN'], bankdaten);
       expect(json['ABBUCHUNG_ERFOLGT'], false);
