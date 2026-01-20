@@ -51,9 +51,21 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
   @override
   void initState() {
     super.initState();
-    _currentYear = DateTime.now().year;
-    _availableYears = [_currentYear, _currentYear - 1];
-    _selectedYear = _currentYear;
+    final now = DateTime.now();
+    _currentYear = now.year;
+    
+    // Calculate available years: 2024 to current year (only from October onwards)
+    const startYear = 2024;
+    final isOctoberOrLater = now.month >= 10;
+    final endYear = isOctoberOrLater ? _currentYear : _currentYear - 1;
+    
+    _availableYears = List.generate(
+      endYear - startYear + 1,
+      (index) => startYear + index,
+    ).reversed.toList();
+    
+    // Set selected year to the most recent available year
+    _selectedYear = _availableYears.isNotEmpty ? _availableYears.first : _currentYear;
     _kontoinhaberController.addListener(_updateBankDataResult);
     _ibanController.addListener(_updateBankDataResult);
     _bicController.addListener(_updateBankDataResult);

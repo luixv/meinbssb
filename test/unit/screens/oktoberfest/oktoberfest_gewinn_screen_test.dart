@@ -19,6 +19,7 @@ void main() {
   late UserData userData;
   late String passnummer;
   late int currentYear;
+  late int selectedYear;
 
   setUp(() {
     mockApiService = MockApiService();
@@ -35,6 +36,10 @@ void main() {
       mitgliedschaftId: 1,
     );
     currentYear = DateTime.now().year;
+    // Calculate the selected year based on whether we're in October or later
+    final now = DateTime.now();
+    final isOctoberOrLater = now.month >= 10;
+    selectedYear = isOctoberOrLater ? currentYear : currentYear - 1;
 
     when(mockApiService.fetchGewinne(any, any))
         .thenAnswer((_) async => <Gewinn>[]);
@@ -65,7 +70,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
-      verify(mockApiService.fetchGewinne(currentYear, passnummer)).called(1);
+      verify(mockApiService.fetchGewinne(selectedYear, passnummer)).called(1);
     });
 
     testWidgets('should fetch bank data on init', (tester) async {
@@ -83,11 +88,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(DropdownButtonFormField<int>), findsOneWidget);
-      expect(find.text('$currentYear'), findsOneWidget);
+      expect(find.text('$selectedYear'), findsOneWidget);
     });
 
     testWidgets('should fetch Gewinne when year changes', (tester) async {
-      when(mockApiService.fetchGewinne(currentYear - 1, passnummer))
+      // Pick a different year to change to
+      final differentYear = selectedYear == 2024 ? 2024 : selectedYear - 1;
+      when(mockApiService.fetchGewinne(differentYear, passnummer))
           .thenAnswer((_) async => <Gewinn>[]);
 
       await tester.pumpWidget(buildTestWidget());
@@ -95,11 +102,55 @@ void main() {
 
       await tester.tap(find.byType(DropdownButtonFormField<int>));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('${currentYear - 1}').last);
+      await tester.tap(find.text('$differentYear').last);
       await tester.pumpAndSettle();
 
-      verify(mockApiService.fetchGewinne(currentYear - 1, passnummer))
+      verify(mockApiService.fetchGewinne(differentYear, passnummer))
           .called(1);
+    });
+
+    testWidgets('should include years from 2024 to current available year', (tester) async {
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap to open dropdown
+      await tester.tap(find.byType(DropdownButtonFormField<int>));
+      await tester.pumpAndSettle();
+
+      // Verify 2024 is always available
+      expect(find.text('2024').last, findsOneWidget);
+      
+      // Verify the selected year is available
+      expect(find.text('$selectedYear').last, findsOneWidget);
+    });
+
+    testWidgets('should not include current year before October', (tester) async {
+      final now = DateTime.now();
+      if (now.month < 10) {
+        await tester.pumpWidget(buildTestWidget());
+        await tester.pumpAndSettle();
+
+        // selectedYear should be currentYear - 1 before October
+        expect(selectedYear, equals(currentYear - 1));
+        
+        // Verify the dropdown shows the correct selected year
+        expect(find.text('$selectedYear'), findsOneWidget);
+      }
+    });
+
+    testWidgets('should include current year from October onwards', (tester) async {
+      final now = DateTime.now();
+      if (now.month >= 10) {
+        await tester.pumpWidget(buildTestWidget());
+        await tester.pumpAndSettle();
+
+        // Tap to open dropdown
+        await tester.tap(find.byType(DropdownButtonFormField<int>));
+        await tester.pumpAndSettle();
+
+        // Current year should be in the list
+        expect(find.text('$currentYear').last, findsOneWidget);
+      }
     });
   });
 
@@ -132,7 +183,7 @@ void main() {
         (_) async => [
           Gewinn(
             gewinnId: 1,
-            jahr: currentYear,
+            jahr: selectedYear,
             isSachpreis: false,
             geldpreis: 250,
             sachpreis: '',
@@ -167,7 +218,7 @@ void main() {
         (_) async => [
           Gewinn(
             gewinnId: 1,
-            jahr: currentYear,
+            jahr: selectedYear,
             isSachpreis: false,
             geldpreis: 100,
             sachpreis: '',
