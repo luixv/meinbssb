@@ -15,6 +15,30 @@ enum BeduerfnisAntragStatus {
 }
 
 extension BeduerfnisAntragStatusExtension on BeduerfnisAntragStatus {
+  /// Convert enum to database ID
+  int toId() {
+    switch (this) {
+      case BeduerfnisAntragStatus.entwurf:
+        return 1;
+      case BeduerfnisAntragStatus.eingereichtAmVerein:
+        return 2;
+      case BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein:
+        return 3;
+      case BeduerfnisAntragStatus.genehmightVonVerein:
+        return 4;
+      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein:
+        return 5;
+      case BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied:
+        return 6;
+      case BeduerfnisAntragStatus.eingereichtAnBSSB:
+        return 7;
+      case BeduerfnisAntragStatus.genehmight:
+        return 8;
+      case BeduerfnisAntragStatus.abgelehnt:
+        return 9;
+    }
+  }
+
   /// Convert enum to German string representation for API/database
   String toGermanString() {
     switch (this) {
@@ -36,6 +60,32 @@ extension BeduerfnisAntragStatusExtension on BeduerfnisAntragStatus {
         return 'Genehmight';
       case BeduerfnisAntragStatus.abgelehnt:
         return 'Abgelehnt';
+    }
+  }
+
+  /// Convert database ID to enum
+  static BeduerfnisAntragStatus? fromId(int? id) {
+    switch (id) {
+      case 1:
+        return BeduerfnisAntragStatus.entwurf;
+      case 2:
+        return BeduerfnisAntragStatus.eingereichtAmVerein;
+      case 3:
+        return BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein;
+      case 4:
+        return BeduerfnisAntragStatus.genehmightVonVerein;
+      case 5:
+        return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein;
+      case 6:
+        return BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied;
+      case 7:
+        return BeduerfnisAntragStatus.eingereichtAnBSSB;
+      case 8:
+        return BeduerfnisAntragStatus.genehmight;
+      case 9:
+        return BeduerfnisAntragStatus.abgelehnt;
+      default:
+        return null;
     }
   }
 

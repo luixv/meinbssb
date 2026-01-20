@@ -67,12 +67,13 @@ CREATE TABLE IF NOT EXISTS bed_auswahl_typ (
 
 -- Create bed_auswahl table (Selection Data Values)
 CREATE TABLE IF NOT EXISTS bed_auswahl (
-    id          SERIAL PRIMARY KEY,
-    typ_id      INT NOT NULL REFERENCES bed_auswahl_typ(id) ON DELETE CASCADE,
-    kuerzel     TEXT NOT NULL,
-    beschreibung TEXT NOT NULL,
-    created_at  TIMESTAMP DEFAULT now(),
-    deleted_at  TIMESTAMP,
+    id                  SERIAL PRIMARY KEY,
+    typ_id              INT NOT NULL REFERENCES bed_auswahl_typ(id) ON DELETE CASCADE,
+    kuerzel             TEXT NOT NULL,
+    beschreibung        TEXT NOT NULL,
+    sort_reihenfolge    INT,
+    created_at          TIMESTAMP DEFAULT now(),
+    deleted_at          TIMESTAMP,
     CONSTRAINT uq_typ_kuerzel UNIQUE (typ_id, kuerzel)
 );
 
@@ -170,10 +171,24 @@ CREATE TABLE IF NOT EXISTS bed_antrag (
     wbk_art             TEXT CHECK (wbk_art IN ('yellow', 'green')),
     beduerfnisart       TEXT CHECK (beduerfnisart IN ('langwaffe', 'kurzwaffe')),
     anzahl_waffen       INTEGER,
-    verein_genehmigt    BOOLEAN DEFAULT false,
+    vereinsnummer       BIGINT,
     email               TEXT,
     bankdaten           JSONB,
     abbuchung_erfolgt   BOOLEAN DEFAULT false,
+    bemerkung           TEXT
+);
+
+-- Create bed_wettkampf table (Competition Records)
+CREATE TABLE IF NOT EXISTS bed_wettkampf (
+    id                  SERIAL PRIMARY KEY,
+    created_at          TIMESTAMP DEFAULT now(),
+    changed_at          TIMESTAMP,
+    deleted_at          TIMESTAMP,
+    antragsnummer       BIGINT NOT NULL,
+    schiessdatum        DATE NOT NULL,
+    wettkampfart        VARCHAR(255) NOT NULL,
+    disziplin_id        INT NOT NULL REFERENCES bed_auswahl(id),
+    wettkampfergebnis   NUMERIC(7,1),
     bemerkung           TEXT
 );
 
@@ -188,13 +203,14 @@ CREATE TABLE IF NOT EXISTS his_bed_auswahl_typ (
 );
 
 CREATE TABLE IF NOT EXISTS his_bed_auswahl (
-    id          INT,
-    typ_id      INT,
-    kuerzel     TEXT,
-    beschreibung TEXT,
-    created_at  TIMESTAMP,
-    deleted_at  TIMESTAMP,
-    action      TEXT NOT NULL
+    id                  INT,
+    typ_id              INT,
+    kuerzel             TEXT,
+    beschreibung        TEXT,
+    sort_reihenfolge    INT,
+    created_at          TIMESTAMP,
+    deleted_at          TIMESTAMP,
+    action              TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS his_bed_datei (
@@ -263,10 +279,24 @@ CREATE TABLE IF NOT EXISTS his_bed_antrag (
     wbk_art             TEXT,
     beduerfnisart       TEXT,
     anzahl_waffen       INTEGER,
-    verein_genehmigt    BOOLEAN,
+    vereinsnummer       BIGINT,
     email               TEXT,
     bankdaten           JSONB,
     abbuchung_erfolgt   BOOLEAN,
+    bemerkung           TEXT,
+    action              TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS his_bed_wettkampf (
+    id                  INT,
+    created_at          TIMESTAMP,
+    changed_at          TIMESTAMP,
+    deleted_at          TIMESTAMP,
+    antragsnummer       BIGINT,
+    schiessdatum        DATE,
+    wettkampfart        VARCHAR(255),
+    disziplin_id        INT,
+    wettkampfergebnis   NUMERIC(7,1),
     bemerkung           TEXT,
     action              TEXT NOT NULL
 );
@@ -291,13 +321,13 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_his_bed_auswahl() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        INSERT INTO his_bed_auswahl VALUES (NEW.id, NEW.typ_id, NEW.kuerzel, NEW.beschreibung, NEW.created_at, NEW.deleted_at, 'insert');
+        INSERT INTO his_bed_auswahl VALUES (NEW.id, NEW.typ_id, NEW.kuerzel, NEW.beschreibung, NEW.sort_reihenfolge, NEW.created_at, NEW.deleted_at, 'insert');
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
-        INSERT INTO his_bed_auswahl VALUES (OLD.id, OLD.typ_id, OLD.kuerzel, OLD.beschreibung, OLD.created_at, OLD.deleted_at, 'update');
+        INSERT INTO his_bed_auswahl VALUES (OLD.id, OLD.typ_id, OLD.kuerzel, OLD.beschreibung, OLD.sort_reihenfolge, OLD.created_at, OLD.deleted_at, 'update');
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
-        INSERT INTO his_bed_auswahl VALUES (OLD.id, OLD.typ_id, OLD.kuerzel, OLD.beschreibung, OLD.created_at, OLD.deleted_at, 'delete');
+        INSERT INTO his_bed_auswahl VALUES (OLD.id, OLD.typ_id, OLD.kuerzel, OLD.beschreibung, OLD.sort_reihenfolge, OLD.created_at, OLD.deleted_at, 'delete');
         RETURN OLD;
     END IF;
     RETURN NULL;
@@ -371,13 +401,13 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_his_bed_antrag() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        INSERT INTO his_bed_antrag VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.person_id, NEW.status_id, NEW.wbk_neu, NEW.wbk_art, NEW.beduerfnisart, NEW.anzahl_waffen, NEW.verein_genehmigt, NEW.email, NEW.bankdaten, NEW.abbuchung_erfolgt, NEW.bemerkung, 'insert');
+        INSERT INTO his_bed_antrag VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.person_id, NEW.status_id, NEW.wbk_neu, NEW.wbk_art, NEW.beduerfnisart, NEW.anzahl_waffen, NEW.vereinsnummer, NEW.email, NEW.bankdaten, NEW.abbuchung_erfolgt, NEW.bemerkung, 'insert');
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
-        INSERT INTO his_bed_antrag VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.person_id, OLD.status_id, OLD.wbk_neu, OLD.wbk_art, OLD.beduerfnisart, OLD.anzahl_waffen, OLD.verein_genehmigt, OLD.email, OLD.bankdaten, OLD.abbuchung_erfolgt, OLD.bemerkung, 'update');
+        INSERT INTO his_bed_antrag VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.person_id, OLD.status_id, OLD.wbk_neu, OLD.wbk_art, OLD.beduerfnisart, OLD.anzahl_waffen, OLD.vereinsnummer, OLD.email, OLD.bankdaten, OLD.abbuchung_erfolgt, OLD.bemerkung, 'update');
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
-        INSERT INTO his_bed_antrag VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.person_id, OLD.status_id, OLD.wbk_neu, OLD.wbk_art, OLD.beduerfnisart, OLD.anzahl_waffen, OLD.verein_genehmigt, OLD.email, OLD.bankdaten, OLD.abbuchung_erfolgt, OLD.bemerkung, 'delete');
+        INSERT INTO his_bed_antrag VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.person_id, OLD.status_id, OLD.wbk_neu, OLD.wbk_art, OLD.beduerfnisart, OLD.anzahl_waffen, OLD.vereinsnummer, OLD.email, OLD.bankdaten, OLD.abbuchung_erfolgt, OLD.bemerkung, 'delete');
         RETURN OLD;
     END IF;
     RETURN NULL;
@@ -410,6 +440,22 @@ BEGIN
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
         INSERT INTO his_bed_antrag_person VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.person_id, OLD.status_id, OLD.vorname, OLD.nachname, OLD.vereinsname, 'delete');
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_his_bed_wettkampf() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO his_bed_wettkampf VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.schiessdatum, NEW.wettkampfart, NEW.disziplin_id, NEW.wettkampfergebnis, NEW.bemerkung, 'insert');
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO his_bed_wettkampf VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.wettkampfart, OLD.disziplin_id, OLD.wettkampfergebnis, OLD.bemerkung, 'update');
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO his_bed_wettkampf VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.schiessdatum, OLD.wettkampfart, OLD.disziplin_id, OLD.wettkampfergebnis, OLD.bemerkung, 'delete');
         RETURN OLD;
     END IF;
     RETURN NULL;
@@ -461,6 +507,11 @@ DROP TRIGGER IF EXISTS trg_his_bed_antrag_person ON bed_antrag_person;
 CREATE TRIGGER trg_his_bed_antrag_person
 AFTER INSERT OR UPDATE OR DELETE ON bed_antrag_person
 FOR EACH ROW EXECUTE FUNCTION fn_his_bed_antrag_person();
+
+DROP TRIGGER IF EXISTS trg_his_bed_wettkampf ON bed_wettkampf;
+CREATE TRIGGER trg_his_bed_wettkampf
+AFTER INSERT OR UPDATE OR DELETE ON bed_wettkampf
+FOR EACH ROW EXECUTE FUNCTION fn_his_bed_wettkampf();
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -538,6 +589,13 @@ CREATE INDEX IF NOT EXISTS idx_bed_antrag_person_person_id ON bed_antrag_person(
 CREATE INDEX IF NOT EXISTS idx_bed_antrag_person_status_id ON bed_antrag_person(status_id);
 CREATE INDEX IF NOT EXISTS idx_bed_antrag_person_deleted_at ON bed_antrag_person(deleted_at) WHERE deleted_at IS NULL;
 
+-- Indexes for bed_wettkampf table
+CREATE INDEX IF NOT EXISTS idx_bed_wettkampf_antragsnummer ON bed_wettkampf(antragsnummer);
+CREATE INDEX IF NOT EXISTS idx_bed_wettkampf_schiessdatum ON bed_wettkampf(schiessdatum);
+CREATE INDEX IF NOT EXISTS idx_bed_wettkampf_disziplin_id ON bed_wettkampf(disziplin_id);
+CREATE INDEX IF NOT EXISTS idx_bed_wettkampf_deleted_at ON bed_wettkampf(deleted_at) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_bed_wettkampf_antragsnummer_schiessdatum ON bed_wettkampf(antragsnummer, schiessdatum);
+
 -- Grant privileges to main app user (replace bssbuser with your POSTGRES_USER)
 GRANT CONNECT ON DATABASE bssbdb TO bssbuser;
 GRANT USAGE ON SCHEMA public TO bssbuser;
@@ -582,3 +640,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON bed_datei_zuord TO web_anon;
 -- Grant access to bed_antrag_person table
 GRANT SELECT, INSERT, UPDATE ON bed_antrag_person TO bssbuser;
 GRANT SELECT, INSERT, UPDATE ON bed_antrag_person TO web_anon;
+
+-- Grant access to bed_wettkampf table
+GRANT SELECT, INSERT, UPDATE, DELETE ON bed_wettkampf TO bssbuser;
+GRANT SELECT, INSERT, UPDATE, DELETE ON bed_wettkampf TO web_anon;

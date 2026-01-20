@@ -563,7 +563,7 @@ class _BeduerfnissantragStep1ScreenState
             wbkArt: _wbkColor,
             beduerfnisart: beduerfnisartValue,
             anzahlWaffen: int.tryParse(_anzahlController.text) ?? 0,
-            vereinGenehmigt: antrag.vereinGenehmigt,
+            vereinsnummer: antrag.vereinsnummer,
             email: antrag.email,
             bankdaten: antrag.bankdaten,
             abbuchungErfolgt: antrag.abbuchungErfolgt,
@@ -597,12 +597,12 @@ class _BeduerfnissantragStep1ScreenState
         try {
           final newAntrag = await apiService.createBedAntrag(
             personId: widget.userData!.personId,
-            statusId: BeduerfnisAntragStatus.entwurf,
+            statusId: BeduerfnisAntragStatus.entwurf.toId(),
             wbkNeu: _wbkType == 'neu',
             wbkArt: _wbkColor, // 'gelb' or 'gruen'
             beduerfnisart: beduerfnisartValue, // 'kurzwaffe' or 'langwaffe'
             anzahlWaffen: int.tryParse(_anzahlController.text) ?? 0,
-            vereinGenehmigt: false,
+            vereinsnummer: null,
             email: widget.userData?.email,
             abbuchungErfolgt: false,
           );

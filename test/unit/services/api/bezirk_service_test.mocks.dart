@@ -4,11 +4,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
-import 'dart:typed_data' as _i5;
+import 'dart:typed_data' as _i6;
 
-import 'package:meinbssb/services/core/cache_service.dart' as _i6;
+import 'package:meinbssb/services/core/cache_service.dart' as _i7;
 import 'package:meinbssb/services/core/http_client.dart' as _i3;
-import 'package:meinbssb/services/core/network_service.dart' as _i7;
+import 'package:meinbssb/services/core/network_service.dart' as _i8;
+import 'package:meinbssb/services/core/postgrest_service.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
 
@@ -60,6 +61,13 @@ class MockHttpClient extends _i1.Mock implements _i3.HttpClient {
   int get serverTimeout =>
       (super.noSuchMethod(Invocation.getter(#serverTimeout), returnValue: 0)
           as int);
+
+  @override
+  void setPostgrestService(_i5.PostgrestService? postgrestService) =>
+      super.noSuchMethod(
+        Invocation.method(#setPostgrestService, [postgrestService]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   _i2.Future<dynamic> post(
@@ -122,18 +130,18 @@ class MockHttpClient extends _i1.Mock implements _i3.HttpClient {
           as _i2.Future<dynamic>);
 
   @override
-  _i2.Future<_i5.Uint8List> getBytes(String? endpoint) =>
+  _i2.Future<_i6.Uint8List> getBytes(String? endpoint) =>
       (super.noSuchMethod(
             Invocation.method(#getBytes, [endpoint]),
-            returnValue: _i2.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+            returnValue: _i2.Future<_i6.Uint8List>.value(_i6.Uint8List(0)),
           )
-          as _i2.Future<_i5.Uint8List>);
+          as _i2.Future<_i6.Uint8List>);
 }
 
 /// A class which mocks [CacheService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCacheService extends _i1.Mock implements _i6.CacheService {
+class MockCacheService extends _i1.Mock implements _i7.CacheService {
   MockCacheService() {
     _i1.throwOnMissingStub(this);
   }
@@ -326,7 +334,7 @@ class MockCacheService extends _i1.Mock implements _i6.CacheService {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i7.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i8.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }

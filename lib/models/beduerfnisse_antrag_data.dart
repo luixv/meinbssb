@@ -61,9 +61,7 @@ class BeduerfnisseAntrag {
       beduerfnisart:
           (json['BEDUERFNISART'] ?? json['beduerfnisart']) as String?,
       anzahlWaffen: (json['ANZAHL_WAFFEN'] ?? json['anzahl_waffen']) as int?,
-      vereinGenehmigt:
-          (json['VEREIN_GENEHMIGT'] ?? json['verein_genehmigt']) as bool? ??
-          false,
+      vereinsnummer: (json['VEREINSNUMMER'] ?? json['vereinsnummer']) as int?,
       email: (json['EMAIL'] ?? json['email']) as String?,
       bankdaten:
           (json['BANKDATEN'] ?? json['bankdaten']) as Map<String, dynamic>?,
@@ -87,7 +85,7 @@ class BeduerfnisseAntrag {
     this.wbkArt,
     this.beduerfnisart,
     this.anzahlWaffen,
-    this.vereinGenehmigt,
+    this.vereinsnummer,
     this.email,
     this.bankdaten,
     this.abbuchungErfolgt,
@@ -127,8 +125,8 @@ class BeduerfnisseAntrag {
   /// The number of weapons.
   final int? anzahlWaffen;
 
-  /// Whether the club has approved.
-  final bool? vereinGenehmigt;
+  /// The club number (Vereinsnummer).
+  final int? vereinsnummer;
 
   /// The email address.
   final String? email;
@@ -155,7 +153,7 @@ class BeduerfnisseAntrag {
     String? wbkArt,
     String? beduerfnisart,
     int? anzahlWaffen,
-    bool? vereinGenehmigt,
+    int? vereinsnummer,
     String? email,
     Map<String, dynamic>? bankdaten,
     bool? abbuchungErfolgt,
@@ -173,7 +171,7 @@ class BeduerfnisseAntrag {
       wbkArt: wbkArt ?? this.wbkArt,
       beduerfnisart: beduerfnisart ?? this.beduerfnisart,
       anzahlWaffen: anzahlWaffen ?? this.anzahlWaffen,
-      vereinGenehmigt: vereinGenehmigt ?? this.vereinGenehmigt,
+      vereinsnummer: vereinsnummer ?? this.vereinsnummer,
       email: email ?? this.email,
       bankdaten: bankdaten ?? this.bankdaten,
       abbuchungErfolgt: abbuchungErfolgt ?? this.abbuchungErfolgt,
@@ -195,7 +193,7 @@ class BeduerfnisseAntrag {
       'WBK_ART': wbkArt,
       'BEDUERFNISART': beduerfnisart,
       'ANZAHL_WAFFEN': anzahlWaffen,
-      'VEREIN_GENEHMIGT': vereinGenehmigt,
+      'VEREINSNUMMER': vereinsnummer,
       'EMAIL': email,
       'BANKDATEN': bankdaten,
       'ABBUCHUNG_ERFOLGT': abbuchungErfolgt,

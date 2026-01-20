@@ -3,15 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
-import 'dart:typed_data' as _i7;
+import 'dart:async' as _i7;
+import 'dart:typed_data' as _i8;
 
 import 'package:mailer/mailer.dart' as _i2;
-import 'package:mailer/smtp_server.dart' as _i10;
-import 'package:meinbssb/services/core/calendar_service.dart' as _i8;
+import 'package:mailer/smtp_server.dart' as _i11;
+import 'package:meinbssb/services/core/calendar_service.dart' as _i9;
 import 'package:meinbssb/services/core/config_service.dart' as _i3;
-import 'package:meinbssb/services/core/email_service.dart' as _i9;
+import 'package:meinbssb/services/core/email_service.dart' as _i10;
 import 'package:meinbssb/services/core/http_client.dart' as _i4;
+import 'package:meinbssb/services/core/postgrest_service.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
 
@@ -88,7 +89,14 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
           as int);
 
   @override
-  _i6.Future<dynamic> post(
+  void setPostgrestService(_i6.PostgrestService? postgrestService) =>
+      super.noSuchMethod(
+        Invocation.method(#setPostgrestService, [postgrestService]),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i7.Future<dynamic> post(
     String? endpoint,
     Map<String, dynamic>? body, {
     String? overrideBaseUrl,
@@ -99,12 +107,12 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
               [endpoint, body],
               {#overrideBaseUrl: overrideBaseUrl},
             ),
-            returnValue: _i6.Future<dynamic>.value(),
+            returnValue: _i7.Future<dynamic>.value(),
           )
-          as _i6.Future<dynamic>);
+          as _i7.Future<dynamic>);
 
   @override
-  _i6.Future<dynamic> put(
+  _i7.Future<dynamic> put(
     String? endpoint,
     Map<String, dynamic>? body, {
     String? overrideBaseUrl,
@@ -115,12 +123,12 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
               [endpoint, body],
               {#overrideBaseUrl: overrideBaseUrl},
             ),
-            returnValue: _i6.Future<dynamic>.value(),
+            returnValue: _i7.Future<dynamic>.value(),
           )
-          as _i6.Future<dynamic>);
+          as _i7.Future<dynamic>);
 
   @override
-  _i6.Future<dynamic> delete(
+  _i7.Future<dynamic> delete(
     String? endpoint, {
     Map<String, dynamic>? body,
     String? overrideBaseUrl,
@@ -131,41 +139,41 @@ class MockHttpClient extends _i1.Mock implements _i4.HttpClient {
               [endpoint],
               {#body: body, #overrideBaseUrl: overrideBaseUrl},
             ),
-            returnValue: _i6.Future<dynamic>.value(),
+            returnValue: _i7.Future<dynamic>.value(),
           )
-          as _i6.Future<dynamic>);
+          as _i7.Future<dynamic>);
 
   @override
-  _i6.Future<dynamic> get(String? endpoint, {String? overrideBaseUrl}) =>
+  _i7.Future<dynamic> get(String? endpoint, {String? overrideBaseUrl}) =>
       (super.noSuchMethod(
             Invocation.method(
               #get,
               [endpoint],
               {#overrideBaseUrl: overrideBaseUrl},
             ),
-            returnValue: _i6.Future<dynamic>.value(),
+            returnValue: _i7.Future<dynamic>.value(),
           )
-          as _i6.Future<dynamic>);
+          as _i7.Future<dynamic>);
 
   @override
-  _i6.Future<_i7.Uint8List> getBytes(String? endpoint) =>
+  _i7.Future<_i8.Uint8List> getBytes(String? endpoint) =>
       (super.noSuchMethod(
             Invocation.method(#getBytes, [endpoint]),
-            returnValue: _i6.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
+            returnValue: _i7.Future<_i8.Uint8List>.value(_i8.Uint8List(0)),
           )
-          as _i6.Future<_i7.Uint8List>);
+          as _i7.Future<_i8.Uint8List>);
 }
 
 /// A class which mocks [CalendarService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
+class MockCalendarService extends _i1.Mock implements _i9.CalendarService {
   MockCalendarService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i6.Future<String> generateIcsFile({
+  _i7.Future<String> generateIcsFile({
     required String? eventTitle,
     required DateTime? eventDate,
     required String? location,
@@ -180,7 +188,7 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
               #description: description,
               #organizerEmail: organizerEmail,
             }),
-            returnValue: _i6.Future<String>.value(
+            returnValue: _i7.Future<String>.value(
               _i5.dummyValue<String>(
                 this,
                 Invocation.method(#generateIcsFile, [], {
@@ -193,10 +201,10 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
               ),
             ),
           )
-          as _i6.Future<String>);
+          as _i7.Future<String>);
 
   @override
-  _i6.Future<String> saveIcsFile({
+  _i7.Future<String> saveIcsFile({
     required String? icsContent,
     required String? fileName,
   }) =>
@@ -205,7 +213,7 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
               #icsContent: icsContent,
               #fileName: fileName,
             }),
-            returnValue: _i6.Future<String>.value(
+            returnValue: _i7.Future<String>.value(
               _i5.dummyValue<String>(
                 this,
                 Invocation.method(#saveIcsFile, [], {
@@ -215,10 +223,10 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
               ),
             ),
           )
-          as _i6.Future<String>);
+          as _i7.Future<String>);
 
   @override
-  _i6.Future<String> generateCalendarLink({
+  _i7.Future<String> generateCalendarLink({
     required String? eventTitle,
     required DateTime? eventDate,
     required String? location,
@@ -233,7 +241,7 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
               #description: description,
               #organizerEmail: organizerEmail,
             }),
-            returnValue: _i6.Future<String>.value(
+            returnValue: _i7.Future<String>.value(
               _i5.dummyValue<String>(
                 this,
                 Invocation.method(#generateCalendarLink, [], {
@@ -246,7 +254,7 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
               ),
             ),
           )
-          as _i6.Future<String>);
+          as _i7.Future<String>);
 
   @override
   String generateUID(String? eventTitle, DateTime? eventDate) =>
@@ -307,24 +315,24 @@ class MockCalendarService extends _i1.Mock implements _i8.CalendarService {
 /// A class which mocks [EmailSender].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEmailSender extends _i1.Mock implements _i9.EmailSender {
+class MockEmailSender extends _i1.Mock implements _i10.EmailSender {
   MockEmailSender() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i6.Future<_i2.SendReport> send(
+  _i7.Future<_i2.SendReport> send(
     _i2.Message? message,
-    _i10.SmtpServer? server,
+    _i11.SmtpServer? server,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#send, [message, server]),
-            returnValue: _i6.Future<_i2.SendReport>.value(
+            returnValue: _i7.Future<_i2.SendReport>.value(
               _FakeSendReport_0(
                 this,
                 Invocation.method(#send, [message, server]),
               ),
             ),
           )
-          as _i6.Future<_i2.SendReport>);
+          as _i7.Future<_i2.SendReport>);
 }

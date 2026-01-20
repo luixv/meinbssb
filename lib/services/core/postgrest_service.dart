@@ -3,15 +3,14 @@ import 'package:http/http.dart' as http;
 import 'logger_service.dart';
 import 'config_service.dart';
 import 'dart:typed_data'; // Import Uint8List
-import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
 import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
 import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
 import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
 import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
 
 class PostgrestService {
   PostgrestService({
@@ -646,210 +645,15 @@ class PostgrestService {
   }
 
   //
-  // --- bed_auswahl_typ Service Methods ---
+  //--- Beduerfnisse Service Methods ---
   //
 
-  /// Create a new bed_auswahl_typ entry
-  Future<BeduerfnisseAuswahlTyp> createBedAuswahlTyp({
-    required String kuerzel,
-    required String beschreibung,
-  }) async {
-    try {
-      final response = await _httpClient.post(
-        Uri.parse('${_baseUrl}bed_auswahl_typ'),
-        headers: _headers,
-        body: jsonEncode({
-          'kuerzel': kuerzel,
-          'beschreibung': beschreibung,
-          'created_at': DateTime.now().toIso8601String(),
-        }),
-      );
 
-      if (response.statusCode == 201) {
-        LoggerService.logInfo('bed_auswahl_typ created successfully');
-        final List<dynamic> result = jsonDecode(response.body);
-        if (result.isNotEmpty) {
-          return BeduerfnisseAuswahlTyp.fromJson(result[0] as Map<String, dynamic>);
-        }
-        throw Exception('Empty response from create bed_auswahl_typ');
-      } else {
-        LoggerService.logError(
-          'Failed to create bed_auswahl_typ. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        throw Exception('Failed to create bed_auswahl_typ: ${response.body}');
-      }
-    } catch (e) {
-      LoggerService.logError('Error creating bed_auswahl_typ: $e');
-      rethrow;
-    }
-  }
-
-  /// Get all bed_auswahl_typ entries (excludes deleted)
-  Future<List<BeduerfnisseAuswahlTyp>> getBedAuswahlTypen() async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_auswahl_typ?deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> types = jsonDecode(response.body);
-        return types
-            .map((json) => BeduerfnisseAuswahlTyp.fromJson(json as Map<String, dynamic>))
-            .toList();
-      } else {
-        LoggerService.logError(
-          'Failed to get bed_auswahl_typ. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return [];
-      }
-    } catch (e) {
-      LoggerService.logError('Error getting bed_auswahl_typ: $e');
-      return [];
-    }
-  }
-
-  /// Get bed_auswahl_typ by ID
-  Future<BeduerfnisseAuswahlTyp?> getBedAuswahlTypById(int id) async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_auswahl_typ?id=eq.$id&deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> types = jsonDecode(response.body);
-        if (types.isNotEmpty) {
-          return BeduerfnisseAuswahlTyp.fromJson(types[0] as Map<String, dynamic>);
-        }
-        return null;
-      } else {
-        LoggerService.logError(
-          'Failed to get bed_auswahl_typ by ID. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return null;
-      }
-    } catch (e) {
-      LoggerService.logError('Error getting bed_auswahl_typ by ID: $e');
-      return null;
-    }
-  }
-
-  /// Update bed_auswahl_typ by ID
-  Future<bool> updateBedAuswahlTyp(int id, Map<String, dynamic> data) async {
-    try {
-      final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_auswahl_typ?id=eq.$id'),
-        headers: _headers,
-        body: jsonEncode(data),
-      );
-
-      if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_auswahl_typ updated successfully');
-        return true;
-      } else {
-        LoggerService.logError(
-          'Failed to update bed_auswahl_typ. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return false;
-      }
-    } catch (e) {
-      LoggerService.logError('Error updating bed_auswahl_typ: $e');
-      return false;
-    }
-  }
-
-  /// Soft delete bed_auswahl_typ by ID
-  Future<bool> deleteBedAuswahlTyp(int id) async {
-    try {
-      final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_auswahl_typ?id=eq.$id'),
-        headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_auswahl_typ deleted successfully');
-        return true;
-      } else {
-        LoggerService.logError(
-          'Failed to delete bed_auswahl_typ. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return false;
-      }
-    } catch (e) {
-      LoggerService.logError('Error deleting bed_auswahl_typ: $e');
-      return false;
-    }
-  }
 
   //
   // --- bed_auswahl Service Methods ---
   //
 
-  /// Create a new bed_auswahl entry
-  Future<BeduerfnisseAuswahl> createBedAuswahl({
-    required int typId,
-    required String kuerzel,
-    required String beschreibung,
-  }) async {
-    try {
-      final response = await _httpClient.post(
-        Uri.parse('${_baseUrl}bed_auswahl'),
-        headers: _headers,
-        body: jsonEncode({
-          'typ_id': typId,
-          'kuerzel': kuerzel,
-          'beschreibung': beschreibung,
-          'created_at': DateTime.now().toIso8601String(),
-        }),
-      );
-
-      if (response.statusCode == 201) {
-        LoggerService.logInfo('bed_auswahl created successfully');
-        final List<dynamic> result = jsonDecode(response.body);
-        if (result.isNotEmpty) {
-          return BeduerfnisseAuswahl.fromJson(result[0] as Map<String, dynamic>);
-        }
-        throw Exception('Empty response from create bed_auswahl');
-      } else {
-        LoggerService.logError(
-          'Failed to create bed_auswahl. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        throw Exception('Failed to create bed_auswahl: ${response.body}');
-      }
-    } catch (e) {
-      LoggerService.logError('Error creating bed_auswahl: $e');
-      rethrow;
-    }
-  }
-
-  /// Get all bed_auswahl entries (excludes deleted)
-  Future<List<BeduerfnisseAuswahl>> getBedAuswahlList() async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_auswahl?deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> items = jsonDecode(response.body);
-        return items
-            .map((json) => BeduerfnisseAuswahl.fromJson(json as Map<String, dynamic>))
-            .toList();
-      } else {
-        LoggerService.logError(
-          'Failed to get bed_auswahl. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return [];
-      }
-    } catch (e) {
-      LoggerService.logError('Error getting bed_auswahl: $e');
-      return [];
-    }
-  }
 
   /// Get bed_auswahl by type ID
   Future<List<BeduerfnisseAuswahl>> getBedAuswahlByTypId(int typId) async {
@@ -875,90 +679,14 @@ class PostgrestService {
       return [];
     }
   }
-
-  /// Get bed_auswahl by ID
-  Future<BeduerfnisseAuswahl?> getBedAuswahlById(int id) async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_auswahl?id=eq.$id&deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> items = jsonDecode(response.body);
-        if (items.isNotEmpty) {
-          return BeduerfnisseAuswahl.fromJson(items[0] as Map<String, dynamic>);
-        }
-        return null;
-      } else {
-        LoggerService.logError(
-          'Failed to get bed_auswahl by ID. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return null;
-      }
-    } catch (e) {
-      LoggerService.logError('Error getting bed_auswahl by ID: $e');
-      return null;
-    }
-  }
-
-  /// Update bed_auswahl by ID
-  Future<bool> updateBedAuswahl(int id, Map<String, dynamic> data) async {
-    try {
-      final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_auswahl?id=eq.$id'),
-        headers: _headers,
-        body: jsonEncode(data),
-      );
-
-      if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_auswahl updated successfully');
-        return true;
-      } else {
-        LoggerService.logError(
-          'Failed to update bed_auswahl. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return false;
-      }
-    } catch (e) {
-      LoggerService.logError('Error updating bed_auswahl: $e');
-      return false;
-    }
-  }
-
-  /// Soft delete bed_auswahl by ID
-  Future<bool> deleteBedAuswahl(int id) async {
-    try {
-      final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_auswahl?id=eq.$id'),
-        headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_auswahl deleted successfully');
-        return true;
-      } else {
-        LoggerService.logError(
-          'Failed to delete bed_auswahl. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return false;
-      }
-    } catch (e) {
-      LoggerService.logError('Error deleting bed_auswahl: $e');
-      return false;
-    }
-  }
-
+  
   //
   // --- bed_datei Service Methods ---
   //
 
   /// Create a new bed_datei entry
   Future<Map<String, dynamic>> createBedDatei({
-    required String antragsnummer,
+    required int antragsnummer,
     required String dateiname,
     required List<int> fileBytes,
   }) async {
@@ -991,8 +719,8 @@ class PostgrestService {
   }
 
   /// Get bed_datei entries by antragsnummer (excludes deleted)
-  Future<List<Map<String, dynamic>>> getBedDateiByAntragsnummer(
-    String antragsnummer,
+  Future<List<BeduerfnisseDatei>> getBedDateiByAntragsnummer(
+    int antragsnummer,
   ) async {
     try {
       final response = await _httpClient.get(
@@ -1002,7 +730,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> files = jsonDecode(response.body);
-        return files.cast<Map<String, dynamic>>();
+        return files
+            .map((json) => BeduerfnisseDatei.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to get bed_datei by antragsnummer. Status: ${response.statusCode}, Body: ${response.body}',
@@ -1012,29 +742,6 @@ class PostgrestService {
     } catch (e) {
       LoggerService.logError('Error getting bed_datei by antragsnummer: $e');
       return [];
-    }
-  }
-
-  /// Get bed_datei by ID
-  Future<Map<String, dynamic>?> getBedDateiById(int id) async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_datei?id=eq.$id&deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> files = jsonDecode(response.body);
-        return files.isNotEmpty ? files[0] : null;
-      } else {
-        LoggerService.logError(
-          'Failed to get bed_datei by ID. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return null;
-      }
-    } catch (e) {
-      LoggerService.logError('Error getting bed_datei by ID: $e');
-      return null;
     }
   }
 
@@ -1088,10 +795,10 @@ class PostgrestService {
   }
 
   /// Soft delete bed_datei by ID
-  Future<bool> deleteBedDatei(int id) async {
+  Future<bool> deleteBedDatei(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_datei?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_datei?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
         body: jsonEncode({
           'deleted_at': DateTime.now().toIso8601String(),
@@ -1119,13 +826,14 @@ class PostgrestService {
 
   /// Create a new bed_sport entry
   Future<Map<String, dynamic>> createBedSport({
-    required String antragsnummer,
+    required int antragsnummer,
     required String schiessdatum,
     required int waffenartId,
     required int disziplinId,
     required bool training,
     int? wettkampfartId,
     double? wettkampfergebnis,
+    String? bemerkung,
   }) async {
     try {
       final data = {
@@ -1135,6 +843,7 @@ class PostgrestService {
         'disziplin_id': disziplinId,
         'training': training,
         'created_at': DateTime.now().toIso8601String(),
+        'bemerkung': bemerkung,
       };
       if (wettkampfartId != null) data['wettkampfart_id'] = wettkampfartId;
       if (wettkampfergebnis != null) data['wettkampfergebnis'] = wettkampfergebnis;
@@ -1162,8 +871,8 @@ class PostgrestService {
   }
 
   /// Get bed_sport entries by antragsnummer (excludes deleted)
-  Future<List<Map<String, dynamic>>> getBedSportByAntragsnummer(
-    String antragsnummer,
+  Future<List<BeduerfnisseSport>> getBedSportByAntragsnummer(
+    int antragsnummer,
   ) async {
     try {
       final response = await _httpClient.get(
@@ -1173,7 +882,9 @@ class PostgrestService {
 
       if (response.statusCode == 200) {
         final List<dynamic> records = jsonDecode(response.body);
-        return records.cast<Map<String, dynamic>>();
+        return records
+            .map((json) => BeduerfnisseSport.fromJson(json as Map<String, dynamic>))
+            .toList();
       } else {
         LoggerService.logError(
           'Failed to get bed_sport by antragsnummer. Status: ${response.statusCode}, Body: ${response.body}',
@@ -1183,29 +894,6 @@ class PostgrestService {
     } catch (e) {
       LoggerService.logError('Error getting bed_sport by antragsnummer: $e');
       return [];
-    }
-  }
-
-  /// Get bed_sport by ID
-  Future<Map<String, dynamic>?> getBedSportById(int id) async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_sport?id=eq.$id&deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> records = jsonDecode(response.body);
-        return records.isNotEmpty ? records[0] : null;
-      } else {
-        LoggerService.logError(
-          'Failed to get bed_sport by ID. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return null;
-      }
-    } catch (e) {
-      LoggerService.logError('Error getting bed_sport by ID: $e');
-      return null;
     }
   }
 
@@ -1262,10 +950,10 @@ class PostgrestService {
   }
 
   /// Soft delete bed_sport by ID
-  Future<bool> deleteBedSport(int id) async {
+  Future<bool> deleteBedSport(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_sport?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_sport?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
         body: jsonEncode({
           'deleted_at': DateTime.now().toIso8601String(),
@@ -1293,7 +981,7 @@ class PostgrestService {
 
   /// Create a new bed_waffe_besitz entry
   Future<Map<String, dynamic>> createBedWaffeBesitz({
-    required String antragsnummer,
+    required int antragsnummer,
     required String wbkNr,
     required String lfdWbk,
     required int waffenartId,
@@ -1347,7 +1035,7 @@ class PostgrestService {
 
   /// Get bed_waffe_besitz entries by antragsnummer (excludes deleted)
   Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
-    String antragsnummer,
+    int antragsnummer,
   ) async {
     try {
       final response = await _httpClient.get(
@@ -1369,32 +1057,6 @@ class PostgrestService {
     } catch (e) {
       LoggerService.logError('Error getting bed_waffe_besitz by antragsnummer: $e');
       return [];
-    }
-  }
-
-  /// Get bed_waffe_besitz by ID
-  Future<BeduerfnisseWaffeBesitz?> getBedWaffeBesitzById(int id) async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_waffe_besitz?id=eq.$id&deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> records = jsonDecode(response.body);
-        if (records.isNotEmpty) {
-          return BeduerfnisseWaffeBesitz.fromJson(records[0] as Map<String, dynamic>);
-        }
-        return null;
-      } else {
-        LoggerService.logError(
-          'Failed to get bed_waffe_besitz by ID. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return null;
-      }
-    } catch (e) {
-      LoggerService.logError('Error getting bed_waffe_besitz by ID: $e');
-      return null;
     }
   }
 
@@ -1456,10 +1118,10 @@ class PostgrestService {
   }
 
   /// Soft delete bed_waffe_besitz by ID
-  Future<bool> deleteBedWaffeBesitz(int id) async {
+  Future<bool> deleteBedWaffeBesitz(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_waffe_besitz?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_waffe_besitz?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
         body: jsonEncode({
           'deleted_at': DateTime.now().toIso8601String(),
@@ -1482,208 +1144,18 @@ class PostgrestService {
   }
 
   //
-  // --- bed_antrag_status Service Methods ---
-  //
-
-  /// Create a new bed_antrag_status entry
-  Future<BeduerfnisseAntragStatus> createBedAntragStatus({
-    required String status,
-    String? beschreibung,
-  }) async {
-    try {
-      final body = {
-        'status': status,
-        if (beschreibung != null) 'beschreibung': beschreibung,
-      };
-
-      final response = await _httpClient.post(
-        Uri.parse('${_baseUrl}bed_antrag_status'),
-        headers: _headers,
-        body: jsonEncode(body),
-      );
-
-      if (response.statusCode == 201) {
-        final List<dynamic> data = jsonDecode(response.body);
-        LoggerService.logInfo('bed_antrag_status created successfully');
-        if (data.isNotEmpty) {
-          return BeduerfnisseAntragStatus.fromJson(data[0] as Map<String, dynamic>);
-        }
-        throw Exception('Empty response from create bed_antrag_status');
-      } else {
-        LoggerService.logError(
-          'Failed to create bed_antrag_status. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        throw Exception('Failed to create bed_antrag_status');
-      }
-    } catch (e) {
-      LoggerService.logError('Error creating bed_antrag_status: $e');
-      rethrow;
-    }
-  }
-
-  /// Get all bed_antrag_status entries (excluding soft deleted)
-  Future<List<BeduerfnisseAntragStatus>> getBedAntragStatusList() async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_antrag_status?deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data
-            .map((json) => BeduerfnisseAntragStatus.fromJson(json as Map<String, dynamic>))
-            .toList();
-      } else {
-        LoggerService.logError(
-          'Failed to fetch bed_antrag_status list. Status: ${response.statusCode}',
-        );
-        return [];
-      }
-    } catch (e) {
-      LoggerService.logError('Error fetching bed_antrag_status list: $e');
-      return [];
-    }
-  }
-
-  /// Get a bed_antrag_status entry by ID
-  Future<BeduerfnisseAntragStatus?> getBedAntragStatusById(int id) async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_antrag_status?id=eq.$id&deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        if (data.isNotEmpty) {
-          return BeduerfnisseAntragStatus.fromJson(data[0] as Map<String, dynamic>);
-        }
-        return null;
-      } else {
-        LoggerService.logError(
-          'Failed to fetch bed_antrag_status. Status: ${response.statusCode}',
-        );
-        return null;
-      }
-    } catch (e) {
-      LoggerService.logError('Error fetching bed_antrag_status by ID: $e');
-      return null;
-    }
-  }
-
-  /// Get a bed_antrag_status entry by status value
-  Future<BeduerfnisseAntragStatus?> getBedAntragStatusByStatus(
-    String status,
-  ) async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse(
-          '${_baseUrl}bed_antrag_status?status=eq.$status&deleted_at=is.null',
-        ),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        if (data.isNotEmpty) {
-          return BeduerfnisseAntragStatus.fromJson(data[0] as Map<String, dynamic>);
-        }
-        return null;
-      } else {
-        LoggerService.logError(
-          'Failed to fetch bed_antrag_status by status. Status: ${response.statusCode}',
-        );
-        return null;
-      }
-    } catch (e) {
-      LoggerService.logError('Error fetching bed_antrag_status by status: $e');
-      return null;
-    }
-  }
-
-  /// Update a bed_antrag_status entry
-  Future<bool> updateBedAntragStatus(BeduerfnisseAntragStatus antragStatus) async {
-    try {
-      if (antragStatus.id == null) {
-        LoggerService.logError('Cannot update bed_antrag_status without an ID');
-        return false;
-      }
-
-      // Convert to JSON
-      final updateData = antragStatus.toJson();
-
-      // Remove id and deleted_at from update data
-      updateData.remove('ID');
-      updateData.remove('DELETED_AT');
-
-      // Convert keys to snake_case for PostgREST
-      final snakeCaseData = {
-        if (updateData['STATUS'] != null) 'status': updateData['STATUS'],
-        if (updateData['BESCHREIBUNG'] != null) 'beschreibung': updateData['BESCHREIBUNG'],
-      };
-
-      final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_antrag_status?id=eq.${antragStatus.id}'),
-        headers: _headers,
-        body: jsonEncode(snakeCaseData),
-      );
-
-      if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_antrag_status updated successfully');
-        return true;
-      } else {
-        LoggerService.logError(
-          'Failed to update bed_antrag_status. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return false;
-      }
-    } catch (e) {
-      LoggerService.logError('Error updating bed_antrag_status: $e');
-      return false;
-    }
-  }
-
-  /// Soft delete a bed_antrag_status entry
-  Future<bool> deleteBedAntragStatus(int id) async {
-    try {
-      final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_antrag_status?id=eq.$id'),
-        headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_antrag_status deleted successfully');
-        return true;
-      } else {
-        LoggerService.logError(
-          'Failed to delete bed_antrag_status. Status: ${response.statusCode}, Body: ${response.body}',
-        );
-        return false;
-      }
-    } catch (e) {
-      LoggerService.logError('Error deleting bed_antrag_status: $e');
-      return false;
-    }
-  }
-
-  //
   // --- bed_antrag Service Methods ---
   //
 
   /// Create a new bed_antrag entry
   Future<BeduerfnisseAntrag> createBedAntrag({
-    required String antragsnummer,
     required int personId,
     int? statusId,
     bool? wbkNeu,
     String? wbkArt,
     String? beduerfnisart,
     int? anzahlWaffen,
-    bool? vereinGenehmigt,
+    int? vereinsnummer,
     String? email,
     Map<String, dynamic>? bankdaten,
     bool? abbuchungErfolgt,
@@ -1691,14 +1163,13 @@ class PostgrestService {
   }) async {
     try {
       final body = {
-        'antragsnummer': antragsnummer,
         'person_id': personId,
         if (statusId != null) 'status_id': statusId,
         if (wbkNeu != null) 'wbk_neu': wbkNeu,
         if (wbkArt != null) 'wbk_art': wbkArt,
         if (beduerfnisart != null) 'beduerfnisart': beduerfnisart,
         if (anzahlWaffen != null) 'anzahl_waffen': anzahlWaffen,
-        if (vereinGenehmigt != null) 'verein_genehmigt': vereinGenehmigt,
+        if (vereinsnummer != null) 'vereinsnummer': vereinsnummer,
         if (email != null) 'email': email,
         if (bankdaten != null) 'bankdaten': bankdaten,
         if (abbuchungErfolgt != null) 'abbuchung_erfolgt': abbuchungErfolgt,
@@ -1730,34 +1201,9 @@ class PostgrestService {
     }
   }
 
-  /// Get all bed_antrag entries (excluding soft deleted)
-  Future<List<BeduerfnisseAntrag>> getBedAntragList() async {
-    try {
-      final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_antrag?deleted_at=is.null'),
-        headers: _headers,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data
-            .map((json) => BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>))
-            .toList();
-      } else {
-        LoggerService.logError(
-          'Failed to fetch bed_antrag list. Status: ${response.statusCode}',
-        );
-        return [];
-      }
-    } catch (e) {
-      LoggerService.logError('Error fetching bed_antrag list: $e');
-      return [];
-    }
-  }
-
   /// Get bed_antrag entries by antragsnummer
   Future<List<BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
-    String antragsnummer,
+    int antragsnummer,
   ) async {
     try {
       final response = await _httpClient.get(
@@ -1892,7 +1338,7 @@ class PostgrestService {
         if (updateData['WBK_ART'] != null) 'wbk_art': updateData['WBK_ART'],
         if (updateData['BEDUERFNISART'] != null) 'beduerfnisart': updateData['BEDUERFNISART'],
         if (updateData['ANZAHL_WAFFEN'] != null) 'anzahl_waffen': updateData['ANZAHL_WAFFEN'],
-        if (updateData['VEREIN_GENEHMIGT'] != null) 'verein_genehmigt': updateData['VEREIN_GENEHMIGT'],
+        if (updateData['VEREINSNUMMER'] != null) 'vereinsnummer': updateData['VEREINSNUMMER'],
         if (updateData['EMAIL'] != null) 'email': updateData['EMAIL'],
         if (updateData['BANKDATEN'] != null) 'bankdaten': updateData['BANKDATEN'],
         if (updateData['ABBUCHUNG_ERFOLGT'] != null) 'abbuchung_erfolgt': updateData['ABBUCHUNG_ERFOLGT'],
@@ -1922,10 +1368,10 @@ class PostgrestService {
   }
 
   /// Soft delete a bed_antrag entry
-  Future<bool> deleteBedAntrag(int id) async {
+  Future<bool> deleteBedAntrag(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_antrag?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_antrag?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
         body: jsonEncode({
           'deleted_at': DateTime.now().toIso8601String(),
@@ -2218,6 +1664,144 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError('Error deleting bed_datei_zuord: $e');
+      return false;
+    }
+  }
+
+  // --- Bed Wettkampf Methods ---
+  //
+  /// Creates a new wettkampf record
+  Future<BeduerfnisseWettkampf> createBedWettkampf({
+    required int antragsnummer,
+    required DateTime schiessdatum,
+    required String wettkampfart,
+    required int disziplinId,
+    double? wettkampfergebnis,
+    String? bemerkung,
+  }) async {
+    try {
+      final requestBody = {
+        'antragsnummer': antragsnummer,
+        'schiessdatum': schiessdatum.toIso8601String().split('T')[0],
+        'wettkampfart': wettkampfart,
+        'disziplin_id': disziplinId,
+        if (wettkampfergebnis != null) 'wettkampfergebnis': wettkampfergebnis,
+        if (bemerkung != null) 'bemerkung': bemerkung,
+      };
+
+      final response = await _httpClient.post(
+        Uri.parse('${_baseUrl}bed_wettkampf'),
+        headers: _headers,
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 201) {
+        LoggerService.logInfo('bed_wettkampf created successfully');
+        final data = jsonDecode(response.body) as List<dynamic>;
+        return BeduerfnisseWettkampf.fromJson(data.first as Map<String, dynamic>);
+      } else {
+        LoggerService.logError(
+          'Failed to create bed_wettkampf. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        throw Exception('Failed to create bed_wettkampf: ${response.body}');
+      }
+    } catch (e) {
+      LoggerService.logError('Error creating bed_wettkampf: $e');
+      rethrow;
+    }
+  }
+
+  /// Gets wettkampf records by antragsnummer
+  Future<List<BeduerfnisseWettkampf>> getBedWettkampfByAntragsnummer(
+    int antragsnummer,
+  ) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+          '${_baseUrl}bed_wettkampf?antragsnummer=eq.$antragsnummer&deleted_at=is.null&order=schiessdatum.desc',
+        ),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as List<dynamic>;
+        return data
+            .map((json) => BeduerfnisseWettkampf.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } else {
+        LoggerService.logError(
+          'Failed to fetch bed_wettkampf by antragsnummer. Status: ${response.statusCode}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError('Error fetching bed_wettkampf by antragsnummer: $e');
+      return [];
+    }
+  }
+
+  /// Updates a wettkampf record using the model
+  Future<bool> updateBedWettkampf(BeduerfnisseWettkampf wettkampf) async {
+    try {
+      if (wettkampf.id == null) {
+        LoggerService.logError('Cannot update bed_wettkampf without an ID');
+        return false;
+      }
+
+      // Convert model to snake_case JSON for database
+      final updateData = <String, dynamic>{
+        'changed_at': DateTime.now().toIso8601String(),
+        'antragsnummer': wettkampf.antragsnummer,
+        'schiessdatum': wettkampf.schiessdatum.toIso8601String().split('T')[0],
+        'wettkampfart': wettkampf.wettkampfart,
+        'disziplin_id': wettkampf.disziplinId,
+        'wettkampfergebnis': wettkampf.wettkampfergebnis,
+        'bemerkung': wettkampf.bemerkung,
+      };
+
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_wettkampf?id=eq.${wettkampf.id}'),
+        headers: _headers,
+        body: jsonEncode(updateData),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_wettkampf updated successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to update bed_wettkampf. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error updating bed_wettkampf: $e');
+      return false;
+    }
+  }
+
+  /// Soft deletes wettkampf records by antragsnummer
+  Future<bool> deleteBedWettkampf(int antragsnummer) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_wettkampf?antragsnummer=eq.$antragsnummer'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_wettkampf deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_wettkampf. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_wettkampf: $e');
       return false;
     }
   }
