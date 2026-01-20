@@ -29,7 +29,7 @@
   "cacheExpirationHours": "24",
   "testEmails": false,
   "testRecipient": "",
-  "schulungenBccEmail": "lehrgang@bssb.bayern",
+  "schulungenBccEmail": "lehrgang@bssb.bayern,webportal@bssb.bayern",
   "startRechteBccEmail": "schuetzenausweis@bssb.bayern",
   "registrationBccEmail": "webportal@bssb.bayern",
   "passwordResetBccEmail": "webportal@bssb.bayern",
