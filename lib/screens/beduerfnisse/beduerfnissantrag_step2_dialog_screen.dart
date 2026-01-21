@@ -904,13 +904,11 @@ class _BeduerfnissantragStep2DialogScreenState
                                                     );
 
                                                 await apiService
-                                                    .uploadBedDateiForSport(
+                                                    .uploadBedDatei(
                                                       antragsnummer:
                                                           widget.antragsnummer!,
                                                       dateiname: fileName,
                                                       fileBytes: bytes,
-                                                      bedSportId:
-                                                          _createdBedSportId!,
                                                     );
 
                                                 if (mounted) {

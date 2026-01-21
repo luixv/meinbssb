@@ -800,6 +800,10 @@ class ApiService {
     return _postgrestService.deleteBedDatei(antragsnummer);
   }
 
+  Future<bool> deleteBedDateiById(int dateiId) async {
+    return _postgrestService.deleteBedDateiById(dateiId);
+  }
+
   /// Get the document for a specific sport activity
   /// Returns the document if one exists, null otherwise
   Future<BeduerfnisseDatei?> getBedDateiBySportId(int bedSportId) async {
@@ -823,19 +827,17 @@ class ApiService {
     }
   }
 
-  /// Upload a document and create entries in both bed_datei and bed_datei_zuord
-  /// This is used when uploading documents for bed_sport records
-  /// Returns true on success, false on failure
-  Future<bool> uploadBedDateiForSport({
+  /// Upload a document and create an entry in bed_datei
+  /// Returns the dateiId on success, null on failure
+  Future<int?> uploadBedDatei({
     required int antragsnummer,
     required String dateiname,
     required List<int> fileBytes,
-    required int bedSportId,
   }) async {
     try {
-      LoggerService.logInfo('Uploading document for bed_sport_id: $bedSportId');
+      LoggerService.logInfo('Uploading document for antragsnummer: $antragsnummer');
 
-      // Step 1: Create bed_datei entry
+      // Create bed_datei entry
       final dateiResponse = await createBedDatei(
         antragsnummer: antragsnummer,
         dateiname: dateiname,
@@ -845,43 +847,47 @@ class ApiService {
       // Check if datei was created successfully
       if (dateiResponse.isEmpty || dateiResponse['id'] == null) {
         LoggerService.logError('Failed to create bed_datei: empty response');
-        return false;
+        return null;
       }
 
       final dateiId = dateiResponse['id'] as int;
       LoggerService.logInfo('bed_datei created with id: $dateiId');
 
-      // Step 2: Create bed_datei_zuord entry
-      try {
-        await createBedDateiZuord(
-          antragsnummer: antragsnummer,
-          dateiId: dateiId,
-          dateiArt: 'SPORT',
-          bedSportId: bedSportId,
-        );
-
-        LoggerService.logInfo(
-          'bed_datei_zuord created successfully for datei_id: $dateiId',
-        );
-
-        return true;
-      } catch (e) {
-        // If bed_datei_zuord creation fails, we should clean up the bed_datei
-        LoggerService.logError(
-          'Failed to create bed_datei_zuord: $e. Cleaning up bed_datei...',
-        );
-
-        // Attempt to delete the created bed_datei
-        try {
-          await _postgrestService.deleteBedDateiById(dateiId);
-        } catch (cleanupError) {
-          LoggerService.logError('Failed to cleanup bed_datei: $cleanupError');
-        }
-
-        return false;
-      }
+      return dateiId;
     } catch (e) {
-      LoggerService.logError('Error uploading document for sport: $e');
+      LoggerService.logError('Error uploading document: $e');
+      return null;
+    }
+  }
+
+  /// Map a bed_datei to a bed_sport by creating a bed_datei_zuord entry
+  /// Returns true on success, false on failure
+  Future<bool> mapBedDateiToSport({
+    required int antragsnummer,
+    required int dateiId,
+    required int bedSportId,
+  }) async {
+    try {
+      LoggerService.logInfo(
+        'Mapping datei_id: $dateiId to bed_sport_id: $bedSportId',
+      );
+
+      await createBedDateiZuord(
+        antragsnummer: antragsnummer,
+        dateiId: dateiId,
+        dateiArt: 'SPORT',
+        bedSportId: bedSportId,
+      );
+
+      LoggerService.logInfo(
+        'bed_datei_zuord created successfully for datei_id: $dateiId',
+      );
+
+      return true;
+    } catch (e) {
+      LoggerService.logError(
+        'Failed to create bed_datei_zuord: $e',
+      );
       return false;
     }
   }

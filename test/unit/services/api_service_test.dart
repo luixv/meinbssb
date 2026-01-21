@@ -3059,124 +3059,150 @@ void main() {
     });
 
     group('Document Upload Tests', () {
-      test('uploadBedDateiForSport creates datei and datei_zuord successfully', () async {
-        final expectedDateiResponse = {
-          'id': 100,
-          'antragsnummer': 123,
-          'dateiname': 'test.pdf',
-        };
+      group('uploadBedDatei', () {
+        test('returns dateiId when datei creation succeeds', () async {
+          final expectedDateiResponse = {
+            'id': 100,
+            'antragsnummer': 123,
+            'dateiname': 'test.pdf',
+          };
 
-        final expectedDateiZuord = BeduerfnisseDateiZuord(
-          id: 1,
-          antragsnummer: '123',
-          dateiId: 100,
-          dateiArt: 'SPORT',
-          bedSportId: 5,
-        );
+          // Mock createBedDatei
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => expectedDateiResponse);
 
-        // Mock createBedDatei
-        when(
-          mockPostgrestService.createBedDatei(
+          final result = await apiService.uploadBedDatei(
             antragsnummer: 123,
             dateiname: 'test.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).thenAnswer((_) async => expectedDateiResponse);
+            fileBytes: [1, 2, 3],
+          );
 
-        // Mock createBedDateiZuord
-        when(
-          mockPostgrestService.createBedDateiZuord(
-            antragsnummer: 123,
-            dateiId: 100,
-            dateiArt: 'SPORT',
-            bedSportId: 5,
-          ),
-        ).thenAnswer((_) async => expectedDateiZuord);
+          expect(result, equals(100));
+          verify(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).called(1);
+        });
 
-        final result = await apiService.uploadBedDateiForSport(
-          antragsnummer: 123,
-          dateiname: 'test.pdf',
-          fileBytes: [1, 2, 3],
-          bedSportId: 5,
-        );
+        test('returns null when datei response is empty', () async {
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => {});
 
-        expect(result, isTrue);
-        verify(
-          mockPostgrestService.createBedDatei(
+          final result = await apiService.uploadBedDatei(
             antragsnummer: 123,
             dateiname: 'test.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).called(1);
-        verify(
-          mockPostgrestService.createBedDateiZuord(
+            fileBytes: [1, 2, 3],
+          );
+
+          expect(result, isNull);
+        });
+
+        test('returns null when datei response has no id', () async {
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => {'antragsnummer': 123});
+
+          final result = await apiService.uploadBedDatei(
             antragsnummer: 123,
-            dateiId: 100,
-            dateiArt: 'SPORT',
-            bedSportId: 5,
-          ),
-        ).called(1);
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          );
+
+          expect(result, isNull);
+        });
+
+        test('returns null when exception occurs', () async {
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenThrow(Exception('Network error'));
+
+          final result = await apiService.uploadBedDatei(
+            antragsnummer: 123,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          );
+
+          expect(result, isNull);
+        });
       });
 
-      test('uploadBedDateiForSport returns false when datei creation fails', () async {
-        when(
-          mockPostgrestService.createBedDatei(
-            antragsnummer: 123,
-            dateiname: 'test.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).thenAnswer((_) async => {});
-
-        final result = await apiService.uploadBedDateiForSport(
-          antragsnummer: 123,
-          dateiname: 'test.pdf',
-          fileBytes: [1, 2, 3],
-          bedSportId: 5,
-        );
-
-        expect(result, isFalse);
-      });
-
-      test('uploadBedDateiForSport cleans up datei when datei_zuord creation fails', () async {
-        final expectedDateiResponse = {
-          'id': 100,
-          'antragsnummer': 123,
-          'dateiname': 'test.pdf',
-        };
-
-        // Mock createBedDatei success
-        when(
-          mockPostgrestService.createBedDatei(
-            antragsnummer: 123,
-            dateiname: 'test.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).thenAnswer((_) async => expectedDateiResponse);
-
-        // Mock createBedDateiZuord failure
-        when(
-          mockPostgrestService.createBedDateiZuord(
-            antragsnummer: 123,
+      group('mapBedDateiToSport', () {
+        test('returns true when mapping succeeds', () async {
+          final expectedDateiZuord = BeduerfnisseDateiZuord(
+            id: 1,
+            antragsnummer: '123',
             dateiId: 100,
             dateiArt: 'SPORT',
             bedSportId: 5,
-          ),
-        ).thenThrow(Exception('Failed to create zuord'));
+          );
 
-        // Mock cleanup
-        when(
-          mockPostgrestService.deleteBedDateiById(100),
-        ).thenAnswer((_) async => true);
+          // Mock createBedDateiZuord
+          when(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 123,
+              dateiId: 100,
+              dateiArt: 'SPORT',
+              bedSportId: 5,
+            ),
+          ).thenAnswer((_) async => expectedDateiZuord);
 
-        final result = await apiService.uploadBedDateiForSport(
-          antragsnummer: 123,
-          dateiname: 'test.pdf',
-          fileBytes: [1, 2, 3],
-          bedSportId: 5,
-        );
+          final result = await apiService.mapBedDateiToSport(
+            antragsnummer: 123,
+            dateiId: 100,
+            bedSportId: 5,
+          );
 
-        expect(result, isFalse);
-        verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 123,
+              dateiId: 100,
+              dateiArt: 'SPORT',
+              bedSportId: 5,
+            ),
+          ).called(1);
+        });
+
+        test('returns false when exception occurs', () async {
+          // Mock createBedDateiZuord failure
+          when(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 123,
+              dateiId: 100,
+              dateiArt: 'SPORT',
+              bedSportId: 5,
+            ),
+          ).thenThrow(Exception('Failed to create zuord'));
+
+          final result = await apiService.mapBedDateiToSport(
+            antragsnummer: 123,
+            dateiId: 100,
+            bedSportId: 5,
+          );
+
+          expect(result, isFalse);
+        });
       });
 
       test('uploadBedDateiForWBK creates datei and datei_zuord successfully', () async {
