@@ -794,7 +794,7 @@ class PostgrestService {
     }
   }
 
-  /// Soft delete bed_datei by ID
+  /// Soft delete bed_datei by antragsnummer
   Future<bool> deleteBedDatei(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
@@ -816,6 +816,32 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError('Error deleting bed_datei: $e');
+      return false;
+    }
+  }
+
+  /// Soft delete bed_datei by datei_id (primary key)
+  Future<bool> deleteBedDateiById(int dateiId) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_datei?id=eq.$dateiId'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_datei deleted successfully for id: $dateiId');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_datei by id. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_datei by id: $e');
       return false;
     }
   }
@@ -949,11 +975,37 @@ class PostgrestService {
     }
   }
 
-  /// Soft delete bed_sport by ID
-  Future<bool> deleteBedSport(int antragsnummer) async {
+  /// Soft delete bed_sport by antragsnummer
+  Future<bool> deleteBedSportByAntragsnummer(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_sport?antragsnummer=eq.$antragsnummer'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_sport deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_sport. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_sport: $e');
+      return false;
+    }
+  }
+
+/// Soft delete bed_sport by ID
+  Future<bool> deleteBedSportById(int id) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_sport?id=eq.$id'),
         headers: _headers,
         body: jsonEncode({
           'deleted_at': DateTime.now().toIso8601String(),
@@ -1548,13 +1600,39 @@ class PostgrestService {
     }
   }
 
+  /// Soft delete a bed_antrag_person entry by setting deleted_at timestamp
+  Future<bool> deleteBedAntragPerson(int antragsnummer) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_antrag_person?antragsnummer=eq.$antragsnummer'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_antrag_person deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_antrag_person. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_antrag_person: $e');
+      return false;
+    }
+  }
+
   //
   // --- bed_datei_zuord Service Methods ---
   //
 
   /// Create a new bed_datei_zuord entry
   Future<BeduerfnisseDateiZuord> createBedDateiZuord({
-    required String antragsnummer,
+    required int antragsnummer,
     required int dateiId,
     required String dateiArt,
     int? bedSportId,
@@ -1642,11 +1720,11 @@ class PostgrestService {
     }
   }
 
-  /// Soft delete a bed_datei_zuord entry
-  Future<bool> deleteBedDateiZuord(int id) async {
+  /// Soft delete all bed_datei_zuord entries by antragsnummer
+  Future<bool> deleteBedDateiZuord(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_datei_zuord?id=eq.$id'),
+        Uri.parse('${_baseUrl}bed_datei_zuord?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
         body: jsonEncode({
           'deleted_at': DateTime.now().toIso8601String(),
@@ -1654,7 +1732,7 @@ class PostgrestService {
       );
 
       if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_datei_zuord deleted successfully');
+        LoggerService.logInfo('bed_datei_zuord deleted successfully for antragsnummer: $antragsnummer');
         return true;
       } else {
         LoggerService.logError(
@@ -1664,6 +1742,64 @@ class PostgrestService {
       }
     } catch (e) {
       LoggerService.logError('Error deleting bed_datei_zuord: $e');
+      return false;
+    }
+  }
+
+  /// Get bed_datei_zuord entry by bed_sport_id
+  /// Returns a single BeduerfnisseDateiZuord or null if not found
+  /// (There can only be one datei per bed_sport)
+  Future<BeduerfnisseDateiZuord?> getBedDateiZuordByBedSportId(
+    int bedSportId,
+  ) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+          '${_baseUrl}bed_datei_zuord?bed_sport_id=eq.$bedSportId&deleted_at=is.null',
+        ),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        if (data.isNotEmpty) {
+          return BeduerfnisseDateiZuord.fromJson(data[0] as Map<String, dynamic>);
+        }
+        return null;
+      } else {
+        LoggerService.logError(
+          'Failed to get bed_datei_zuord by bed_sport_id. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error getting bed_datei_zuord by bed_sport_id: $e');
+      return null;
+    }
+  }
+
+  /// Soft delete all bed_datei_zuord entries by bed_sport_id
+  Future<bool> deleteBedDateiZuordByBedSportId(int bedSportId) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_datei_zuord?bed_sport_id=eq.$bedSportId'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_datei_zuord deleted successfully for bed_sport_id: $bedSportId');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_datei_zuord by bed_sport_id. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_datei_zuord by bed_sport_id: $e');
       return false;
     }
   }

@@ -1845,6 +1845,14 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
           as _i2.Future<bool>);
 
   @override
+  _i2.Future<bool> deleteBedDateiById(int? dateiId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiById, [dateiId]),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
+
+  @override
   _i2.Future<Map<String, dynamic>> createBedSport({
     required int? antragsnummer,
     required String? schiessdatum,
@@ -1893,9 +1901,17 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
           as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteBedSport(int? antragsnummer) =>
+  _i2.Future<bool> deleteBedSportByAntragsnummer(int? antragsnummer) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteBedSport, [antragsnummer]),
+            Invocation.method(#deleteBedSportByAntragsnummer, [antragsnummer]),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
+
+  @override
+  _i2.Future<bool> deleteBedSportById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedSportById, [id]),
             returnValue: _i2.Future<bool>.value(false),
           )
           as _i2.Future<bool>);
@@ -2146,8 +2162,16 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
           as _i2.Future<bool>);
 
   @override
+  _i2.Future<bool> deleteBedAntragPerson(int? antragsnummer) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedAntragPerson, [antragsnummer]),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
+
+  @override
   _i2.Future<_i10.BeduerfnisseDateiZuord> createBedDateiZuord({
-    required String? antragsnummer,
+    required int? antragsnummer,
     required int? dateiId,
     required String? dateiArt,
     int? bedSportId,
@@ -2184,9 +2208,27 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
           as _i2.Future<bool>);
 
   @override
-  _i2.Future<bool> deleteBedDateiZuord(int? id) =>
+  _i2.Future<bool> deleteBedDateiZuord(int? antragsnummer) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteBedDateiZuord, [id]),
+            Invocation.method(#deleteBedDateiZuord, [antragsnummer]),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
+
+  @override
+  _i2.Future<_i10.BeduerfnisseDateiZuord?> getBedDateiZuordByBedSportId(
+    int? bedSportId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiZuordByBedSportId, [bedSportId]),
+            returnValue: _i2.Future<_i10.BeduerfnisseDateiZuord?>.value(),
+          )
+          as _i2.Future<_i10.BeduerfnisseDateiZuord?>);
+
+  @override
+  _i2.Future<bool> deleteBedDateiZuordByBedSportId(int? bedSportId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiZuordByBedSportId, [bedSportId]),
             returnValue: _i2.Future<bool>.value(false),
           )
           as _i2.Future<bool>);
