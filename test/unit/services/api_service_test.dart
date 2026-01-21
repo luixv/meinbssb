@@ -2756,6 +2756,10 @@ void main() {
         when(
           mockPostgrestService.deleteBedWettkampf(1),
         ).thenAnswer((_) async => true);
+        
+        when(
+          mockPostgrestService.deleteBedAntrag(1),
+        ).thenAnswer((_) async => true);
 
         final result = await apiService.deleteBedAntrag(1);
         expect(result, isTrue);
@@ -2767,6 +2771,7 @@ void main() {
         verify(mockPostgrestService.deleteBedSportByAntragsnummer(1)).called(1);
         verify(mockPostgrestService.deleteBedWaffeBesitz(1)).called(1);
         verify(mockPostgrestService.deleteBedWettkampf(1)).called(1);
+        verify(mockPostgrestService.deleteBedAntrag(1)).called(1);
       });
     });
 

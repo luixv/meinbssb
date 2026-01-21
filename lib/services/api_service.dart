@@ -1344,6 +1344,10 @@ class ApiService {
         antragsnummer,
       );
 
+      // Soft delete bed_antrag
+      results['bed_antrag'] = await _postgrestService
+          .deleteBedAntrag(antragsnummer);
+
       // Check if all deletions were successful
       final allSuccessful = results.values.every((result) => result);
 
