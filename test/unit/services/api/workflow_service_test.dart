@@ -395,4 +395,284 @@ void main() {
       );
     });
   });
+
+  group('WorkflowService.getAvailableTransitions', () {
+    test('Returns available transitions for Mitglied from Entwurf', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.entwurf,
+        userRole: WorkflowRole.mitglied,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.eingereichtAmVerein));
+      expect(result, hasLength(1));
+    });
+
+    test('Returns available transitions for Verein from Eingereicht am Verein', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
+        userRole: WorkflowRole.verein,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.genehmightVonVerein));
+      expect(result, contains(BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein));
+      expect(result, contains(BeduerfnisAntragStatus.abgelehnt));
+      expect(result, hasLength(3));
+    });
+
+    test('Returns available transitions for BSSB from Genehmight von Verein', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.genehmightVonVerein,
+        userRole: WorkflowRole.bssb,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.eingereichtAnBSSB));
+      expect(result, hasLength(1));
+    });
+
+    test('Returns available transitions for BSSB from Eingereicht an BSSB', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.eingereichtAnBSSB,
+        userRole: WorkflowRole.bssb,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied));
+      expect(result, contains(BeduerfnisAntragStatus.abgelehnt));
+      expect(result, hasLength(2));
+    });
+
+    test('Returns available transitions for Mitglied from Zurückgewiesen an Mitglied von Verein', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
+        userRole: WorkflowRole.mitglied,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.eingereichtAmVerein));
+      expect(result, hasLength(1));
+    });
+
+    test('Returns available transitions for Verein from Zurückgewiesen von BSSB an Verein', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein,
+        userRole: WorkflowRole.verein,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.genehmight));
+      expect(result, hasLength(1));
+    });
+
+    test('Returns available transitions for BSSB from Zurückgewiesen von BSSB an Verein', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein,
+        userRole: WorkflowRole.bssb,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.abgelehnt));
+      expect(result, hasLength(1));
+    });
+
+    test('Returns available transitions for Mitglied from Zurückgewiesen von BSSB an Mitglied', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
+        userRole: WorkflowRole.mitglied,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.genehmight));
+      expect(result, hasLength(1));
+    });
+
+    test('Returns available transitions for BSSB from Zurückgewiesen von BSSB an Mitglied', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
+        userRole: WorkflowRole.bssb,
+      );
+      expect(result, contains(BeduerfnisAntragStatus.abgelehnt));
+      expect(result, hasLength(1));
+    });
+
+    test('Returns empty list for Mitglied from Genehmight von Verein', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.genehmightVonVerein,
+        userRole: WorkflowRole.mitglied,
+      );
+      expect(result, isEmpty);
+    });
+
+    test('Returns empty list for Verein from Entwurf', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.entwurf,
+        userRole: WorkflowRole.verein,
+      );
+      expect(result, isEmpty);
+    });
+
+    test('Returns empty list for BSSB from Entwurf', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.entwurf,
+        userRole: WorkflowRole.bssb,
+      );
+      expect(result, isEmpty);
+    });
+
+    test('Returns empty list for terminal state Genehmight', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.genehmight,
+        userRole: WorkflowRole.mitglied,
+      );
+      expect(result, isEmpty);
+    });
+
+    test('Returns empty list for terminal state Abgelehnt', () {
+      final result = workflowService.getAvailableTransitions(
+        currentState: BeduerfnisAntragStatus.abgelehnt,
+        userRole: WorkflowRole.mitglied,
+      );
+      expect(result, isEmpty);
+    });
+  });
+
+  group('WorkflowService.getRequiredRoleForTransition', () {
+    test('Returns Mitglied for Entwurf -> Eingereicht am Verein', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.entwurf,
+        toState: BeduerfnisAntragStatus.eingereichtAmVerein,
+      );
+      expect(result, WorkflowRole.mitglied);
+    });
+
+    test('Returns Verein for Eingereicht am Verein -> Genehmight von Verein', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.eingereichtAmVerein,
+        toState: BeduerfnisAntragStatus.genehmightVonVerein,
+      );
+      expect(result, WorkflowRole.verein);
+    });
+
+    test('Returns Verein for Eingereicht am Verein -> Zurückgewiesen an Mitglied von Verein', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.eingereichtAmVerein,
+        toState: BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
+      );
+      expect(result, WorkflowRole.verein);
+    });
+
+    test('Returns Verein for Eingereicht am Verein -> Abgelehnt', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.eingereichtAmVerein,
+        toState: BeduerfnisAntragStatus.abgelehnt,
+      );
+      expect(result, WorkflowRole.verein);
+    });
+
+    test('Returns BSSB for Genehmight von Verein -> Eingereicht an BSSB', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.genehmightVonVerein,
+        toState: BeduerfnisAntragStatus.eingereichtAnBSSB,
+      );
+      expect(result, WorkflowRole.bssb);
+    });
+
+    test('Returns BSSB for Eingereicht an BSSB -> Zurückgewiesen von BSSB an Mitglied', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.eingereichtAnBSSB,
+        toState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
+      );
+      expect(result, WorkflowRole.bssb);
+    });
+
+    test('Returns BSSB for Eingereicht an BSSB -> Abgelehnt', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.eingereichtAnBSSB,
+        toState: BeduerfnisAntragStatus.abgelehnt,
+      );
+      expect(result, WorkflowRole.bssb);
+    });
+
+    test('Returns Mitglied for Zurückgewiesen an Mitglied von Verein -> Eingereicht am Verein', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
+        toState: BeduerfnisAntragStatus.eingereichtAmVerein,
+      );
+      expect(result, WorkflowRole.mitglied);
+    });
+
+    test('Returns Verein for Zurückgewiesen von BSSB an Verein -> Genehmight', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein,
+        toState: BeduerfnisAntragStatus.genehmight,
+      );
+      expect(result, WorkflowRole.verein);
+    });
+
+    test('Returns BSSB for Zurückgewiesen von BSSB an Verein -> Abgelehnt', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnVerein,
+        toState: BeduerfnisAntragStatus.abgelehnt,
+      );
+      expect(result, WorkflowRole.bssb);
+    });
+
+    test('Returns Mitglied for Zurückgewiesen von BSSB an Mitglied -> Genehmight', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
+        toState: BeduerfnisAntragStatus.genehmight,
+      );
+      expect(result, WorkflowRole.mitglied);
+    });
+
+    test('Returns BSSB for Zurückgewiesen von BSSB an Mitglied -> Abgelehnt', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.zurueckgewiesenVonBSSBAnMitglied,
+        toState: BeduerfnisAntragStatus.abgelehnt,
+      );
+      expect(result, WorkflowRole.bssb);
+    });
+
+    test('Returns null for invalid transition: Entwurf -> Genehmight', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.entwurf,
+        toState: BeduerfnisAntragStatus.genehmight,
+      );
+      expect(result, isNull);
+    });
+
+    test('Returns null for invalid transition: Entwurf -> Zurückgewiesen an Mitglied von Verein', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.entwurf,
+        toState: BeduerfnisAntragStatus.zurueckgewiesenAnMitgliedVonVerein,
+      );
+      expect(result, isNull);
+    });
+
+    test('Returns null for invalid transition: Genehmight von Verein -> Abgelehnt', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.genehmightVonVerein,
+        toState: BeduerfnisAntragStatus.abgelehnt,
+      );
+      expect(result, isNull);
+    });
+
+    test('Returns null for staying in same state: Entwurf -> Entwurf', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.entwurf,
+        toState: BeduerfnisAntragStatus.entwurf,
+      );
+      expect(result, isNull);
+    });
+
+    test('Returns null for staying in same state: Eingereicht am Verein -> Eingereicht am Verein', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.eingereichtAmVerein,
+        toState: BeduerfnisAntragStatus.eingereichtAmVerein,
+      );
+      expect(result, isNull);
+    });
+
+    test('Returns null for transition from terminal state Genehmight', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.genehmight,
+        toState: BeduerfnisAntragStatus.entwurf,
+      );
+      expect(result, isNull);
+    });
+
+    test('Returns null for transition from terminal state Abgelehnt', () {
+      final result = workflowService.getRequiredRoleForTransition(
+        fromState: BeduerfnisAntragStatus.abgelehnt,
+        toState: BeduerfnisAntragStatus.entwurf,
+      );
+      expect(result, isNull);
+    });
+  });
 }
