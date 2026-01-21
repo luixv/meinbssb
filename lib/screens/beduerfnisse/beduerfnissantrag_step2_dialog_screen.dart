@@ -45,6 +45,12 @@ class _BeduerfnissantragStep2DialogScreenState
   @override
   void initState() {
     super.initState();
+
+    // Set default date to today
+    final now = DateTime.now();
+    _datumController.text =
+        '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}';
+
     final apiService = Provider.of<ApiService>(context, listen: false);
     _waffenartFuture = apiService.getBedAuswahlByTypId(1);
     _auswahlFuture = apiService.getBedAuswahlByTypId(2);
@@ -897,13 +903,15 @@ class _BeduerfnissantragStep2DialogScreenState
                                                       listen: false,
                                                     );
 
-                                                await apiService.uploadBedDateiForSport(
-                                                  antragsnummer:
-                                                      widget.antragsnummer!,
-                                                  dateiname: fileName,
-                                                  fileBytes: bytes,
-                                                  bedSportId: _createdBedSportId! 
-                                                );
+                                                await apiService
+                                                    .uploadBedDateiForSport(
+                                                      antragsnummer:
+                                                          widget.antragsnummer!,
+                                                      dateiname: fileName,
+                                                      fileBytes: bytes,
+                                                      bedSportId:
+                                                          _createdBedSportId!,
+                                                    );
 
                                                 if (mounted) {
                                                   setState(() {
