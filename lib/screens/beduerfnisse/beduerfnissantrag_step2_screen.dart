@@ -49,7 +49,6 @@ class _BeduerfnissantragStep2ScreenState
   late Future<List<BeduerfnisseAuswahl>> _waffenartFuture;
   late Future<List<BeduerfnisseAuswahl>> _wettkampfartFuture;
   late Future<List<Disziplin>> _disziplinenFuture;
-  Future<List<BeduerfnisseDatei>>? _bedDateiFuture;
 
   @override
   void initState() {
@@ -59,9 +58,6 @@ class _BeduerfnissantragStep2ScreenState
     _waffenartFuture = apiService.getBedAuswahlByTypId(1);
     _wettkampfartFuture = apiService.getBedAuswahlByTypId(2);
     _disziplinenFuture = apiService.fetchDisziplinen();
-    if (widget.antrag?.antragsnummer != null) {
-      _bedDateiFuture = _fetchBedDateiData();
-    }
   }
 
   Future<List<BeduerfnisseSport>> _fetchBedSportData() async {
@@ -81,22 +77,6 @@ class _BeduerfnissantragStep2ScreenState
           SnackBar(content: Text('Fehler beim Laden der Daten: $e')),
         );
       }
-      return [];
-    }
-  }
-
-  Future<List<BeduerfnisseDatei>> _fetchBedDateiData() async {
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    if (widget.antrag?.antragsnummer == null) {
-      return [];
-    }
-    try {
-      final antragsnummer = widget.antrag!.antragsnummer;
-      if (antragsnummer == null) {
-        return [];
-      }
-      return await apiService.getBedDateiByAntragsnummer(antragsnummer);
-    } catch (e) {
       return [];
     }
   }
@@ -481,14 +461,6 @@ class _BeduerfnissantragStep2ScreenState
                                             setState(() {
                                               _bedSportFuture =
                                                   _fetchBedSportData();
-                                              // Refresh documents list to show new uploads
-                                              if (widget
-                                                      .antrag
-                                                      ?.antragsnummer !=
-                                                  null) {
-                                                _bedDateiFuture =
-                                                    _fetchBedDateiData();
-                                              }
                                             });
                                           }
                                         },
@@ -569,8 +541,6 @@ class _BeduerfnissantragStep2ScreenState
                           _waffenartFuture,
                           _wettkampfartFuture,
                           _disziplinenFuture,
-                          _bedDateiFuture ??
-                              Future.value(<BeduerfnisseDatei>[]),
                         ]),
                         builder: (
                           context,
@@ -605,9 +575,6 @@ class _BeduerfnissantragStep2ScreenState
                               [];
                           final disziplinList =
                               (snapshot.data?[3] as List<Disziplin>?) ?? [];
-                          final bedDateiList =
-                              (snapshot.data?[4] as List<BeduerfnisseDatei>?) ??
-                              [];
 
                           // Create lookup maps
                           final waffenartMap = {
@@ -620,7 +587,6 @@ class _BeduerfnissantragStep2ScreenState
                             for (var d in disziplinList)
                               d.disziplinId: d.disziplinNr,
                           };
-                          final hasDocuments = bedDateiList.isNotEmpty;
 
                           if (bedSportList.isEmpty) {
                             return ScaledText(
@@ -963,41 +929,99 @@ class _BeduerfnissantragStep2ScreenState
                                                                   ),
                                                                 ),
                                                               ),
-                                                              if (hasDocuments) ...[
-                                                                const SizedBox(
-                                                                  width:
-                                                                      UIConstants
-                                                                          .spacingS,
-                                                                ),
-                                                                Tooltip(
-                                                                  message:
-                                                                      'Dokument anzeigen',
-                                                                  child: IconButton(
-                                                                    icon: Icon(
-                                                                      Icons
-                                                                          .insert_drive_file,
-                                                                      size:
-                                                                          UIConstants
-                                                                              .iconSizeS *
-                                                                          fontSizeProvider
-                                                                              .scaleFactor,
-                                                                      color:
-                                                                          UIConstants
-                                                                              .primaryColor,
-                                                                    ),
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .zero,
-                                                                    constraints:
-                                                                        const BoxConstraints(),
-                                                                    onPressed:
-                                                                        () => _showDocuments(
+                                                              const SizedBox(
+                                                                width:
+                                                                    UIConstants
+                                                                        .spacingS,
+                                                              ),
+                                                              FutureBuilder<
+                                                                bool
+                                                              >(
+                                                                future:
+                                                                    sport.id !=
+                                                                            null
+                                                                        ? Provider.of<
+                                                                          ApiService
+                                                                        >(
                                                                           context,
-                                                                          bedDateiList,
+                                                                          listen:
+                                                                              false,
+                                                                        ).hasBedDateiSport(
+                                                                          sport
+                                                                              .id!,
+                                                                        )
+                                                                        : Future.value(
+                                                                          false,
                                                                         ),
-                                                                  ),
-                                                                ),
-                                                              ],
+                                                                builder: (
+                                                                  context,
+                                                                  hasDocSnapshot,
+                                                                ) {
+                                                                  if (hasDocSnapshot
+                                                                          .connectionState ==
+                                                                      ConnectionState
+                                                                          .waiting) {
+                                                                    return const SizedBox(
+                                                                      width: 24,
+                                                                      height:
+                                                                          24,
+                                                                      child: CircularProgressIndicator(
+                                                                        strokeWidth:
+                                                                            2,
+                                                                      ),
+                                                                    );
+                                                                  }
+
+                                                                  if (hasDocSnapshot
+                                                                          .hasData &&
+                                                                      hasDocSnapshot
+                                                                              .data ==
+                                                                          true) {
+                                                                    return Tooltip(
+                                                                      message:
+                                                                          'Dokument anzeigen',
+                                                                      child: IconButton(
+                                                                        icon: Icon(
+                                                                          Icons
+                                                                              .insert_drive_file,
+                                                                          size:
+                                                                              UIConstants.iconSizeS *
+                                                                              fontSizeProvider.scaleFactor,
+                                                                          color:
+                                                                              UIConstants.primaryColor,
+                                                                        ),
+                                                                        padding:
+                                                                            EdgeInsets.zero,
+                                                                        constraints:
+                                                                            const BoxConstraints(),
+                                                                        onPressed: () async {
+                                                                          // Fetch and view the document
+                                                                          final apiService = Provider.of<
+                                                                            ApiService
+                                                                          >(
+                                                                            context,
+                                                                            listen:
+                                                                                false,
+                                                                          );
+                                                                          final doc = await apiService.getBedDateiBySportId(
+                                                                            sport.id!,
+                                                                          );
+                                                                          if (doc !=
+                                                                                  null &&
+                                                                              context.mounted) {
+                                                                            _viewDocument(
+                                                                              context,
+                                                                              doc,
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                      ),
+                                                                    );
+                                                                  }
+
+                                                                  return const SizedBox.shrink();
+                                                                },
+                                                              ),
                                                             ],
                                                           ),
                                                         ],
