@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
@@ -47,6 +49,7 @@ class _BeduerfnissantragStep2ScreenState
   late Future<List<BeduerfnisseAuswahl>> _waffenartFuture;
   late Future<List<BeduerfnisseAuswahl>> _wettkampfartFuture;
   late Future<List<Disziplin>> _disziplinenFuture;
+  Future<List<BeduerfnisseDatei>>? _bedDateiFuture;
 
   @override
   void initState() {
@@ -56,6 +59,9 @@ class _BeduerfnissantragStep2ScreenState
     _waffenartFuture = apiService.getBedAuswahlByTypId(1);
     _wettkampfartFuture = apiService.getBedAuswahlByTypId(2);
     _disziplinenFuture = apiService.fetchDisziplinen();
+    if (widget.antrag?.antragsnummer != null) {
+      _bedDateiFuture = _fetchBedDateiData();
+    }
   }
 
   Future<List<BeduerfnisseSport>> _fetchBedSportData() async {
@@ -77,6 +83,241 @@ class _BeduerfnissantragStep2ScreenState
       }
       return [];
     }
+  }
+
+  Future<List<BeduerfnisseDatei>> _fetchBedDateiData() async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    if (widget.antrag?.antragsnummer == null) {
+      return [];
+    }
+    try {
+      final antragsnummer = widget.antrag!.antragsnummer;
+      if (antragsnummer == null) {
+        return [];
+      }
+      return await apiService.getBedDateiByAntragsnummer(antragsnummer);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  void _showDocuments(BuildContext context, List<BeduerfnisseDatei> documents) {
+    if (documents.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: ScaledText(
+            'Keine Dokumente verfügbar',
+            style: TextStyle(fontSize: UIConstants.snackBarTextFontSize),
+          ),
+        ),
+      );
+      return;
+    }
+
+    // If there's only one document, view it directly
+    if (documents.length == 1) {
+      _viewDocument(context, documents[0]);
+      return;
+    }
+
+    // If there are multiple documents, show a list to choose from
+    final fontSizeProvider = Provider.of<FontSizeProvider>(
+      context,
+      listen: false,
+    );
+
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => Dialog(
+            child: Container(
+              width: 500,
+              constraints: const BoxConstraints(maxHeight: 600),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      color: UIConstants.defaultAppColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(4),
+                        topRight: Radius.circular(4),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.insert_drive_file,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ScaledText(
+                            'Dokument auswählen',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () => Navigator.of(dialogContext).pop(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Document list
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: documents.length,
+                      itemBuilder: (context, index) {
+                        final doc = documents[index];
+                        final fileSize = doc.fileBytes.length;
+                        final fileSizeKB = (fileSize / 1024).toStringAsFixed(1);
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.description,
+                              color: UIConstants.primaryColor,
+                              size:
+                                  UIConstants.iconSizeM *
+                                  fontSizeProvider.scaleFactor,
+                            ),
+                            title: ScaledText(
+                              doc.dateiname,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            subtitle: ScaledText(
+                              '$fileSizeKB KB',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(
+                                Icons.visibility,
+                                color: UIConstants.primaryColor,
+                              ),
+                              tooltip: 'Anzeigen',
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop();
+                                _viewDocument(context, doc);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+  }
+
+  void _viewDocument(BuildContext context, BeduerfnisseDatei document) {
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => Dialog(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: Column(
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      color: UIConstants.defaultAppColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(4),
+                        topRight: Radius.circular(4),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.description, color: Colors.white),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ScaledText(
+                            document.dateiname,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () => Navigator.of(dialogContext).pop(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Document content
+                  Expanded(
+                    child: Container(
+                      color: Colors.grey[200],
+                      child: Center(
+                        child: InteractiveViewer(
+                          panEnabled: true,
+                          minScale: 0.5,
+                          maxScale: 4.0,
+                          child: Image.memory(
+                            Uint8List.fromList(document.fileBytes),
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    size: 64,
+                                    color: Colors.red,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ScaledText(
+                                    'Dokument kann nicht angezeigt werden',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ScaledText(
+                                    'Dateiformat wird nicht unterstützt',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
   }
 
   Future<void> _deleteBedSport(int? sportId) async {
@@ -240,6 +481,14 @@ class _BeduerfnissantragStep2ScreenState
                                             setState(() {
                                               _bedSportFuture =
                                                   _fetchBedSportData();
+                                              // Refresh documents list to show new uploads
+                                              if (widget
+                                                      .antrag
+                                                      ?.antragsnummer !=
+                                                  null) {
+                                                _bedDateiFuture =
+                                                    _fetchBedDateiData();
+                                              }
                                             });
                                           }
                                         },
@@ -320,6 +569,8 @@ class _BeduerfnissantragStep2ScreenState
                           _waffenartFuture,
                           _wettkampfartFuture,
                           _disziplinenFuture,
+                          _bedDateiFuture ??
+                              Future.value(<BeduerfnisseDatei>[]),
                         ]),
                         builder: (
                           context,
@@ -354,6 +605,9 @@ class _BeduerfnissantragStep2ScreenState
                               [];
                           final disziplinList =
                               (snapshot.data?[3] as List<Disziplin>?) ?? [];
+                          final bedDateiList =
+                              (snapshot.data?[4] as List<BeduerfnisseDatei>?) ??
+                              [];
 
                           // Create lookup maps
                           final waffenartMap = {
@@ -366,6 +620,7 @@ class _BeduerfnissantragStep2ScreenState
                             for (var d in disziplinList)
                               d.disziplinId: d.disziplinNr,
                           };
+                          final hasDocuments = bedDateiList.isNotEmpty;
 
                           if (bedSportList.isEmpty) {
                             return ScaledText(
@@ -433,17 +688,20 @@ class _BeduerfnissantragStep2ScreenState
                                                       children: [
                                                         Row(
                                                           children: [
-                                                            Icon(
-                                                              Icons
-                                                                  .calendar_today,
-                                                              size:
-                                                                  UIConstants
-                                                                      .iconSizeS *
-                                                                  fontSizeProvider
-                                                                      .scaleFactor,
-                                                              color:
-                                                                  UIConstants
-                                                                      .primaryColor,
+                                                            Tooltip(
+                                                              message: 'Datum',
+                                                              child: Icon(
+                                                                Icons
+                                                                    .calendar_today,
+                                                                size:
+                                                                    UIConstants
+                                                                        .iconSizeS *
+                                                                    fontSizeProvider
+                                                                        .scaleFactor,
+                                                                color:
+                                                                    UIConstants
+                                                                        .primaryColor,
+                                                              ),
                                                             ),
                                                             const SizedBox(
                                                               width:
@@ -479,16 +737,20 @@ class _BeduerfnissantragStep2ScreenState
                                                         ),
                                                         Row(
                                                           children: [
-                                                            Icon(
-                                                              Icons.category,
-                                                              size:
-                                                                  UIConstants
-                                                                      .iconSizeS *
-                                                                  fontSizeProvider
-                                                                      .scaleFactor,
-                                                              color:
-                                                                  UIConstants
-                                                                      .primaryColor,
+                                                            Tooltip(
+                                                              message:
+                                                                  'Disziplin',
+                                                              child: Icon(
+                                                                Icons.category,
+                                                                size:
+                                                                    UIConstants
+                                                                        .iconSizeS *
+                                                                    fontSizeProvider
+                                                                        .scaleFactor,
+                                                                color:
+                                                                    UIConstants
+                                                                        .primaryColor,
+                                                              ),
                                                             ),
                                                             const SizedBox(
                                                               width:
@@ -519,17 +781,21 @@ class _BeduerfnissantragStep2ScreenState
                                                         ),
                                                         Row(
                                                           children: [
-                                                            Icon(
-                                                              Icons
-                                                                  .fitness_center,
-                                                              size:
-                                                                  UIConstants
-                                                                      .iconSizeS *
-                                                                  fontSizeProvider
-                                                                      .scaleFactor,
-                                                              color:
-                                                                  UIConstants
-                                                                      .primaryColor,
+                                                            Tooltip(
+                                                              message:
+                                                                  'Training',
+                                                              child: Icon(
+                                                                Icons
+                                                                    .fitness_center,
+                                                                size:
+                                                                    UIConstants
+                                                                        .iconSizeS *
+                                                                    fontSizeProvider
+                                                                        .scaleFactor,
+                                                                color:
+                                                                    UIConstants
+                                                                        .primaryColor,
+                                                              ),
                                                             ),
                                                             const SizedBox(
                                                               width:
@@ -558,7 +824,8 @@ class _BeduerfnissantragStep2ScreenState
                                                     ),
                                                   ),
                                                   const SizedBox(
-                                                    width: UIConstants.spacingM,
+                                                    width:
+                                                        UIConstants.spacingXXS,
                                                   ),
                                                   // Right column
                                                   Expanded(
@@ -569,17 +836,20 @@ class _BeduerfnissantragStep2ScreenState
                                                       children: [
                                                         Row(
                                                           children: [
-                                                            Icon(
-                                                              Icons
-                                                                  .sports_score,
-                                                              size:
-                                                                  UIConstants
-                                                                      .iconSizeS *
-                                                                  fontSizeProvider
-                                                                      .scaleFactor,
-                                                              color:
-                                                                  UIConstants
-                                                                      .primaryColor,
+                                                            Tooltip(
+                                                              message:
+                                                                  'Waffenart',
+                                                              child: Icon(
+                                                                Icons.adjust,
+                                                                size:
+                                                                    UIConstants
+                                                                        .iconSizeS *
+                                                                    fontSizeProvider
+                                                                        .scaleFactor,
+                                                                color:
+                                                                    UIConstants
+                                                                        .primaryColor,
+                                                              ),
                                                             ),
                                                             const SizedBox(
                                                               width:
@@ -603,6 +873,45 @@ class _BeduerfnissantragStep2ScreenState
                                                             ),
                                                           ],
                                                         ),
+                                                        if (hasDocuments) ...[
+                                                          const SizedBox(
+                                                            height:
+                                                                UIConstants
+                                                                    .spacingS,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Tooltip(
+                                                                message:
+                                                                    'Dokument anzeigen',
+                                                                child: IconButton(
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .insert_drive_file,
+                                                                    size:
+                                                                        UIConstants
+                                                                            .iconSizeS *
+                                                                        fontSizeProvider
+                                                                            .scaleFactor,
+                                                                    color:
+                                                                        UIConstants
+                                                                            .primaryColor,
+                                                                  ),
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  constraints:
+                                                                      const BoxConstraints(),
+                                                                  onPressed:
+                                                                      () => _showDocuments(
+                                                                        context,
+                                                                        bedDateiList,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
                                                         if (wettkampfartName !=
                                                             null) ...[
                                                           const SizedBox(
@@ -612,17 +921,21 @@ class _BeduerfnissantragStep2ScreenState
                                                           ),
                                                           Row(
                                                             children: [
-                                                              Icon(
-                                                                Icons
-                                                                    .emoji_events,
-                                                                size:
-                                                                    UIConstants
-                                                                        .iconSizeS *
-                                                                    fontSizeProvider
-                                                                        .scaleFactor,
-                                                                color:
-                                                                    UIConstants
-                                                                        .primaryColor,
+                                                              Tooltip(
+                                                                message:
+                                                                    'Wettkampfart',
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .emoji_events,
+                                                                  size:
+                                                                      UIConstants
+                                                                          .iconSizeS *
+                                                                      fontSizeProvider
+                                                                          .scaleFactor,
+                                                                  color:
+                                                                      UIConstants
+                                                                          .primaryColor,
+                                                                ),
                                                               ),
                                                               const SizedBox(
                                                                 width:
@@ -645,29 +958,58 @@ class _BeduerfnissantragStep2ScreenState
                                                             ],
                                                           ),
                                                         ],
+                                                        if (sport
+                                                                .wettkampfergebnis !=
+                                                            null) ...[
+                                                          const SizedBox(
+                                                            height:
+                                                                UIConstants
+                                                                    .spacingS,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Tooltip(
+                                                                message:
+                                                                    'Wettkampfergebnis',
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .leaderboard,
+                                                                  size:
+                                                                      UIConstants
+                                                                          .iconSizeS *
+                                                                      fontSizeProvider
+                                                                          .scaleFactor,
+                                                                  color:
+                                                                      UIConstants
+                                                                          .primaryColor,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width:
+                                                                    UIConstants
+                                                                        .spacingS,
+                                                              ),
+                                                              Flexible(
+                                                                child: ScaledText(
+                                                                  '${sport.wettkampfergebnis}',
+                                                                  style: UIStyles.bodyTextStyle.copyWith(
+                                                                    fontSize:
+                                                                        UIStyles
+                                                                            .bodyTextStyle
+                                                                            .fontSize! *
+                                                                        fontSizeProvider
+                                                                            .scaleFactor,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
                                                       ],
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                              if (sport.wettkampfergebnis !=
-                                                  null) ...[
-                                                const SizedBox(
-                                                  height: UIConstants.spacingS,
-                                                ),
-                                                ScaledText(
-                                                  'Wettkampfergebnis: ${sport.wettkampfergebnis}',
-                                                  style: UIStyles.bodyTextStyle
-                                                      .copyWith(
-                                                        fontSize:
-                                                            UIStyles
-                                                                .bodyTextStyle
-                                                                .fontSize! *
-                                                            fontSizeProvider
-                                                                .scaleFactor,
-                                                      ),
-                                                ),
-                                              ],
                                               if (sport.bemerkung != null) ...[
                                                 const SizedBox(
                                                   height: UIConstants.spacingS,
