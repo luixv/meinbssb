@@ -1525,6 +1525,40 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
+  _i13.Future<bool> uploadBedDateiForSport({
+    required int? antragsnummer,
+    required String? dateiname,
+    required List<int>? fileBytes,
+    required int? bedSportId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#uploadBedDateiForSport, [], {
+              #antragsnummer: antragsnummer,
+              #dateiname: dateiname,
+              #fileBytes: fileBytes,
+              #bedSportId: bedSportId,
+            }),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<bool> uploadBedDateiForWBK({
+    required int? antragsnummer,
+    required String? dateiname,
+    required List<int>? fileBytes,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#uploadBedDateiForWBK, [], {
+              #antragsnummer: antragsnummer,
+              #dateiname: dateiname,
+              #fileBytes: fileBytes,
+            }),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
   _i13.Future<Map<String, dynamic>> createBedSport({
     required int? antragsnummer,
     required String? schiessdatum,
@@ -1568,14 +1602,6 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
   _i13.Future<bool> updateBedSport(_i39.BeduerfnisseSport? sport) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedSport, [sport]),
-            returnValue: _i13.Future<bool>.value(false),
-          )
-          as _i13.Future<bool>);
-
-  @override
-  _i13.Future<bool> deleteBedSport(int? antragsnummer) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedSport, [antragsnummer]),
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
@@ -1721,29 +1747,9 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<List<_i9.BeduerfnisseAntrag>>);
 
   @override
-  _i13.Future<List<_i9.BeduerfnisseAntrag>> getBedAntragByStatusId(
-    int? statusId,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#getBedAntragByStatusId, [statusId]),
-            returnValue: _i13.Future<List<_i9.BeduerfnisseAntrag>>.value(
-              <_i9.BeduerfnisseAntrag>[],
-            ),
-          )
-          as _i13.Future<List<_i9.BeduerfnisseAntrag>>);
-
-  @override
   _i13.Future<bool> updateBedAntrag(_i9.BeduerfnisseAntrag? antrag) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedAntrag, [antrag]),
-            returnValue: _i13.Future<bool>.value(false),
-          )
-          as _i13.Future<bool>);
-
-  @override
-  _i13.Future<bool> deleteBedAntrag(int? antragsnummer) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedAntrag, [antragsnummer]),
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
@@ -1819,7 +1825,7 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
 
   @override
   _i13.Future<_i11.BeduerfnisseDateiZuord> createBedDateiZuord({
-    required String? antragsnummer,
+    required int? antragsnummer,
     required int? dateiId,
     required String? dateiArt,
     int? bedSportId,
@@ -1856,9 +1862,17 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<bool> deleteBedDateiZuord(int? id) =>
+  _i13.Future<bool> deleteBedDateiZuord(int? antragsnummer) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteBedDateiZuord, [id]),
+            Invocation.method(#deleteBedDateiZuord, [antragsnummer]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<bool> hasBedDateiSport(int? sportId) =>
+      (super.noSuchMethod(
+            Invocation.method(#hasBedDateiSport, [sportId]),
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
@@ -1950,6 +1964,30 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
             returnValue: false,
           )
           as bool);
+
+  @override
+  _i13.Future<bool> deleteBedDateiBySportId(int? bedSportId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiBySportId, [bedSportId]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<bool> deleteBedSportById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedSportById, [id]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<bool> deleteBedAntrag(int? antragsnummer) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedAntrag, [antragsnummer]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
 }
 
 /// A class which mocks [ConfigService].
@@ -3222,6 +3260,14 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<bool>);
 
   @override
+  _i13.Future<bool> deleteBedDateiById(int? dateiId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiById, [dateiId]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
   _i13.Future<Map<String, dynamic>> createBedSport({
     required int? antragsnummer,
     required String? schiessdatum,
@@ -3270,9 +3316,17 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<bool> deleteBedSport(int? antragsnummer) =>
+  _i13.Future<bool> deleteBedSportByAntragsnummer(int? antragsnummer) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteBedSport, [antragsnummer]),
+            Invocation.method(#deleteBedSportByAntragsnummer, [antragsnummer]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<bool> deleteBedSportById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedSportById, [id]),
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
@@ -3523,8 +3577,16 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<bool>);
 
   @override
+  _i13.Future<bool> deleteBedAntragPerson(int? antragsnummer) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedAntragPerson, [antragsnummer]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
   _i13.Future<_i11.BeduerfnisseDateiZuord> createBedDateiZuord({
-    required String? antragsnummer,
+    required int? antragsnummer,
     required int? dateiId,
     required String? dateiArt,
     int? bedSportId,
@@ -3561,9 +3623,27 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<bool> deleteBedDateiZuord(int? id) =>
+  _i13.Future<bool> deleteBedDateiZuord(int? antragsnummer) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteBedDateiZuord, [id]),
+            Invocation.method(#deleteBedDateiZuord, [antragsnummer]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<_i11.BeduerfnisseDateiZuord?> getBedDateiZuordByBedSportId(
+    int? bedSportId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiZuordByBedSportId, [bedSportId]),
+            returnValue: _i13.Future<_i11.BeduerfnisseDateiZuord?>.value(),
+          )
+          as _i13.Future<_i11.BeduerfnisseDateiZuord?>);
+
+  @override
+  _i13.Future<bool> deleteBedDateiZuordByBedSportId(int? bedSportId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiZuordByBedSportId, [bedSportId]),
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);

@@ -393,7 +393,7 @@ class _BeduerfnissantragStep2ScreenState
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final success = await apiService.deleteBedSport(sportId);
+      final success = await apiService.deleteBedSportById(sportId);
 
       if (mounted) {
         if (success) {
