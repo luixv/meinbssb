@@ -34,6 +34,7 @@ class _BeduerfnissantragStep2DialogScreenState
   bool _training = false;
   bool _isLoading = false;
   bool _documentUploaded = false;
+  bool _isUploadingDocument = false;
   int?
   _uploadedDateiId; // Stores the datei_id from uploadBedDatei (before mapping to sport)
   int? _selectedWaffenartId;
@@ -421,8 +422,7 @@ class _BeduerfnissantragStep2DialogScreenState
       // Store the created bedSport ID
       final createdBedSportId = response['id'] as int?;
       if (createdBedSportId != null) {
-        setState(() {
-        });
+        setState(() {});
 
         // Map uploaded document to the newly created sport
         if (_uploadedDateiId != null) {
@@ -450,8 +450,7 @@ class _BeduerfnissantragStep2DialogScreenState
               );
             }
           }
-        } else {
-        }
+        } else {}
       }
 
       if (mounted) {
@@ -895,6 +894,10 @@ class _BeduerfnissantragStep2DialogScreenState
                                                 return;
                                               }
 
+                                              setState(() {
+                                                _isUploadingDocument = true;
+                                              });
+
                                               try {
                                                 final ImagePicker picker =
                                                     ImagePicker();
@@ -905,6 +908,10 @@ class _BeduerfnissantragStep2DialogScreenState
                                                     );
 
                                                 if (file == null) {
+                                                  setState(() {
+                                                    _isUploadingDocument =
+                                                        false;
+                                                  });
                                                   return;
                                                 }
 
@@ -913,6 +920,10 @@ class _BeduerfnissantragStep2DialogScreenState
                                                 final fileName = file.name;
 
                                                 if (bytes.isEmpty) {
+                                                  setState(() {
+                                                    _isUploadingDocument =
+                                                        false;
+                                                  });
                                                   if (mounted) {
                                                     ScaffoldMessenger.of(
                                                       buttonContext,
@@ -941,13 +952,14 @@ class _BeduerfnissantragStep2DialogScreenState
                                                       fileBytes: bytes,
                                                     );
 
-
                                                 if (mounted) {
                                                   if (dateiId != null) {
                                                     setState(() {
                                                       _uploadedDateiId =
                                                           dateiId;
                                                       _documentUploaded = true;
+                                                      _isUploadingDocument =
+                                                          false;
                                                     });
                                                     ScaffoldMessenger.of(
                                                       buttonContext,
@@ -959,6 +971,10 @@ class _BeduerfnissantragStep2DialogScreenState
                                                       ),
                                                     );
                                                   } else {
+                                                    setState(() {
+                                                      _isUploadingDocument =
+                                                          false;
+                                                    });
                                                     ScaffoldMessenger.of(
                                                       buttonContext,
                                                     ).showSnackBar(
@@ -971,6 +987,9 @@ class _BeduerfnissantragStep2DialogScreenState
                                                   }
                                                 }
                                               } catch (e) {
+                                                setState(() {
+                                                  _isUploadingDocument = false;
+                                                });
                                                 if (mounted) {
                                                   ScaffoldMessenger.of(
                                                     buttonContext,
@@ -1064,11 +1083,13 @@ class _BeduerfnissantragStep2DialogScreenState
                           mini: true,
                           tooltip: 'Speichern',
                           backgroundColor:
-                              _isLoading || !_areAllCompulsoryFieldsFilled()
+                              _isLoading ||
+                                      !_areAllCompulsoryFieldsFilled() ||
+                                      _isUploadingDocument
                                   ? UIConstants.disabledBackgroundColor
                                   : UIConstants.defaultAppColor,
                           onPressed:
-                              _isLoading
+                              _isLoading || _isUploadingDocument
                                   ? null
                                   : (_areAllCompulsoryFieldsFilled()
                                       ? _saveBedSport
@@ -1105,6 +1126,36 @@ class _BeduerfnissantragStep2DialogScreenState
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 UIConstants.circularProgressIndicator,
                               ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  // Document upload loading overlay
+                  if (_isUploadingDocument)
+                    Positioned.fill(
+                      child: AbsorbPointer(
+                        absorbing: true,
+                        child: Container(
+                          color: UIConstants.overlayColor,
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    UIConstants.circularProgressIndicator,
+                                  ),
+                                ),
+                                SizedBox(height: UIConstants.spacingM),
+                                Text(
+                                  'Dokument wird hochgeladen...',
+                                  style: TextStyle(
+                                    color: UIConstants.whiteColor,
+                                    fontSize: UIConstants.bodyFontSize,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
