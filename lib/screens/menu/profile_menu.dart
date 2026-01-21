@@ -121,7 +121,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   );
                 },
-              ),/*
+              ),
               _buildMenuItem(
                 context,
                 'Bedürfnisse',
@@ -139,7 +139,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   );
                 },
-              ),*/
+              ),
               _buildMenuItem(context, 'Passwort ändern', Icons.lock, () {
                 Navigator.push(
                   context,

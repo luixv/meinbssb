@@ -923,7 +923,7 @@ void main() {
           body: anyNamed('body'),
         )).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.deleteBedSport(1);
+        final result = await service.deleteBedSportById(1);
         expect(result, isTrue);
       });
     });
@@ -1274,7 +1274,7 @@ void main() {
         )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedAntragPerson(
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           personId: 100,
           statusId: 1,
           name: 'Max',
@@ -1306,7 +1306,7 @@ void main() {
 
         expect(
           () => service.createBedAntragPerson(
-            antragsnummer: 'A123',
+            antragsnummer: '123',
             personId: 100,
           ),
           throwsException,
@@ -1322,7 +1322,7 @@ void main() {
 
         expect(
           () => service.createBedAntragPerson(
-            antragsnummer: 'A123',
+            antragsnummer: '123',
             personId: 100,
           ),
           throwsException,
@@ -1418,7 +1418,7 @@ void main() {
 
         const antragPerson = BeduerfnisseAntragPerson(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           personId: 100,
           vorname: 'Max Updated',
         );
@@ -1434,7 +1434,7 @@ void main() {
 
       test('updateBedAntragPerson returns false when id is null', () async {
         const antragPerson = BeduerfnisseAntragPerson(
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           personId: 100,
         );
 
@@ -1456,7 +1456,7 @@ void main() {
 
         const antragPerson = BeduerfnisseAntragPerson(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           personId: 100,
         );
 
@@ -1478,7 +1478,7 @@ void main() {
 
         const antragPerson = BeduerfnisseAntragPerson(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           personId: 100,
         );
 
@@ -1505,7 +1505,7 @@ void main() {
         )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedDateiZuord(
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
@@ -1533,7 +1533,7 @@ void main() {
 
         expect(
           () => service.createBedDateiZuord(
-            antragsnummer: 'A123',
+            antragsnummer: 123,
             dateiId: 10,
             dateiArt: 'SPORT',
           ),
@@ -1550,7 +1550,7 @@ void main() {
 
         expect(
           () => service.createBedDateiZuord(
-            antragsnummer: 'A123',
+            antragsnummer: 123,
             dateiId: 10,
             dateiArt: 'SPORT',
           ),
@@ -1574,7 +1574,7 @@ void main() {
         )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedDateiZuord(
-          antragsnummer: 'A124',
+          antragsnummer: 124,
           dateiId: 11,
           dateiArt: 'WBK',
         );
@@ -1593,7 +1593,7 @@ void main() {
 
         const dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 6,
@@ -1610,7 +1610,7 @@ void main() {
 
       test('updateBedDateiZuord returns false when id is null', () async {
         const dateiZuord = BeduerfnisseDateiZuord(
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           dateiId: 10,
           dateiArt: 'SPORT',
         );
@@ -1633,7 +1633,7 @@ void main() {
 
         const dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           dateiId: 10,
           dateiArt: 'SPORT',
         );
@@ -1656,7 +1656,7 @@ void main() {
 
         const dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: '123',
           dateiId: 10,
           dateiArt: 'SPORT',
         );
@@ -1665,14 +1665,68 @@ void main() {
         expect(result, isFalse);
       });
 
-      test('deleteBedDateiZuord soft deletes entry successfully', () async {
+      test('getBedDateiZuordByBedSportId returns single record', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': '123',
+            'datei_id': 50,
+            'datei_art': 'SPORT',
+            'bed_sport_id': 10,
+          },
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedDateiZuordByBedSportId(10);
+
+        expect(result, isNotNull);
+        expect(result!.id, equals(1));
+        expect(result.dateiId, equals(50));
+        expect(result.bedSportId, equals(10));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).called(1);
+      });
+
+      test('getBedDateiZuordByBedSportId returns null when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getBedDateiZuordByBedSportId(10);
+
+        expect(result, isNull);
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).called(1);
+      });
+
+      test('getBedDateiZuordByBedSportId returns null on error', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.getBedDateiZuordByBedSportId(10);
+
+        expect(result, isNull);
+      });
+
+      test('deleteBedDateiZuordByBedSportId deletes successfully', () async {
         when(mockClient.patch(
           any,
           headers: anyNamed('headers'),
           body: anyNamed('body'),
         )).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.deleteBedDateiZuord(1);
+        final result = await service.deleteBedDateiZuordByBedSportId(10);
+
         expect(result, isTrue);
         verify(mockClient.patch(
           any,
@@ -1681,25 +1735,173 @@ void main() {
         )).called(1);
       });
 
-      test('deleteBedDateiZuord returns false on error', () async {
+      test('deleteBedDateiZuordByBedSportId returns false on error', () async {
         when(mockClient.patch(
           any,
           headers: anyNamed('headers'),
           body: anyNamed('body'),
         )).thenAnswer((_) async => http.Response('Error', 500));
 
-        final result = await service.deleteBedDateiZuord(1);
+        final result = await service.deleteBedDateiZuordByBedSportId(10);
+
+        expect(result, isFalse);
+      });
+    });
+
+    group('bed_datei Additional Methods', () {
+      test('deleteBedDateiById deletes successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.deleteBedDateiById(100);
+
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('deleteBedDateiById returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.deleteBedDateiById(100);
+
         expect(result, isFalse);
       });
 
-      test('deleteBedDateiZuord handles exception gracefully', () async {
+      test('deleteBedDateiById handles exception gracefully', () async {
         when(mockClient.patch(
           any,
           headers: anyNamed('headers'),
           body: anyNamed('body'),
         )).thenThrow(Exception('Network error'));
 
-        final result = await service.deleteBedDateiZuord(1);
+        final result = await service.deleteBedDateiById(100);
+
+        expect(result, isFalse);
+      });
+    });
+
+    group('bed_sport Additional Methods', () {
+      test('deleteBedSportById deletes successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.deleteBedSportById(10);
+
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('deleteBedSportById returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.deleteBedSportById(10);
+
+        expect(result, isFalse);
+      });
+
+      test('deleteBedSportById handles exception gracefully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenThrow(Exception('Network error'));
+
+        final result = await service.deleteBedSportById(10);
+
+        expect(result, isFalse);
+      });
+
+      test('deleteBedSportByAntragsnummer deletes successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.deleteBedSportByAntragsnummer(123);
+
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('deleteBedSportByAntragsnummer returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.deleteBedSportByAntragsnummer(123);
+
+        expect(result, isFalse);
+      });
+    });
+
+    group('bed_antrag_person Additional Methods', () {
+      test('deleteBedAntragPerson deletes successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.deleteBedAntragPerson(123);
+
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('deleteBedAntragPerson returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.deleteBedAntragPerson(123);
+
+        expect(result, isFalse);
+      });
+
+      test('deleteBedAntragPerson handles exception gracefully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenThrow(Exception('Network error'));
+
+        final result = await service.deleteBedAntragPerson(123);
+
         expect(result, isFalse);
       });
     });

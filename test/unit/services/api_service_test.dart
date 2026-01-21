@@ -2508,14 +2508,20 @@ void main() {
         verify(mockPostgrestService.updateBedSport(sport)).called(1);
       });
 
-      test('deleteBedSport delegates to postgrest service', () async {
+      test('deleteBedSport delegates to postgrest service with cascading delete', () async {
+        // Mock getBedDateiZuordByBedSportId to return null (no datei_zuord exists)
         when(
-          mockPostgrestService.deleteBedSport(1),
+          mockPostgrestService.getBedDateiZuordByBedSportId(1),
+        ).thenAnswer((_) async => null);
+        
+        when(
+          mockPostgrestService.deleteBedSportById(1),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.deleteBedSport(1);
+        final result = await apiService.deleteBedSportById(1);
         expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedSport(1)).called(1);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(1)).called(1);
+        verify(mockPostgrestService.deleteBedSportById(1)).called(1);
       });
     });
 
@@ -2725,14 +2731,42 @@ void main() {
         ).called(1);
       });
 
-      test('deleteBedAntrag delegates to postgrest service', () async {
+      test('deleteBedAntrag performs cascading delete', () async {
+        // Mock all cascading delete calls
         when(
-          mockPostgrestService.deleteBedAntrag(1),
+          mockPostgrestService.deleteBedAntragPerson(1),
+        ).thenAnswer((_) async => true);
+        
+        when(
+          mockPostgrestService.deleteBedDatei(1),
+        ).thenAnswer((_) async => true);
+        
+        when(
+          mockPostgrestService.deleteBedDateiZuord(1),
+        ).thenAnswer((_) async => true);
+        
+        when(
+          mockPostgrestService.deleteBedSportByAntragsnummer(1),
+        ).thenAnswer((_) async => true);
+        
+        when(
+          mockPostgrestService.deleteBedWaffeBesitz(1),
+        ).thenAnswer((_) async => true);
+        
+        when(
+          mockPostgrestService.deleteBedWettkampf(1),
         ).thenAnswer((_) async => true);
 
         final result = await apiService.deleteBedAntrag(1);
         expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedAntrag(1)).called(1);
+        
+        // Verify all cascading deletes were called
+        verify(mockPostgrestService.deleteBedAntragPerson(1)).called(1);
+        verify(mockPostgrestService.deleteBedDatei(1)).called(1);
+        verify(mockPostgrestService.deleteBedDateiZuord(1)).called(1);
+        verify(mockPostgrestService.deleteBedSportByAntragsnummer(1)).called(1);
+        verify(mockPostgrestService.deleteBedWaffeBesitz(1)).called(1);
+        verify(mockPostgrestService.deleteBedWettkampf(1)).called(1);
       });
     });
 
@@ -2850,7 +2884,7 @@ void main() {
         ).thenAnswer((_) async => expectedResult);
 
         final result = await apiService.createBedDateiZuord(
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
@@ -2859,7 +2893,7 @@ void main() {
         expect(result, equals(expectedResult));
         verify(
           mockPostgrestService.createBedDateiZuord(
-            antragsnummer: 'A123',
+            antragsnummer: 123,
             dateiId: 10,
             dateiArt: 'SPORT',
             bedSportId: 5,
@@ -2885,14 +2919,45 @@ void main() {
         verify(mockPostgrestService.updateBedDateiZuord(dateiZuord)).called(1);
       });
 
-      test('deleteBedDateiZuord delegates to postgrest service', () async {
-        when(
-          mockPostgrestService.deleteBedDateiZuord(1),
-        ).thenAnswer((_) async => true);
+      test('hasBedDateiSport returns true when datei exists', () async {
+        final dateiZuord = BeduerfnisseDateiZuord(
+          id: 1,
+          antragsnummer: '123',
+          dateiId: 50,
+          dateiArt: 'SPORT',
+          bedSportId: 10,
+        );
 
-        final result = await apiService.deleteBedDateiZuord(1);
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => dateiZuord);
+
+        final result = await apiService.hasBedDateiSport(10);
+
         expect(result, isTrue);
-        verify(mockPostgrestService.deleteBedDateiZuord(1)).called(1);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
+      });
+
+      test('hasBedDateiSport returns false when datei does not exist', () async {
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => null);
+
+        final result = await apiService.hasBedDateiSport(10);
+
+        expect(result, isFalse);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
+      });
+
+      test('hasBedDateiSport returns false on exception', () async {
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(10),
+        ).thenThrow(Exception('Database error'));
+
+        final result = await apiService.hasBedDateiSport(10);
+
+        expect(result, isFalse);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
       });
     });
 
@@ -2985,6 +3050,305 @@ void main() {
         final result = await apiService.deleteBedWettkampf(123);
         expect(result, isTrue);
         verify(mockPostgrestService.deleteBedWettkampf(123)).called(1);
+      });
+    });
+
+    group('Document Upload Tests', () {
+      test('uploadBedDateiForSport creates datei and datei_zuord successfully', () async {
+        final expectedDateiResponse = {
+          'id': 100,
+          'antragsnummer': 123,
+          'dateiname': 'test.pdf',
+        };
+
+        final expectedDateiZuord = BeduerfnisseDateiZuord(
+          id: 1,
+          antragsnummer: '123',
+          dateiId: 100,
+          dateiArt: 'SPORT',
+          bedSportId: 5,
+        );
+
+        // Mock createBedDatei
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 123,
+            dateiname: 'test.pdf',
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        ).thenAnswer((_) async => expectedDateiResponse);
+
+        // Mock createBedDateiZuord
+        when(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 123,
+            dateiId: 100,
+            dateiArt: 'SPORT',
+            bedSportId: 5,
+          ),
+        ).thenAnswer((_) async => expectedDateiZuord);
+
+        final result = await apiService.uploadBedDateiForSport(
+          antragsnummer: 123,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3],
+          bedSportId: 5,
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 123,
+            dateiname: 'test.pdf',
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        ).called(1);
+        verify(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 123,
+            dateiId: 100,
+            dateiArt: 'SPORT',
+            bedSportId: 5,
+          ),
+        ).called(1);
+      });
+
+      test('uploadBedDateiForSport returns false when datei creation fails', () async {
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 123,
+            dateiname: 'test.pdf',
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        ).thenAnswer((_) async => {});
+
+        final result = await apiService.uploadBedDateiForSport(
+          antragsnummer: 123,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3],
+          bedSportId: 5,
+        );
+
+        expect(result, isFalse);
+      });
+
+      test('uploadBedDateiForSport cleans up datei when datei_zuord creation fails', () async {
+        final expectedDateiResponse = {
+          'id': 100,
+          'antragsnummer': 123,
+          'dateiname': 'test.pdf',
+        };
+
+        // Mock createBedDatei success
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 123,
+            dateiname: 'test.pdf',
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        ).thenAnswer((_) async => expectedDateiResponse);
+
+        // Mock createBedDateiZuord failure
+        when(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 123,
+            dateiId: 100,
+            dateiArt: 'SPORT',
+            bedSportId: 5,
+          ),
+        ).thenThrow(Exception('Failed to create zuord'));
+
+        // Mock cleanup
+        when(
+          mockPostgrestService.deleteBedDateiById(100),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.uploadBedDateiForSport(
+          antragsnummer: 123,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3],
+          bedSportId: 5,
+        );
+
+        expect(result, isFalse);
+        verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
+      });
+
+      test('uploadBedDateiForWBK creates datei and datei_zuord successfully', () async {
+        final expectedDateiResponse = {
+          'id': 200,
+          'antragsnummer': 456,
+          'dateiname': 'wbk.pdf',
+        };
+
+        final expectedDateiZuord = BeduerfnisseDateiZuord(
+          id: 2,
+          antragsnummer: '456',
+          dateiId: 200,
+          dateiArt: 'WBK',
+        );
+
+        // Mock createBedDatei
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 456,
+            dateiname: 'wbk.pdf',
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        ).thenAnswer((_) async => expectedDateiResponse);
+
+        // Mock createBedDateiZuord
+        when(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 456,
+            dateiId: 200,
+            dateiArt: 'WBK',
+            bedSportId: null,
+          ),
+        ).thenAnswer((_) async => expectedDateiZuord);
+
+        final result = await apiService.uploadBedDateiForWBK(
+          antragsnummer: 456,
+          dateiname: 'wbk.pdf',
+          fileBytes: [4, 5, 6],
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 456,
+            dateiname: 'wbk.pdf',
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        ).called(1);
+        verify(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 456,
+            dateiId: 200,
+            dateiArt: 'WBK',
+            bedSportId: null,
+          ),
+        ).called(1);
+      });
+
+      test('uploadBedDateiForWBK returns false when datei creation fails', () async {
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 456,
+            dateiname: 'wbk.pdf',
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        ).thenAnswer((_) async => {});
+
+        final result = await apiService.uploadBedDateiForWBK(
+          antragsnummer: 456,
+          dateiname: 'wbk.pdf',
+          fileBytes: [4, 5, 6],
+        );
+
+        expect(result, isFalse);
+      });
+    });
+
+    group('Cascading Delete Tests', () {
+      test('deleteBedDateiBySportId deletes datei_zuord and datei successfully', () async {
+        final dateiZuord = BeduerfnisseDateiZuord(
+          id: 1,
+          antragsnummer: '123',
+          dateiId: 50,
+          dateiArt: 'SPORT',
+          bedSportId: 10,
+        );
+
+        // Mock getBedDateiZuordByBedSportId
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => dateiZuord);
+
+        // Mock deleteBedDateiZuordByBedSportId
+        when(
+          mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => true);
+
+        // Mock deleteBedDateiById
+        when(
+          mockPostgrestService.deleteBedDateiById(50),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBedDateiBySportId(10);
+
+        expect(result, isTrue);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
+        verify(mockPostgrestService.deleteBedDateiZuordByBedSportId(10)).called(1);
+        verify(mockPostgrestService.deleteBedDateiById(50)).called(1);
+      });
+
+      test('deleteBedDateiBySportId returns true when no datei_zuord exists', () async {
+        // Mock getBedDateiZuordByBedSportId returning null
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => null);
+
+        final result = await apiService.deleteBedDateiBySportId(10);
+
+        expect(result, isTrue);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
+        verifyNever(mockPostgrestService.deleteBedDateiZuordByBedSportId(any));
+        verifyNever(mockPostgrestService.deleteBedDateiById(any));
+      });
+
+      test('deleteBedDateiBySportId returns false when datei_zuord deletion fails', () async {
+        final dateiZuord = BeduerfnisseDateiZuord(
+          id: 1,
+          antragsnummer: '123',
+          dateiId: 50,
+          dateiArt: 'SPORT',
+          bedSportId: 10,
+        );
+
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => dateiZuord);
+
+        when(
+          mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => false);
+
+        final result = await apiService.deleteBedDateiBySportId(10);
+
+        expect(result, isFalse);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
+        verify(mockPostgrestService.deleteBedDateiZuordByBedSportId(10)).called(1);
+        verifyNever(mockPostgrestService.deleteBedDateiById(any));
+      });
+
+      test('deleteBedDateiBySportId returns false when datei deletion fails', () async {
+        final dateiZuord = BeduerfnisseDateiZuord(
+          id: 1,
+          antragsnummer: '123',
+          dateiId: 50,
+          dateiArt: 'SPORT',
+          bedSportId: 10,
+        );
+
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => dateiZuord);
+
+        when(
+          mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedDateiById(50),
+        ).thenAnswer((_) async => false);
+
+        final result = await apiService.deleteBedDateiBySportId(10);
+
+        expect(result, isFalse);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
+        verify(mockPostgrestService.deleteBedDateiZuordByBedSportId(10)).called(1);
+        verify(mockPostgrestService.deleteBedDateiById(50)).called(1);
       });
     });
   });

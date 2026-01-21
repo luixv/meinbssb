@@ -1244,6 +1244,40 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
           as _i12.Future<bool>);
 
   @override
+  _i12.Future<bool> uploadBedDateiForSport({
+    required int? antragsnummer,
+    required String? dateiname,
+    required List<int>? fileBytes,
+    required int? bedSportId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#uploadBedDateiForSport, [], {
+              #antragsnummer: antragsnummer,
+              #dateiname: dateiname,
+              #fileBytes: fileBytes,
+              #bedSportId: bedSportId,
+            }),
+            returnValue: _i12.Future<bool>.value(false),
+          )
+          as _i12.Future<bool>);
+
+  @override
+  _i12.Future<bool> uploadBedDateiForWBK({
+    required int? antragsnummer,
+    required String? dateiname,
+    required List<int>? fileBytes,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#uploadBedDateiForWBK, [], {
+              #antragsnummer: antragsnummer,
+              #dateiname: dateiname,
+              #fileBytes: fileBytes,
+            }),
+            returnValue: _i12.Future<bool>.value(false),
+          )
+          as _i12.Future<bool>);
+
+  @override
   _i12.Future<Map<String, dynamic>> createBedSport({
     required int? antragsnummer,
     required String? schiessdatum,
@@ -1287,14 +1321,6 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
   _i12.Future<bool> updateBedSport(_i36.BeduerfnisseSport? sport) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedSport, [sport]),
-            returnValue: _i12.Future<bool>.value(false),
-          )
-          as _i12.Future<bool>);
-
-  @override
-  _i12.Future<bool> deleteBedSport(int? antragsnummer) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedSport, [antragsnummer]),
             returnValue: _i12.Future<bool>.value(false),
           )
           as _i12.Future<bool>);
@@ -1440,29 +1466,9 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
           as _i12.Future<List<_i8.BeduerfnisseAntrag>>);
 
   @override
-  _i12.Future<List<_i8.BeduerfnisseAntrag>> getBedAntragByStatusId(
-    int? statusId,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#getBedAntragByStatusId, [statusId]),
-            returnValue: _i12.Future<List<_i8.BeduerfnisseAntrag>>.value(
-              <_i8.BeduerfnisseAntrag>[],
-            ),
-          )
-          as _i12.Future<List<_i8.BeduerfnisseAntrag>>);
-
-  @override
   _i12.Future<bool> updateBedAntrag(_i8.BeduerfnisseAntrag? antrag) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedAntrag, [antrag]),
-            returnValue: _i12.Future<bool>.value(false),
-          )
-          as _i12.Future<bool>);
-
-  @override
-  _i12.Future<bool> deleteBedAntrag(int? antragsnummer) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedAntrag, [antragsnummer]),
             returnValue: _i12.Future<bool>.value(false),
           )
           as _i12.Future<bool>);
@@ -1538,7 +1544,7 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
 
   @override
   _i12.Future<_i10.BeduerfnisseDateiZuord> createBedDateiZuord({
-    required String? antragsnummer,
+    required int? antragsnummer,
     required int? dateiId,
     required String? dateiArt,
     int? bedSportId,
@@ -1575,9 +1581,17 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
           as _i12.Future<bool>);
 
   @override
-  _i12.Future<bool> deleteBedDateiZuord(int? id) =>
+  _i12.Future<bool> deleteBedDateiZuord(int? antragsnummer) =>
       (super.noSuchMethod(
-            Invocation.method(#deleteBedDateiZuord, [id]),
+            Invocation.method(#deleteBedDateiZuord, [antragsnummer]),
+            returnValue: _i12.Future<bool>.value(false),
+          )
+          as _i12.Future<bool>);
+
+  @override
+  _i12.Future<bool> hasBedDateiSport(int? sportId) =>
+      (super.noSuchMethod(
+            Invocation.method(#hasBedDateiSport, [sportId]),
             returnValue: _i12.Future<bool>.value(false),
           )
           as _i12.Future<bool>);
@@ -1669,6 +1683,30 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
             returnValue: false,
           )
           as bool);
+
+  @override
+  _i12.Future<bool> deleteBedDateiBySportId(int? bedSportId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiBySportId, [bedSportId]),
+            returnValue: _i12.Future<bool>.value(false),
+          )
+          as _i12.Future<bool>);
+
+  @override
+  _i12.Future<bool> deleteBedSportById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedSportById, [id]),
+            returnValue: _i12.Future<bool>.value(false),
+          )
+          as _i12.Future<bool>);
+
+  @override
+  _i12.Future<bool> deleteBedAntrag(int? antragsnummer) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedAntrag, [antragsnummer]),
+            returnValue: _i12.Future<bool>.value(false),
+          )
+          as _i12.Future<bool>);
 }
 
 /// A class which mocks [CacheService].
