@@ -873,45 +873,6 @@ class _BeduerfnissantragStep2ScreenState
                                                             ),
                                                           ],
                                                         ),
-                                                        if (hasDocuments) ...[
-                                                          const SizedBox(
-                                                            height:
-                                                                UIConstants
-                                                                    .spacingS,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Tooltip(
-                                                                message:
-                                                                    'Dokument anzeigen',
-                                                                child: IconButton(
-                                                                  icon: Icon(
-                                                                    Icons
-                                                                        .insert_drive_file,
-                                                                    size:
-                                                                        UIConstants
-                                                                            .iconSizeS *
-                                                                        fontSizeProvider
-                                                                            .scaleFactor,
-                                                                    color:
-                                                                        UIConstants
-                                                                            .primaryColor,
-                                                                  ),
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  constraints:
-                                                                      const BoxConstraints(),
-                                                                  onPressed:
-                                                                      () => _showDocuments(
-                                                                        context,
-                                                                        bedDateiList,
-                                                                      ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
                                                         if (wettkampfartName !=
                                                             null) ...[
                                                           const SizedBox(
@@ -1002,6 +963,41 @@ class _BeduerfnissantragStep2ScreenState
                                                                   ),
                                                                 ),
                                                               ),
+                                                              if (hasDocuments) ...[
+                                                                const SizedBox(
+                                                                  width:
+                                                                      UIConstants
+                                                                          .spacingS,
+                                                                ),
+                                                                Tooltip(
+                                                                  message:
+                                                                      'Dokument anzeigen',
+                                                                  child: IconButton(
+                                                                    icon: Icon(
+                                                                      Icons
+                                                                          .insert_drive_file,
+                                                                      size:
+                                                                          UIConstants
+                                                                              .iconSizeS *
+                                                                          fontSizeProvider
+                                                                              .scaleFactor,
+                                                                      color:
+                                                                          UIConstants
+                                                                              .primaryColor,
+                                                                    ),
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    constraints:
+                                                                        const BoxConstraints(),
+                                                                    onPressed:
+                                                                        () => _showDocuments(
+                                                                          context,
+                                                                          bedDateiList,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ],
                                                           ),
                                                         ],
