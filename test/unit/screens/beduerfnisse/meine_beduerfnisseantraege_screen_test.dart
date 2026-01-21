@@ -400,8 +400,16 @@ void main() {
     testWidgets('shows error message when API fails', (
       WidgetTester tester,
     ) async {
-      when(mockApiService.getBedAntragByPersonId(123))
-          .thenThrow(Exception('Network error'));
+      // Set up the stub to throw on first call only
+      var callCount = 0;
+      when(mockApiService.getBedAntragByPersonId(123)).thenAnswer((_) async {
+        callCount++;
+        if (callCount == 1) {
+          throw Exception('Network error');
+        }
+        // Return empty list on subsequent calls to prevent ongoing errors
+        return [];
+      });
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
