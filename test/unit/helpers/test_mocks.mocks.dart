@@ -1525,17 +1525,47 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<bool> uploadBedDateiForSport({
+  _i13.Future<bool> deleteBedDateiById(int? dateiId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiById, [dateiId]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<_i38.BeduerfnisseDatei?> getBedDateiBySportId(int? bedSportId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiBySportId, [bedSportId]),
+            returnValue: _i13.Future<_i38.BeduerfnisseDatei?>.value(),
+          )
+          as _i13.Future<_i38.BeduerfnisseDatei?>);
+
+  @override
+  _i13.Future<int?> uploadBedDatei({
     required int? antragsnummer,
     required String? dateiname,
     required List<int>? fileBytes,
-    required int? bedSportId,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#uploadBedDateiForSport, [], {
+            Invocation.method(#uploadBedDatei, [], {
               #antragsnummer: antragsnummer,
               #dateiname: dateiname,
               #fileBytes: fileBytes,
+            }),
+            returnValue: _i13.Future<int?>.value(),
+          )
+          as _i13.Future<int?>);
+
+  @override
+  _i13.Future<bool> mapBedDateiToSport({
+    required int? antragsnummer,
+    required int? dateiId,
+    required int? bedSportId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#mapBedDateiToSport, [], {
+              #antragsnummer: antragsnummer,
+              #dateiId: dateiId,
               #bedSportId: bedSportId,
             }),
             returnValue: _i13.Future<bool>.value(false),
@@ -3242,6 +3272,14 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
             ),
           )
           as _i13.Future<List<_i38.BeduerfnisseDatei>>);
+
+  @override
+  _i13.Future<_i38.BeduerfnisseDatei?> getBedDateiById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiById, [id]),
+            returnValue: _i13.Future<_i38.BeduerfnisseDatei?>.value(),
+          )
+          as _i13.Future<_i38.BeduerfnisseDatei?>);
 
   @override
   _i13.Future<bool> updateBedDatei(_i38.BeduerfnisseDatei? datei) =>

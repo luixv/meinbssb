@@ -1241,17 +1241,47 @@ class MockApiService extends _i1.Mock implements _i12.ApiService {
           as _i14.Future<bool>);
 
   @override
-  _i14.Future<bool> uploadBedDateiForSport({
+  _i14.Future<bool> deleteBedDateiById(int? dateiId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiById, [dateiId]),
+            returnValue: _i14.Future<bool>.value(false),
+          )
+          as _i14.Future<bool>);
+
+  @override
+  _i14.Future<_i35.BeduerfnisseDatei?> getBedDateiBySportId(int? bedSportId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiBySportId, [bedSportId]),
+            returnValue: _i14.Future<_i35.BeduerfnisseDatei?>.value(),
+          )
+          as _i14.Future<_i35.BeduerfnisseDatei?>);
+
+  @override
+  _i14.Future<int?> uploadBedDatei({
     required int? antragsnummer,
     required String? dateiname,
     required List<int>? fileBytes,
-    required int? bedSportId,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(#uploadBedDateiForSport, [], {
+            Invocation.method(#uploadBedDatei, [], {
               #antragsnummer: antragsnummer,
               #dateiname: dateiname,
               #fileBytes: fileBytes,
+            }),
+            returnValue: _i14.Future<int?>.value(),
+          )
+          as _i14.Future<int?>);
+
+  @override
+  _i14.Future<bool> mapBedDateiToSport({
+    required int? antragsnummer,
+    required int? dateiId,
+    required int? bedSportId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#mapBedDateiToSport, [], {
+              #antragsnummer: antragsnummer,
+              #dateiId: dateiId,
               #bedSportId: bedSportId,
             }),
             returnValue: _i14.Future<bool>.value(false),

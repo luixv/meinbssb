@@ -815,15 +815,23 @@ class _BeduerfnissantragStep2ScreenState
                                                                     sport.id !=
                                                                             null
                                                                         ? Provider.of<
-                                                                          ApiService
-                                                                        >(
-                                                                          context,
-                                                                          listen:
-                                                                              false,
-                                                                        ).hasBedDateiSport(
-                                                                          sport
-                                                                              .id!,
-                                                                        )
+                                                                              ApiService
+                                                                            >(
+                                                                              context,
+                                                                              listen:
+                                                                                  false,
+                                                                            )
+                                                                            .hasBedDateiSport(
+                                                                              sport.id!,
+                                                                            )
+                                                                            .then((
+                                                                              hasDoc,
+                                                                            ) {
+                                                                              print(
+                                                                                'DEBUG: sport.id=${sport.id}, hasBedDateiSport=$hasDoc',
+                                                                              );
+                                                                              return hasDoc;
+                                                                            })
                                                                         : Future.value(
                                                                           false,
                                                                         ),

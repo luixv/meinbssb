@@ -34,13 +34,14 @@ class _BeduerfnissantragStep2DialogScreenState
   bool _training = false;
   bool _isLoading = false;
   bool _documentUploaded = false;
+  int?
+  _uploadedDateiId; // Stores the datei_id from uploadBedDatei (before mapping to sport)
   int? _selectedWaffenartId;
   int? _selectedDisziplinId;
   late Future<List<BeduerfnisseAuswahl>> _waffenartFuture;
   late Future<List<BeduerfnisseAuswahl>> _auswahlFuture;
   late Future<List<Disziplin>> _disziplinenFuture;
   int? _selectedWettkampfartId;
-  int? _createdBedSportId;
 
   @override
   void initState() {
@@ -417,11 +418,46 @@ class _BeduerfnissantragStep2DialogScreenState
                 : null,
       );
 
-      // Store the created bedSport ID for document upload
-      if (response['id'] != null) {
+      // Store the created bedSport ID
+      final createdBedSportId = response['id'] as int?;
+      if (createdBedSportId != null) {
         setState(() {
-          _createdBedSportId = response['id'] as int;
         });
+
+        // Map uploaded document to the newly created sport
+        if (_uploadedDateiId != null) {
+          print(
+            'DEBUG: Mapping document $_uploadedDateiId to sport $createdBedSportId',
+          );
+          final mapped = await apiService.mapBedDateiToSport(
+            antragsnummer: widget.antragsnummer!,
+            dateiId: _uploadedDateiId!,
+            bedSportId: createdBedSportId,
+          );
+
+          print('DEBUG: Mapping result: $mapped');
+          if (!mapped) {
+            // Mapping failed, but sport was created
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Warnung: Dokument konnte nicht verknüpft werden',
+                  ),
+                ),
+              );
+            }
+          } else {
+            print('DEBUG: Document successfully mapped!');
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Dokument erfolgreich verknüpft')),
+              );
+            }
+          }
+        } else {
+          print('DEBUG: No document to map (_uploadedDateiId is null)');
+        }
       }
 
       if (mounted) {
@@ -903,7 +939,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                                       listen: false,
                                                     );
 
-                                                await apiService
+                                                final dateiId = await apiService
                                                     .uploadBedDatei(
                                                       antragsnummer:
                                                           widget.antragsnummer!,
@@ -911,28 +947,49 @@ class _BeduerfnissantragStep2DialogScreenState
                                                       fileBytes: bytes,
                                                     );
 
+                                                print(
+                                                  'DEBUG: Upload returned datei_id: $dateiId',
+                                                );
+
                                                 if (mounted) {
-                                                  setState(() {
-                                                    _documentUploaded = true;
-                                                  });
-                                                  ScaffoldMessenger.of(
-                                                    buttonContext,
-                                                  ).showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                        'Dokument erfolgreich hochgeladen',
+                                                  if (dateiId != null) {
+                                                    setState(() {
+                                                      _uploadedDateiId =
+                                                          dateiId;
+                                                      _documentUploaded = true;
+                                                    });
+                                                    print(
+                                                      'DEBUG: Stored _uploadedDateiId = $_uploadedDateiId',
+                                                    );
+                                                    ScaffoldMessenger.of(
+                                                      buttonContext,
+                                                    ).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          'Dokument erfolgreich hochgeladen',
+                                                        ),
                                                       ),
-                                                    ),
-                                                  );
+                                                    );
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                      buttonContext,
+                                                    ).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                          'Fehler beim Hochladen des Dokuments',
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
                                                 }
                                               } catch (e) {
                                                 if (mounted) {
                                                   ScaffoldMessenger.of(
                                                     buttonContext,
                                                   ).showSnackBar(
-                                                    SnackBar(
+                                                    const SnackBar(
                                                       content: Text(
-                                                        'Fehler beim Hochladen: $e',
+                                                        'Dokument erfolgreich hochgeladen',
                                                       ),
                                                     ),
                                                   );
@@ -992,7 +1049,22 @@ class _BeduerfnissantragStep2DialogScreenState
                           onPressed:
                               _isLoading
                                   ? null
-                                  : () => Navigator.of(context).pop(),
+                                  : () async {
+                                    // Clean up uploaded document if not mapped
+                                    if (_uploadedDateiId != null) {
+                                      final apiService =
+                                          Provider.of<ApiService>(
+                                            context,
+                                            listen: false,
+                                          );
+                                      await apiService.deleteBedDateiById(
+                                        _uploadedDateiId!,
+                                      );
+                                    }
+                                    if (mounted) {
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
                           child: const Icon(
                             Icons.close,
                             color: UIConstants.whiteColor,
