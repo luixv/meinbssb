@@ -699,10 +699,10 @@ packages:
     dependency: "direct overridden"
     description:
       name: image_picker_android
-      sha256: "539e0030d442ce11d168896d979e04e66e28ef819eadc59aeb62b9d374a139d7"
+      sha256: "297e42bd236c4ac4b091d4277292159b3280545e030cae2be3d503f9ecf7e6a1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.13+11"
+    version: "0.8.13+12"
   image_picker_for_web:
     dependency: transitive
     description:
@@ -1477,10 +1477,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics_compiler
-      sha256: d354a7ec6931e6047785f4db12a1f61ec3d43b207fc0790f863818543f8ff0dc
+      sha256: "201e876b5d52753626af64b6359cd13ac6011b80728731428fd34bc840f71c9b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.19"
+    version: "1.1.20"
   vector_math:
     dependency: "direct overridden"
     description:

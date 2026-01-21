@@ -3284,9 +3284,8 @@ void main() {
         });
       });
 
-      test(
-        'uploadBedDateiForWBK creates datei and datei_zuord successfully',
-        () async {
+      group('uploadBedDateiForWBK', () {
+        test('creates datei and datei_zuord successfully', () async {
           final expectedDateiResponse = {
             'id': 200,
             'antragsnummer': 456,
@@ -3341,12 +3340,9 @@ void main() {
               bedSportId: null,
             ),
           ).called(1);
-        },
-      );
+        });
 
-      test(
-        'uploadBedDateiForWBK returns false when datei creation fails',
-        () async {
+        test('returns false when datei creation fails', () async {
           when(
             mockPostgrestService.createBedDatei(
               antragsnummer: 456,
@@ -3362,11 +3358,11 @@ void main() {
           );
 
           expect(result, isFalse);
-        },
-      );
+        });
+      });
     });
 
-    group('Cascading Delete Tests', () {
+    group('Cascading Delete - Datei Tests', () {
       test(
         'deleteBedDateiBySportId deletes datei_zuord and datei successfully',
         () async {
@@ -3496,7 +3492,7 @@ void main() {
       );
     });
 
-    group('Cascading Delete Tests', () {
+    group('Cascading Delete - Sport and Antrag Tests', () {
       test('deleteBedSportById delegates to underlying services', () async {
         final dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
@@ -3975,10 +3971,10 @@ void main() {
         expect(result, isFalse);
         verifyNever(
           mockPostgrestService.createBedDateiZuord(
-            antragsnummer: any,
-            dateiId: any,
-            dateiArt: any,
-            bedSportId: any,
+            antragsnummer: anyNamed('antragsnummer'),
+            dateiId: anyNamed('dateiId'),
+            dateiArt: anyNamed('dateiArt'),
+            bedSportId: anyNamed('bedSportId'),
           ),
         );
       });
@@ -4077,6 +4073,7 @@ void main() {
         final result = await apiService.hasBedDateiSport(5);
 
         expect(result, isFalse);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(5)).called(1);
       });
     });
   });
