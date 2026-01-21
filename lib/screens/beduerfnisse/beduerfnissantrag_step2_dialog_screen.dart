@@ -40,6 +40,7 @@ class _BeduerfnissantragStep2DialogScreenState
   late Future<List<BeduerfnisseAuswahl>> _auswahlFuture;
   late Future<List<Disziplin>> _disziplinenFuture;
   int? _selectedWettkampfartId;
+  int? _createdBedSportId;
 
   @override
   void initState() {
@@ -397,7 +398,7 @@ class _BeduerfnissantragStep2DialogScreenState
         return;
       }
 
-      await apiService.createBedSport(
+      final response = await apiService.createBedSport(
         antragsnummer: widget.antragsnummer!,
         schiessdatum: schiessdatumForDb,
         waffenartId: _selectedWaffenartId!,
@@ -409,6 +410,13 @@ class _BeduerfnissantragStep2DialogScreenState
                 ? double.parse(_wettkampfergebnisController.text)
                 : null,
       );
+
+      // Store the created bedSport ID for document upload
+      if (response['id'] != null) {
+        setState(() {
+          _createdBedSportId = response['id'] as int;
+        });
+      }
 
       if (mounted) {
         widget.onSaved({
@@ -889,11 +897,12 @@ class _BeduerfnissantragStep2DialogScreenState
                                                       listen: false,
                                                     );
 
-                                                await apiService.createBedDatei(
+                                                await apiService.uploadBedDateiForSport(
                                                   antragsnummer:
                                                       widget.antragsnummer!,
                                                   dateiname: fileName,
                                                   fileBytes: bytes,
+                                                  bedSportId: _createdBedSportId! 
                                                 );
 
                                                 if (mounted) {
