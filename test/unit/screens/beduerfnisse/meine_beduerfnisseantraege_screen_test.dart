@@ -480,8 +480,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify all status texts are displayed
+      // Note: The German word is "Genehmight" (with 'gh'), not "Genehmigt"
       expect(find.text('Entwurf'), findsOneWidget);
-      expect(find.text('Genehmigt'), findsOneWidget);
+      expect(find.text('Genehmight'), findsOneWidget);
       expect(find.text('Abgelehnt'), findsOneWidget);
     });
   });
