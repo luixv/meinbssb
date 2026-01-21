@@ -827,9 +827,6 @@ class _BeduerfnissantragStep2ScreenState
                                                                             .then((
                                                                               hasDoc,
                                                                             ) {
-                                                                              print(
-                                                                                'DEBUG: sport.id=${sport.id}, hasBedDateiSport=$hasDoc',
-                                                                              );
                                                                               return hasDoc;
                                                                             })
                                                                         : Future.value(

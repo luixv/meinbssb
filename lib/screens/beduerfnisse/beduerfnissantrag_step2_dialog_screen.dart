@@ -426,16 +426,12 @@ class _BeduerfnissantragStep2DialogScreenState
 
         // Map uploaded document to the newly created sport
         if (_uploadedDateiId != null) {
-          print(
-            'DEBUG: Mapping document $_uploadedDateiId to sport $createdBedSportId',
-          );
           final mapped = await apiService.mapBedDateiToSport(
             antragsnummer: widget.antragsnummer!,
             dateiId: _uploadedDateiId!,
             bedSportId: createdBedSportId,
           );
 
-          print('DEBUG: Mapping result: $mapped');
           if (!mapped) {
             // Mapping failed, but sport was created
             if (mounted) {
@@ -448,7 +444,6 @@ class _BeduerfnissantragStep2DialogScreenState
               );
             }
           } else {
-            print('DEBUG: Document successfully mapped!');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Dokument erfolgreich verknüpft')),
@@ -456,7 +451,6 @@ class _BeduerfnissantragStep2DialogScreenState
             }
           }
         } else {
-          print('DEBUG: No document to map (_uploadedDateiId is null)');
         }
       }
 
@@ -947,9 +941,6 @@ class _BeduerfnissantragStep2DialogScreenState
                                                       fileBytes: bytes,
                                                     );
 
-                                                print(
-                                                  'DEBUG: Upload returned datei_id: $dateiId',
-                                                );
 
                                                 if (mounted) {
                                                   if (dateiId != null) {
@@ -958,9 +949,6 @@ class _BeduerfnissantragStep2DialogScreenState
                                                           dateiId;
                                                       _documentUploaded = true;
                                                     });
-                                                    print(
-                                                      'DEBUG: Stored _uploadedDateiId = $_uploadedDateiId',
-                                                    );
                                                     ScaffoldMessenger.of(
                                                       buttonContext,
                                                     ).showSnackBar(
