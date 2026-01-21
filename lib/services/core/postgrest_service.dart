@@ -745,6 +745,32 @@ class PostgrestService {
     }
   }
 
+    /// Get bed_datei entry by ID
+  Future<BeduerfnisseDatei?> getBedDateiById(int id) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('${_baseUrl}bed_datei?id=eq.$id&deleted_at=is.null'),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> files = jsonDecode(response.body);
+        if (files.isNotEmpty) {
+          return BeduerfnisseDatei.fromJson(files[0] as Map<String, dynamic>);
+        }
+        return null;
+      } else {
+        LoggerService.logError(
+          'Failed to get bed_datei by id. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      LoggerService.logError('Error getting bed_datei by id: $e');
+      return null;
+    }
+  }
+
   /// Update bed_datei by ID
   Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
     try {

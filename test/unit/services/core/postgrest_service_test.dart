@@ -1789,6 +1789,64 @@ void main() {
 
         expect(result, isFalse);
       });
+
+      test('getBedDateiById returns datei successfully', () async {
+        final mockResponse = [
+          {
+            'id': 100,
+            'antragsnummer': 123,
+            'dateiname': 'document.pdf',
+            'file_bytes': [],
+          },
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedDateiById(100);
+
+        expect(result, isNotNull);
+        expect(result!.id, equals(100));
+        expect(result.dateiname, equals('document.pdf'));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).called(1);
+      });
+
+      test('getBedDateiById returns null when no datei found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getBedDateiById(100);
+
+        expect(result, isNull);
+      });
+
+      test('getBedDateiById returns null on error status code', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.getBedDateiById(100);
+
+        expect(result, isNull);
+      });
+
+      test('getBedDateiById handles exception gracefully', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenThrow(Exception('Network error'));
+
+        final result = await service.getBedDateiById(100);
+
+        expect(result, isNull);
+      });
     });
 
     group('bed_sport Additional Methods', () {
