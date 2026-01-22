@@ -75,11 +75,7 @@ class _BeduerfnissantragStep3ScreenState
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Fehler beim Hochladen',
-              ),
-            ),
+            const SnackBar(content: Text('Fehler beim Hochladen')),
           );
         }
       }
@@ -133,11 +129,7 @@ class _BeduerfnissantragStep3ScreenState
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Fehler beim Hochladen',
-              ),
-            ),
+            const SnackBar(content: Text('Fehler beim Hochladen')),
           );
         }
       }
@@ -282,7 +274,7 @@ class _BeduerfnissantragStep3ScreenState
 
                       // Vorderseite WBK Section
                       ScaledText(
-                        'Vorderseite WBK',
+                        'WBK',
                         style: UIStyles.bodyTextStyle.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize:
@@ -321,67 +313,6 @@ class _BeduerfnissantragStep3ScreenState
                               onPressed:
                                   () =>
                                       _scanAndUploadDocument('Vorderseite WBK'),
-                              icon: const Icon(Icons.camera_alt),
-                              label: ScaledText(
-                                'Scannen',
-                                style: TextStyle(
-                                  fontSize: 16 * fontSizeProvider.scaleFactor,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    UIConstants.submitButtonBackground,
-                                foregroundColor: UIConstants.buttonTextColor,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: UIConstants.spacingM,
-                                  vertical: UIConstants.spacingM,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: UIConstants.spacingL),
-
-                      // Rückseite WBK Section
-                      ScaledText(
-                        'Rückseite WBK',
-                        style: UIStyles.bodyTextStyle.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              UIStyles.bodyTextStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () => _uploadDocument('Rückseite WBK'),
-                              icon: const Icon(Icons.upload_file),
-                              label: ScaledText(
-                                'Hochladen',
-                                style: TextStyle(
-                                  fontSize: 16 * fontSizeProvider.scaleFactor,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    UIConstants.submitButtonBackground,
-                                foregroundColor: UIConstants.buttonTextColor,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: UIConstants.spacingM,
-                                  vertical: UIConstants.spacingM,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  () => _scanAndUploadDocument('Rückseite WBK'),
                               icon: const Icon(Icons.camera_alt),
                               label: ScaledText(
                                 'Scannen',
