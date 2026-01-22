@@ -3000,6 +3000,50 @@ void main() {
         verify(mockPostgrestService.updateBedDateiZuord(dateiZuord)).called(1);
       });
 
+      test('getBedDateiZuordByAntragsnummer delegates to postgrest service', () async {
+        final expectedResults = [
+          BeduerfnisseDateiZuord(
+            id: 1,
+            antragsnummer: '123',
+            dateiId: 50,
+            dateiArt: 'SPORT',
+            bedSportId: 10,
+          ),
+          BeduerfnisseDateiZuord(
+            id: 2,
+            antragsnummer: '123',
+            dateiId: 51,
+            dateiArt: 'SPORT',
+            bedSportId: 11,
+          ),
+        ];
+
+        when(
+          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+        ).thenAnswer((_) async => expectedResults);
+
+        final result = await apiService.getBedDateiZuordByAntragsnummer(123, 'SPORT');
+
+        expect(result, equals(expectedResults));
+        expect(result.length, equals(2));
+        verify(
+          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+        ).called(1);
+      });
+
+      test('getBedDateiZuordByAntragsnummer returns empty list when not found', () async {
+        when(
+          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'WBK'),
+        ).thenAnswer((_) async => <BeduerfnisseDateiZuord>[]);
+
+        final result = await apiService.getBedDateiZuordByAntragsnummer(123, 'WBK');
+
+        expect(result, isEmpty);
+        verify(
+          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'WBK'),
+        ).called(1);
+      });
+
       test('hasBedDateiSport returns true when datei exists', () async {
         final dateiZuord = BeduerfnisseDateiZuord(
           id: 1,

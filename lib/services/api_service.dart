@@ -1165,6 +1165,16 @@ class ApiService {
     return _postgrestService.deleteBedDateiZuord(antragsnummer);
   }
 
+  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByAntragsnummer(
+    int antragsnummer,
+    String dateiArt,
+  ) async {
+    return _postgrestService.getBedDateiZuordByAntragsnummer(
+      antragsnummer,
+      dateiArt,
+    );
+  }
+
   /// Check if a bed_datei_zuord entry exists for the given bed_sport_id
   /// Returns true if an entry exists, false otherwise
   Future<bool> hasBedDateiSport(int sportId) async {
