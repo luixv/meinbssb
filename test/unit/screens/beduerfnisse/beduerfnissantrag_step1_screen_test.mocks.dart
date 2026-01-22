@@ -1623,6 +1623,22 @@ class MockApiService extends _i1.Mock implements _i12.ApiService {
           as _i14.Future<bool>);
 
   @override
+  _i14.Future<List<_i36.BeduerfnisseDatei>> getBedDateiZuordByAntragsnummer(
+    int? antragsnummer,
+    String? dateiArt,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiZuordByAntragsnummer, [
+              antragsnummer,
+              dateiArt,
+            ]),
+            returnValue: _i14.Future<List<_i36.BeduerfnisseDatei>>.value(
+              <_i36.BeduerfnisseDatei>[],
+            ),
+          )
+          as _i14.Future<List<_i36.BeduerfnisseDatei>>);
+
+  @override
   _i14.Future<bool> hasBedDateiSport(int? sportId) =>
       (super.noSuchMethod(
             Invocation.method(#hasBedDateiSport, [sportId]),
