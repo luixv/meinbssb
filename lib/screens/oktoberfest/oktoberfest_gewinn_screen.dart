@@ -192,7 +192,9 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                   'Oktoberfest Gewinn Bildschirm. Hier sehen Sie Ihre Gewinne für das Jahr und können Bankdaten bearbeiten.',
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: UIConstants.screenPadding,
+                  padding: UIConstants.screenPadding.copyWith(
+                    top: UIConstants.spacingM,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -350,22 +352,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
                         ),
                       ],
                       const SizedBox(height: UIConstants.spacingL),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final screenWidth = constraints.maxWidth;
-                          const double minWidth = 280;
-                          const double maxWidth = 480;
-                          double width = screenWidth * 0.5;
-                          width = width.clamp(minWidth, maxWidth);
-                          return Align(
-                            alignment: Alignment.centerLeft,
-                            child: SizedBox(
-                              width: width,
-                              child: _buildBankDataSection(),
-                            ),
-                          );
-                        },
-                      ),
+                      _buildBankDataSection(),
                       const SizedBox(height: UIConstants.spacingM),
                       _buildSubmitSection(),
                       const SizedBox(height: UIConstants.spacingXXL),
@@ -411,7 +398,7 @@ class _OktoberfestGewinnScreenState extends State<OktoberfestGewinnScreen> {
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
                 'Bankdaten',
