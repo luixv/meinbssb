@@ -6,10 +6,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('DocumentScannerService', () {
-
-    setUp(() {
-    });
-
     group('ScanResult', () {
       test('creates instance with bytes and fileName', () {
         final bytes = [1, 2, 3, 4, 5];
@@ -364,7 +360,7 @@ void main() {
         final longMessage = 'Fehler: ${'x' * 1000}';
         final exception = ScanException(longMessage);
 
-        expect(exception.message, hasLength(1007));
+        expect(exception.message, hasLength(1008));
         expect(exception.message, startsWith('Fehler: '));
       });
 
