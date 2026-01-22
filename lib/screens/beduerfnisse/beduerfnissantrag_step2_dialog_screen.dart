@@ -7,7 +7,6 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/document_scanner_service.dart';
-import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/widgets/dialog_fabs.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
@@ -108,16 +107,11 @@ class _BeduerfnissantragStep2DialogScreenState
 
       if (scanResult == null) {
         // User cancelled scanning
-        LoggerService.logInfo('User cancelled document scanning');
         setState(() {
           _isUploadingDocument = false;
         });
         return;
       }
-
-      LoggerService.logInfo(
-        'Document scanned successfully: ${scanResult.fileName}, size: ${scanResult.bytes.length} bytes',
-      );
 
       final dateiId = await apiService.uploadBedDatei(
         antragsnummer: widget.antragsnummer!,
@@ -127,9 +121,6 @@ class _BeduerfnissantragStep2DialogScreenState
 
       if (mounted) {
         if (dateiId != null) {
-          LoggerService.logInfo(
-            'Scanned document uploaded successfully with dateiId=$dateiId',
-          );
           setState(() {
             _uploadedDateiId = dateiId;
             _documentUploaded = true;
@@ -138,10 +129,10 @@ class _BeduerfnissantragStep2DialogScreenState
           ScaffoldMessenger.of(buttonContext).showSnackBar(
             const SnackBar(
               content: Text('Dokument erfolgreich gescannt und hochgeladen'),
+              duration: Duration(seconds: 1),
             ),
           );
         } else {
-          LoggerService.logError('Failed to upload scanned document');
           setState(() {
             _isUploadingDocument = false;
           });
@@ -524,10 +515,6 @@ class _BeduerfnissantragStep2DialogScreenState
 
         // Map uploaded document to the newly created sport
         if (_uploadedDateiId != null) {
-          LoggerService.logInfo(
-            'Mapping document: dateiId=$_uploadedDateiId to bedSportId=$createdBedSportId',
-          );
-
           final mapped = await apiService.mapBedDateiToSport(
             antragsnummer: widget.antragsnummer!,
             dateiId: _uploadedDateiId!,
@@ -535,10 +522,6 @@ class _BeduerfnissantragStep2DialogScreenState
           );
 
           if (!mapped) {
-            // Mapping failed, but sport was created
-            LoggerService.logError(
-              'Failed to map document to sport: dateiId=$_uploadedDateiId, bedSportId=$createdBedSportId',
-            );
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -549,19 +532,12 @@ class _BeduerfnissantragStep2DialogScreenState
               );
             }
           } else {
-            LoggerService.logInfo(
-              'Successfully mapped document to sport: dateiId=$_uploadedDateiId, bedSportId=$createdBedSportId',
-            );
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Dokument erfolgreich verknüpft')),
               );
             }
           }
-        } else {
-          LoggerService.logWarning(
-            'No document uploaded for sport activity bedSportId=$createdBedSportId',
-          );
         }
       }
 
@@ -1164,6 +1140,11 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                     content: Text(
                                                                       'Dokument erfolgreich hochgeladen',
                                                                     ),
+                                                                    duration:
+                                                                        Duration(
+                                                                          seconds:
+                                                                              1,
+                                                                        ),
                                                                   ),
                                                                 );
                                                               } else {
