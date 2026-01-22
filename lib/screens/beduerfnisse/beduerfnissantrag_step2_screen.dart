@@ -910,7 +910,7 @@ class _BeduerfnissantragStep2ScreenState
                                                                               }
                                                                             },
                                                                             child: Icon(
-                                                                              Icons.insert_drive_file,
+                                                                              Icons.visibility,
                                                                               size:
                                                                                   UIConstants.iconSizeS *
                                                                                   fontSizeProvider.scaleFactor,

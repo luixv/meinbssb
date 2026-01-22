@@ -68,7 +68,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
-      expect(find.text('Meine Bedürfnisseanträge'), findsOneWidget);
+      expect(find.text('Meine Bedürfnisanträge'), findsOneWidget);
     });
 
     testWidgets('shows FAB buttons', (WidgetTester tester) async {
@@ -509,7 +509,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Screen should be popped (title no longer visible)
-      expect(find.text('Meine Bedürfnisseanträge'), findsNothing);
+      expect(find.text('Meine Bedürfnisanträge'), findsNothing);
     });
   });
 
@@ -604,7 +604,7 @@ void main() {
       expect(find.byType(Semantics), findsWidgets);
 
       // The subtitle text should be visible (it has a semantic label but we test via text)
-      expect(find.text('Meine Bedürfnisseanträge'), findsOneWidget);
+      expect(find.text('Meine Bedürfnisanträge'), findsOneWidget);
     });
 
     testWidgets('FABs have tooltips', (WidgetTester tester) async {
@@ -639,7 +639,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify the screen renders with scaled fonts
-      expect(find.text('Meine Bedürfnisseanträge'), findsOneWidget);
+      expect(find.text('Meine Bedürfnisanträge'), findsOneWidget);
       expect(find.text('100'), findsOneWidget);
     });
   });

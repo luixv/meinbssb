@@ -157,7 +157,7 @@ void main() {
       await tester.longPress(fabFinder);
       await tester.pumpAndSettle();
 
-      expect(find.text('Meine Bedürfnisseanträge'), findsOneWidget);
+      expect(find.text('Meine Bedürfnisanträge'), findsOneWidget);
     });
 
     testWidgets('renders with null userData', (WidgetTester tester) async {

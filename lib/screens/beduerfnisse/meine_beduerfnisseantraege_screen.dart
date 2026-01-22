@@ -202,7 +202,7 @@ class _MeineBeduerfnisseantraegeScreenState
         return Semantics(
           container: true,
           liveRegion: true,
-          label: 'Bedürfnisbescheinigung - Meine Bedürfnisseanträge',
+          label: 'Bedürfnisbescheinigung - Meine Bedürfnisanträge',
           child: BaseScreenLayout(
             title: 'Bedürfnisbescheinigung',
             userData: widget.userData,
@@ -258,7 +258,7 @@ class _MeineBeduerfnisseantraegeScreenState
               autofocus: true,
               child: Semantics(
                 label:
-                    'Meine Bedürfnisseanträge. Hier sehen Sie Ihre eingereichten Bedürfnisseanträge.',
+                    'Meine Bedürfnisanträge. Hier sehen Sie Ihre eingereichten Bedürfnisseanträge.',
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(UIConstants.spacingM),
                   child: Column(
@@ -267,9 +267,9 @@ class _MeineBeduerfnisseantraegeScreenState
                       // Subtitle
                       Semantics(
                         header: true,
-                        label: 'Meine Bedürfnisseanträge',
+                        label: 'Meine Bedürfnisanträge',
                         child: ScaledText(
-                          'Meine Bedürfnisseanträge',
+                          'Meine Bedürfnisanträge',
                           style: UIStyles.headerStyle.copyWith(
                             fontSize:
                                 UIStyles.headerStyle.fontSize! *

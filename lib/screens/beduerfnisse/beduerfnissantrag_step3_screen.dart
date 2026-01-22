@@ -380,7 +380,7 @@ class _BeduerfnissantragStep3ScreenState
                                   children: [
                                     IconButton(
                                       icon: const Icon(
-                                        Icons.insert_drive_file,
+                                        Icons.visibility,
                                         color: UIConstants.primaryColor,
                                       ),
                                       onPressed:

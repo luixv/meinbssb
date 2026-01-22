@@ -39,13 +39,13 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
             floatingActionButton: Semantics(
               button: true,
               enabled: true,
-              label: 'Meine Bedürfnisseanträge anzeigen',
+              label: 'Meine Bedürfnisanträge anzeigen',
               hint: 'Doppeltippen um zur Übersicht Ihrer Anträge zu navigieren',
               child: KeyboardFocusFAB(
-                heroTag: 'meineBeduerfnisseantraegeFab',
-                tooltip: 'Meine Bedürfnisseanträge',
-                semanticLabel: 'Meine Bedürfnisseanträge Button',
-                semanticHint: 'Navigieren zu Meine Bedürfnisseanträge',
+                heroTag: 'meineBedürfnisantraegeFab',
+                tooltip: 'Meine Bedürfnisanträge',
+                semanticLabel: 'Meine Bedürfnisanträge Button',
+                semanticHint: 'Navigieren zu Meine Bedürfnisanträge',
                 onPressed: () {
                   Navigator.push(
                     context,
