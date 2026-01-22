@@ -7,6 +7,7 @@ import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
@@ -563,6 +564,198 @@ void main() {
 
       // Screen should render without overflow
       expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnissantragStep2Screen - Error Handling', () {
+    testWidgets('handles null antragsnummer gracefully', (
+      WidgetTester tester,
+    ) async {
+      final antragWithoutNummer = BeduerfnisseAntrag(
+        antragsnummer: null,
+        personId: 12345,
+        statusId: BeduerfnisAntragStatus.entwurf,
+        wbkNeu: true,
+        wbkArt: 'gelb',
+        beduerfnisart: 'Kurzwaffe',
+        anzahlWaffen: 2,
+      );
+
+      await tester.pumpWidget(createTestWidget(antrag: antragWithoutNummer));
+      await tester.pumpAndSettle();
+
+      // Should display screen without errors
+      expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnissantragStep2Screen - Delete Functionality', () {
+    testWidgets('shows error when deleting with null sportId', (
+      WidgetTester tester,
+    ) async {
+      final sportData = BeduerfnisseSport(
+        id: null, // null ID
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 1, 15),
+        waffenartId: 1,
+        disziplinId: 1,
+        training: true,
+      );
+
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Try to delete
+      final deleteButton = find.byIcon(Icons.delete_outline).first;
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      // Should show error message
+      expect(find.text('Fehler: ID nicht gefunden'), findsOneWidget);
+    });
+
+    testWidgets('successfully deletes bed sport entry', (
+      WidgetTester tester,
+    ) async {
+      final sportData = BeduerfnisseSport(
+        id: 1,
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 1, 15),
+        waffenartId: 1,
+        disziplinId: 1,
+        training: true,
+      );
+
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+
+      when(mockApiService.deleteBedSportById(1)).thenAnswer((_) async => true);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap delete button
+      final deleteButton = find.byIcon(Icons.delete_outline).first;
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      // Confirm deletion
+      expect(find.text('Nachweis löschen'), findsOneWidget);
+      final confirmButton = find.text('Löschen');
+      await tester.tap(confirmButton);
+      await tester.pumpAndSettle();
+
+      // Should show success message
+      expect(find.text('Nachweis erfolgreich gelöscht'), findsOneWidget);
+    });
+
+    testWidgets('shows error when deletion fails', (WidgetTester tester) async {
+      final sportData = BeduerfnisseSport(
+        id: 1,
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 1, 15),
+        waffenartId: 1,
+        disziplinId: 1,
+        training: true,
+      );
+
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+
+      when(mockApiService.deleteBedSportById(1)).thenAnswer((_) async => false);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap delete button
+      final deleteButton = find.byIcon(Icons.delete_outline).first;
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      // Confirm deletion
+      final confirmButton = find.text('Löschen');
+      await tester.tap(confirmButton);
+      await tester.pumpAndSettle();
+
+      // Should show error message
+      expect(find.text('Fehler beim Löschen'), findsOneWidget);
+    });
+
+    testWidgets('cancels deletion when user clicks Abbrechen', (
+      WidgetTester tester,
+    ) async {
+      final sportData = BeduerfnisseSport(
+        id: 1,
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 1, 15),
+        waffenartId: 1,
+        disziplinId: 1,
+        training: true,
+      );
+
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap delete button
+      final deleteButton = find.byIcon(Icons.delete_outline).first;
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      // Cancel deletion
+      final cancelButton = find.text('Abbrechen');
+      await tester.tap(cancelButton);
+      await tester.pumpAndSettle();
+
+      // Should not call API
+      verifyNever(mockApiService.deleteBedSportById(any));
+    });
+  });
+
+  group('BeduerfnissantragStep2Screen - View Document', () {
+    testWidgets('displays sport entries without documents', (
+      WidgetTester tester,
+    ) async {
+      final sportData = BeduerfnisseSport(
+        id: 1,
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 1, 15),
+        waffenartId: 1,
+        disziplinId: 1,
+        training: true,
+      );
+
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+
+      when(mockApiService.hasBedDateiSport(1)).thenAnswer((_) async => false);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should display the sport entry
+      expect(find.byType(Card), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnissantragStep2Screen - Continue to Step 3', () {
+    testWidgets('displays continue FAB', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find the forward arrow FAB
+      final continueButton = find.byIcon(Icons.arrow_forward);
+      expect(continueButton, findsOneWidget);
     });
   });
 }
