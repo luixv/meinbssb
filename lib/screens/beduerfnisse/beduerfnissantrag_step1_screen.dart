@@ -92,7 +92,9 @@ class _BeduerfnissantragStep1ScreenState
         return Semantics(
           container: true,
           liveRegion: true,
-          label: 'Bedürfnisbescheinigung - Erfassen der Daten',
+          label: 'Bedürfnisbescheinigung - Schritt 1: Erfassen der Daten',
+          hint:
+              'Erster Schritt der Antragstellung. Geben Sie die Basisdaten für Ihren Bedürfnisantrag ein',
           child: BaseScreenLayout(
             title: 'Bedürfnisbescheinigung',
             userData: widget.userData,
@@ -104,42 +106,62 @@ class _BeduerfnissantragStep1ScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  KeyboardFocusFAB(
-                    heroTag: 'backFromErfassenFab',
-                    tooltip: 'Zurück',
-                    semanticLabel: 'Zurück Button',
-                    semanticHint: 'Zurück zur vorherigen Seite',
-                    onPressed: () {
-                      widget.onBack?.call();
-                      Navigator.pop(context, true);
-                    },
-                    icon: Icons.arrow_back,
+                  Semantics(
+                    button: true,
+                    enabled: true,
+                    label: 'Zurück zur Übersicht',
+                    hint: 'Doppeltippen um zur vorherigen Seite zurückzukehren',
+                    child: KeyboardFocusFAB(
+                      heroTag: 'backFromErfassenFab',
+                      tooltip: 'Zurück',
+                      semanticLabel: 'Zurück Button',
+                      semanticHint: 'Zurück zur vorherigen Seite',
+                      onPressed: () {
+                        widget.onBack?.call();
+                        Navigator.pop(context, true);
+                      },
+                      icon: Icons.arrow_back,
+                    ),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       // Save FAB (diskette icon) - only show when not read-only
                       if (!widget.readOnly)
-                        KeyboardFocusFAB(
-                          heroTag: 'saveFromErfassenFab',
-                          tooltip: 'Speichern',
-                          semanticLabel: 'Speichern Button',
-                          semanticHint: 'Bedürfnisantrag speichern',
-                          onPressed: () => _saveAntrag(),
-                          icon: Icons.save,
+                        Semantics(
+                          button: true,
+                          enabled: true,
+                          label: 'Bedürfnisantrag speichern',
+                          hint:
+                              'Doppeltippen um Ihre Eingaben zu speichern ohne fortzufahren',
+                          child: KeyboardFocusFAB(
+                            heroTag: 'saveFromErfassenFab',
+                            tooltip: 'Speichern',
+                            semanticLabel: 'Speichern Button',
+                            semanticHint: 'Bedürfnisantrag speichern',
+                            onPressed: () => _saveAntrag(),
+                            icon: Icons.save,
+                          ),
                         ),
                       if (!widget.readOnly)
                         const SizedBox(height: UIConstants.spacingM),
                       // Forward arrow - always visible for navigation
-                      KeyboardFocusFAB(
-                        heroTag: 'nextFromErfassenFab',
-                        tooltip: 'Weiter',
-                        semanticLabel: 'Weiter Button',
-                        semanticHint: 'Weiter zum nächsten Schritt',
-                        onPressed: () {
-                          _proceedToStep2();
-                        },
-                        icon: Icons.arrow_forward,
+                      Semantics(
+                        button: true,
+                        enabled: true,
+                        label: 'Weiter zu Schritt 2',
+                        hint:
+                            'Doppeltippen um Daten zu speichern und zum nächsten Schritt fortzufahren',
+                        child: KeyboardFocusFAB(
+                          heroTag: 'nextFromErfassenFab',
+                          tooltip: 'Weiter',
+                          semanticLabel: 'Weiter Button',
+                          semanticHint: 'Weiter zum nächsten Schritt',
+                          onPressed: () {
+                            _proceedToStep2();
+                          },
+                          icon: Icons.arrow_forward,
+                        ),
                       ),
                     ],
                   ),
@@ -153,6 +175,8 @@ class _BeduerfnissantragStep1ScreenState
               child: Semantics(
                 label:
                     'Erfassen der Daten. Hier können Sie die notwendigen Daten für Ihren Bedürfnisantrag erfassen.',
+                hint:
+                    'Scrollen Sie nach unten um alle Formularfelder auszufüllen',
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(UIConstants.spacingM),
                   child: Column(
@@ -162,6 +186,7 @@ class _BeduerfnissantragStep1ScreenState
                       Semantics(
                         header: true,
                         label: 'Erfassen der Daten',
+                        hint: 'Hauptüberschrift des Formulars',
                         child: ScaledText(
                           'Erfassen der Daten',
                           style: UIStyles.headerStyle.copyWith(
@@ -177,6 +202,7 @@ class _BeduerfnissantragStep1ScreenState
                       Semantics(
                         header: true,
                         label: 'Bedürfnisantrag',
+                        hint: 'Abschnittsüberschrift für Antragstyp',
                         child: ScaledText(
                           'Bedürfnisantrag',
                           style: UIStyles.formValueBoldStyle.copyWith(
@@ -192,65 +218,82 @@ class _BeduerfnissantragStep1ScreenState
                       Semantics(
                         label:
                             'Bedürfnisantrag Typ auswählen: neue oder bestehende WBK',
+                        hint: 'Wählen Sie eine der beiden Optionen aus',
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Transform.translate(
-                              offset: const Offset(0, -8),
-                              child: RadioListTile<String>(
-                                dense: true,
-                                visualDensity: const VisualDensity(
-                                  horizontal: 0,
-                                  vertical: -4,
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                title: ScaledText(
-                                  'Ich beantrage ein Bedürfnis für eine neue WBK',
-                                  style: UIStyles.bodyTextStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.bodyTextStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
+                            Semantics(
+                              label:
+                                  'Option 1: Neue WBK${_wbkType == "neu" ? ", ausgewählt" : ""}',
+                              hint:
+                                  _wbkType == 'neu'
+                                      ? 'Aktuell ausgewählt'
+                                      : 'Doppeltippen um auszuwählen',
+                              child: Transform.translate(
+                                offset: const Offset(0, -8),
+                                child: RadioListTile<String>(
+                                  dense: true,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: 0,
+                                    vertical: -4,
                                   ),
+                                  contentPadding: EdgeInsets.zero,
+                                  title: ScaledText(
+                                    'Ich beantrage ein Bedürfnis für eine neue WBK',
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                  value: 'neu',
+                                  groupValue: _wbkType,
+                                  onChanged:
+                                      widget.readOnly
+                                          ? null
+                                          : (value) {
+                                            setState(() {
+                                              _wbkType = value;
+                                            });
+                                          },
                                 ),
-                                value: 'neu',
-                                groupValue: _wbkType,
-                                onChanged:
-                                    widget.readOnly
-                                        ? null
-                                        : (value) {
-                                          setState(() {
-                                            _wbkType = value;
-                                          });
-                                        },
                               ),
                             ),
-                            Transform.translate(
-                              offset: const Offset(0, -16),
-                              child: RadioListTile<String>(
-                                dense: true,
-                                visualDensity: const VisualDensity(
-                                  horizontal: 0,
-                                  vertical: -4,
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                title: ScaledText(
-                                  'Ich beantrage ein Bedürfnis für eine bestehende WBK',
-                                  style: UIStyles.bodyTextStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.bodyTextStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
+                            Semantics(
+                              label:
+                                  'Option 2: Bestehende WBK${_wbkType == "bestehend" ? ", ausgewählt" : ""}',
+                              hint:
+                                  _wbkType == 'bestehend'
+                                      ? 'Aktuell ausgewählt'
+                                      : 'Doppeltippen um auszuwählen',
+                              child: Transform.translate(
+                                offset: const Offset(0, -16),
+                                child: RadioListTile<String>(
+                                  dense: true,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: 0,
+                                    vertical: -4,
                                   ),
+                                  contentPadding: EdgeInsets.zero,
+                                  title: ScaledText(
+                                    'Ich beantrage ein Bedürfnis für eine bestehende WBK',
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                  value: 'bestehend',
+                                  groupValue: _wbkType,
+                                  onChanged:
+                                      widget.readOnly
+                                          ? null
+                                          : (value) {
+                                            setState(() {
+                                              _wbkType = value;
+                                            });
+                                          },
                                 ),
-                                value: 'bestehend',
-                                groupValue: _wbkType,
-                                onChanged:
-                                    widget.readOnly
-                                        ? null
-                                        : (value) {
-                                          setState(() {
-                                            _wbkType = value;
-                                          });
-                                        },
                               ),
                             ),
                           ],
@@ -261,65 +304,82 @@ class _BeduerfnissantragStep1ScreenState
                       // Radio Group 2: WBK Color
                       Semantics(
                         label: 'WBK Art auswählen: Gelbe oder Grüne WBK',
+                        hint: 'Wählen Sie die Farbe der Waffenbesitzkarte aus',
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Transform.translate(
-                              offset: const Offset(0, -8),
-                              child: RadioListTile<String>(
-                                dense: true,
-                                visualDensity: const VisualDensity(
-                                  horizontal: 0,
-                                  vertical: -4,
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                title: ScaledText(
-                                  'Gelbe WBK',
-                                  style: UIStyles.bodyTextStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.bodyTextStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
+                            Semantics(
+                              label:
+                                  'Option 1: Gelbe WBK${_wbkColor == "gelb" ? ", ausgewählt" : ""}',
+                              hint:
+                                  _wbkColor == 'gelb'
+                                      ? 'Aktuell ausgewählt'
+                                      : 'Doppeltippen um auszuwählen',
+                              child: Transform.translate(
+                                offset: const Offset(0, -8),
+                                child: RadioListTile<String>(
+                                  dense: true,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: 0,
+                                    vertical: -4,
                                   ),
+                                  contentPadding: EdgeInsets.zero,
+                                  title: ScaledText(
+                                    'Gelbe WBK',
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                  value: 'gelb',
+                                  groupValue: _wbkColor,
+                                  onChanged:
+                                      widget.readOnly
+                                          ? null
+                                          : (value) {
+                                            setState(() {
+                                              _wbkColor = value;
+                                            });
+                                          },
                                 ),
-                                value: 'gelb',
-                                groupValue: _wbkColor,
-                                onChanged:
-                                    widget.readOnly
-                                        ? null
-                                        : (value) {
-                                          setState(() {
-                                            _wbkColor = value;
-                                          });
-                                        },
                               ),
                             ),
-                            Transform.translate(
-                              offset: const Offset(0, -16),
-                              child: RadioListTile<String>(
-                                dense: true,
-                                visualDensity: const VisualDensity(
-                                  horizontal: 0,
-                                  vertical: -4,
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                title: ScaledText(
-                                  'Grüne WBK',
-                                  style: UIStyles.bodyTextStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.bodyTextStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
+                            Semantics(
+                              label:
+                                  'Option 2: Grüne WBK${_wbkColor == "gruen" ? ", ausgewählt" : ""}',
+                              hint:
+                                  _wbkColor == 'gruen'
+                                      ? 'Aktuell ausgewählt'
+                                      : 'Doppeltippen um auszuwählen',
+                              child: Transform.translate(
+                                offset: const Offset(0, -16),
+                                child: RadioListTile<String>(
+                                  dense: true,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: 0,
+                                    vertical: -4,
                                   ),
+                                  contentPadding: EdgeInsets.zero,
+                                  title: ScaledText(
+                                    'Grüne WBK',
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                  value: 'gruen',
+                                  groupValue: _wbkColor,
+                                  onChanged:
+                                      widget.readOnly
+                                          ? null
+                                          : (value) {
+                                            setState(() {
+                                              _wbkColor = value;
+                                            });
+                                          },
                                 ),
-                                value: 'gruen',
-                                groupValue: _wbkColor,
-                                onChanged:
-                                    widget.readOnly
-                                        ? null
-                                        : (value) {
-                                          setState(() {
-                                            _wbkColor = value;
-                                          });
-                                        },
                               ),
                             ),
                           ],
@@ -331,74 +391,96 @@ class _BeduerfnissantragStep1ScreenState
                       Semantics(
                         label:
                             'Bedürfnis für eine: Kurzwaffe oder Langwaffe auswählen',
+                        hint: 'Wählen Sie den Waffentyp für Ihren Antrag aus',
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ScaledText(
-                              'Bedürfnis für eine:',
-                              style: UIStyles.bodyTextStyle.copyWith(
-                                fontSize:
-                                    UIStyles.bodyTextStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                                fontWeight: FontWeight.bold,
+                            Semantics(
+                              header: true,
+                              label: 'Bedürfnis für eine',
+                              hint: 'Unterüberschrift für Waffentyp-Auswahl',
+                              child: ScaledText(
+                                'Bedürfnis für eine:',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.bodyTextStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            Transform.translate(
-                              offset: const Offset(0, -8),
-                              child: RadioListTile<String>(
-                                dense: true,
-                                visualDensity: const VisualDensity(
-                                  horizontal: 0,
-                                  vertical: -4,
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                title: ScaledText(
-                                  'Kurzwaffe',
-                                  style: UIStyles.bodyTextStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.bodyTextStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
+                            Semantics(
+                              label:
+                                  'Option 1: Kurzwaffe${_weaponType == "kurz" ? ", ausgewählt" : ""}',
+                              hint:
+                                  _weaponType == 'kurz'
+                                      ? 'Aktuell ausgewählt'
+                                      : 'Doppeltippen um auszuwählen',
+                              child: Transform.translate(
+                                offset: const Offset(0, -8),
+                                child: RadioListTile<String>(
+                                  dense: true,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: 0,
+                                    vertical: -4,
                                   ),
+                                  contentPadding: EdgeInsets.zero,
+                                  title: ScaledText(
+                                    'Kurzwaffe',
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                  value: 'kurz',
+                                  groupValue: _weaponType,
+                                  onChanged:
+                                      widget.readOnly
+                                          ? null
+                                          : (value) {
+                                            setState(() {
+                                              _weaponType = value;
+                                            });
+                                          },
                                 ),
-                                value: 'kurz',
-                                groupValue: _weaponType,
-                                onChanged:
-                                    widget.readOnly
-                                        ? null
-                                        : (value) {
-                                          setState(() {
-                                            _weaponType = value;
-                                          });
-                                        },
                               ),
                             ),
-                            Transform.translate(
-                              offset: const Offset(0, -16),
-                              child: RadioListTile<String>(
-                                dense: true,
-                                visualDensity: const VisualDensity(
-                                  horizontal: 0,
-                                  vertical: -4,
-                                ),
-                                contentPadding: EdgeInsets.zero,
-                                title: ScaledText(
-                                  'Langwaffe',
-                                  style: UIStyles.bodyTextStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.bodyTextStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
+                            Semantics(
+                              label:
+                                  'Option 2: Langwaffe${_weaponType == "lang" ? ", ausgewählt" : ""}',
+                              hint:
+                                  _weaponType == 'lang'
+                                      ? 'Aktuell ausgewählt'
+                                      : 'Doppeltippen um auszuwählen',
+                              child: Transform.translate(
+                                offset: const Offset(0, -16),
+                                child: RadioListTile<String>(
+                                  dense: true,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: 0,
+                                    vertical: -4,
                                   ),
+                                  contentPadding: EdgeInsets.zero,
+                                  title: ScaledText(
+                                    'Langwaffe',
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                  value: 'lang',
+                                  groupValue: _weaponType,
+                                  onChanged:
+                                      widget.readOnly
+                                          ? null
+                                          : (value) {
+                                            setState(() {
+                                              _weaponType = value;
+                                            });
+                                          },
                                 ),
-                                value: 'lang',
-                                groupValue: _weaponType,
-                                onChanged:
-                                    widget.readOnly
-                                        ? null
-                                        : (value) {
-                                          setState(() {
-                                            _weaponType = value;
-                                          });
-                                        },
                               ),
                             ),
                           ],
@@ -410,36 +492,52 @@ class _BeduerfnissantragStep1ScreenState
                       Semantics(
                         label:
                             'Ich besitze bereits ${_weaponType == 'kurz' ? 'Kurzwaffen' : 'Langwaffen'}: Anzahl eingeben',
+                        hint:
+                            'Geben Sie die Anzahl der bereits besessenen Waffen ein',
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ScaledText(
-                              'Ich besitze bereits ${_weaponType == 'kurz' ? 'Kurzwaffen' : 'Langwaffen'}:',
-                              style: UIStyles.bodyTextStyle.copyWith(
-                                fontSize:
-                                    UIStyles.bodyTextStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                                fontWeight: FontWeight.bold,
+                            Semantics(
+                              header: true,
+                              label:
+                                  'Ich besitze bereits ${_weaponType == 'kurz' ? 'Kurzwaffen' : 'Langwaffen'}',
+                              hint: 'Unterüberschrift für Anzahl-Eingabefeld',
+                              child: ScaledText(
+                                'Ich besitze bereits ${_weaponType == 'kurz' ? 'Kurzwaffen' : 'Langwaffen'}:',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.bodyTextStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const SizedBox(height: UIConstants.spacingS),
-                            TextField(
-                              controller: _anzahlController,
+                            Semantics(
+                              textField: true,
+                              label:
+                                  'Anzahl der bereits besessenen ${_weaponType == 'kurz' ? 'Kurzwaffen' : 'Langwaffen'}',
+                              hint:
+                                  'Geben Sie eine Zahl ein. Aktueller Wert: ${_anzahlController.text}',
                               enabled: !widget.readOnly,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9]'),
+                              child: TextField(
+                                controller: _anzahlController,
+                                enabled: !widget.readOnly,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]'),
+                                  ),
+                                ],
+                                decoration: const InputDecoration(
+                                  labelText: 'Anzahl',
+                                  border: OutlineInputBorder(),
                                 ),
-                              ],
-                              decoration: const InputDecoration(
-                                labelText: 'Anzahl',
-                                border: OutlineInputBorder(),
-                              ),
-                              style: UIStyles.bodyTextStyle.copyWith(
-                                fontSize:
-                                    UIStyles.bodyTextStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.bodyTextStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                ),
                               ),
                             ),
                           ],
@@ -450,62 +548,78 @@ class _BeduerfnissantragStep1ScreenState
                       // Verein Dropdown
                       Semantics(
                         label: 'Verein der genehmigt auswählen',
+                        hint:
+                            'Wählen Sie den genehmigenden Verein aus der Dropdown-Liste aus',
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ScaledText(
-                              'Verein der genehmigt:',
-                              style: UIStyles.bodyTextStyle.copyWith(
-                                fontSize:
-                                    UIStyles.bodyTextStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                                fontWeight: FontWeight.bold,
+                            Semantics(
+                              header: true,
+                              label: 'Verein der genehmigt',
+                              hint: 'Unterüberschrift für Vereinsauswahl',
+                              child: ScaledText(
+                                'Verein der genehmigt:',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.bodyTextStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            const SizedBox(height: UIConstants.spacingS),
-                            DropdownButtonFormField<String>(
-                              value: _selectedVerein,
-                              onChanged:
+                            Semantics(
+                              button: true,
+                              label:
+                                  'Vereinsauswahl Dropdown${_selectedVerein != null ? ", ausgewählt: $_selectedVerein" : ""}',
+                              hint:
                                   widget.readOnly
-                                      ? null
-                                      : (value) {
-                                        setState(() {
-                                          _selectedVerein = value;
-                                        });
-                                      },
-                              decoration: const InputDecoration(
-                                labelText: 'Verein auswählen',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: [
-                                // TODO: Load from ZMI? - Erst- und Zweitvereine
-                                DropdownMenuItem(
-                                  value: 'verein1',
-                                  child: ScaledText(
-                                    'Verein 1 (Placeholder)',
-                                    style: UIStyles.bodyTextStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.bodyTextStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
+                                      ? 'Nicht änderbar'
+                                      : 'Doppeltippen um Verein auszuwählen',
+                              enabled: !widget.readOnly,
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedVerein,
+                                onChanged:
+                                    widget.readOnly
+                                        ? null
+                                        : (value) {
+                                          setState(() {
+                                            _selectedVerein = value;
+                                          });
+                                        },
+                                decoration: const InputDecoration(
+                                  labelText: 'Verein auswählen',
+                                  border: OutlineInputBorder(),
+                                ),
+                                items: [
+                                  // TODO: Load from ZMI? - Erst- und Zweitvereine
+                                  DropdownMenuItem(
+                                    value: 'verein1',
+                                    child: ScaledText(
+                                      'Verein 1 (Placeholder)',
+                                      style: UIStyles.bodyTextStyle.copyWith(
+                                        fontSize:
+                                            UIStyles.bodyTextStyle.fontSize! *
+                                            fontSizeProvider.scaleFactor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'verein2',
-                                  child: ScaledText(
-                                    'Verein 2 (Placeholder)',
-                                    style: UIStyles.bodyTextStyle.copyWith(
-                                      fontSize:
-                                          UIStyles.bodyTextStyle.fontSize! *
-                                          fontSizeProvider.scaleFactor,
+                                  DropdownMenuItem(
+                                    value: 'verein2',
+                                    child: ScaledText(
+                                      'Verein 2 (Placeholder)',
+                                      style: UIStyles.bodyTextStyle.copyWith(
+                                        fontSize:
+                                            UIStyles.bodyTextStyle.fontSize! *
+                                            fontSizeProvider.scaleFactor,
+                                      ),
                                     ),
                                   ),
+                                ],
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIStyles.bodyTextStyle.fontSize! *
+                                      fontSizeProvider.scaleFactor,
                                 ),
-                              ],
-                              style: UIStyles.bodyTextStyle.copyWith(
-                                fontSize:
-                                    UIStyles.bodyTextStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
                               ),
                             ),
                           ],
@@ -515,7 +629,9 @@ class _BeduerfnissantragStep1ScreenState
 
                       // Gebührenerhebung
                       Semantics(
+                        header: true,
                         label: 'Gebührenerhebung',
+                        hint: 'Abschnitt für Gebühreninformationen',
                         child: ScaledText(
                           'Gebührenerhebung:',
                           style: UIStyles.bodyTextStyle.copyWith(
