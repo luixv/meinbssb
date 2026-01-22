@@ -803,64 +803,57 @@ class _BeduerfnissantragStep2ScreenState
                                                                   ),
                                                                 ),
                                                               ),
-                                                              const SizedBox(
-                                                                width:
-                                                                    UIConstants
-                                                                        .spacingS,
-                                                              ),
-                                                              FutureBuilder<
-                                                                bool
-                                                              >(
-                                                                future:
-                                                                    sport.id !=
-                                                                            null
-                                                                        ? Provider.of<
-                                                                              ApiService
-                                                                            >(
-                                                                              context,
-                                                                              listen:
-                                                                                  false,
-                                                                            )
-                                                                            .hasBedDateiSport(
-                                                                              sport.id!,
-                                                                            )
-                                                                            .then((
-                                                                              hasDoc,
-                                                                            ) {
-                                                                              return hasDoc;
-                                                                            })
-                                                                        : Future.value(
-                                                                          false,
-                                                                        ),
-                                                                builder: (
-                                                                  context,
-                                                                  hasDocSnapshot,
-                                                                ) {
-                                                                  if (hasDocSnapshot
-                                                                          .connectionState ==
-                                                                      ConnectionState
-                                                                          .waiting) {
-                                                                    return const SizedBox(
-                                                                      width: 24,
-                                                                      height:
-                                                                          24,
-                                                                      child: CircularProgressIndicator(
-                                                                        strokeWidth:
-                                                                            2,
-                                                                      ),
-                                                                    );
-                                                                  }
+                                                            ],
+                                                          ),
+                                                        ],
+                                                        // Document display - show if document exists regardless of wettkampfergebnis
+                                                        FutureBuilder<bool>(
+                                                          future:
+                                                              sport.id != null
+                                                                  ? Provider.of<
+                                                                    ApiService
+                                                                  >(
+                                                                    context,
+                                                                    listen:
+                                                                        false,
+                                                                  ).hasBedDateiSport(
+                                                                    sport.id!,
+                                                                  )
+                                                                  : Future.value(
+                                                                    false,
+                                                                  ),
+                                                          builder: (
+                                                            context,
+                                                            hasDocSnapshot,
+                                                          ) {
+                                                            if (hasDocSnapshot
+                                                                    .connectionState ==
+                                                                ConnectionState
+                                                                    .waiting) {
+                                                              return const SizedBox.shrink();
+                                                            }
 
-                                                                  if (hasDocSnapshot
-                                                                          .hasData &&
-                                                                      hasDocSnapshot
-                                                                              .data ==
-                                                                          true) {
-                                                                    return Tooltip(
-                                                                      message:
-                                                                          'Dokument anzeigen',
-                                                                      child: IconButton(
-                                                                        icon: Icon(
+                                                            if (hasDocSnapshot
+                                                                    .hasData &&
+                                                                hasDocSnapshot
+                                                                        .data ==
+                                                                    true) {
+                                                              return Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  const SizedBox(
+                                                                    height:
+                                                                        UIConstants
+                                                                            .spacingS,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      Tooltip(
+                                                                        message:
+                                                                            'Dokument',
+                                                                        child: Icon(
                                                                           Icons
                                                                               .insert_drive_file,
                                                                           size:
@@ -869,41 +862,56 @@ class _BeduerfnissantragStep2ScreenState
                                                                           color:
                                                                               UIConstants.primaryColor,
                                                                         ),
-                                                                        padding:
-                                                                            EdgeInsets.zero,
-                                                                        constraints:
-                                                                            const BoxConstraints(),
-                                                                        onPressed: () async {
-                                                                          // Fetch and view the document
-                                                                          final apiService = Provider.of<
-                                                                            ApiService
-                                                                          >(
-                                                                            context,
-                                                                            listen:
-                                                                                false,
-                                                                          );
-                                                                          final doc = await apiService.getBedDateiBySportId(
-                                                                            sport.id!,
-                                                                          );
-                                                                          if (doc !=
-                                                                                  null &&
-                                                                              context.mounted) {
-                                                                            _viewDocument(
-                                                                              context,
-                                                                              doc,
-                                                                            );
-                                                                          }
-                                                                        },
                                                                       ),
-                                                                    );
-                                                                  }
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            UIConstants.spacingS,
+                                                                      ),
+                                                                      Flexible(
+                                                                        child: InkWell(
+                                                                          onTap: () async {
+                                                                            final apiService = Provider.of<
+                                                                              ApiService
+                                                                            >(
+                                                                              context,
+                                                                              listen:
+                                                                                  false,
+                                                                            );
+                                                                            final doc = await apiService.getBedDateiBySportId(
+                                                                              sport.id!,
+                                                                            );
+                                                                            if (doc !=
+                                                                                    null &&
+                                                                                context.mounted) {
+                                                                              _viewDocument(
+                                                                                context,
+                                                                                doc,
+                                                                              );
+                                                                            }
+                                                                          },
+                                                                          child: ScaledText(
+                                                                            'Dokument anzeigen',
+                                                                            style: UIStyles.bodyTextStyle.copyWith(
+                                                                              fontSize:
+                                                                                  UIStyles.bodyTextStyle.fontSize! *
+                                                                                  fontSizeProvider.scaleFactor,
+                                                                              color:
+                                                                                  UIConstants.linkColor,
+                                                                              decoration:
+                                                                                  TextDecoration.underline,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            }
 
-                                                                  return const SizedBox.shrink();
-                                                                },
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
+                                                            return const SizedBox.shrink();
+                                                          },
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
