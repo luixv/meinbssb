@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/models/contact_data.dart';
 import 'package:meinbssb/screens/contact_data_screen.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
