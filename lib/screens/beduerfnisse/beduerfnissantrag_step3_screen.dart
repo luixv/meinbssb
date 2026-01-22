@@ -380,16 +380,16 @@ class _BeduerfnissantragStep3ScreenState
                                   children: [
                                     IconButton(
                                       icon: const Icon(
-                                        Icons.visibility,
-                                        color: UIConstants.defaultAppColor,
+                                        Icons.insert_drive_file,
+                                        color: UIConstants.primaryColor,
                                       ),
                                       onPressed:
                                           () => _viewDocument(context, doc),
                                     ),
                                     IconButton(
                                       icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
+                                        Icons.delete_outline,
+                                        color: UIConstants.deleteIcon,
                                       ),
                                       onPressed: () => _deleteDocument(doc.id),
                                     ),
