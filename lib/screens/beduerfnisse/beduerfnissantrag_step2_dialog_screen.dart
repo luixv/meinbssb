@@ -7,6 +7,7 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/document_scanner_service.dart';
+import 'package:meinbssb/services/core/logger_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/widgets/dialog_fabs.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
@@ -107,11 +108,16 @@ class _BeduerfnissantragStep2DialogScreenState
 
       if (scanResult == null) {
         // User cancelled scanning
+        LoggerService.logInfo('User cancelled document scanning');
         setState(() {
           _isUploadingDocument = false;
         });
         return;
       }
+
+      LoggerService.logInfo(
+        'Document scanned successfully: ${scanResult.fileName}, size: ${scanResult.bytes.length} bytes',
+      );
 
       final dateiId = await apiService.uploadBedDatei(
         antragsnummer: widget.antragsnummer!,
@@ -121,6 +127,9 @@ class _BeduerfnissantragStep2DialogScreenState
 
       if (mounted) {
         if (dateiId != null) {
+          LoggerService.logInfo(
+            'Scanned document uploaded successfully with dateiId=$dateiId',
+          );
           setState(() {
             _uploadedDateiId = dateiId;
             _documentUploaded = true;
@@ -132,6 +141,7 @@ class _BeduerfnissantragStep2DialogScreenState
             ),
           );
         } else {
+          LoggerService.logError('Failed to upload scanned document');
           setState(() {
             _isUploadingDocument = false;
           });
@@ -514,6 +524,10 @@ class _BeduerfnissantragStep2DialogScreenState
 
         // Map uploaded document to the newly created sport
         if (_uploadedDateiId != null) {
+          LoggerService.logInfo(
+            'Mapping document: dateiId=$_uploadedDateiId to bedSportId=$createdBedSportId',
+          );
+
           final mapped = await apiService.mapBedDateiToSport(
             antragsnummer: widget.antragsnummer!,
             dateiId: _uploadedDateiId!,
@@ -522,6 +536,9 @@ class _BeduerfnissantragStep2DialogScreenState
 
           if (!mapped) {
             // Mapping failed, but sport was created
+            LoggerService.logError(
+              'Failed to map document to sport: dateiId=$_uploadedDateiId, bedSportId=$createdBedSportId',
+            );
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -532,13 +549,20 @@ class _BeduerfnissantragStep2DialogScreenState
               );
             }
           } else {
+            LoggerService.logInfo(
+              'Successfully mapped document to sport: dateiId=$_uploadedDateiId, bedSportId=$createdBedSportId',
+            );
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Dokument erfolgreich verknüpft')),
               );
             }
           }
-        } else {}
+        } else {
+          LoggerService.logWarning(
+            'No document uploaded for sport activity bedSportId=$createdBedSportId',
+          );
+        }
       }
 
       if (mounted) {
@@ -608,47 +632,104 @@ class _BeduerfnissantragStep2DialogScreenState
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: UIConstants.spacingL),
+                                const SizedBox(height: UIConstants.spacingM),
 
-                                // Datum
-                                TextField(
-                                  controller: _datumController,
-                                  readOnly: true,
-                                  onTap: _selectDate,
-                                  style: UIStyles.bodyTextStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.bodyTextStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
-                                  ),
-                                  decoration: InputDecoration(
-                                    labelText: 'Datum *',
-                                    hintText: 'Wählen Sie ein Datum',
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        UIConstants.cornerRadius,
-                                      ),
-                                      borderSide: const BorderSide(
-                                        color: UIConstants.defaultAppColor,
+                                // Datum with Training Checkbox
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // Datum field
+                                    Expanded(
+                                      flex: 3,
+                                      child: TextField(
+                                        controller: _datumController,
+                                        readOnly: true,
+                                        onTap: _selectDate,
+                                        style: UIStyles.bodyTextStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyTextStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        decoration: InputDecoration(
+                                          labelText: 'Datum *',
+                                          hintText: 'Datum wählen',
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              UIConstants.cornerRadius,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color:
+                                                  UIConstants.defaultAppColor,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              UIConstants.cornerRadius,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color:
+                                                  UIConstants.defaultAppColor,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          suffixIcon: const Icon(
+                                            Icons.calendar_today,
+                                            color: UIConstants.defaultAppColor,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        UIConstants.cornerRadius,
-                                      ),
-                                      borderSide: const BorderSide(
-                                        color: UIConstants.defaultAppColor,
-                                        width: 2,
+                                    const SizedBox(
+                                      width: UIConstants.spacingXS,
+                                    ),
+                                    // Training Checkbox
+                                    Expanded(
+                                      flex: 2,
+                                      child: Semantics(
+                                        checked: _training,
+                                        enabled: true,
+                                        label: 'Training',
+                                        onTap: () {
+                                          setState(() {
+                                            _training = !_training;
+                                          });
+                                        },
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Checkbox(
+                                              value: _training,
+                                              activeColor:
+                                                  UIConstants.defaultAppColor,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _training = value ?? false;
+                                                });
+                                              },
+                                            ),
+                                            Flexible(
+                                              child: ScaledText(
+                                                'Training',
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                    suffixIcon: const Icon(
-                                      Icons.calendar_today,
-                                      color: UIConstants.defaultAppColor,
-                                    ),
-                                  ),
+                                  ],
                                 ),
-                                const SizedBox(height: UIConstants.spacingL),
+                                const SizedBox(height: UIConstants.spacingM),
 
                                 // Waffenart Dropdown
                                 FutureBuilder<List<BeduerfnisseAuswahl>>(
@@ -670,9 +751,7 @@ class _BeduerfnissantragStep2DialogScreenState
 
                                     return DropdownButtonFormField<int>(
                                       value: _selectedWaffenartId,
-                                      hint: const Text(
-                                        'Wählen Sie eine Waffenart',
-                                      ),
+                                      hint: const Text('Waffenart wählen'),
                                       isExpanded: true,
                                       items:
                                           waffenarten.map((waffenart) {
@@ -724,7 +803,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                     );
                                   },
                                 ),
-                                const SizedBox(height: UIConstants.spacingL),
+                                const SizedBox(height: UIConstants.spacingM),
 
                                 // Disziplinnummer lt. SPO
                                 FutureBuilder<List<Disziplin>>(
@@ -746,9 +825,7 @@ class _BeduerfnissantragStep2DialogScreenState
 
                                     return DropdownButtonFormField<int>(
                                       value: _selectedDisziplinId,
-                                      hint: const Text(
-                                        'Wählen Sie eine Disziplin',
-                                      ),
+                                      hint: const Text('Disziplin Wählen'),
                                       isExpanded: true,
                                       items:
                                           disziplinen.map((disziplin) {
@@ -800,44 +877,9 @@ class _BeduerfnissantragStep2DialogScreenState
                                     );
                                   },
                                 ),
-                                const SizedBox(height: UIConstants.spacingL),
+                                const SizedBox(height: UIConstants.spacingM),
 
-                                // Training Checkbox
-                                Semantics(
-                                  checked: _training,
-                                  enabled: true,
-                                  label: 'Training',
-                                  onTap: () {
-                                    setState(() {
-                                      _training = !_training;
-                                    });
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Checkbox(
-                                        value: _training,
-                                        activeColor:
-                                            UIConstants.defaultAppColor,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _training = value ?? false;
-                                          });
-                                        },
-                                      ),
-                                      ScaledText(
-                                        'Training',
-                                        style: UIStyles.bodyTextStyle.copyWith(
-                                          fontSize:
-                                              UIStyles.bodyTextStyle.fontSize! *
-                                              fontSizeProvider.scaleFactor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: UIConstants.spacingL),
-
-                                // Wettkampfart Dropdown (independent of Waffenart)
+                                // Wettkampfart Dropdown
                                 FutureBuilder<List<BeduerfnisseAuswahl>>(
                                   future: _auswahlFuture,
                                   builder: (context, snapshot) {
@@ -857,9 +899,8 @@ class _BeduerfnissantragStep2DialogScreenState
 
                                     return DropdownButtonFormField<int>(
                                       value: _selectedWettkampfartId,
-                                      hint: const Text(
-                                        'Wählen Sie eine Wettkampfart',
-                                      ),
+                                      isExpanded: true,
+                                      hint: const Text('Wettkampfart wählen'),
                                       items:
                                           wettkampfarten.map((wettkampfart) {
                                             return DropdownMenuItem<int>(
@@ -913,7 +954,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                     );
                                   },
                                 ),
-                                const SizedBox(height: UIConstants.spacingL),
+                                const SizedBox(height: UIConstants.spacingM),
 
                                 // Wettkampfergebnis (required if not training)
                                 Row(
@@ -967,7 +1008,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: UIConstants.spacingL),
+                                const SizedBox(height: UIConstants.spacingM),
 
                                 // Dokument label
                                 ScaledText(
@@ -1121,9 +1162,9 @@ class _BeduerfnissantragStep2DialogScreenState
                                                             ScaffoldMessenger.of(
                                                               buttonContext,
                                                             ).showSnackBar(
-                                                              const SnackBar(
+                                                              SnackBar(
                                                                 content: Text(
-                                                                  'Dokument erfolgreich hochgeladen',
+                                                                  'Fehler beim Hochladen: $e',
                                                                 ),
                                                               ),
                                                             );
