@@ -1043,216 +1043,30 @@ class _BeduerfnissantragStep2ScreenState
   }
 
   Future<void> _continueToNextStep() async {
+    if (!mounted) return;
+
     // Check if antrag exists
     if (widget.antrag == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fehler: Antrag nicht gefunden')),
-        );
-      }
-      return;
-    }
-
-    // In read-only mode, just navigate without updating status
-    if (widget.readOnly) {
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BeduerfnissantragStep3Screen(
-                  userData: widget.userData,
-                  antrag: widget.antrag,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                  userRole: widget.userRole,
-                  readOnly: widget.readOnly,
-                ),
-          ),
-        );
-      }
-      return;
-    }
-
-    // Get current antrag status
-    final currentStatus =
-        widget.antrag!.statusId ?? BeduerfnisAntragStatus.entwurf;
-    final nextStatus = BeduerfnisAntragStatus.eingereichtAmVerein;
-
-    // If status is "Entwurf", show confirmation dialog
-    if (currentStatus == BeduerfnisAntragStatus.entwurf) {
-      bool? confirmSubmit = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            backgroundColor: UIConstants.backgroundColor,
-            title: const Center(
-              child: Text(
-                'Antrag einreichen',
-                style: UIStyles.dialogTitleStyle,
-              ),
-            ),
-            content: RichText(
-              textAlign: TextAlign.center,
-              text: const TextSpan(
-                style: UIStyles.dialogContentStyle,
-                children: <TextSpan>[
-                  TextSpan(
-                    text:
-                        'Sind Sie sicher, dass Sie diesen Antrag stellen wollen?',
-                  ),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: UIConstants.spacingM,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minHeight: UIConstants.defaultButtonHeight,
-                      ),
-                      child: Semantics(
-                        label: 'Abbrechen Button',
-                        hint: 'Dialog schließen und Antrag nicht einreichen',
-                        button: true,
-                        child: ElevatedButton(
-                          onPressed:
-                              () => Navigator.of(dialogContext).pop(false),
-                          style: UIStyles.dialogCancelButtonStyle.copyWith(
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                horizontal: UIConstants.spacingM,
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.close,
-                                color: UIConstants.closeIcon,
-                                size: UIConstants.defaultIconSize,
-                              ),
-                              const SizedBox(width: UIConstants.spacingS),
-                              Text(
-                                'Abbrechen',
-                                style: UIStyles.dialogButtonTextStyle.copyWith(
-                                  color: UIConstants.cancelButtonText,
-                                  fontSize: UIConstants.buttonFontSize,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: UIConstants.spacingM),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minHeight: UIConstants.defaultButtonHeight,
-                      ),
-                      child: Semantics(
-                        label: 'Einreichen Button',
-                        hint: 'Antrag einreichen',
-                        button: true,
-                        child: ElevatedButton(
-                          onPressed:
-                              () => Navigator.of(dialogContext).pop(true),
-                          style: UIStyles.dialogAcceptButtonStyle.copyWith(
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                vertical: UIConstants.spacingS,
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.check,
-                                color: UIConstants.checkIcon,
-                                size: UIConstants.defaultIconSize,
-                              ),
-                              const SizedBox(width: UIConstants.spacingS),
-                              Text(
-                                'Einreichen',
-                                style: UIStyles.dialogButtonTextStyle.copyWith(
-                                  color: UIConstants.submitButtonText,
-                                  fontSize: UIConstants.buttonFontSize,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fehler: Antrag nicht gefunden')),
       );
-
-      // If user cancelled, return early
-      if (confirmSubmit != true) {
-        return;
-      }
-    }
-
-    // Check if workflow transition is allowed
-    final workflowService = WorkflowService();
-    final canTransition = workflowService.canAntragChangeFromStateToState(
-      currentState: currentStatus,
-      nextState: nextStatus,
-      userRole: widget.userRole,
-    );
-
-    if (!canTransition) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sie haben keine Berechtigung für diese Aktion'),
-          ),
-        );
-      }
       return;
     }
 
-    // Update antrag status
-    try {
-      final apiService = Provider.of<ApiService>(context, listen: false);
-      final updatedAntrag = widget.antrag!.copyWith(statusId: nextStatus);
-
-      await apiService.updateBedAntrag(updatedAntrag);
-
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BeduerfnissantragStep3Screen(
-                  userData: widget.userData,
-                  antrag: updatedAntrag,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                  userRole: widget.userRole,
-                  readOnly: widget.readOnly,
-                ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler beim Aktualisieren: $e')),
-        );
-      }
-    }
+    // Navigate to step 3 screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => BeduerfnissantragStep3Screen(
+              userData: widget.userData,
+              antrag: widget.antrag,
+              isLoggedIn: widget.isLoggedIn,
+              onLogout: widget.onLogout,
+              userRole: widget.userRole,
+              readOnly: widget.readOnly,
+            ),
+      ),
+    );
   }
 }

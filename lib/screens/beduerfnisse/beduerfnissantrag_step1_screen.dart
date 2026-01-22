@@ -643,52 +643,42 @@ class _BeduerfnissantragStep1ScreenState
   Future<void> _proceedToStep2() async {
     if (!mounted) return;
 
-    try {
-      // Get the antrag to pass to Step 2
-      late BeduerfnisseAntrag antragForStep2;
+    // First save the antrag
+    await _saveAntrag();
 
-      if (widget.antrag != null) {
-        // Edit mode: Use existing antrag
-        antragForStep2 = widget.antrag!;
-      } else if (_createdAntrag != null) {
-        // Create mode: Use previously created antrag
-        antragForStep2 = _createdAntrag!;
-      } else {
-        // Should not happen if button is disabled, but as a fallback
+    // Get the antrag to pass to Step 2
+    final antragForStep2 = widget.antrag ?? _createdAntrag;
+
+    if (antragForStep2 == null) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Bitte speichern Sie zuerst das Formular'),
           ),
         );
-        return;
       }
+      return;
+    }
 
-      // For now, assume the user is a "mitglied" - in the future this will come from user roles
-      const userRole = WorkflowRole.mitglied;
+    // For now, assume the user is a "mitglied" - in the future this will come from user roles
+    const userRole = WorkflowRole.mitglied;
 
-      // Navigate to step 2 screen
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BeduerfnissantragStep2Screen(
-                  userData: widget.userData,
-                  antrag: antragForStep2,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                  userRole: userRole,
-                  readOnly: widget.readOnly,
-                ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Fortfahren: $e')));
-      }
+    // Navigate to step 2 screen
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => BeduerfnissantragStep2Screen(
+                userData: widget.userData,
+                antrag: antragForStep2,
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+                userRole: userRole,
+                readOnly: widget.readOnly,
+              ),
+        ),
+      );
     }
   }
 }
