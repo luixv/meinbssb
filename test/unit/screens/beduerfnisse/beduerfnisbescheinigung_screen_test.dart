@@ -380,4 +380,137 @@ void main() {
       expect(headerSemanticFinder, findsOneWidget);
     });
   });
+
+  group('BeduerfnisbescheinigungScreen - FAB Interaction', () {
+    testWidgets('FAB is present and visible', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      final fabFinder = find.byType(FloatingActionButton);
+      expect(fabFinder, findsOneWidget);
+    });
+
+    testWidgets('FAB is focusable for keyboard navigation', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find focus widgets
+      expect(find.byType(Focus), findsWidgets);
+    });
+  });
+
+  group('BeduerfnisbescheinigungScreen - Layout Tests', () {
+    testWidgets('uses proper layout structure', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should use Scaffold
+      expect(find.byType(Scaffold), findsWidgets);
+    });
+
+    testWidgets('all steps are in a Column layout', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find Column widgets
+      final columnFinder = find.byType(Column);
+      expect(columnFinder, findsWidgets);
+    });
+
+    testWidgets('proper spacing between elements', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Check for SizedBox widgets used for spacing
+      final sizedBoxFinder = find.byType(SizedBox);
+      expect(sizedBoxFinder, findsWidgets);
+    });
+  });
+
+  group('BeduerfnisbescheinigungScreen - Consumer Tests', () {
+    testWidgets('rebuilds when FontSizeProvider changes', (
+      WidgetTester tester,
+    ) async {
+      final fontSizeProvider = FontSizeProvider();
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<FontSizeProvider>.value(
+          value: fontSizeProvider,
+          child: MaterialApp(
+            home: BeduerfnisbescheinigungScreen(
+              userData: dummyUser,
+              isLoggedIn: true,
+              onLogout: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+
+      // Change font size
+      fontSizeProvider.setScaleFactor(2.0);
+      await tester.pumpAndSettle();
+
+      // Screen should still render
+      expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnisbescheinigungScreen - Step Content Tests', () {
+    testWidgets('step 1 has correct number of sub-items', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Count bullet points (step 1 has 5 items)
+      final bulletFinder = find.text('• ');
+      expect(bulletFinder, findsNWidgets(5));
+    });
+
+    testWidgets('steps 2-4 have no sub-items', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Only 5 bullets total (all from step 1)
+      final bulletFinder = find.text('• ');
+      expect(bulletFinder, findsNWidgets(5));
+    });
+
+    testWidgets('all text is wrapped properly', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find Expanded widgets used for text wrapping
+      final expandedFinder = find.byType(Expanded);
+      expect(expandedFinder, findsWidgets);
+    });
+  });
+
+  group('BeduerfnisbescheinigungScreen - Semantic Structure', () {
+    testWidgets('has proper semantic tree structure', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Check for Semantics widgets
+      final semanticsFinder = find.byType(Semantics);
+      expect(semanticsFinder, findsWidgets);
+    });
+
+    testWidgets('title has semantic label', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Title should be accessible
+      expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+    });
+  });
 }

@@ -222,4 +222,253 @@ void main() {
       expect(find.text('Schießaktivität hinzufügen'), findsOneWidget);
     });
   });
+
+  group('BeduerfnissantragStep2DialogScreen - Form Fields', () {
+    testWidgets('date field is displayed', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Datum *'), findsOneWidget);
+    });
+
+    testWidgets('waffenart field is displayed', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Waffenart *'), findsOneWidget);
+    });
+
+    testWidgets('disziplin field is displayed', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Disziplinnummer lt. SPO *'), findsOneWidget);
+    });
+
+    testWidgets('dropdown fields are displayed', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Waffenart *'), findsOneWidget);
+      expect(find.text('Disziplinnummer lt. SPO *'), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnissantragStep2DialogScreen - State Tests', () {
+    testWidgets('training checkbox state toggles correctly', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      final trainingCheckbox = find.byType(Checkbox);
+      expect(trainingCheckbox, findsOneWidget);
+
+      // Initial state
+      Checkbox checkbox = tester.widget(trainingCheckbox);
+      expect(checkbox.value, false);
+
+      // Toggle
+      await tester.tap(trainingCheckbox);
+      await tester.pumpAndSettle();
+
+      checkbox = tester.widget(trainingCheckbox);
+      expect(checkbox.value, true);
+
+      // Toggle back
+      await tester.tap(trainingCheckbox);
+      await tester.pumpAndSettle();
+
+      checkbox = tester.widget(trainingCheckbox);
+      expect(checkbox.value, false);
+    });
+
+    testWidgets('wettkampf fields visibility controlled by training checkbox', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Wettkampf fields visible when training is false
+      expect(find.text('Wettkampfart *'), findsOneWidget);
+
+      // Check training
+      await tester.tap(find.byType(Checkbox));
+      await tester.pumpAndSettle();
+
+      // Wettkampf fields hidden
+      expect(find.text('Wettkampfart *'), findsNothing);
+    });
+  });
+
+  group('BeduerfnissantragStep2DialogScreen - Layout Tests', () {
+    testWidgets('dialog has proper layout structure', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should have scrollable content
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+    });
+
+    testWidgets('proper spacing between form fields', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Check for SizedBox widgets used for spacing
+      final sizedBoxFinder = find.byType(SizedBox);
+      expect(sizedBoxFinder, findsWidgets);
+    });
+
+    testWidgets('all required fields marked with asterisk', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Required fields should have *
+      expect(find.textContaining('*'), findsWidgets);
+    });
+  });
+
+  group('BeduerfnissantragStep2DialogScreen - FAB Tests', () {
+    testWidgets('both FABs are visible', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find FABs
+      final fabFinder = find.byType(FloatingActionButton);
+      expect(fabFinder, findsNWidgets(2));
+    });
+
+    testWidgets('cancel FAB has correct icon', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.close), findsOneWidget);
+    });
+
+    testWidgets('save FAB has correct icon', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.check), findsOneWidget);
+    });
+
+    testWidgets('save FAB is disabled when form is invalid', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      final saveFab = find.byKey(const ValueKey('saveBedSportFab'));
+      final fabWidget = tester.widget<FloatingActionButton>(saveFab);
+
+      // Initially disabled
+      expect(fabWidget.onPressed, isNull);
+    });
+  });
+
+  group('BeduerfnissantragStep2DialogScreen - Consumer Tests', () {
+    testWidgets('rebuilds when FontSizeProvider changes', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.text('Schießaktivität hinzufügen'), findsOneWidget);
+
+      // Change font size
+      fontSizeProvider.setScaleFactor(2.0);
+      await tester.pumpAndSettle();
+
+      // Dialog should still render
+      expect(find.text('Schießaktivität hinzufügen'), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnissantragStep2DialogScreen - Conditional Fields', () {
+    testWidgets('wettkampfergebnis field hidden when training checked', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Initially visible
+      expect(find.text('Wettkampfergebnis *'), findsOneWidget);
+
+      // Check training
+      await tester.tap(find.byType(Checkbox));
+      await tester.pumpAndSettle();
+
+      // Now hidden
+      expect(find.text('Wettkampfergebnis *'), findsNothing);
+    });
+
+    testWidgets('wettkampfart field hidden when training checked', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Initially visible
+      expect(find.text('Wettkampfart *'), findsOneWidget);
+
+      // Check training
+      await tester.tap(find.byType(Checkbox));
+      await tester.pumpAndSettle();
+
+      // Now hidden
+      expect(find.text('Wettkampfart *'), findsNothing);
+    });
+  });
+
+  group('BeduerfnissantragStep2DialogScreen - Integration Tests', () {
+    testWidgets('complete dialog flow works', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Verify initial state
+      expect(find.text('Schießaktivität hinzufügen'), findsOneWidget);
+
+      // Toggle training checkbox
+      await tester.tap(find.byType(Checkbox));
+      await tester.pumpAndSettle();
+
+      // Verify wettkampf fields are hidden
+      expect(find.text('Wettkampfart *'), findsNothing);
+      expect(find.text('Wettkampfergebnis *'), findsNothing);
+
+      // Toggle back
+      await tester.tap(find.byType(Checkbox));
+      await tester.pumpAndSettle();
+
+      // Verify wettkampf fields are visible again
+      expect(find.text('Wettkampfart *'), findsOneWidget);
+      expect(find.text('Wettkampfergebnis *'), findsOneWidget);
+    });
+
+    testWidgets('cancel button is present', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Tap cancel button exists
+      expect(find.byIcon(Icons.close), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnissantragStep2DialogScreen - API Integration', () {
+    testWidgets('loads dropdowns from API', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Verify API calls were made
+      verify(mockApiService.getBedAuswahlByTypId(1)).called(1);
+      verify(mockApiService.getBedAuswahlByTypId(2)).called(1);
+      verify(mockApiService.fetchDisziplinen()).called(1);
+    });
+  });
 }

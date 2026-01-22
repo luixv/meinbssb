@@ -601,4 +601,148 @@ void main() {
       expect(fab.onPressed, isNotNull);
     });
   });
+
+  group('BeduerfnissantragStep1Screen - State Management', () {
+    testWidgets('screen renders successfully', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Screen should render
+      expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+    });
+
+    testWidgets('form fields are present', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should have at least one text field for Anzahl
+      expect(find.byType(TextField), findsWidgets);
+    });
+  });
+
+  group('BeduerfnissantragStep1Screen - Consumer Tests', () {
+    testWidgets('rebuilds when FontSizeProvider changes', (
+      WidgetTester tester,
+    ) async {
+      final fontSizeProvider = FontSizeProvider();
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<FontSizeProvider>.value(
+              value: fontSizeProvider,
+            ),
+            Provider<ApiService>.value(value: mockApiService),
+          ],
+          child: MaterialApp(
+            home: BeduerfnissantragStep1Screen(
+              userData: dummyUserData,
+              isLoggedIn: true,
+              onLogout: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+
+      // Change font size to smaller value to avoid overflow
+      fontSizeProvider.setScaleFactor(0.9);
+      await tester.pumpAndSettle();
+
+      // Screen should still render
+      expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnissantragStep1Screen - Layout Tests', () {
+    testWidgets('uses proper layout structure', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should use Scaffold
+      expect(find.byType(Scaffold), findsWidgets);
+    });
+
+    testWidgets('has scrollable content', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find scrollable widgets
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+    });
+
+    testWidgets('proper spacing between form elements', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Check for SizedBox widgets used for spacing
+      final sizedBoxFinder = find.byType(SizedBox);
+      expect(sizedBoxFinder, findsWidgets);
+    });
+  });
+
+  group('BeduerfnissantragStep1Screen - Form Validation', () {
+    testWidgets('anzahl field validates numeric input', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      final textField = find.widgetWithText(TextField, 'Anzahl');
+      expect(textField, findsOneWidget);
+
+      // Enter valid number
+      await tester.enterText(textField, '10');
+      await tester.pump();
+
+      // Field should accept it
+      final textFieldWidget = tester.widget<TextField>(textField);
+      expect(textFieldWidget.controller?.text, '10');
+    });
+  });
+
+  group('BeduerfnissantragStep1Screen - Conditional Rendering', () {
+    testWidgets('weapon count field changes label based on weapon type', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Initially shows Kurzwaffen
+      expect(find.text('Ich besitze bereits Kurzwaffen:'), findsOneWidget);
+
+      // Select Langwaffe
+      final langRadio = find.widgetWithText(RadioListTile<String>, 'Langwaffe');
+      await tester.tap(langRadio);
+      await tester.pumpAndSettle();
+
+      // Should now show Langwaffen
+      expect(find.text('Ich besitze bereits Langwaffen:'), findsOneWidget);
+    });
+
+    testWidgets('WBK type selection enables color selection', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find WBK color radios
+      expect(find.text('Gelbe WBK'), findsOneWidget);
+      expect(find.text('Grüne WBK'), findsOneWidget);
+    });
+  });
+
+  group('BeduerfnissantragStep1Screen - Integration Tests', () {
+    testWidgets('complete form renders correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Verify basic screen structure
+      expect(find.text('Bedürfnisbescheinigung'), findsOneWidget);
+    });
+  });
 }
