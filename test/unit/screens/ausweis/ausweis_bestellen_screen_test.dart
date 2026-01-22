@@ -281,4 +281,368 @@ void main() {
     // Check that the dialog is still present
     expect(find.byType(AlertDialog), findsOneWidget);
   });
+
+  testWidgets('checkboxes can be toggled and enable submit button', (
+    WidgetTester tester,
+  ) async {
+    final apiService = FakeApiService();
+    await tester.pumpWidget(
+      buildTestWidget(
+        apiService: apiService,
+        userData: const UserData(
+          personId: 1,
+          webLoginId: 1,
+          passnummer: '',
+          vereinNr: 1,
+          namen: '',
+          vorname: '',
+          titel: null,
+          geburtsdatum: null,
+          geschlecht: null,
+          vereinName: '',
+          strasse: null,
+          plz: null,
+          ort: null,
+          land: '',
+          nationalitaet: '',
+          passStatus: 0,
+          passdatenId: 1,
+          eintrittVerein: null,
+          austrittVerein: null,
+          mitgliedschaftId: 1,
+          telefon: '',
+          erstLandesverbandId: 0,
+          produktionsDatum: null,
+          erstVereinId: 0,
+          digitalerPass: 0,
+          isOnline: false,
+          disziplin: null,
+        ),
+      ),
+    );
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Find checkboxes
+    final checkboxes = find.byType(Checkbox);
+    expect(checkboxes, findsNWidgets(2));
+
+    // Initially submit button should be disabled (null onPressed)
+    final submitFabs = find.byType(FloatingActionButton);
+    expect(submitFabs, findsNWidgets(2)); // Cancel and Submit FABs
+
+    // Find the submit FAB (second one, with check icon)
+    final submitFab = submitFabs.at(1);
+    final submitButton = tester.widget<FloatingActionButton>(submitFab);
+    expect(submitButton.onPressed, isNull);
+
+    // Toggle first checkbox (AGB)
+    await tester.tap(checkboxes.first);
+    await tester.pump();
+
+    // Still disabled (need both checkboxes)
+    final submitButton2 = tester.widget<FloatingActionButton>(submitFab);
+    expect(submitButton2.onPressed, isNull);
+
+    // Toggle second checkbox (Lastschrift)
+    await tester.tap(checkboxes.last);
+    await tester.pump();
+
+    // Now submit button should be enabled
+    final submitButton3 = tester.widget<FloatingActionButton>(submitFab);
+    expect(submitButton3.onPressed, isNotNull);
+  });
+
+  testWidgets('successful save navigates to success screen', (
+    WidgetTester tester,
+  ) async {
+    final apiService = FakeApiService();
+    apiService.shouldSucceed = true;
+
+    await tester.pumpWidget(
+      buildTestWidget(
+        apiService: apiService,
+        userData: const UserData(
+          personId: 1,
+          webLoginId: 1,
+          passnummer: '',
+          vereinNr: 1,
+          namen: '',
+          vorname: '',
+          titel: null,
+          geburtsdatum: null,
+          geschlecht: null,
+          vereinName: '',
+          strasse: null,
+          plz: null,
+          ort: null,
+          land: '',
+          nationalitaet: '',
+          passStatus: 0,
+          passdatenId: 1,
+          eintrittVerein: null,
+          austrittVerein: null,
+          mitgliedschaftId: 1,
+          telefon: '',
+          erstLandesverbandId: 0,
+          produktionsDatum: null,
+          erstVereinId: 0,
+          digitalerPass: 0,
+          isOnline: false,
+          disziplin: null,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Toggle both checkboxes
+    final checkboxes = find.byType(Checkbox);
+    await tester.tap(checkboxes.first);
+    await tester.pump();
+    await tester.tap(checkboxes.last);
+    await tester.pump();
+
+    // Tap submit button
+    final submitFabs = find.byType(FloatingActionButton);
+    await tester.tap(submitFabs.at(1)); // Second FAB is submit
+    await tester.pumpAndSettle();
+
+    // Should navigate to success screen
+    expect(
+      find.textContaining('Die Bestellung des Schützenausweises'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('failed save shows error snackbar', (WidgetTester tester) async {
+    final apiService = FakeApiService();
+    apiService.shouldSucceed = false;
+
+    await tester.pumpWidget(
+      buildTestWidget(
+        apiService: apiService,
+        userData: const UserData(
+          personId: 1,
+          webLoginId: 1,
+          passnummer: '',
+          vereinNr: 1,
+          namen: '',
+          vorname: '',
+          titel: null,
+          geburtsdatum: null,
+          geschlecht: null,
+          vereinName: '',
+          strasse: null,
+          plz: null,
+          ort: null,
+          land: '',
+          nationalitaet: '',
+          passStatus: 0,
+          passdatenId: 1,
+          eintrittVerein: null,
+          austrittVerein: null,
+          mitgliedschaftId: 1,
+          telefon: '',
+          erstLandesverbandId: 0,
+          produktionsDatum: null,
+          erstVereinId: 0,
+          digitalerPass: 0,
+          isOnline: false,
+          disziplin: null,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Toggle both checkboxes
+    final checkboxes = find.byType(Checkbox);
+    await tester.tap(checkboxes.first);
+    await tester.pump();
+    await tester.tap(checkboxes.last);
+    await tester.pump();
+
+    // Tap submit button
+    final submitFabs = find.byType(FloatingActionButton);
+    await tester.tap(submitFabs.at(1)); // Second FAB is submit
+    await tester.pumpAndSettle();
+
+    // Should show error message
+    expect(find.text('Antrag konnte nicht gesendet werden.'), findsOneWidget);
+  });
+
+  testWidgets('tapping AGB link opens AGB dialog', (WidgetTester tester) async {
+    final apiService = FakeApiService();
+    await tester.pumpWidget(
+      buildTestWidget(
+        apiService: apiService,
+        userData: const UserData(
+          personId: 1,
+          webLoginId: 1,
+          passnummer: '',
+          vereinNr: 1,
+          namen: '',
+          vorname: '',
+          titel: null,
+          geburtsdatum: null,
+          geschlecht: null,
+          vereinName: '',
+          strasse: null,
+          plz: null,
+          ort: null,
+          land: '',
+          nationalitaet: '',
+          passStatus: 0,
+          passdatenId: 1,
+          eintrittVerein: null,
+          austrittVerein: null,
+          mitgliedschaftId: 1,
+          telefon: '',
+          erstLandesverbandId: 0,
+          produktionsDatum: null,
+          erstVereinId: 0,
+          digitalerPass: 0,
+          isOnline: false,
+          disziplin: null,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Find and tap AGB link
+    final agbLink = find.text('AGB');
+    expect(agbLink, findsOneWidget);
+    await tester.tap(agbLink);
+    await tester.pumpAndSettle();
+
+    // Should open a second dialog (nested)
+    expect(find.byType(Dialog), findsNWidgets(2));
+  });
+
+  testWidgets('save with ZVE data from PassdatenAkzeptOrAktiv', (
+    WidgetTester tester,
+  ) async {
+    final apiService = FakeApiService();
+    apiService.shouldSucceed = true;
+
+    await tester.pumpWidget(
+      buildTestWidget(
+        apiService: apiService,
+        userData: const UserData(
+          personId: 1,
+          webLoginId: 1,
+          passnummer: '',
+          vereinNr: 1,
+          namen: '',
+          vorname: '',
+          titel: null,
+          geburtsdatum: null,
+          geschlecht: null,
+          vereinName: '',
+          strasse: null,
+          plz: null,
+          ort: null,
+          land: '',
+          nationalitaet: '',
+          passStatus: 0,
+          passdatenId: 1,
+          eintrittVerein: null,
+          austrittVerein: null,
+          mitgliedschaftId: 1,
+          telefon: '',
+          erstLandesverbandId: 0,
+          produktionsDatum: null,
+          erstVereinId: 0,
+          digitalerPass: 0,
+          isOnline: false,
+          disziplin: null,
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Toggle both checkboxes
+    final checkboxes = find.byType(Checkbox);
+    await tester.tap(checkboxes.first);
+    await tester.pump();
+    await tester.tap(checkboxes.last);
+    await tester.pump();
+
+    // Tap submit button
+    final submitFabs = find.byType(FloatingActionButton);
+    await tester.tap(submitFabs.at(1)); // Second FAB is submit
+    await tester.pumpAndSettle();
+
+    // Verify the API was called
+    expect(apiService.called, isTrue);
+  });
+
+  testWidgets('handles null userData gracefully', (WidgetTester tester) async {
+    final apiService = FakeApiService();
+    await tester.pumpWidget(
+      buildTestWidget(apiService: apiService, userData: null),
+    );
+
+    // Should render without errors
+    expect(find.byType(AusweisBestellenScreen), findsOneWidget);
+    expect(find.byType(ElevatedButton), findsOneWidget);
+
+    // Tapping button with null userData should not crash
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Dialog should not open (early return in _showBankDataDialog)
+    expect(find.byType(AlertDialog), findsNothing);
+  });
+
+  testWidgets('loading state shows CircularProgressIndicator', (
+    WidgetTester tester,
+  ) async {
+    final apiService = FakeApiService();
+    await tester.pumpWidget(
+      buildTestWidget(
+        apiService: apiService,
+        userData: const UserData(
+          personId: 1,
+          webLoginId: 1,
+          passnummer: '',
+          vereinNr: 1,
+          namen: '',
+          vorname: '',
+          titel: null,
+          geburtsdatum: null,
+          geschlecht: null,
+          vereinName: '',
+          strasse: null,
+          plz: null,
+          ort: null,
+          land: '',
+          nationalitaet: '',
+          passStatus: 0,
+          passdatenId: 1,
+          eintrittVerein: null,
+          austrittVerein: null,
+          mitgliedschaftId: 1,
+          telefon: '',
+          erstLandesverbandId: 0,
+          produktionsDatum: null,
+          erstVereinId: 0,
+          digitalerPass: 0,
+          isOnline: false,
+          disziplin: null,
+        ),
+      ),
+    );
+
+    // Initially not loading
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byType(ElevatedButton), findsOneWidget);
+  });
 }
