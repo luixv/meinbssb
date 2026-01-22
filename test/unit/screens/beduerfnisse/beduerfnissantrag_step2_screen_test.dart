@@ -430,16 +430,12 @@ void main() {
       expect(find.text('Fehler beim Löschen'), findsOneWidget);
     });
 
-    testWidgets('shows error on failed status update', (
+    testWidgets('navigates to step 3 when forward button is tapped', (
       WidgetTester tester,
     ) async {
       final antragEntwurf = dummyAntrag.copyWith(
         statusId: BeduerfnisAntragStatus.entwurf,
       );
-
-      when(
-        mockApiService.updateBedAntrag(any),
-      ).thenThrow(Exception('Update failed'));
 
       await tester.pumpWidget(
         createTestWidget(antrag: antragEntwurf, readOnly: false),
@@ -450,11 +446,8 @@ void main() {
       await tester.tap(forwardButton);
       await tester.pumpAndSettle();
 
-      final confirmButton = find.text('Einreichen');
-      await tester.tap(confirmButton);
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('Fehler beim Aktualisieren:'), findsOneWidget);
+      // After navigation, step 2 screen should no longer be visible
+      expect(find.byType(BeduerfnissantragStep2Screen), findsNothing);
     });
   });
 

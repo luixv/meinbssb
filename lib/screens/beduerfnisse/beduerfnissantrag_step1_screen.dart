@@ -660,6 +660,23 @@ class _BeduerfnissantragStep1ScreenState
       return;
     }
 
+    // Fetch fresh antrag data from API to ensure we have the latest values
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final antragsList = await apiService.getBedAntragByAntragsnummer(
+      antragForStep2.antragsnummer!,
+    );
+
+    if (antragsList.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fehler beim Laden des Antrags')),
+        );
+      }
+      return;
+    }
+
+    final freshAntrag = antragsList.first;
+
     // For now, assume the user is a "mitglied" - in the future this will come from user roles
     const userRole = WorkflowRole.mitglied;
 
@@ -671,7 +688,7 @@ class _BeduerfnissantragStep1ScreenState
           builder:
               (context) => BeduerfnissantragStep2Screen(
                 userData: widget.userData,
-                antrag: antragForStep2,
+                antrag: freshAntrag,
                 isLoggedIn: widget.isLoggedIn,
                 onLogout: widget.onLogout,
                 userRole: userRole,

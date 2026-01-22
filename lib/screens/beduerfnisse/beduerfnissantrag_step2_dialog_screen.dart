@@ -1254,7 +1254,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                                   ),
                                                 ),
                                                 child: const Icon(
-                                                  Icons.document_scanner,
+                                                  Icons.camera_alt,
                                                   color:
                                                       UIConstants
                                                           .buttonTextColor,

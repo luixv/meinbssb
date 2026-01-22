@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
+import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
+import 'package:image_picker/image_picker.dart';
 
 class BeduerfnissantragStep3Screen extends StatefulWidget {
   const BeduerfnissantragStep3Screen({
@@ -34,6 +37,119 @@ class BeduerfnissantragStep3Screen extends StatefulWidget {
 
 class _BeduerfnissantragStep3ScreenState
     extends State<BeduerfnissantragStep3Screen> {
+  Future<void> _uploadDocument(String documentType) async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+
+      if (file == null) {
+        return;
+      }
+
+      if (widget.antrag?.antragsnummer == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler: Antragsnummer nicht gefunden'),
+            ),
+          );
+        }
+        return;
+      }
+
+      final bytes = await file.readAsBytes();
+
+      // Upload the document
+      final success = await apiService.uploadBedDateiForWBK(
+        antragsnummer: widget.antrag!.antragsnummer!,
+        dateiname: file.name,
+        fileBytes: bytes,
+      );
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('$documentType erfolgreich hochgeladen')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Fehler beim Hochladen',
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler beim Hochladen: $e')));
+      }
+    }
+  }
+
+  Future<void> _scanAndUploadDocument(String documentType) async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+
+    try {
+      // Scan the document
+      final scanResult = await apiService.scanDocument();
+
+      if (scanResult == null) {
+        // User cancelled scanning
+        return;
+      }
+
+      if (widget.antrag?.antragsnummer == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler: Antragsnummer nicht gefunden'),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Upload the scanned document
+      final success = await apiService.uploadBedDateiForWBK(
+        antragsnummer: widget.antrag!.antragsnummer!,
+        dateiname: scanResult.fileName,
+        fileBytes: scanResult.bytes,
+      );
+
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '$documentType erfolgreich gescannt und hochgeladen',
+              ),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Fehler beim Hochladen',
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler beim Scannen: $e')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<FontSizeProvider>(
@@ -41,9 +157,9 @@ class _BeduerfnissantragStep3ScreenState
         return Semantics(
           container: true,
           liveRegion: true,
-          label: 'Bedürfnisbescheinigung - Schritt 3',
+          label: 'Bedürfnisbescheinigung',
           child: BaseScreenLayout(
-            title: 'Bedürfnisbescheinigung - Schritt 3',
+            title: 'Bedürfnisbescheinigung',
             userData: widget.userData,
             isLoggedIn: widget.isLoggedIn,
             onLogout: widget.onLogout,
@@ -88,12 +204,41 @@ class _BeduerfnissantragStep3ScreenState
                 ],
               ),
             ),
-            body: Padding(
-              padding: UIConstants.screenPadding,
-              child: Center(
+            body: Semantics(
+              label:
+                  'Bedürfnisbescheinigung. Hier wird Ihr Bedürfnisantrag angezeigt.',
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(UIConstants.spacingM),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Subtitle
+                    Semantics(
+                      header: true,
+                      label: 'Bedürfnisbescheinigung',
+                      child: ScaledText(
+                        'Bedürfnisbescheinigung',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20 * fontSizeProvider.scaleFactor,
+                          color: const Color.fromRGBO(11, 75, 16, 1),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+
+                    // Additional text for existing WBK (under subtitle)
+                    if (widget.antrag != null &&
+                        widget.antrag!.wbkNeu == false) ...[
+                      ScaledText(
+                        'Kopie der vorhandenen WBK (Vorder und Rückseite)',
+                        style: TextStyle(
+                          fontSize: 16 * fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
+                    ],
+
                     // Display Bedürfnisantrag type
                     if (widget.antrag != null)
                       Container(
@@ -130,6 +275,134 @@ class _BeduerfnissantragStep3ScreenState
                           ],
                         ),
                       ),
+                    // Buttons for existing WBK
+                    if (widget.antrag != null &&
+                        widget.antrag!.wbkNeu == false) ...[
+                      const SizedBox(height: UIConstants.spacingL),
+
+                      // Vorderseite WBK Section
+                      ScaledText(
+                        'Vorderseite WBK',
+                        style: UIStyles.bodyTextStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              UIStyles.bodyTextStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  () => _uploadDocument('Vorderseite WBK'),
+                              icon: const Icon(Icons.upload_file),
+                              label: ScaledText(
+                                'Hochladen',
+                                style: TextStyle(
+                                  fontSize: 16 * fontSizeProvider.scaleFactor,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: UIConstants.spacingM),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  () =>
+                                      _scanAndUploadDocument('Vorderseite WBK'),
+                              icon: const Icon(Icons.camera_alt),
+                              label: ScaledText(
+                                'Scannen',
+                                style: TextStyle(
+                                  fontSize: 16 * fontSizeProvider.scaleFactor,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: UIConstants.spacingL),
+
+                      // Rückseite WBK Section
+                      ScaledText(
+                        'Rückseite WBK',
+                        style: UIStyles.bodyTextStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              UIStyles.bodyTextStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => _uploadDocument('Rückseite WBK'),
+                              icon: const Icon(Icons.upload_file),
+                              label: ScaledText(
+                                'Hochladen',
+                                style: TextStyle(
+                                  fontSize: 16 * fontSizeProvider.scaleFactor,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: UIConstants.spacingM),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  () => _scanAndUploadDocument('Rückseite WBK'),
+                              icon: const Icon(Icons.camera_alt),
+                              label: ScaledText(
+                                'Scannen',
+                                style: TextStyle(
+                                  fontSize: 16 * fontSizeProvider.scaleFactor,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
