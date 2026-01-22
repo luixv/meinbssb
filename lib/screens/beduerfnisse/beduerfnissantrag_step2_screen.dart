@@ -297,7 +297,7 @@ class _BeduerfnissantragStep2ScreenState
           container: true,
           liveRegion: true,
           label:
-              'Bedürfnisbescheinigung - Schritt 2: Nachweis der Sportschützeneigenschaft',
+              'Bedürfnisbescheinigung - Nachweis der Sportschützeneigenschaft',
           hint:
               'Zweiter Schritt der Antragstellung. Fügen Sie Nachweise Ihrer Schießaktivitäten hinzu',
           child: BaseScreenLayout(

@@ -28,7 +28,7 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
         return Semantics(
           container: true,
           liveRegion: true,
-          label: 'Bedürfnisbescheinigung Hauptbildschirm',
+          label: 'Bedürfnisbescheinigung',
           hint:
               'Informationen zum Beantragungsprozess der Bedürfnisbescheinigung',
           child: BaseScreenLayout(
