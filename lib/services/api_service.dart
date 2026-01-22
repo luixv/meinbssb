@@ -51,6 +51,7 @@ import 'core/network_service.dart';
 import 'core/postgrest_service.dart';
 import 'core/email_service.dart';
 import 'core/calendar_service.dart';
+import 'core/document_scanner_service.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -80,6 +81,7 @@ class ApiService {
     required StartingRightsService startingRightsService,
     required RollsAndRights rollsAndRights,
     required WorkflowService workflowService,
+    required DocumentScannerService documentScannerService,
   }) : _configService = configService,
        _imageService = imageService,
        _cacheService = cacheService,
@@ -95,7 +97,8 @@ class ApiService {
        _bezirkService = bezirkService,
        _startingRightsService = startingRightsService,
        _rollsAndRights = rollsAndRights,
-       _workflowService = workflowService;
+       _workflowService = workflowService,
+       _documentScannerService = documentScannerService;
 
   final ConfigService _configService;
   final ImageService _imageService;
@@ -113,6 +116,7 @@ class ApiService {
   StartingRightsService _startingRightsService;
   final RollsAndRights _rollsAndRights;
   final WorkflowService _workflowService;
+  final DocumentScannerService _documentScannerService;
 
   /// Sets the StartingRightsService instance.
   /// This is used to break the circular dependency during initialization.
@@ -144,6 +148,18 @@ class ApiService {
       personId,
       getCacheExpirationDuration(),
     );
+  }
+
+  //
+  // --- Document Scanner Service Methods ---
+  //
+  /// Scans a document using the device camera
+  /// Returns the scanned image bytes and filename if successful
+  /// Returns null if scanning was cancelled
+  /// Throws UnsupportedPlatformException if platform doesn't support scanning
+  /// Throws ScanException if scanning fails
+  Future<ScanResult?> scanDocument() async {
+    return _documentScannerService.scanDocument();
   }
 
   //
@@ -835,7 +851,9 @@ class ApiService {
     required List<int> fileBytes,
   }) async {
     try {
-      LoggerService.logInfo('Uploading document for antragsnummer: $antragsnummer');
+      LoggerService.logInfo(
+        'Uploading document for antragsnummer: $antragsnummer',
+      );
 
       // Create bed_datei entry
       final dateiResponse = await createBedDatei(
@@ -885,9 +903,7 @@ class ApiService {
 
       return true;
     } catch (e) {
-      LoggerService.logError(
-        'Failed to create bed_datei_zuord: $e',
-      );
+      LoggerService.logError('Failed to create bed_datei_zuord: $e');
       return false;
     }
   }
@@ -1351,8 +1367,9 @@ class ApiService {
       );
 
       // Soft delete bed_antrag
-      results['bed_antrag'] = await _postgrestService
-          .deleteBedAntrag(antragsnummer);
+      results['bed_antrag'] = await _postgrestService.deleteBedAntrag(
+        antragsnummer,
+      );
 
       // Check if all deletions were successful
       final allSuccessful = results.values.every((result) => result);

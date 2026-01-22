@@ -52,6 +52,7 @@ import 'package:meinbssb/services/api_service.dart' as _i50;
 import 'package:meinbssb/services/core/cache_service.dart' as _i16;
 import 'package:meinbssb/services/core/calendar_service.dart' as _i46;
 import 'package:meinbssb/services/core/config_service.dart' as _i6;
+import 'package:meinbssb/services/core/document_scanner_service.dart' as _i54;
 import 'package:meinbssb/services/core/email_service.dart' as _i42;
 import 'package:meinbssb/services/core/http_client.dart' as _i12;
 import 'package:meinbssb/services/core/image_service.dart' as _i15;
@@ -3017,4 +3018,22 @@ class MockWorkflowService extends _i1.Mock implements _i52.WorkflowService {
             }),
           )
           as _i52.WorkflowRole?);
+}
+
+/// A class which mocks [DocumentScannerService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDocumentScannerService extends _i1.Mock
+    implements _i54.DocumentScannerService {
+  MockDocumentScannerService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.Future<_i54.ScanResult?> scanDocument() =>
+      (super.noSuchMethod(
+            Invocation.method(#scanDocument, []),
+            returnValue: _i2.Future<_i54.ScanResult?>.value(),
+          )
+          as _i2.Future<_i54.ScanResult?>);
 }

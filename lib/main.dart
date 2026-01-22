@@ -28,6 +28,7 @@ import 'services/core/config_service.dart';
 import 'services/core/logger_service.dart';
 import 'services/core/network_service.dart';
 import 'services/core/token_service.dart';
+import 'services/core/document_scanner_service.dart';
 import 'providers/font_size_provider.dart';
 import 'services/core/calendar_service.dart';
 
@@ -42,7 +43,6 @@ import 'providers/compulsory_update_provider.dart';
 import 'widgets/kill_switch_gate.dart';
 import 'widgets/compulsory_update_gate.dart';
 import 'dart:io';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -241,7 +241,7 @@ class AppInitializer {
 
   static late RollsAndRights rollsAndRights;
   static late WorkflowService workflowService;
-  
+
   static late HttpClient httpClient;
 
   static Future<void> init({
@@ -317,7 +317,7 @@ class AppInitializer {
     // Initialize Domain Services
     final imageService = ImageService(httpClient: httpClient);
     final postgrestService = PostgrestService(configService: configService);
-    
+
     // Attach PostgrestService to HttpClient (to enable API request logging)
     httpClient.setPostgrestService(postgrestService);
 
@@ -360,7 +360,7 @@ class AppInitializer {
 
     // Initialize WorkflowService
     workflowService = WorkflowService();
-    
+
     authService = AuthService(
       httpClient: httpClient,
       cacheService: cacheService,
@@ -370,6 +370,9 @@ class AppInitializer {
       emailService: emailService,
     );
     authServiceProvider = Provider<AuthService>.value(value: authService);
+
+    // Initialize DocumentScannerService
+    final documentScannerService = DocumentScannerService();
 
     // Initialize ApiService with ALL dependencies
     apiService = ApiService(
@@ -391,6 +394,7 @@ class AppInitializer {
       startingRightsService: startingRightsService,
       rollsAndRights: rollsAndRights,
       workflowService: workflowService,
+      documentScannerService: documentScannerService,
     );
     apiServiceProvider = Provider<ApiService>.value(value: apiService);
 
@@ -405,4 +409,3 @@ class AppInitializer {
     //  Helper function to keep init cleaner
   }
 }
-

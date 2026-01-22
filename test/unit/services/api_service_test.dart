@@ -45,6 +45,7 @@ import 'package:meinbssb/services/core/token_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/calendar_service.dart';
+import 'package:meinbssb/services/core/document_scanner_service.dart';
 
 import 'package:meinbssb/models/person_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
@@ -77,6 +78,7 @@ import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
   StartingRightsService,
   RollsAndRights,
   WorkflowService,
+  DocumentScannerService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -100,6 +102,7 @@ void main() {
   late MockStartingRightsService mockStartingRightsService;
   late MockRollsAndRights mockRollsAndRights;
   late MockWorkflowService mockWorkflowService;
+  late MockDocumentScannerService mockDocumentScannerService;
 
   late HttpClient httpClient;
 
@@ -122,6 +125,7 @@ void main() {
     mockStartingRightsService = MockStartingRightsService();
     mockRollsAndRights = MockRollsAndRights();
     mockWorkflowService = MockWorkflowService();
+    mockDocumentScannerService = MockDocumentScannerService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -150,6 +154,7 @@ void main() {
       startingRightsService: mockStartingRightsService,
       rollsAndRights: mockRollsAndRights,
       workflowService: mockWorkflowService,
+      documentScannerService: mockDocumentScannerService,
     );
   });
 
@@ -381,6 +386,7 @@ void main() {
             calendarService: MockCalendarService(),
             bezirkService: MockBezirkService(),
             startingRightsService: MockStartingRightsService(),
+            documentScannerService: MockDocumentScannerService(),
           );
         });
 
@@ -1586,6 +1592,7 @@ void main() {
           calendarService: MockCalendarService(),
           bezirkService: MockBezirkService(),
           startingRightsService: MockStartingRightsService(),
+          documentScannerService: MockDocumentScannerService(),
         );
       });
 

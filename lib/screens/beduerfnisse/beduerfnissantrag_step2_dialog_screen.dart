@@ -6,6 +6,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/services/core/document_scanner_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/widgets/dialog_fabs.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
@@ -85,6 +86,93 @@ class _BeduerfnissantragStep2DialogScreenState
         _selectedDisziplinId != null &&
         !wettkampfartRequired &&
         !wettkampfergebnisRequired;
+  }
+
+  // Scan a single document with edge detection
+  Future<void> _scanDocument(BuildContext buttonContext) async {
+    if (widget.antragsnummer == null) {
+      ScaffoldMessenger.of(buttonContext).showSnackBar(
+        const SnackBar(content: Text('Fehler: Antragsnummer fehlt')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isUploadingDocument = true;
+    });
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final scanResult = await apiService.scanDocument();
+
+      if (scanResult == null) {
+        // User cancelled scanning
+        setState(() {
+          _isUploadingDocument = false;
+        });
+        return;
+      }
+
+      final dateiId = await apiService.uploadBedDatei(
+        antragsnummer: widget.antragsnummer!,
+        dateiname: scanResult.fileName,
+        fileBytes: scanResult.bytes,
+      );
+
+      if (mounted) {
+        if (dateiId != null) {
+          setState(() {
+            _uploadedDateiId = dateiId;
+            _documentUploaded = true;
+            _isUploadingDocument = false;
+          });
+          ScaffoldMessenger.of(buttonContext).showSnackBar(
+            const SnackBar(
+              content: Text('Dokument erfolgreich gescannt und hochgeladen'),
+            ),
+          );
+        } else {
+          setState(() {
+            _isUploadingDocument = false;
+          });
+          ScaffoldMessenger.of(buttonContext).showSnackBar(
+            const SnackBar(
+              content: Text('Fehler beim Hochladen des Dokuments'),
+            ),
+          );
+        }
+      }
+    } on UnsupportedPlatformException catch (e) {
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(buttonContext).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } on ScanException catch (e) {
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(
+          buttonContext,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    } catch (e) {
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(
+          buttonContext,
+        ).showSnackBar(SnackBar(content: Text('Fehler beim Scannen: $e')));
+      }
+    }
   }
 
   Future<void> _selectDate() async {
@@ -496,354 +584,45 @@ class _BeduerfnissantragStep2DialogScreenState
               label: 'Dialog - Schießaktivität hinzufügen',
               child: Stack(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(UIConstants.spacingL),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Title
-                          Semantics(
-                            header: true,
-                            label: 'Schießaktivität hinzufügen',
-                            child: ScaledText(
-                              'Schießaktivität hinzufügen',
-                              style: UIStyles.titleStyle.copyWith(
-                                fontSize:
-                                    UIStyles.titleStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                                color: UIConstants.defaultAppColor,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
-
-                          // Datum
-                          TextField(
-                            controller: _datumController,
-                            readOnly: true,
-                            onTap: _selectDate,
-                            style: UIStyles.bodyTextStyle.copyWith(
-                              fontSize:
-                                  UIStyles.bodyTextStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Datum *',
-                              hintText: 'Wählen Sie ein Datum',
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  UIConstants.cornerRadius,
-                                ),
-                                borderSide: const BorderSide(
-                                  color: UIConstants.defaultAppColor,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  UIConstants.cornerRadius,
-                                ),
-                                borderSide: const BorderSide(
-                                  color: UIConstants.defaultAppColor,
-                                  width: 2,
-                                ),
-                              ),
-                              suffixIcon: const Icon(
-                                Icons.calendar_today,
-                                color: UIConstants.defaultAppColor,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
-
-                          // Waffenart Dropdown
-                          FutureBuilder<List<BeduerfnisseAuswahl>>(
-                            future: _waffenartFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              if (snapshot.hasError) {
-                                return const Text(
-                                  'Fehler beim Laden der Waffenarten',
-                                );
-                              }
-
-                              final waffenarten = snapshot.data ?? [];
-
-                              return DropdownButtonFormField<int>(
-                                value: _selectedWaffenartId,
-                                hint: const Text('Wählen Sie eine Waffenart'),
-                                isExpanded: true,
-                                items:
-                                    waffenarten.map((waffenart) {
-                                      return DropdownMenuItem<int>(
-                                        value: waffenart.id,
-                                        child: ScaledText(
-                                          '${waffenart.id} - ${waffenart.beschreibung}',
-                                          style: UIStyles.bodyTextStyle
-                                              .copyWith(
-                                                fontSize:
-                                                    UIStyles
-                                                        .bodyTextStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      );
-                                    }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedWaffenartId = value;
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  labelText: 'Waffenart *',
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      UIConstants.cornerRadius,
-                                    ),
-                                    borderSide: const BorderSide(
-                                      color: UIConstants.defaultAppColor,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      UIConstants.cornerRadius,
-                                    ),
-                                    borderSide: const BorderSide(
-                                      color: UIConstants.defaultAppColor,
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
-
-                          // Disziplinnummer lt. SPO
-                          FutureBuilder<List<Disziplin>>(
-                            future: _disziplinenFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              if (snapshot.hasError) {
-                                return const Text(
-                                  'Fehler beim Laden der Disziplinen',
-                                );
-                              }
-
-                              final disziplinen = snapshot.data ?? [];
-
-                              return DropdownButtonFormField<int>(
-                                value: _selectedDisziplinId,
-                                hint: const Text('Wählen Sie eine Disziplin'),
-                                isExpanded: true,
-                                items:
-                                    disziplinen.map((disziplin) {
-                                      return DropdownMenuItem<int>(
-                                        value: disziplin.disziplinId,
-                                        child: ScaledText(
-                                          '${disziplin.disziplinNr} - ${disziplin.disziplin}',
-                                          style: UIStyles.bodyTextStyle
-                                              .copyWith(
-                                                fontSize:
-                                                    UIStyles
-                                                        .bodyTextStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      );
-                                    }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedDisziplinId = value;
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  labelText: 'Disziplinnummer lt. SPO *',
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      UIConstants.cornerRadius,
-                                    ),
-                                    borderSide: const BorderSide(
-                                      color: UIConstants.defaultAppColor,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      UIConstants.cornerRadius,
-                                    ),
-                                    borderSide: const BorderSide(
-                                      color: UIConstants.defaultAppColor,
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
-
-                          // Training Checkbox
-                          Semantics(
-                            checked: _training,
-                            enabled: true,
-                            label: 'Training',
-                            onTap: () {
-                              setState(() {
-                                _training = !_training;
-                              });
-                            },
-                            child: Row(
+                  Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(UIConstants.spacingL),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Checkbox(
-                                  value: _training,
-                                  activeColor: UIConstants.defaultAppColor,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _training = value ?? false;
-                                    });
-                                  },
-                                ),
-                                ScaledText(
-                                  'Training',
-                                  style: UIStyles.bodyTextStyle.copyWith(
-                                    fontSize:
-                                        UIStyles.bodyTextStyle.fontSize! *
-                                        fontSizeProvider.scaleFactor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
-
-                          // Wettkampfart Dropdown (independent of Waffenart)
-                          FutureBuilder<List<BeduerfnisseAuswahl>>(
-                            future: _auswahlFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              if (snapshot.hasError) {
-                                return const Text(
-                                  'Fehler beim Laden der Wettkampfarten',
-                                );
-                              }
-
-                              final wettkampfarten = snapshot.data ?? [];
-
-                              return DropdownButtonFormField<int>(
-                                value: _selectedWettkampfartId,
-                                hint: const Text(
-                                  'Wählen Sie eine Wettkampfart',
-                                ),
-                                items:
-                                    wettkampfarten.map((wettkampfart) {
-                                      return DropdownMenuItem<int>(
-                                        value: wettkampfart.id,
-                                        child: ScaledText(
-                                          wettkampfart.beschreibung,
-                                          style: UIStyles.bodyTextStyle
-                                              .copyWith(
-                                                fontSize:
-                                                    UIStyles
-                                                        .bodyTextStyle
-                                                        .fontSize! *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      );
-                                    }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedWettkampfartId = value;
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  labelText:
-                                      _training
-                                          ? 'Wettkampfart (optional)'
-                                          : 'Wettkampfart *',
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      UIConstants.cornerRadius,
-                                    ),
-                                    borderSide: const BorderSide(
+                                // Title
+                                Semantics(
+                                  header: true,
+                                  label: 'Schießaktivität hinzufügen',
+                                  child: ScaledText(
+                                    'Schießaktivität hinzufügen',
+                                    style: UIStyles.titleStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.titleStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
                                       color: UIConstants.defaultAppColor,
                                     ),
                                   ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      UIConstants.cornerRadius,
-                                    ),
-                                    borderSide: const BorderSide(
-                                      color: UIConstants.defaultAppColor,
-                                      width: 2,
-                                    ),
-                                  ),
                                 ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
+                                const SizedBox(height: UIConstants.spacingL),
 
-                          // Wettkampfergebnis (required if not training)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: _wettkampfergebnisController,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                      RegExp(r'^\d*\.?\d*$'),
-                                    ),
-                                  ],
+                                // Datum
+                                TextField(
+                                  controller: _datumController,
+                                  readOnly: true,
+                                  onTap: _selectDate,
                                   style: UIStyles.bodyTextStyle.copyWith(
                                     fontSize:
                                         UIStyles.bodyTextStyle.fontSize! *
                                         fontSizeProvider.scaleFactor,
                                   ),
                                   decoration: InputDecoration(
-                                    labelText:
-                                        _training
-                                            ? 'Wettkampfergebnis (optional)'
-                                            : 'Wettkampfergebnis *',
+                                    labelText: 'Datum *',
+                                    hintText: 'Wählen Sie ein Datum',
                                     filled: true,
                                     fillColor: Colors.white,
                                     border: OutlineInputBorder(
@@ -863,256 +642,659 @@ class _BeduerfnissantragStep2DialogScreenState
                                         width: 2,
                                       ),
                                     ),
+                                    suffixIcon: const Icon(
+                                      Icons.calendar_today,
+                                      color: UIConstants.defaultAppColor,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
+                                const SizedBox(height: UIConstants.spacingL),
 
-                          // Dokument hochladen button - always visible
-                          SizedBox(
-                            width: double.infinity,
-                            child: Builder(
-                              builder:
-                                  (buttonContext) => ElevatedButton.icon(
-                                    onPressed:
-                                        _documentUploaded
-                                            ? null
-                                            : () async {
-                                              if (widget.antragsnummer ==
-                                                  null) {
-                                                ScaffoldMessenger.of(
-                                                  buttonContext,
-                                                ).showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                      'Fehler: Antragsnummer fehlt',
-                                                    ),
-                                                  ),
-                                                );
-                                                return;
-                                              }
+                                // Waffenart Dropdown
+                                FutureBuilder<List<BeduerfnisseAuswahl>>(
+                                  future: _waffenartFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    if (snapshot.hasError) {
+                                      return const Text(
+                                        'Fehler beim Laden der Waffenarten',
+                                      );
+                                    }
 
-                                              setState(() {
-                                                _isUploadingDocument = true;
-                                              });
+                                    final waffenarten = snapshot.data ?? [];
 
-                                              try {
-                                                final ImagePicker picker =
-                                                    ImagePicker();
-                                                final XFile? file = await picker
-                                                    .pickImage(
-                                                      source:
-                                                          ImageSource.gallery,
-                                                    );
-
-                                                if (file == null) {
-                                                  setState(() {
-                                                    _isUploadingDocument =
-                                                        false;
-                                                  });
-                                                  return;
-                                                }
-
-                                                final bytes =
-                                                    await file.readAsBytes();
-                                                final fileName = file.name;
-
-                                                if (bytes.isEmpty) {
-                                                  setState(() {
-                                                    _isUploadingDocument =
-                                                        false;
-                                                  });
-                                                  if (mounted) {
-                                                    ScaffoldMessenger.of(
-                                                      buttonContext,
-                                                    ).showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                          'Fehler: Datei konnte nicht gelesen werden',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                  return;
-                                                }
-
-                                                final apiService =
-                                                    Provider.of<ApiService>(
-                                                      context,
-                                                      listen: false,
-                                                    );
-
-                                                final dateiId = await apiService
-                                                    .uploadBedDatei(
-                                                      antragsnummer:
-                                                          widget.antragsnummer!,
-                                                      dateiname: fileName,
-                                                      fileBytes: bytes,
-                                                    );
-
-                                                if (mounted) {
-                                                  if (dateiId != null) {
-                                                    setState(() {
-                                                      _uploadedDateiId =
-                                                          dateiId;
-                                                      _documentUploaded = true;
-                                                      _isUploadingDocument =
-                                                          false;
-                                                    });
-                                                    ScaffoldMessenger.of(
-                                                      buttonContext,
-                                                    ).showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                          'Dokument erfolgreich hochgeladen',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    setState(() {
-                                                      _isUploadingDocument =
-                                                          false;
-                                                    });
-                                                    ScaffoldMessenger.of(
-                                                      buttonContext,
-                                                    ).showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                          'Fehler beim Hochladen des Dokuments',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                }
-                                              } catch (e) {
-                                                setState(() {
-                                                  _isUploadingDocument = false;
-                                                });
-                                                if (mounted) {
-                                                  ScaffoldMessenger.of(
-                                                    buttonContext,
-                                                  ).showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                        'Dokument erfolgreich hochgeladen',
-                                                      ),
-                                                    ),
-                                                  );
-                                                }
-                                              }
-                                            },
-                                    icon: const Icon(
-                                      Icons.upload_file,
-                                      color: UIConstants.buttonTextColor,
-                                    ),
-                                    label: Text(
-                                      'Dokument hochladen',
-                                      style: UIStyles.bodyTextStyle.copyWith(
-                                        color: UIConstants.buttonTextColor,
-                                        fontSize:
-                                            UIStyles.bodyTextStyle.fontSize! *
-                                            fontSizeProvider.scaleFactor,
+                                    return DropdownButtonFormField<int>(
+                                      value: _selectedWaffenartId,
+                                      hint: const Text(
+                                        'Wählen Sie eine Waffenart',
                                       ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          _documentUploaded
-                                              ? Colors.lightGreen
-                                              : UIConstants.defaultAppColor,
-                                      disabledBackgroundColor:
-                                          Colors.lightGreen,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: UIConstants.spacingM,
-                                        horizontal: UIConstants.spacingL,
+                                      isExpanded: true,
+                                      items:
+                                          waffenarten.map((waffenart) {
+                                            return DropdownMenuItem<int>(
+                                              value: waffenart.id,
+                                              child: ScaledText(
+                                                '${waffenart.id} - ${waffenart.beschreibung}',
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedWaffenartId = value;
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: 'Waffenart *',
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            UIConstants.cornerRadius,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: UIConstants.defaultAppColor,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            UIConstants.cornerRadius,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: UIConstants.defaultAppColor,
+                                            width: 2,
+                                          ),
+                                        ),
                                       ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          UIConstants.cornerRadius,
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: UIConstants.spacingL),
+
+                                // Disziplinnummer lt. SPO
+                                FutureBuilder<List<Disziplin>>(
+                                  future: _disziplinenFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    if (snapshot.hasError) {
+                                      return const Text(
+                                        'Fehler beim Laden der Disziplinen',
+                                      );
+                                    }
+
+                                    final disziplinen = snapshot.data ?? [];
+
+                                    return DropdownButtonFormField<int>(
+                                      value: _selectedDisziplinId,
+                                      hint: const Text(
+                                        'Wählen Sie eine Disziplin',
+                                      ),
+                                      isExpanded: true,
+                                      items:
+                                          disziplinen.map((disziplin) {
+                                            return DropdownMenuItem<int>(
+                                              value: disziplin.disziplinId,
+                                              child: ScaledText(
+                                                '${disziplin.disziplinNr} - ${disziplin.disziplin}',
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedDisziplinId = value;
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: 'Disziplinnummer lt. SPO *',
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            UIConstants.cornerRadius,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: UIConstants.defaultAppColor,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            UIConstants.cornerRadius,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: UIConstants.defaultAppColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: UIConstants.spacingL),
+
+                                // Training Checkbox
+                                Semantics(
+                                  checked: _training,
+                                  enabled: true,
+                                  label: 'Training',
+                                  onTap: () {
+                                    setState(() {
+                                      _training = !_training;
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Checkbox(
+                                        value: _training,
+                                        activeColor:
+                                            UIConstants.defaultAppColor,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _training = value ?? false;
+                                          });
+                                        },
+                                      ),
+                                      ScaledText(
+                                        'Training',
+                                        style: UIStyles.bodyTextStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyTextStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: UIConstants.spacingL),
+
+                                // Wettkampfart Dropdown (independent of Waffenart)
+                                FutureBuilder<List<BeduerfnisseAuswahl>>(
+                                  future: _auswahlFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    if (snapshot.hasError) {
+                                      return const Text(
+                                        'Fehler beim Laden der Wettkampfarten',
+                                      );
+                                    }
+
+                                    final wettkampfarten = snapshot.data ?? [];
+
+                                    return DropdownButtonFormField<int>(
+                                      value: _selectedWettkampfartId,
+                                      hint: const Text(
+                                        'Wählen Sie eine Wettkampfart',
+                                      ),
+                                      items:
+                                          wettkampfarten.map((wettkampfart) {
+                                            return DropdownMenuItem<int>(
+                                              value: wettkampfart.id,
+                                              child: ScaledText(
+                                                wettkampfart.beschreibung,
+                                                style: UIStyles.bodyTextStyle
+                                                    .copyWith(
+                                                      fontSize:
+                                                          UIStyles
+                                                              .bodyTextStyle
+                                                              .fontSize! *
+                                                          fontSizeProvider
+                                                              .scaleFactor,
+                                                    ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedWettkampfartId = value;
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            _training
+                                                ? 'Wettkampfart (optional)'
+                                                : 'Wettkampfart *',
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            UIConstants.cornerRadius,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: UIConstants.defaultAppColor,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            UIConstants.cornerRadius,
+                                          ),
+                                          borderSide: const BorderSide(
+                                            color: UIConstants.defaultAppColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: UIConstants.spacingL),
+
+                                // Wettkampfergebnis (required if not training)
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        controller:
+                                            _wettkampfergebnisController,
+                                        keyboardType:
+                                            const TextInputType.numberWithOptions(
+                                              decimal: true,
+                                            ),
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d*\.?\d*$'),
+                                          ),
+                                        ],
+                                        style: UIStyles.bodyTextStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyTextStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                        decoration: InputDecoration(
+                                          labelText:
+                                              _training
+                                                  ? 'Wettkampfergebnis (optional)'
+                                                  : 'Wettkampfergebnis *',
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              UIConstants.cornerRadius,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color:
+                                                  UIConstants.defaultAppColor,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              UIConstants.cornerRadius,
+                                            ),
+                                            borderSide: const BorderSide(
+                                              color:
+                                                  UIConstants.defaultAppColor,
+                                              width: 2,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
+                                  ],
+                                ),
+                                const SizedBox(height: UIConstants.spacingL),
+
+                                // Dokument label
+                                ScaledText(
+                                  'Dokument hochladen oder scannen',
+                                  style: UIStyles.bodyTextStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.bodyTextStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
                                   ),
-                            ),
-                          ),
-                          if (!_training)
-                            const SizedBox(height: UIConstants.spacingL),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // FABs positioned at bottom-right
-                  Positioned(
-                    bottom: UIConstants.dialogFabTightBottom,
-                    right: UIConstants.dialogFabTightRight,
-                    child: DialogFABs(
-                      children: [
-                        FloatingActionButton(
-                          heroTag: 'cancelBedSportFab',
-                          mini: true,
-                          tooltip: 'Abbrechen',
-                          backgroundColor: UIConstants.defaultAppColor,
-                          onPressed:
-                              _isLoading
-                                  ? null
-                                  : () async {
-                                    // Clean up uploaded document if not mapped
-                                    if (_uploadedDateiId != null) {
-                                      final apiService =
-                                          Provider.of<ApiService>(
-                                            context,
-                                            listen: false,
-                                          );
-                                      await apiService.deleteBedDateiById(
-                                        _uploadedDateiId!,
-                                      );
-                                    }
-                                    if (mounted) {
-                                      Navigator.of(context).pop();
-                                    }
-                                  },
-                          child: const Icon(
-                            Icons.close,
-                            color: UIConstants.whiteColor,
-                          ),
-                        ),
-                        FloatingActionButton(
-                          key: const ValueKey('saveBedSportFab'),
-                          heroTag: 'saveBedSportFab',
-                          mini: true,
-                          tooltip: 'Speichern',
-                          backgroundColor:
-                              _isLoading ||
-                                      !_areAllCompulsoryFieldsFilled() ||
-                                      _isUploadingDocument
-                                  ? UIConstants.disabledBackgroundColor
-                                  : UIConstants.defaultAppColor,
-                          onPressed:
-                              _isLoading || _isUploadingDocument
-                                  ? null
-                                  : (_areAllCompulsoryFieldsFilled()
-                                      ? _saveBedSport
-                                      : null),
-                          child:
-                              _isLoading
-                                  ? const SizedBox(
-                                    width: UIConstants.loadingIndicatorSize,
-                                    height: UIConstants.loadingIndicatorSize,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        UIConstants.whiteColor,
+                                ),
+                                const SizedBox(height: UIConstants.spacingS),
+
+                                // Dokument hochladen and scannen buttons - always visible
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Builder(
+                                        builder:
+                                            (buttonContext) => ElevatedButton(
+                                              onPressed:
+                                                  _documentUploaded
+                                                      ? null
+                                                      : () async {
+                                                        if (widget
+                                                                .antragsnummer ==
+                                                            null) {
+                                                          ScaffoldMessenger.of(
+                                                            buttonContext,
+                                                          ).showSnackBar(
+                                                            const SnackBar(
+                                                              content: Text(
+                                                                'Fehler: Antragsnummer fehlt',
+                                                              ),
+                                                            ),
+                                                          );
+                                                          return;
+                                                        }
+
+                                                        setState(() {
+                                                          _isUploadingDocument =
+                                                              true;
+                                                        });
+
+                                                        try {
+                                                          final ImagePicker
+                                                          picker =
+                                                              ImagePicker();
+                                                          final XFile?
+                                                          file = await picker
+                                                              .pickImage(
+                                                                source:
+                                                                    ImageSource
+                                                                        .gallery,
+                                                              );
+
+                                                          if (file == null) {
+                                                            setState(() {
+                                                              _isUploadingDocument =
+                                                                  false;
+                                                            });
+                                                            return;
+                                                          }
+
+                                                          final bytes =
+                                                              await file
+                                                                  .readAsBytes();
+                                                          final fileName =
+                                                              file.name;
+
+                                                          if (bytes.isEmpty) {
+                                                            setState(() {
+                                                              _isUploadingDocument =
+                                                                  false;
+                                                            });
+                                                            if (mounted) {
+                                                              ScaffoldMessenger.of(
+                                                                buttonContext,
+                                                              ).showSnackBar(
+                                                                const SnackBar(
+                                                                  content: Text(
+                                                                    'Fehler: Datei konnte nicht gelesen werden',
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }
+                                                            return;
+                                                          }
+
+                                                          final apiService =
+                                                              Provider.of<
+                                                                ApiService
+                                                              >(
+                                                                context,
+                                                                listen: false,
+                                                              );
+
+                                                          final dateiId =
+                                                              await apiService
+                                                                  .uploadBedDatei(
+                                                                    antragsnummer:
+                                                                        widget
+                                                                            .antragsnummer!,
+                                                                    dateiname:
+                                                                        fileName,
+                                                                    fileBytes:
+                                                                        bytes,
+                                                                  );
+
+                                                          if (mounted) {
+                                                            if (dateiId !=
+                                                                null) {
+                                                              setState(() {
+                                                                _uploadedDateiId =
+                                                                    dateiId;
+                                                                _documentUploaded =
+                                                                    true;
+                                                                _isUploadingDocument =
+                                                                    false;
+                                                              });
+                                                              ScaffoldMessenger.of(
+                                                                buttonContext,
+                                                              ).showSnackBar(
+                                                                const SnackBar(
+                                                                  content: Text(
+                                                                    'Dokument erfolgreich hochgeladen',
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              setState(() {
+                                                                _isUploadingDocument =
+                                                                    false;
+                                                              });
+                                                              ScaffoldMessenger.of(
+                                                                buttonContext,
+                                                              ).showSnackBar(
+                                                                const SnackBar(
+                                                                  content: Text(
+                                                                    'Fehler beim Hochladen des Dokuments',
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }
+                                                          }
+                                                        } catch (e) {
+                                                          setState(() {
+                                                            _isUploadingDocument =
+                                                                false;
+                                                          });
+                                                          if (mounted) {
+                                                            ScaffoldMessenger.of(
+                                                              buttonContext,
+                                                            ).showSnackBar(
+                                                              const SnackBar(
+                                                                content: Text(
+                                                                  'Dokument erfolgreich hochgeladen',
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                        }
+                                                      },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    _documentUploaded
+                                                        ? Colors.lightGreen
+                                                        : UIConstants
+                                                            .defaultAppColor,
+                                                disabledBackgroundColor:
+                                                    Colors.lightGreen,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical:
+                                                          UIConstants.spacingM,
+                                                      horizontal:
+                                                          UIConstants.spacingL,
+                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        UIConstants
+                                                            .cornerRadius,
+                                                      ),
+                                                ),
+                                              ),
+                                              child: const Icon(
+                                                Icons.upload_file,
+                                                color:
+                                                    UIConstants.buttonTextColor,
+                                              ),
+                                            ),
                                       ),
                                     ),
-                                  )
-                                  : const Icon(
-                                    Icons.check,
+                                    const SizedBox(width: UIConstants.spacingM),
+                                    Expanded(
+                                      child: Builder(
+                                        builder:
+                                            (buttonContext) => ElevatedButton(
+                                              onPressed:
+                                                  _documentUploaded
+                                                      ? null
+                                                      : () => _scanDocument(
+                                                        buttonContext,
+                                                      ),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    _documentUploaded
+                                                        ? Colors.lightGreen
+                                                        : UIConstants
+                                                            .defaultAppColor,
+                                                disabledBackgroundColor:
+                                                    Colors.lightGreen,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical:
+                                                          UIConstants.spacingM,
+                                                      horizontal:
+                                                          UIConstants.spacingL,
+                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        UIConstants
+                                                            .cornerRadius,
+                                                      ),
+                                                ),
+                                              ),
+                                              child: const Icon(
+                                                Icons.document_scanner,
+                                                color:
+                                                    UIConstants.buttonTextColor,
+                                              ),
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (!_training)
+                                  const SizedBox(height: UIConstants.spacingL),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // FABs at bottom
+                      Container(
+                        padding: const EdgeInsets.all(UIConstants.spacingM),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            DialogFABs(
+                              children: [
+                                FloatingActionButton(
+                                  heroTag: 'cancelBedSportFab',
+                                  mini: true,
+                                  tooltip: 'Abbrechen',
+                                  backgroundColor: UIConstants.defaultAppColor,
+                                  onPressed:
+                                      _isLoading
+                                          ? null
+                                          : () async {
+                                            // Clean up uploaded document if not mapped
+                                            if (_uploadedDateiId != null) {
+                                              final apiService =
+                                                  Provider.of<ApiService>(
+                                                    context,
+                                                    listen: false,
+                                                  );
+                                              await apiService
+                                                  .deleteBedDateiById(
+                                                    _uploadedDateiId!,
+                                                  );
+                                            }
+                                            if (mounted) {
+                                              Navigator.of(context).pop();
+                                            }
+                                          },
+                                  child: const Icon(
+                                    Icons.close,
                                     color: UIConstants.whiteColor,
                                   ),
+                                ),
+                                FloatingActionButton(
+                                  key: const ValueKey('saveBedSportFab'),
+                                  heroTag: 'saveBedSportFab',
+                                  mini: true,
+                                  tooltip: 'Speichern',
+                                  backgroundColor:
+                                      _isLoading ||
+                                              !_areAllCompulsoryFieldsFilled() ||
+                                              _isUploadingDocument
+                                          ? UIConstants.disabledBackgroundColor
+                                          : UIConstants.defaultAppColor,
+                                  onPressed:
+                                      _isLoading || _isUploadingDocument
+                                          ? null
+                                          : (_areAllCompulsoryFieldsFilled()
+                                              ? _saveBedSport
+                                              : null),
+                                  child:
+                                      _isLoading
+                                          ? const SizedBox(
+                                            width:
+                                                UIConstants
+                                                    .loadingIndicatorSize,
+                                            height:
+                                                UIConstants
+                                                    .loadingIndicatorSize,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                    UIConstants.whiteColor,
+                                                  ),
+                                            ),
+                                          )
+                                          : const Icon(
+                                            Icons.check,
+                                            color: UIConstants.whiteColor,
+                                          ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   // Loading overlay
                   if (_isLoading)
