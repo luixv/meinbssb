@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
-import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
-import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step3_dialog_screen.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
+import 'package:meinbssb/services/api_service.dart';
+import 'dart:typed_data';
 
 class BeduerfnissantragStep3Screen extends StatefulWidget {
   const BeduerfnissantragStep3Screen({
@@ -37,107 +38,134 @@ class BeduerfnissantragStep3Screen extends StatefulWidget {
 
 class _BeduerfnissantragStep3ScreenState
     extends State<BeduerfnissantragStep3Screen> {
-  Future<void> _uploadDocument(String documentType) async {
-    final apiService = Provider.of<ApiService>(context, listen: false);
+  late Future<List<BeduerfnisseDatei>> _documentsFuture;
 
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? file = await picker.pickImage(source: ImageSource.gallery);
-
-      if (file == null) {
-        return;
-      }
-
-      if (widget.antrag?.antragsnummer == null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler: Antragsnummer nicht gefunden'),
-            ),
-          );
-        }
-        return;
-      }
-
-      final bytes = await file.readAsBytes();
-
-      // Upload the document
-      final success = await apiService.uploadBedDateiForWBK(
-        antragsnummer: widget.antrag!.antragsnummer!,
-        dateiname: file.name,
-        fileBytes: bytes,
-      );
-
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$documentType erfolgreich hochgeladen')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fehler beim Hochladen')),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Hochladen: $e')));
-      }
-    }
+  @override
+  void initState() {
+    super.initState();
+    _documentsFuture = _fetchDocuments();
   }
 
-  Future<void> _scanAndUploadDocument(String documentType) async {
+  Future<List<BeduerfnisseDatei>> _fetchDocuments() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
+    if (widget.antrag?.antragsnummer == null) {
+      return [];
+    }
+    return apiService.getBedDateiZuordByAntragsnummer(
+      widget.antrag!.antragsnummer!,
+      'WBK',
+    );
+  }
 
-    try {
-      // Scan the document
-      final scanResult = await apiService.scanDocument();
-
-      if (scanResult == null) {
-        // User cancelled scanning
-        return;
-      }
-
-      if (widget.antrag?.antragsnummer == null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler: Antragsnummer nicht gefunden'),
-            ),
-          );
-        }
-        return;
-      }
-
-      // Upload the scanned document
-      final success = await apiService.uploadBedDateiForWBK(
-        antragsnummer: widget.antrag!.antragsnummer!,
-        dateiname: scanResult.fileName,
-        fileBytes: scanResult.bytes,
-      );
-
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '$documentType erfolgreich gescannt und hochgeladen',
+  void _viewDocument(BuildContext context, BeduerfnisseDatei document) {
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => Dialog(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      color: UIConstants.defaultAppColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(4),
+                        topRight: Radius.circular(4),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.description, color: Colors.white),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ScaledText(
+                            document.dateiname,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () => Navigator.of(dialogContext).pop(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: Colors.grey[200],
+                      child: Center(
+                        child: InteractiveViewer(
+                          panEnabled: true,
+                          minScale: 0.5,
+                          maxScale: 4.0,
+                          child: Image.memory(
+                            Uint8List.fromList(document.fileBytes),
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Text('Fehler beim Laden des Bildes'),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fehler beim Hochladen')),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Scannen: $e')));
+          ),
+    );
+  }
+
+  Future<void> _deleteDocument(int? dateiId) async {
+    if (dateiId == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Dokument löschen'),
+            content: const Text(
+              'Möchten Sie dieses Dokument wirklich löschen?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Abbrechen'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Löschen'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmed != true) return;
+
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final success = await apiService.deleteBedDateiById(dateiId);
+
+    if (mounted) {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Dokument erfolgreich gelöscht')),
+        );
+        setState(() {
+          _documentsFuture = _fetchDocuments();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fehler beim Löschen des Dokuments')),
+        );
       }
     }
   }
@@ -176,6 +204,30 @@ class _BeduerfnissantragStep3ScreenState
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Add button to open upload dialog
+                      KeyboardFocusFAB(
+                        heroTag: 'addDocumentFab',
+                        tooltip: 'Dokument hinzufügen',
+                        semanticLabel: 'Dokument hinzufügen Button',
+                        semanticHint:
+                            'Öffnet Dialog zum Hochladen von Dokumenten',
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => BeduerfnissantragStep3Dialog(
+                                  antragsnummer: widget.antrag?.antragsnummer,
+                                ),
+                          ).then((_) {
+                            // Refresh document list after dialog is closed
+                            setState(() {
+                              _documentsFuture = _fetchDocuments();
+                            });
+                          });
+                        },
+                        icon: Icons.add,
+                      ),
+                      const SizedBox(height: UIConstants.spacingS),
                       // Forward arrow - always visible for navigation
                       KeyboardFocusFAB(
                         heroTag: 'nextFromStep3Fab',
@@ -231,7 +283,7 @@ class _BeduerfnissantragStep3ScreenState
                       const SizedBox(height: UIConstants.spacingM),
                     ],
 
-                    // Display Bedürfnisantrag type
+                    // Display Bedürfnisantrag type summary
                     if (widget.antrag != null)
                       Container(
                         padding: const EdgeInsets.all(UIConstants.spacingM),
@@ -267,73 +319,88 @@ class _BeduerfnissantragStep3ScreenState
                           ],
                         ),
                       ),
-                    // Buttons for existing WBK
-                    if (widget.antrag != null &&
-                        widget.antrag!.wbkNeu == false) ...[
-                      const SizedBox(height: UIConstants.spacingL),
+                    const SizedBox(height: UIConstants.spacingL),
 
-                      // Vorderseite WBK Section
-                      ScaledText(
-                        'WBK',
-                        style: UIStyles.bodyTextStyle.copyWith(
+                    // Document List Section
+                    Semantics(
+                      header: true,
+                      label: 'Hochgeladene Dokumente',
+                      child: ScaledText(
+                        'Hochgeladene Dokumente:',
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize:
-                              UIStyles.bodyTextStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
+                          fontSize: 18 * fontSizeProvider.scaleFactor,
+                          color: UIConstants.defaultAppColor,
                         ),
                       ),
-                      const SizedBox(height: UIConstants.spacingS),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  () => _uploadDocument('Vorderseite WBK'),
-                              icon: const Icon(Icons.upload_file),
-                              label: ScaledText(
-                                'Hochladen',
-                                style: TextStyle(
-                                  fontSize: 16 * fontSizeProvider.scaleFactor,
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
+
+                    FutureBuilder<List<BeduerfnisseDatei>>(
+                      future: _documentsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Text('Fehler: ${snapshot.error}');
+                        }
+                        final documents = snapshot.data ?? [];
+                        if (documents.isEmpty) {
+                          return const ScaledText(
+                            'Keine Dokumente hochgeladen.',
+                          );
+                        }
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: documents.length,
+                          itemBuilder: (context, index) {
+                            final doc = documents[index];
+                            return Card(
+                              margin: const EdgeInsets.only(
+                                bottom: UIConstants.spacingM,
+                              ),
+                              child: ListTile(
+                                leading: const Icon(
+                                  Icons.description,
+                                  color: UIConstants.defaultAppColor,
+                                ),
+                                title: ScaledText(
+                                  doc.dateiname,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.visibility,
+                                        color: UIConstants.defaultAppColor,
+                                      ),
+                                      onPressed:
+                                          () => _viewDocument(context, doc),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () => _deleteDocument(doc.id),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    UIConstants.submitButtonBackground,
-                                foregroundColor: UIConstants.buttonTextColor,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: UIConstants.spacingM,
-                                  vertical: UIConstants.spacingM,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  () =>
-                                      _scanAndUploadDocument('Vorderseite WBK'),
-                              icon: const Icon(Icons.camera_alt),
-                              label: ScaledText(
-                                'Scannen',
-                                style: TextStyle(
-                                  fontSize: 16 * fontSizeProvider.scaleFactor,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    UIConstants.submitButtonBackground,
-                                foregroundColor: UIConstants.buttonTextColor,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: UIConstants.spacingM,
-                                  vertical: UIConstants.spacingM,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
