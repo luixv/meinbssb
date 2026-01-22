@@ -1165,6 +1165,39 @@ class ApiService {
     return _postgrestService.deleteBedDateiZuord(antragsnummer);
   }
 
+  /// Get bed_datei entries by antragsnummer and datei_art
+  /// Returns a list of BeduerfnisseDatei with fileBytes from bed_datei_zuord associations
+  Future<List<BeduerfnisseDatei>> getBedDateiZuordByAntragsnummer(
+    int antragsnummer,
+    String dateiArt,
+  ) async {
+    try {
+      // Get the bed_datei_zuord entries
+      final dateiZuordList = await _postgrestService.getBedDateiZuordByAntragsnummer(
+        antragsnummer,
+        dateiArt,
+      );
+
+      // Map each datei_zuord to its associated bed_datei
+      final result = <BeduerfnisseDatei>[];
+      for (final dateiZuord in dateiZuordList) {
+        // Get the associated bed_datei to retrieve fileBytes
+        final datei = await _postgrestService.getBedDateiById(dateiZuord.dateiId);
+        
+        if (datei != null) {
+          result.add(datei);
+        }
+      }
+
+      return result;
+    } catch (e) {
+      LoggerService.logError(
+        'Error getting bed_datei for antragsnummer $antragsnummer and datei_art $dateiArt: $e',
+      );
+      return [];
+    }
+  }
+
   /// Check if a bed_datei_zuord entry exists for the given bed_sport_id
   /// Returns true if an entry exists, false otherwise
   Future<bool> hasBedDateiSport(int sportId) async {

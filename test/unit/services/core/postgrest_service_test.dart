@@ -1665,6 +1665,82 @@ void main() {
         expect(result, isFalse);
       });
 
+      test('getBedDateiZuordByAntragsnummer returns list of records', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': '123',
+            'datei_id': 50,
+            'datei_art': 'SPORT',
+            'bed_sport_id': 10,
+          },
+          {
+            'id': 2,
+            'antragsnummer': '123',
+            'datei_id': 51,
+            'datei_art': 'SPORT',
+            'bed_sport_id': 11,
+          },
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedDateiZuordByAntragsnummer(123, 'SPORT');
+
+        expect(result, isA<List<BeduerfnisseDateiZuord>>());
+        expect(result.length, equals(2));
+        expect(result[0].id, equals(1));
+        expect(result[0].antragsnummer, equals('123'));
+        expect(result[0].dateiArt, equals('SPORT'));
+        expect(result[1].id, equals(2));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).called(1);
+      });
+
+      test('getBedDateiZuordByAntragsnummer returns empty list when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getBedDateiZuordByAntragsnummer(123, 'WBK');
+
+        expect(result, isA<List<BeduerfnisseDateiZuord>>());
+        expect(result.isEmpty, isTrue);
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).called(1);
+      });
+
+      test('getBedDateiZuordByAntragsnummer returns empty list on error status', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.getBedDateiZuordByAntragsnummer(123, 'SPORT');
+
+        expect(result, isA<List<BeduerfnisseDateiZuord>>());
+        expect(result.isEmpty, isTrue);
+      });
+
+      test('getBedDateiZuordByAntragsnummer handles exception gracefully', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenThrow(Exception('Network error'));
+
+        final result = await service.getBedDateiZuordByAntragsnummer(123, 'SPORT');
+
+        expect(result, isA<List<BeduerfnisseDateiZuord>>());
+        expect(result.isEmpty, isTrue);
+      });
+
       test('getBedDateiZuordByBedSportId returns single record', () async {
         final mockResponse = [
           {

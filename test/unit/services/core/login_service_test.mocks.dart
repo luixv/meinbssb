@@ -2225,6 +2225,22 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
           as _i2.Future<bool>);
 
   @override
+  _i2.Future<List<_i10.BeduerfnisseDateiZuord>> getBedDateiZuordByAntragsnummer(
+    int? antragsnummer,
+    String? dateiArt,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiZuordByAntragsnummer, [
+              antragsnummer,
+              dateiArt,
+            ]),
+            returnValue: _i2.Future<List<_i10.BeduerfnisseDateiZuord>>.value(
+              <_i10.BeduerfnisseDateiZuord>[],
+            ),
+          )
+          as _i2.Future<List<_i10.BeduerfnisseDateiZuord>>);
+
+  @override
   _i2.Future<_i10.BeduerfnisseDateiZuord?> getBedDateiZuordByBedSportId(
     int? bedSportId,
   ) =>

@@ -1772,6 +1772,38 @@ class PostgrestService {
     }
   }
 
+  /// Get bed_datei_zuord entries by antragsnummer and datei_art
+  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByAntragsnummer(
+    int antragsnummer,
+    String dateiArt,
+  ) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+          '${_baseUrl}bed_datei_zuord?antragsnummer=eq.$antragsnummer&datei_art=eq.$dateiArt&deleted_at=is.null',
+        ),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data
+            .map((json) => BeduerfnisseDateiZuord.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } else {
+        LoggerService.logError(
+          'Failed to get bed_datei_zuord by antragsnummer and datei_art. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError(
+        'Error getting bed_datei_zuord by antragsnummer and datei_art: $e',
+      );
+      return [];
+    }
+  }
+
   /// Get bed_datei_zuord entry by bed_sport_id
   /// Returns a single BeduerfnisseDateiZuord or null if not found
   /// (There can only be one datei per bed_sport)

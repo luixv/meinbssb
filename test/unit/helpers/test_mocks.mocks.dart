@@ -1909,6 +1909,22 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
+  _i13.Future<List<_i39.BeduerfnisseDatei>> getBedDateiZuordByAntragsnummer(
+    int? antragsnummer,
+    String? dateiArt,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiZuordByAntragsnummer, [
+              antragsnummer,
+              dateiArt,
+            ]),
+            returnValue: _i13.Future<List<_i39.BeduerfnisseDatei>>.value(
+              <_i39.BeduerfnisseDatei>[],
+            ),
+          )
+          as _i13.Future<List<_i39.BeduerfnisseDatei>>);
+
+  @override
   _i13.Future<bool> hasBedDateiSport(int? sportId) =>
       (super.noSuchMethod(
             Invocation.method(#hasBedDateiSport, [sportId]),
@@ -3676,6 +3692,20 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
+
+  @override
+  _i13.Future<List<_i11.BeduerfnisseDateiZuord>>
+  getBedDateiZuordByAntragsnummer(int? antragsnummer, String? dateiArt) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiZuordByAntragsnummer, [
+              antragsnummer,
+              dateiArt,
+            ]),
+            returnValue: _i13.Future<List<_i11.BeduerfnisseDateiZuord>>.value(
+              <_i11.BeduerfnisseDateiZuord>[],
+            ),
+          )
+          as _i13.Future<List<_i11.BeduerfnisseDateiZuord>>);
 
   @override
   _i13.Future<_i11.BeduerfnisseDateiZuord?> getBedDateiZuordByBedSportId(
