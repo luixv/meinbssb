@@ -1586,12 +1586,14 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
     required int? antragsnummer,
     required String? dateiname,
     required List<int>? fileBytes,
+    required String? label,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#uploadBedDateiForWBK, [], {
               #antragsnummer: antragsnummer,
               #dateiname: dateiname,
               #fileBytes: fileBytes,
+              #label: label,
             }),
             returnValue: _i13.Future<bool>.value(false),
           )

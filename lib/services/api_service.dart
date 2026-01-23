@@ -914,6 +914,7 @@ class ApiService {
     required int antragsnummer,
     required String dateiname,
     required List<int> fileBytes,
+    required String label,
   }) async {
     try {
       LoggerService.logInfo(
@@ -942,7 +943,8 @@ class ApiService {
           antragsnummer: antragsnummer,
           dateiId: dateiId,
           dateiArt: 'WBK',
-          bedSportId: null, // WBK documents are not linked to a specific sport
+          bedSportId: null,
+          label: label,
         );
 
         LoggerService.logInfo(

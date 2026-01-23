@@ -3452,6 +3452,7 @@ void main() {
             antragsnummer: 456,
             dateiname: 'wbk.pdf',
             fileBytes: [4, 5, 6],
+            label: 'Test Label',
           );
 
           expect(result, isTrue);
@@ -3468,7 +3469,7 @@ void main() {
               dateiId: 200,
               dateiArt: 'WBK',
               bedSportId: null,
-              label: null,
+              label: 'Test Label',
             ),
           ).called(1);
         });
@@ -3486,9 +3487,63 @@ void main() {
             antragsnummer: 456,
             dateiname: 'wbk.pdf',
             fileBytes: [4, 5, 6],
+            label: 'Test Label',
           );
 
           expect(result, isFalse);
+        });
+
+        test('creates datei and datei_zuord successfully with empty label', () async {
+          final expectedDateiResponse = {
+            'id': 201,
+            'antragsnummer': 457,
+            'dateiname': 'wbk2.pdf',
+          };
+
+          final expectedDateiZuord = BeduerfnisseDateiZuord(
+            id: 3,
+            antragsnummer: 457,
+            dateiId: 201,
+            dateiArt: 'WBK',
+          );
+
+          // Mock createBedDatei
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 457,
+              dateiname: 'wbk2.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => expectedDateiResponse);
+
+          // Mock createBedDateiZuord
+          when(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 457,
+              dateiId: 201,
+              dateiArt: 'WBK',
+              bedSportId: null,
+              label: '',
+            ),
+          ).thenAnswer((_) async => expectedDateiZuord);
+
+          final result = await apiService.uploadBedDateiForWBK(
+            antragsnummer: 457,
+            dateiname: 'wbk2.pdf',
+            fileBytes: [7, 8, 9],
+            label: '',
+          );
+
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 457,
+              dateiId: 201,
+              dateiArt: 'WBK',
+              bedSportId: null,
+              label: '',
+            ),
+          ).called(1);
         });
       });
     });
@@ -4065,28 +4120,29 @@ void main() {
         ).thenAnswer((_) async => zuord);
 
         final result = await apiService.uploadBedDateiForWBK(
-          antragsnummer: 100,
-          dateiname: 'wbk.pdf',
-          fileBytes: [1, 2, 3],
-        );
-
-        expect(result, isTrue);
-        verify(
-          mockPostgrestService.createBedDatei(
             antragsnummer: 100,
             dateiname: 'wbk.pdf',
             fileBytes: [1, 2, 3],
-          ),
-        ).called(1);
-        verify(
-          mockPostgrestService.createBedDateiZuord(
-            antragsnummer: 100,
-            dateiId: 123,
-            dateiArt: 'WBK',
-            bedSportId: null,
-            label: null,
-          ),
-        ).called(1);
+            label: 'WBK Document',
+          );
+
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 100,
+              dateiname: 'wbk.pdf',
+              fileBytes: [1, 2, 3],
+            ),
+          ).called(1);
+          verify(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 100,
+              dateiId: 123,
+              dateiArt: 'WBK',
+              bedSportId: null,
+              label: 'WBK Document',
+            ),
+          ).called(1);
       });
 
       test('returns false when datei creation fails', () async {
@@ -4102,6 +4158,7 @@ void main() {
           antragsnummer: 100,
           dateiname: 'wbk.pdf',
           fileBytes: [1, 2, 3],
+          label: 'Test Label',
         );
 
         expect(result, isFalse);
@@ -4145,6 +4202,7 @@ void main() {
           antragsnummer: 100,
           dateiname: 'wbk.pdf',
           fileBytes: [1, 2, 3],
+          label: 'Test Label',
         );
 
         expect(result, isFalse);
@@ -4164,6 +4222,7 @@ void main() {
           antragsnummer: 100,
           dateiname: 'wbk.pdf',
           fileBytes: [1, 2, 3],
+          label: 'Test Label',
         );
 
         expect(result, isFalse);

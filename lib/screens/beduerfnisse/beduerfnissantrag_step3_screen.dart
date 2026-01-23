@@ -11,7 +11,7 @@ import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step3_dialog_screen.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step4_screen.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'dart:typed_data';
 
@@ -40,7 +40,7 @@ class BeduerfnissantragStep3Screen extends StatefulWidget {
 
 class _BeduerfnissantragStep3ScreenState
     extends State<BeduerfnissantragStep3Screen> {
-  late Future<List<BeduerfnisseDatei>> _documentsFuture;
+  late Future<List<BeduerfnisseDateiZuord>> _documentsFuture;
 
   @override
   void initState() {
@@ -48,31 +48,35 @@ class _BeduerfnissantragStep3ScreenState
     _documentsFuture = _fetchDocuments();
   }
 
-  Future<List<BeduerfnisseDatei>> _fetchDocuments() async {
+  Future<List<BeduerfnisseDateiZuord>> _fetchDocuments() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
     if (widget.antrag?.antragsnummer == null) {
       return [];
     }
 
-    // Get the bed_datei_zuord entries
-    final dateiZuordList = await apiService.getBedDateiZuordByAntragsnummer(
+    // Get the bed_datei_zuord entries (without fetching file data)
+    return await apiService.getBedDateiZuordByAntragsnummer(
       widget.antrag!.antragsnummer!,
       'WBK',
     );
-
-    // Fetch the actual bed_datei for each zuord
-    final result = <BeduerfnisseDatei>[];
-    for (final zuord in dateiZuordList) {
-      final datei = await apiService.getBedDateiById(zuord.dateiId);
-      if (datei != null) {
-        result.add(datei);
-      }
-    }
-
-    return result;
   }
 
-  void _viewDocument(BuildContext context, BeduerfnisseDatei document) {
+  void _viewDocument(BuildContext context, BeduerfnisseDateiZuord document) async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    
+    // Fetch the actual bed_datei to get file data only when viewing
+    final datei = await apiService.getBedDateiById(document.dateiId);
+    if (datei == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fehler beim Laden des Dokuments')),
+        );
+      }
+      return;
+    }
+    
+    if (!mounted) return;
+    
     showDialog(
       context: context,
       builder:
@@ -97,7 +101,7 @@ class _BeduerfnissantragStep3ScreenState
                         const SizedBox(width: 8),
                         Expanded(
                           child: ScaledText(
-                            document.dateiname,
+                            document.label ?? datei.dateiname,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -121,7 +125,7 @@ class _BeduerfnissantragStep3ScreenState
                           minScale: 0.5,
                           maxScale: 4.0,
                           child: Image.memory(
-                            Uint8List.fromList(document.fileBytes),
+                            Uint8List.fromList(datei.fileBytes),
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) {
                               return const Center(
@@ -140,9 +144,7 @@ class _BeduerfnissantragStep3ScreenState
     );
   }
 
-  Future<void> _deleteDocument(int? dateiId) async {
-    if (dateiId == null) return;
-
+  Future<void> _deleteDocument(BeduerfnisseDateiZuord document) async {
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -158,7 +160,7 @@ class _BeduerfnissantragStep3ScreenState
     if (confirmed != true) return;
 
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final success = await apiService.deleteBedDateiById(dateiId);
+    final success = await apiService.deleteBedDateiById(document.dateiId);
 
     if (mounted) {
       if (success) {
@@ -353,7 +355,7 @@ class _BeduerfnissantragStep3ScreenState
                     ),
                     const SizedBox(height: UIConstants.spacingM),
 
-                    FutureBuilder<List<BeduerfnisseDatei>>(
+                    FutureBuilder<List<BeduerfnisseDateiZuord>>(
                       future: _documentsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -387,7 +389,7 @@ class _BeduerfnissantragStep3ScreenState
                                   color: UIConstants.defaultAppColor,
                                 ),
                                 title: ScaledText(
-                                  doc.dateiname,
+                                  doc.label ?? 'Dokument ${doc.id ?? index + 1}',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -408,7 +410,7 @@ class _BeduerfnissantragStep3ScreenState
                                         Icons.delete_outline,
                                         color: UIConstants.deleteIcon,
                                       ),
-                                      onPressed: () => _deleteDocument(doc.id),
+                                      onPressed: () => _deleteDocument(doc),
                                     ),
                                   ],
                                 ),

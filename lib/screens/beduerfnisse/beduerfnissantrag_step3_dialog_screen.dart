@@ -20,6 +20,7 @@ class BeduerfnissantragStep3Dialog extends StatefulWidget {
 class _BeduerfnissantragStep3DialogState
     extends State<BeduerfnissantragStep3Dialog> {
   bool _isUploadingDocument = false;
+  final TextEditingController _labelController = TextEditingController();
 
   Future<void> _uploadDocument(
     BuildContext context,
@@ -66,6 +67,7 @@ class _BeduerfnissantragStep3DialogState
         antragsnummer: widget.antragsnummer!,
         dateiname: file.name,
         fileBytes: bytes,
+        label: _labelController.text.trim(),
       );
 
       if (mounted) {
@@ -158,6 +160,7 @@ class _BeduerfnissantragStep3DialogState
         antragsnummer: widget.antragsnummer!,
         dateiname: scanResult.fileName,
         fileBytes: scanResult.bytes,
+        label: _labelController.text.trim(),
       );
 
       if (mounted) {
@@ -207,6 +210,12 @@ class _BeduerfnissantragStep3DialogState
   }
 
   @override
+  void dispose() {
+    _labelController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
@@ -240,6 +249,28 @@ class _BeduerfnissantragStep3DialogState
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingM),
+
+                      // Datei Beschreibung input field
+                      TextField(
+                        controller: _labelController,
+                        decoration: InputDecoration(
+                          labelText: 'Datei Beschreibung',
+                          hintText: 'Beschreibung des Dokuments',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              UIConstants.cornerRadius,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: UIConstants.spacingM,
+                            vertical: UIConstants.spacingM,
+                          ),
+                        ),
+                        style: TextStyle(
+                          fontSize: 16 * fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingL),
 
                       // WBK Section
                       ScaledText(
