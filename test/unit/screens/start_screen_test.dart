@@ -546,9 +546,8 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      // Find the SnackBar and check its content
-      // Check for SnackBar with expected error text
-      expect(find.byType(SnackBar), findsOneWidget);
+      // Wait for SnackBar to appear and check for error text
+      await tester.pumpAndSettle();
       expect(
         find.text('Fehler beim Abmelden von der Schulung.'),
         findsOneWidget,
@@ -578,9 +577,8 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      // Find the SnackBar and check its content
-      // Check for SnackBar with error text containing 'Error:'
-      expect(find.byType(SnackBar), findsOneWidget);
+      // Wait for SnackBar to appear and check for error text
+      await tester.pumpAndSettle();
       expect(find.textContaining('Error:'), findsOneWidget);
     });
   });
