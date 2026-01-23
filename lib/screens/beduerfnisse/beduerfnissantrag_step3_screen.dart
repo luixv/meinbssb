@@ -52,10 +52,23 @@ class _BeduerfnissantragStep3ScreenState
     if (widget.antrag?.antragsnummer == null) {
       return [];
     }
-    return apiService.getBedDateiZuordByAntragsnummer(
+    
+    // Get the bed_datei_zuord entries
+    final dateiZuordList = await apiService.getBedDateiZuordByAntragsnummer(
       widget.antrag!.antragsnummer!,
       'WBK',
     );
+    
+    // Fetch the actual bed_datei for each zuord
+    final result = <BeduerfnisseDatei>[];
+    for (final zuord in dateiZuordList) {
+      final datei = await apiService.getBedDateiById(zuord.dateiId);
+      if (datei != null) {
+        result.add(datei);
+      }
+    }
+    
+    return result;
   }
 
   void _viewDocument(BuildContext context, BeduerfnisseDatei document) {

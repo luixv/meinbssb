@@ -1662,6 +1662,7 @@ class PostgrestService {
     required int dateiId,
     required String dateiArt,
     int? bedSportId,
+    String? label,
   }) async {
     try {
       final body = {
@@ -1670,6 +1671,7 @@ class PostgrestService {
         'datei_art': dateiArt,
         'created_at': DateTime.now().toIso8601String(),
         if (bedSportId != null) 'bed_sport_id': bedSportId,
+        if (label != null) 'label': label,
       };
 
       final response = await _httpClient.post(
@@ -1722,6 +1724,7 @@ class PostgrestService {
         if (updateData['DATEI_ID'] != null) 'datei_id': updateData['DATEI_ID'],
         if (updateData['DATEI_ART'] != null) 'datei_art': updateData['DATEI_ART'],
         if (updateData['BED_SPORT_ID'] != null) 'bed_sport_id': updateData['BED_SPORT_ID'],
+        if (updateData['LABEL'] != null) 'label': updateData['LABEL'],
         'changed_at': updateData['changed_at'],
       };
 

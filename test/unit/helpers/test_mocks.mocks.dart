@@ -1868,6 +1868,7 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
     required int? dateiId,
     required String? dateiArt,
     int? bedSportId,
+    String? label,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createBedDateiZuord, [], {
@@ -1875,6 +1876,7 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
               #dateiId: dateiId,
               #dateiArt: dateiArt,
               #bedSportId: bedSportId,
+              #label: label,
             }),
             returnValue: _i13.Future<_i11.BeduerfnisseDateiZuord>.value(
               _FakeBeduerfnisseDateiZuord_10(
@@ -1884,6 +1886,7 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
                   #dateiId: dateiId,
                   #dateiArt: dateiArt,
                   #bedSportId: bedSportId,
+                  #label: label,
                 }),
               ),
             ),
@@ -1909,20 +1912,26 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<List<_i39.BeduerfnisseDatei>> getBedDateiZuordByAntragsnummer(
-    int? antragsnummer,
-    String? dateiArt,
-  ) =>
+  _i13.Future<List<_i11.BeduerfnisseDateiZuord>>
+  getBedDateiZuordByAntragsnummer(int? antragsnummer, String? dateiArt) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiZuordByAntragsnummer, [
               antragsnummer,
               dateiArt,
             ]),
-            returnValue: _i13.Future<List<_i39.BeduerfnisseDatei>>.value(
-              <_i39.BeduerfnisseDatei>[],
+            returnValue: _i13.Future<List<_i11.BeduerfnisseDateiZuord>>.value(
+              <_i11.BeduerfnisseDateiZuord>[],
             ),
           )
-          as _i13.Future<List<_i39.BeduerfnisseDatei>>);
+          as _i13.Future<List<_i11.BeduerfnisseDateiZuord>>);
+
+  @override
+  _i13.Future<_i39.BeduerfnisseDatei?> getBedDateiById(int? dateiId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiById, [dateiId]),
+            returnValue: _i13.Future<_i39.BeduerfnisseDatei?>.value(),
+          )
+          as _i13.Future<_i39.BeduerfnisseDatei?>);
 
   @override
   _i13.Future<bool> hasBedDateiSport(int? sportId) =>
@@ -3653,6 +3662,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
     required int? dateiId,
     required String? dateiArt,
     int? bedSportId,
+    String? label,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createBedDateiZuord, [], {
@@ -3660,6 +3670,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #dateiId: dateiId,
               #dateiArt: dateiArt,
               #bedSportId: bedSportId,
+              #label: label,
             }),
             returnValue: _i13.Future<_i11.BeduerfnisseDateiZuord>.value(
               _FakeBeduerfnisseDateiZuord_10(
@@ -3669,6 +3680,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
                   #dateiId: dateiId,
                   #dateiArt: dateiArt,
                   #bedSportId: bedSportId,
+                  #label: label,
                 }),
               ),
             ),
