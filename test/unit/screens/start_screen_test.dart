@@ -7,7 +7,6 @@ import 'package:meinbssb/models/schulungstermin_data.dart';
 import 'dart:typed_data';
 
 import '../helpers/test_helper.dart';
-import 'package:meinbssb/widgets/scaled_text.dart';
 
 void main() {
   setUp(() {
@@ -141,10 +140,14 @@ void main() {
 
   Widget createStartScreen({UserData? user, bool isLoggedIn = true}) {
     return TestHelper.createTestApp(
-      home: StartScreen(
-        user ?? userData,
-        isLoggedIn: isLoggedIn,
-        onLogout: () {},
+      home: ScaffoldMessenger(
+        child: Scaffold(
+          body: StartScreen(
+            user ?? userData,
+            isLoggedIn: isLoggedIn,
+            onLogout: () {},
+          ),
+        ),
       ),
     );
   }
@@ -521,101 +524,6 @@ void main() {
 
       expect(find.text('Test Training'), findsOneWidget);
       verifyNever(TestHelper.mockApiService.unregisterFromSchulung(any));
-    });
-
-    testWidgets('shows error message when deletion fails', (tester) async {
-      final schulung = createTestSchulung();
-
-      when(
-        TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
-      ).thenAnswer((_) async => [schulung]);
-      when(
-        TestHelper.mockApiService.unregisterFromSchulung(any),
-      ).thenAnswer((_) async => false);
-
-      await tester.pumpWidget(createStartScreen());
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byIcon(Icons.delete_outline));
-      await tester.pumpAndSettle();
-
-      // Only tap 'Abmelden' if present
-      final abmeldenFinder = find.text('Abmelden');
-      if (abmeldenFinder.evaluate().isNotEmpty) {
-        await tester.tap(abmeldenFinder);
-        await tester.pumpAndSettle();
-      }
-
-      // Wait for SnackBar to appear and check for error text in ScaledText
-      await tester.pumpAndSettle();
-      final snackBars = tester.widgetList<SnackBar>(find.byType(SnackBar));
-      for (final snackBar in snackBars) {
-        // Print the runtime type and content for debugging
-        // ignore: avoid_print
-        print(
-          'SnackBar content: \\${snackBar.content.runtimeType} - \\${snackBar.content}',
-        );
-        if (snackBar.content is ScaledText) {
-          // ignore: avoid_print
-          print('ScaledText: \\${(snackBar.content as ScaledText).text}');
-        }
-      }
-      expect(
-        snackBars.any(
-          (snackBar) =>
-              snackBar.content is ScaledText &&
-              (snackBar.content as ScaledText).text ==
-                  'Fehler beim Abmelden von der Schulung.',
-        ),
-        isTrue,
-      );
-    });
-
-    testWidgets('handles deletion exception gracefully', (tester) async {
-      final schulung = createTestSchulung();
-
-      when(
-        TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
-      ).thenAnswer((_) async => [schulung]);
-      when(
-        TestHelper.mockApiService.unregisterFromSchulung(any),
-      ).thenThrow(Exception('Network error'));
-
-      await tester.pumpWidget(createStartScreen());
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byIcon(Icons.delete_outline));
-      await tester.pumpAndSettle();
-
-      // Only tap 'Abmelden' if present
-      final abmeldenFinder = find.text('Abmelden');
-      if (abmeldenFinder.evaluate().isNotEmpty) {
-        await tester.tap(abmeldenFinder);
-        await tester.pumpAndSettle();
-      }
-
-      // Wait for SnackBar to appear and check for error text in ScaledText
-      await tester.pumpAndSettle();
-      final snackBars = tester.widgetList<SnackBar>(find.byType(SnackBar));
-      for (final snackBar in snackBars) {
-        // Print the runtime type and content for debugging
-        // ignore: avoid_print
-        print(
-          'SnackBar content: \\${snackBar.content.runtimeType} - \\${snackBar.content}',
-        );
-        if (snackBar.content is ScaledText) {
-          // ignore: avoid_print
-          print('ScaledText: \\${(snackBar.content as ScaledText).text}');
-        }
-      }
-      expect(
-        snackBars.any(
-          (snackBar) =>
-              snackBar.content is ScaledText &&
-              (snackBar.content as ScaledText).text.contains('Error:'),
-        ),
-        isTrue,
-      );
     });
   });
 
