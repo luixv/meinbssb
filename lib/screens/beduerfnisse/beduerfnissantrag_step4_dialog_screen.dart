@@ -51,30 +51,42 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                             ?.copyWith(color: Theme.of(context).primaryColor),
                       ),
                       const SizedBox(height: 24),
-                      TextFormField(
-                        controller: wbkNrController,
-                        decoration: const InputDecoration(
-                          labelText: 'WBK-Nr *',
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(),
-                        ),
-                        validator:
-                            (v) =>
-                                v == null || v.isEmpty ? 'Pflichtfeld' : null,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: lfdWbkController,
-                        decoration: const InputDecoration(
-                          labelText: 'lfd WBK *',
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(),
-                        ),
-                        validator:
-                            (v) =>
-                                v == null || v.isEmpty ? 'Pflichtfeld' : null,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: wbkNrController,
+                              decoration: const InputDecoration(
+                                labelText: 'WBK-Nr *',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(),
+                              ),
+                              validator:
+                                  (v) =>
+                                      v == null || v.isEmpty
+                                          ? 'Pflichtfeld'
+                                          : null,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextFormField(
+                              controller: lfdWbkController,
+                              decoration: const InputDecoration(
+                                labelText: 'lfd WBK *',
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(),
+                              ),
+                              validator:
+                                  (v) =>
+                                      v == null || v.isEmpty
+                                          ? 'Pflichtfeld'
+                                          : null,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       // Waffenart Dropdown with look and feel from step 2
