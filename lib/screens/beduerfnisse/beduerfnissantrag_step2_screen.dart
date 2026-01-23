@@ -1,3 +1,4 @@
+import 'package:meinbssb/widgets/delete_confirm_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -182,82 +183,30 @@ class _BeduerfnissantragStep2ScreenState
 
   Future<void> _deleteBedSport(int? sportId) async {
     if (sportId == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fehler: ID nicht gefunden')),
-        );
-      }
+      showDialog(
+        context: context,
+        builder:
+            (dialogContext) => DeleteConfirmDialog(
+              title: 'Fehler',
+              message: 'ID nicht gefunden',
+              onCancel: () => Navigator.of(dialogContext).pop(),
+              onDelete: () => Navigator.of(dialogContext).pop(),
+            ),
+      );
       return;
     }
 
-    // Show confirmation dialog
+    // Show MeinBSSB confirmation dialog
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
-            child: Text('Nachweis löschen', style: UIStyles.dialogTitleStyle),
+      barrierDismissible: false,
+      builder:
+          (dialogContext) => DeleteConfirmDialog(
+            title: 'Nachweis löschen',
+            message: 'Möchten Sie diesen Nachweis wirklich löschen?',
+            onCancel: () => Navigator.of(dialogContext).pop(false),
+            onDelete: () => Navigator.of(dialogContext).pop(true),
           ),
-          content: RichText(
-            textAlign: TextAlign.center,
-            text: const TextSpan(
-              style: UIStyles.dialogContentStyle,
-              children: <TextSpan>[
-                TextSpan(text: 'Möchten Sie diesen Nachweis wirklich löschen?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: UIConstants.spacingM,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Semantics(
-                    button: true,
-                    label: 'Abbrechen',
-                    hint: 'Doppeltippen um das Löschen abzubrechen',
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(false),
-                      style: UIStyles.dialogCancelButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.close, color: UIConstants.closeIcon),
-                          UIConstants.horizontalSpacingS,
-                          const Text('Abbrechen'),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Semantics(
-                    button: true,
-                    label: 'Löschen bestätigen',
-                    hint:
-                        'Doppeltippen um die Schießaktivität unwiderruflich zu löschen',
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(true),
-                      style: UIStyles.dialogAcceptButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.check, color: UIConstants.checkIcon),
-                          UIConstants.horizontalSpacingS,
-                          const Text('Löschen'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
     );
 
     if (confirmed != true) return;
@@ -266,26 +215,37 @@ class _BeduerfnissantragStep2ScreenState
       final apiService = Provider.of<ApiService>(context, listen: false);
       final success = await apiService.deleteBedSportById(sportId);
 
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Nachweis erfolgreich gelöscht')),
-          );
+      if (success) {
+        // Just refresh the data, no success dialog
+        if (mounted) {
           setState(() {
             _bedSportFuture = _fetchBedSportData();
           });
-        } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Fehler beim Löschen')));
         }
+      } else {
+        // Show MeinBSSB-styled error dialog
+        await showDialog(
+          context: context,
+          builder:
+              (dialogContext) => DeleteConfirmDialog(
+                title: 'Fehler',
+                message: 'Fehler beim Löschen des Nachweises.',
+                onCancel: () => Navigator.of(dialogContext).pop(),
+                onDelete: () => Navigator.of(dialogContext).pop(),
+              ),
+        );
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Löschen: $e')));
-      }
+      await showDialog(
+        context: context,
+        builder:
+            (dialogContext) => DeleteConfirmDialog(
+              title: 'Fehler',
+              message: 'Fehler beim Löschen: $e',
+              onCancel: () => Navigator.of(dialogContext).pop(),
+              onDelete: () => Navigator.of(dialogContext).pop(),
+            ),
+      );
     }
   }
 
@@ -1086,6 +1046,8 @@ class _BeduerfnissantragStep2ScreenState
                         },
                       ),
                       const SizedBox(height: UIConstants.spacingXXXL2),
+                      // Add extra free space below the table
+                      const SizedBox(height: 200),
                     ],
                   ),
                 ),

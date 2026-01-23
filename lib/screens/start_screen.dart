@@ -18,6 +18,7 @@ import '/models/schulungstermin_data.dart';
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
+import '/widgets/delete_confirm_dialog.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen(
@@ -185,85 +186,12 @@ class StartScreenState extends State<StartScreen> {
     final bool? confirmDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: UIConstants.backgroundColor,
-          title: const Center(
-            child: ScaledText(
-              'Schulung abmelden',
-              style: UIStyles.dialogTitleStyle,
-            ),
-          ),
-          content: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: UIStyles.dialogContentStyle,
-              children: <TextSpan>[
-                const TextSpan(
-                  text: 'Sind Sie sicher, dass Sie die Schulung\n\n',
-                ),
-                TextSpan(
-                  text: bezeichnung,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const TextSpan(text: '\n\nabmelden möchten?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(dialogContext).pop(false);
-                    },
-                    style: UIStyles.dialogCancelButtonStyle,
-                    child: Row(
-                      mainAxisAlignment: UIConstants.centerAlignment,
-                      children: [
-                        const Icon(Icons.close, color: UIConstants.closeIcon),
-                        UIConstants.horizontalSpacingM,
-                        Flexible(
-                          child: ScaledText(
-                            'Abbrechen',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
-                              fontSize: UIConstants.buttonFontSize,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: UIConstants.spacingM),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(dialogContext).pop(true);
-                    },
-                    style: UIStyles.dialogAcceptButtonStyle,
-                    child: Row(
-                      mainAxisAlignment: UIConstants.centerAlignment,
-                      children: [
-                        const Icon(Icons.check, color: UIConstants.checkIcon),
-                        UIConstants.horizontalSpacingS,
-                        Flexible(
-                          child: ScaledText(
-                            'Abmelden',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.deleteButtonText,
-                              fontSize: UIConstants.buttonFontSize,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        return DeleteConfirmDialog(
+          title: 'Schulung abmelden',
+          message:
+              'Sind Sie sicher, dass Sie die Schulung "$bezeichnung" abmelden möchten?',
+          onCancel: () => Navigator.of(dialogContext).pop(false),
+          onDelete: () => Navigator.of(dialogContext).pop(true),
         );
       },
     );

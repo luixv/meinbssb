@@ -1,3 +1,4 @@
+import 'package:meinbssb/widgets/delete_confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
@@ -130,22 +131,13 @@ class _BeduerfnissantragStep3ScreenState
 
     final confirmed = await showDialog<bool>(
       context: context,
+      barrierDismissible: false,
       builder:
-          (context) => AlertDialog(
-            title: const Text('Dokument löschen'),
-            content: const Text(
-              'Möchten Sie dieses Dokument wirklich löschen?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Abbrechen'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Löschen'),
-              ),
-            ],
+          (ctx) => DeleteConfirmDialog(
+            title: 'Dokument löschen',
+            message: 'Möchten Sie dieses Dokument wirklich löschen?',
+            onCancel: () => Navigator.of(ctx).pop(false),
+            onDelete: () => Navigator.of(ctx).pop(true),
           ),
     );
 
@@ -156,9 +148,6 @@ class _BeduerfnissantragStep3ScreenState
 
     if (mounted) {
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Dokument erfolgreich gelöscht')),
-        );
         setState(() {
           _documentsFuture = _fetchDocuments();
         });
