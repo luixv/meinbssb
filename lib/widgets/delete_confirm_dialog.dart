@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'scaled_text.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class DeleteConfirmDialog extends StatelessWidget {
   const DeleteConfirmDialog({
@@ -18,78 +20,83 @@ class DeleteConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaleFactor =
+        Provider.of<FontSizeProvider>(context, listen: false).scaleFactor;
+
     return Dialog(
       backgroundColor: UIConstants.backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
       ),
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(UIConstants.spacingL),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: UIConstants.spacingL),
-                Icon(
-                  UIConstants.deleteIconData,
-                  color: UIConstants.errorColor,
-                  size: 48,
+      child: Padding(
+        padding: const EdgeInsets.all(UIConstants.spacingL),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: ScaledText(
+                title,
+                style: UIStyles.dialogTitleStyle.copyWith(
+                  fontSize: UIStyles.dialogTitleStyle.fontSize! * scaleFactor,
                 ),
-                const SizedBox(height: UIConstants.spacingL),
-                ScaledText(
-                  title,
-                  style: UIStyles.dialogTitleStyle.copyWith(
-                    color: UIConstants.errorColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                ScaledText(
-                  message,
-                  style: UIStyles.dialogContentStyle,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: UIConstants.spacingXL),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.cancelButtonBackground,
-                        foregroundColor: UIConstants.cancelButtonText,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: UIConstants.spacingL,
-                          vertical: UIConstants.spacingM,
-                        ),
-                      ),
-                      icon: const Icon(Icons.close),
-                      label: const Text('Abbrechen'),
-                      onPressed:
-                          onCancel ?? () => Navigator.of(context).pop(false),
-                    ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: UIConstants.deleteButtonBackground,
-                        foregroundColor: UIConstants.deleteButtonText,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: UIConstants.spacingL,
-                          vertical: UIConstants.spacingM,
-                        ),
-                      ),
-                      icon: const Icon(Icons.delete_outline),
-                      label: const Text('Löschen'),
-                      onPressed:
-                          onDelete ?? () => Navigator.of(context).pop(true),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: UIConstants.spacingL),
-              ],
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: UIConstants.spacingM),
+            ScaledText(
+              message,
+              style: UIStyles.dialogContentStyle.copyWith(
+                fontSize: UIStyles.dialogContentStyle.fontSize! * scaleFactor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: UIConstants.spacingL),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: UIConstants.spacingM,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed:
+                        onCancel ?? () => Navigator.of(context).pop(false),
+                    style: UIStyles.dialogCancelButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.close, color: UIConstants.closeIcon),
+                        UIConstants.horizontalSpacingS,
+                        ScaledText(
+                          'Abbrechen',
+                          style: TextStyle(fontSize: 16.0 * scaleFactor),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed:
+                        onDelete ?? () => Navigator.of(context).pop(true),
+                    style: UIStyles.dialogAcceptButtonStyle,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.check, color: UIConstants.checkIcon),
+                        UIConstants.horizontalSpacingS,
+                        ScaledText(
+                          'Löschen',
+                          style: TextStyle(fontSize: 16.0 * scaleFactor),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
