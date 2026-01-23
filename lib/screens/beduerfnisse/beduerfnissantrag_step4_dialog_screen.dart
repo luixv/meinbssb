@@ -195,15 +195,23 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      ValueListenableBuilder<bool>(
-                        valueListenable: kompensator,
-                        builder:
-                            (context, value, _) => CheckboxListTile(
-                              title: const Text('Kompensator'),
-                              value: value,
-                              onChanged:
-                                  (val) => kompensator.value = val ?? false,
-                            ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: kompensator,
+                          builder:
+                              (context, value, _) => SwitchListTile(
+                                title: const Text(
+                                  'Kompensator',
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                                value: value,
+                                onChanged:
+                                    (val) => kompensator.value = val,
+                                activeColor: UIConstants.primaryColor,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                        ),
                       ),
                       const SizedBox(height: 24),
                       Row(
