@@ -149,7 +149,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                     }).toList();
                                 return DropdownButtonFormField<int>(
                                   value: selectedWaffenartId,
-                                  hint: const Text('Waffenart wählen'),
+                                  hint: const Text('Waffenart'),
                                   isExpanded: true,
                                   items: items,
                                   onChanged: (val) {
@@ -206,7 +206,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                         ).toList();
                                     return DropdownButtonFormField<int>(
                                       value: selectedKaliberId,
-                                      hint: const Text('Kaliber wählen'),
+                                      hint: const Text('Kaliber'),
                                       isExpanded: true,
                                       items: items,
                                       onChanged: (val) {
@@ -246,7 +246,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                         child: ValueListenableBuilder<bool>(
                           valueListenable: kompensator,
                           builder:
-                              (context, value, _) => SwitchListTile(
+                              (context, value, _) => CheckboxListTile(
                                 title: const Text(
                                   'Kompensator',
                                   style: TextStyle(
@@ -255,8 +255,11 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                   ),
                                 ),
                                 value: value,
-                                onChanged: (val) => kompensator.value = val,
+                                onChanged:
+                                    (val) => kompensator.value = val ?? false,
                                 activeColor: UIConstants.primaryColor,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 contentPadding: EdgeInsets.zero,
                               ),
                         ),
