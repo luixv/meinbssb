@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/constants/ui_constants.dart';
 
 class AddWaffeBesitzDialog extends StatelessWidget {
   const AddWaffeBesitzDialog({
@@ -19,6 +20,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
     final kaliberIdController = TextEditingController();
     final kompensator = ValueNotifier<bool>(false);
     int? selectedWaffenartId;
+    final apiService = Provider.of<ApiService>(context, listen: false);
 
     return FutureBuilder<List<dynamic>>(
       // dynamic for BeduerfnisseAuswahl
@@ -143,39 +145,59 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Abbrechen'),
+                          Semantics(
+                            button: true,
+                            label: 'Abbrechen',
+                            hint: 'Dialog schließen ohne zu speichern',
+                            child: FloatingActionButton(
+                              heroTag: 'cancelWaffeBesitzFab',
+                              mini: true,
+                              backgroundColor:
+                                  UIConstants.cancelButtonBackground,
+                              foregroundColor: UIConstants.cancelButtonText,
+                              tooltip: 'Abbrechen',
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Icon(Icons.close),
+                            ),
                           ),
-                          const SizedBox(width: 16),
-                          ElevatedButton(
-                            onPressed: () async {
-                              if (formKey.currentState?.validate() ?? false) {
-                                final apiService = Provider.of<ApiService>(
-                                  context,
-                                  listen: false,
-                                );
-                                await apiService.createBedWaffeBesitz(
-                                  antragsnummer: antragsnummer,
-                                  wbkNr: wbkNrController.text,
-                                  lfdWbk: lfdWbkController.text,
-                                  waffenartId: selectedWaffenartId ?? 0,
-                                  kaliberId:
-                                      int.tryParse(kaliberIdController.text) ??
-                                      0,
-                                  kompensator: kompensator.value,
-                                  hersteller: null,
-                                  lauflaengeId: null,
-                                  gewicht: null,
-                                  beduerfnisgrundId: null,
-                                  verbandId: null,
-                                  bemerkung: null,
-                                );
-                                Navigator.of(context).pop();
-                                if (onSaved != null) onSaved!();
-                              }
-                            },
-                            child: const Text('Speichern'),
+                          const SizedBox(height: UIConstants.spacingS),
+                          Semantics(
+                            button: true,
+                            label: 'Speichern',
+                            hint: 'Eingaben speichern',
+                            child: FloatingActionButton(
+                              heroTag: 'saveWaffeBesitzFab',
+                              mini: true,
+                              backgroundColor:
+                                  UIConstants.submitButtonBackground,
+                              foregroundColor: UIConstants.submitButtonText,
+                              tooltip: 'Speichern',
+                              onPressed: () async {
+                                if (formKey.currentState?.validate() ?? false) {
+                                  await apiService.createBedWaffeBesitz(
+                                    antragsnummer: antragsnummer,
+                                    wbkNr: wbkNrController.text,
+                                    lfdWbk: lfdWbkController.text,
+                                    waffenartId: selectedWaffenartId ?? 0,
+                                    kaliberId:
+                                        int.tryParse(
+                                          kaliberIdController.text,
+                                        ) ??
+                                        0,
+                                    kompensator: kompensator.value,
+                                    hersteller: null,
+                                    lauflaengeId: null,
+                                    gewicht: null,
+                                    beduerfnisgrundId: null,
+                                    verbandId: null,
+                                    bemerkung: null,
+                                  );
+                                  Navigator.of(context).pop();
+                                  if (onSaved != null) onSaved!();
+                                }
+                              },
+                              child: const Icon(Icons.check),
+                            ),
                           ),
                         ],
                       ),
