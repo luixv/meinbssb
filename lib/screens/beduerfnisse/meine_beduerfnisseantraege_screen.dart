@@ -333,6 +333,8 @@ class _MeineBeduerfnisseantraegeScreenState
                                 if (i < beduerfnisse.length - 1)
                                   const SizedBox(height: UIConstants.spacingS),
                               ],
+                              // Add extra space at the bottom
+                              const SizedBox(height: UIConstants.spacingXXXL),
                             ],
                           );
                         },
