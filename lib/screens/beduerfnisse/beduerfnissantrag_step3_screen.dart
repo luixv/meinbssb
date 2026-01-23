@@ -61,9 +61,12 @@ class _BeduerfnissantragStep3ScreenState
     );
   }
 
-  void _viewDocument(BuildContext context, BeduerfnisseDateiZuord document) async {
+  void _viewDocument(
+    BuildContext context,
+    BeduerfnisseDateiZuord document,
+  ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    
+
     // Fetch the actual bed_datei to get file data only when viewing
     final datei = await apiService.getBedDateiById(document.dateiId);
     if (datei == null) {
@@ -74,9 +77,9 @@ class _BeduerfnissantragStep3ScreenState
       }
       return;
     }
-    
+
     if (!mounted) return;
-    
+
     showDialog(
       context: context,
       builder:
@@ -242,13 +245,14 @@ class _BeduerfnissantragStep3ScreenState
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder:
-                                  (context) => BeduerfnissantragStep4Screen(
-                                    userData: widget.userData,
-                                    isLoggedIn: widget.isLoggedIn,
-                                    onLogout: widget.onLogout,
-                                    antrag: widget.antrag,
-                                  ),
+                              builder: (BuildContext context) {
+                                return BeduerfnissantragStep4Screen(
+                                  userData: widget.userData,
+                                  isLoggedIn: widget.isLoggedIn,
+                                  onLogout: widget.onLogout,
+                                  antrag: widget.antrag,
+                                );
+                              },
                             ),
                           );
                         },
@@ -389,7 +393,8 @@ class _BeduerfnissantragStep3ScreenState
                                   color: UIConstants.defaultAppColor,
                                 ),
                                 title: ScaledText(
-                                  doc.label ?? 'Dokument ${doc.id ?? index + 1}',
+                                  doc.label ??
+                                      'Dokument ${doc.id ?? index + 1}',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -420,6 +425,8 @@ class _BeduerfnissantragStep3ScreenState
                         );
                       },
                     ),
+                    // Add extra space at the bottom for visual comfort
+                    const SizedBox(height: UIConstants.spacingXXXL2),
                   ],
                 ),
               ),
