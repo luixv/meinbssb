@@ -910,7 +910,7 @@ class _BeduerfnissantragStep2ScreenState
                                                                               }
                                                                             },
                                                                             child: Icon(
-                                                                              Icons.visibility,
+                                                                              Icons.remove_red_eye,
                                                                               size:
                                                                                   UIConstants.iconSizeS *
                                                                                   fontSizeProvider.scaleFactor,
@@ -1001,7 +1001,7 @@ class _BeduerfnissantragStep2ScreenState
                                                                                 }
                                                                               },
                                                                               child: Icon(
-                                                                                Icons.insert_drive_file,
+                                                                                Icons.remove_red_eye,
                                                                                 size:
                                                                                     UIConstants.iconSizeS *
                                                                                     fontSizeProvider.scaleFactor,

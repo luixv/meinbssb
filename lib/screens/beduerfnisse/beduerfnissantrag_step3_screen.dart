@@ -286,6 +286,7 @@ class _BeduerfnissantragStep3ScreenState
                     // Display Bedürfnisantrag type summary
                     if (widget.antrag != null)
                       Container(
+                        width: double.infinity,
                         padding: const EdgeInsets.all(UIConstants.spacingM),
                         decoration: BoxDecoration(
                           color: UIConstants.cardColor,
@@ -308,12 +309,19 @@ class _BeduerfnissantragStep3ScreenState
                               ),
                             ),
                             const SizedBox(height: UIConstants.spacingM),
-                            ScaledText(
-                              widget.antrag!.wbkNeu == true
-                                  ? 'Ich beantrage ein Bedürfnis für eine neue WBK'
-                                  : 'Ich beantrage ein Bedürfnis für eine bestehende WBK',
-                              style: TextStyle(
-                                fontSize: 16 * fontSizeProvider.scaleFactor,
+                            SizedBox(
+                              width: double.infinity,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: ScaledText(
+                                  widget.antrag!.wbkNeu == true
+                                      ? 'Ich beantrage ein Bedürfnis für eine neue WBK'
+                                      : 'Ich beantrage ein Bedürfnis für eine bestehende WBK',
+                                  style: TextStyle(
+                                    fontSize: 16 * fontSizeProvider.scaleFactor,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -380,7 +388,7 @@ class _BeduerfnissantragStep3ScreenState
                                   children: [
                                     IconButton(
                                       icon: const Icon(
-                                        Icons.visibility,
+                                        Icons.remove_red_eye,
                                         color: UIConstants.primaryColor,
                                       ),
                                       onPressed:

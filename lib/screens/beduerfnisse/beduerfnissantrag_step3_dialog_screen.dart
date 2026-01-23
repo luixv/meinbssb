@@ -6,7 +6,7 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meinbssb/widgets/dialog_fabs.dart';
+import 'package:meinbssb/widgets/success_dialog.dart';
 
 class BeduerfnissantragStep3Dialog extends StatefulWidget {
   const BeduerfnissantragStep3Dialog({required this.antragsnummer, super.key});
@@ -20,7 +20,6 @@ class BeduerfnissantragStep3Dialog extends StatefulWidget {
 
 class _BeduerfnissantragStep3DialogState
     extends State<BeduerfnissantragStep3Dialog> {
-  final bool _isLoading = false;
   bool _isUploadingDocument = false;
 
   Future<void> _uploadDocument(
@@ -39,10 +38,19 @@ class _BeduerfnissantragStep3DialogState
 
       if (widget.antragsnummer == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler: Antragsnummer nicht gefunden'),
-            ),
+          await showDialog(
+            context: context,
+            builder:
+                (ctx) => AlertDialog(
+                  title: const Text('Fehler'),
+                  content: const Text('Antragsnummer nicht gefunden'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
           );
         }
         return;
@@ -66,13 +74,33 @@ class _BeduerfnissantragStep3DialogState
           _isUploadingDocument = false;
         });
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$documentType erfolgreich hochgeladen')),
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder:
+                (ctx) => SuccessDialog(
+                  title: 'Erfolg',
+                  message: '$documentType erfolgreich hochgeladen',
+                  onClose: () {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(context).pop(true); // Close parent dialog
+                  },
+                ),
           );
-          Navigator.of(context).pop(true); // Close dialog on success
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fehler beim Hochladen')),
+          await showDialog(
+            context: context,
+            builder:
+                (ctx) => AlertDialog(
+                  title: const Text('Fehler'),
+                  content: const Text('Fehler beim Hochladen'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
           );
         }
       }
@@ -81,9 +109,20 @@ class _BeduerfnissantragStep3DialogState
         setState(() {
           _isUploadingDocument = false;
         });
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Hochladen: $e')));
+        await showDialog(
+          context: context,
+          builder:
+              (ctx) => AlertDialog(
+                title: const Text('Fehler'),
+                content: Text('Fehler beim Hochladen: $e'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+        );
       }
     }
   }
@@ -105,10 +144,19 @@ class _BeduerfnissantragStep3DialogState
 
       if (widget.antragsnummer == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler: Antragsnummer nicht gefunden'),
-            ),
+          await showDialog(
+            context: context,
+            builder:
+                (ctx) => AlertDialog(
+                  title: const Text('Fehler'),
+                  content: const Text('Antragsnummer nicht gefunden'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
           );
         }
         return;
@@ -130,17 +178,33 @@ class _BeduerfnissantragStep3DialogState
           _isUploadingDocument = false;
         });
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '$documentType erfolgreich gescannt und hochgeladen',
-              ),
-            ),
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder:
+                (ctx) => SuccessDialog(
+                  title: 'Erfolg',
+                  message: '$documentType erfolgreich gescannt und hochgeladen',
+                  onClose: () {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(context).pop(true); // Close parent dialog
+                  },
+                ),
           );
-          Navigator.of(context).pop(true); // Close dialog on success
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fehler beim Hochladen')),
+          await showDialog(
+            context: context,
+            builder:
+                (ctx) => AlertDialog(
+                  title: const Text('Fehler'),
+                  content: const Text('Fehler beim Hochladen'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
           );
         }
       }
@@ -149,9 +213,20 @@ class _BeduerfnissantragStep3DialogState
         setState(() {
           _isUploadingDocument = false;
         });
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Scannen: $e')));
+        await showDialog(
+          context: context,
+          builder:
+              (ctx) => AlertDialog(
+                title: const Text('Fehler'),
+                content: Text('Fehler beim Scannen: $e'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+        );
       }
     }
   }
@@ -161,162 +236,155 @@ class _BeduerfnissantragStep3DialogState
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
         return Dialog(
-          insetPadding: const EdgeInsets.all(UIConstants.spacingM),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: UIConstants.spacingL,
+            vertical: UIConstants.spacingM,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
           ),
           backgroundColor: UIConstants.backgroundColor,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Scaffold(
-              backgroundColor: UIConstants.backgroundColor,
-              body: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(UIConstants.spacingL),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Dialog Title
-                          ScaledText(
-                            'WBK hochladen',
-                            style: UIStyles.titleStyle.copyWith(
-                              fontSize:
-                                  UIStyles.titleStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
-                              color: UIConstants.defaultAppColor,
-                            ),
-                          ),
-                          const SizedBox(height: UIConstants.spacingL),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(UIConstants.spacingL),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Dialog Title
+                      ScaledText(
+                        'WBK hochladen',
+                        style: UIStyles.titleStyle.copyWith(
+                          fontSize:
+                              UIStyles.titleStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                          color: UIConstants.defaultAppColor,
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingM),
 
-                          // WBK Section
-                          ScaledText(
-                            'Kopie der vorhandenen WBK (Vorder und Rückseite)',
-                            style: UIStyles.bodyTextStyle.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                                  UIStyles.bodyTextStyle.fontSize! *
-                                  fontSizeProvider.scaleFactor,
+                      // WBK Section
+                      ScaledText(
+                        'Hochladen oder scannen der vorhanden WBK (Vorder und Rückseite)',
+                        style: UIStyles.bodyTextStyle.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              UIStyles.bodyTextStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
+                        ),
+                      ),
+                      const SizedBox(height: UIConstants.spacingL),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  _isUploadingDocument
+                                      ? null
+                                      : () => _uploadDocument(context, 'WBK'),
+                              icon: const Icon(Icons.upload_file),
+                              label: ScaledText(
+                                'Hochladen',
+                                style: TextStyle(
+                                  fontSize: 16 * fontSizeProvider.scaleFactor,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
+                                ),
+                              ),
                             ),
                           ),
-                          const SizedBox(height: UIConstants.spacingM),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed:
-                                      _isUploadingDocument
-                                          ? null
-                                          : () =>
-                                              _uploadDocument(context, 'WBK'),
-                                  icon: const Icon(Icons.upload_file),
-                                  label: ScaledText(
-                                    'Hochladen',
-                                    style: TextStyle(
-                                      fontSize:
-                                          16 * fontSizeProvider.scaleFactor,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        UIConstants.submitButtonBackground,
-                                    foregroundColor:
-                                        UIConstants.buttonTextColor,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: UIConstants.spacingM,
-                                      vertical: UIConstants.spacingM,
-                                    ),
-                                  ),
+                          const SizedBox(width: UIConstants.spacingM),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  _isUploadingDocument
+                                      ? null
+                                      : () => _scanAndUploadDocument(
+                                        context,
+                                        'WBK',
+                                      ),
+                              icon: const Icon(Icons.camera_alt),
+                              label: ScaledText(
+                                'Scannen',
+                                style: TextStyle(
+                                  fontSize: 16 * fontSizeProvider.scaleFactor,
                                 ),
                               ),
-                              const SizedBox(width: UIConstants.spacingM),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed:
-                                      _isUploadingDocument
-                                          ? null
-                                          : () => _scanAndUploadDocument(
-                                            context,
-                                            'WBK',
-                                          ),
-                                  icon: const Icon(Icons.camera_alt),
-                                  label: ScaledText(
-                                    'Scannen',
-                                    style: TextStyle(
-                                      fontSize:
-                                          16 * fontSizeProvider.scaleFactor,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        UIConstants.submitButtonBackground,
-                                    foregroundColor:
-                                        UIConstants.buttonTextColor,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: UIConstants.spacingM,
-                                      vertical: UIConstants.spacingM,
-                                    ),
-                                  ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
                                 ),
                               ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: UIConstants.spacingXL),
+                    ],
+                  ),
+                ),
+                // Close button (FAB)
+                Positioned(
+                  bottom: UIConstants.spacingM,
+                  right: UIConstants.spacingM,
+                  child: FloatingActionButton(
+                    heroTag: 'fab_close_upload_dialog',
+                    mini: true,
+                    backgroundColor: UIConstants.submitButtonBackground,
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.close,
+                      color: UIConstants.buttonTextColor,
                     ),
                   ),
-                  // FAB Close button
-                  Positioned(
-                    bottom: UIConstants.dialogFabTightBottom,
-                    right: UIConstants.dialogFabTightRight,
-                    child: DialogFABs(
-                      children: [
-                        FloatingActionButton(
-                          heroTag: 'fab_close_upload_dialog',
-                          mini: true,
-                          backgroundColor: UIConstants.submitButtonBackground,
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Icon(
-                            Icons.close,
-                            color: UIConstants.buttonTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Loading overlays
-                  if (_isLoading || _isUploadingDocument)
-                    Positioned.fill(
-                      child: Container(
+                ),
+                // Loading overlays
+                if (_isUploadingDocument)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: UIConstants.overlayColor,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  UIConstants.circularProgressIndicator,
-                                ),
+                        borderRadius: BorderRadius.circular(
+                          UIConstants.cornerRadius,
+                        ),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.circularProgressIndicator,
                               ),
-                              if (_isUploadingDocument) ...[
-                                const SizedBox(height: UIConstants.spacingM),
-                                const Text(
-                                  'Wird hochgeladen...',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: UIConstants.spacingM),
+                            const Text(
+                              'Wird hochgeladen...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
           ),
         );
