@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 class BeduerfnissantragStep4Screen extends StatelessWidget {
-  final dynamic userData;
-  final bool isLoggedIn;
-  final VoidCallback? onLogout;
-  final dynamic antrag;
 
   const BeduerfnissantragStep4Screen({
-    Key? key,
+    super.key,
     this.userData,
     this.isLoggedIn = false,
     this.onLogout,
     this.antrag,
-  }) : super(key: key);
+  });
+  final dynamic userData;
+  final bool isLoggedIn;
+  final VoidCallback? onLogout;
+  final dynamic antrag;
 
   @override
   Widget build(BuildContext context) {
