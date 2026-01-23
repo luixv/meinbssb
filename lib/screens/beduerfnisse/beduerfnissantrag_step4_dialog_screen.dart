@@ -17,7 +17,6 @@ class AddWaffeBesitzDialog extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final wbkNrController = TextEditingController();
     final lfdWbkController = TextEditingController();
-    final kaliberIdController = TextEditingController();
     final kompensator = ValueNotifier<bool>(false);
     int? selectedWaffenartId;
     int? selectedKaliberId;
@@ -90,95 +89,110 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      // Waffenart Dropdown with look and feel from step 2
-                      Builder(
-                        builder: (context) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (snapshot.hasError) {
-                            return const Text(
-                              'Fehler beim Laden der Waffenarten',
-                            );
-                          }
-                          final items =
-                              waffenarten?.map<DropdownMenuItem<int>>((wa) {
-                                return DropdownMenuItem<int>(
-                                  value: wa.id,
-                                  child: Text(wa.beschreibung ?? wa.toString()),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Builder(
+                              builder: (context) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text(
+                                    'Fehler beim Laden der Waffenarten',
+                                  );
+                                }
+                                final items =
+                                    waffenarten?.map<DropdownMenuItem<int>>((
+                                      wa,
+                                    ) {
+                                      return DropdownMenuItem<int>(
+                                        value: wa.id,
+                                        child: Text(
+                                          wa.beschreibung ?? wa.toString(),
+                                        ),
+                                      );
+                                    }).toList();
+                                return DropdownButtonFormField<int>(
+                                  value: selectedWaffenartId,
+                                  hint: const Text('Waffenart wählen'),
+                                  isExpanded: true,
+                                  items: items,
+                                  onChanged: (val) {
+                                    selectedWaffenartId = val;
+                                  },
+                                  decoration: const InputDecoration(
+                                    labelText: 'Waffenart *',
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  validator:
+                                      (v) => v == null ? 'Pflichtfeld' : null,
                                 );
-                              }).toList();
-                          return DropdownButtonFormField<int>(
-                            value: selectedWaffenartId,
-                            hint: const Text('Waffenart wählen'),
-                            isExpanded: true,
-                            items: items,
-                            onChanged: (val) {
-                              selectedWaffenartId = val;
-                            },
-                            decoration: const InputDecoration(
-                              labelText: 'Waffenart *',
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(),
+                              },
                             ),
-                            validator: (v) => v == null ? 'Pflichtfeld' : null,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      StatefulBuilder(
-                        builder: (context, setState) {
-                          return FutureBuilder<List<dynamic>>(
-                            // dynamic for BeduerfnisseAuswahl
-                            future: apiService.getBedAuswahlByTypId(6),
-                            builder: (context, kaliberSnapshot) {
-                              if (kaliberSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              if (kaliberSnapshot.hasError) {
-                                return const Text(
-                                  'Fehler beim Laden der Kaliber',
-                                );
-                              }
-                              final kaliberList = kaliberSnapshot.data;
-                              final items =
-                                  kaliberList?.map<DropdownMenuItem<int>>((k) {
-                                    return DropdownMenuItem<int>(
-                                      value: k.id,
-                                      child: Text(
-                                        k.beschreibung ?? k.toString(),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: StatefulBuilder(
+                              builder: (context, setState) {
+                                return FutureBuilder<List<dynamic>>(
+                                  // dynamic for BeduerfnisseAuswahl
+                                  future: apiService.getBedAuswahlByTypId(6),
+                                  builder: (context, kaliberSnapshot) {
+                                    if (kaliberSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    if (kaliberSnapshot.hasError) {
+                                      return const Text(
+                                        'Fehler beim Laden der Kaliber',
+                                      );
+                                    }
+                                    final kaliberList = kaliberSnapshot.data;
+                                    final items =
+                                        kaliberList?.map<DropdownMenuItem<int>>(
+                                          (k) {
+                                            return DropdownMenuItem<int>(
+                                              value: k.id,
+                                              child: Text(
+                                                k.beschreibung ?? k.toString(),
+                                              ),
+                                            );
+                                          },
+                                        ).toList();
+                                    return DropdownButtonFormField<int>(
+                                      value: selectedKaliberId,
+                                      hint: const Text('Kaliber wählen'),
+                                      isExpanded: true,
+                                      items: items,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          selectedKaliberId = val;
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        labelText: 'Kaliber *',
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        border: OutlineInputBorder(),
                                       ),
+                                      validator:
+                                          (v) =>
+                                              v == null ? 'Pflichtfeld' : null,
                                     );
-                                  }).toList();
-                              return DropdownButtonFormField<int>(
-                                value: selectedKaliberId,
-                                hint: const Text('Kaliber wählen'),
-                                isExpanded: true,
-                                items: items,
-                                onChanged: (val) {
-                                  setState(() {
-                                    selectedKaliberId = val;
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  labelText: 'Kaliber *',
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(),
-                                ),
-                                validator:
-                                    (v) => v == null ? 'Pflichtfeld' : null,
-                              );
-                            },
-                          );
-                        },
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       ValueListenableBuilder<bool>(
