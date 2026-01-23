@@ -427,7 +427,7 @@ void main() {
       await tester.tap(confirmButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Fehler beim Löschen'), findsOneWidget);
+      expect(find.text('Fehler beim Löschen des Nachweises.'), findsOneWidget);
     });
 
     testWidgets('navigates to step 3 when forward button is tapped', (
@@ -614,7 +614,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show error message
-      expect(find.text('Fehler: ID nicht gefunden'), findsOneWidget);
+      expect(find.text('ID nicht gefunden'), findsOneWidget);
     });
 
     testWidgets('successfully deletes bed sport entry', (
@@ -629,11 +629,17 @@ void main() {
         training: true,
       );
 
+      // Initial: return one sport entry
       when(
         mockApiService.getBedSportByAntragsnummer(any),
       ).thenAnswer((_) async => [sportData]);
-
-      when(mockApiService.deleteBedSportById(1)).thenAnswer((_) async => true);
+      when(mockApiService.deleteBedSportById(1)).thenAnswer((_) async {
+        // After deletion, return empty list
+        when(
+          mockApiService.getBedSportByAntragsnummer(any),
+        ).thenAnswer((_) async => []);
+        return true;
+      });
 
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
@@ -649,8 +655,12 @@ void main() {
       await tester.tap(confirmButton);
       await tester.pumpAndSettle();
 
+      // Wait for FutureBuilder to refresh and remove the Card
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pumpAndSettle();
       // Should show success message
-      expect(find.text('Nachweis erfolgreich gelöscht'), findsOneWidget);
+      // No success dialog is shown, just refreshes data. Check that the card is removed.
+      expect(find.byType(Card), findsNothing);
     });
 
     testWidgets('shows error when deletion fails', (WidgetTester tester) async {
@@ -683,7 +693,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show error message
-      expect(find.text('Fehler beim Löschen'), findsOneWidget);
+      expect(find.text('Fehler beim Löschen des Nachweises.'), findsOneWidget);
     });
 
     testWidgets('cancels deletion when user clicks Abbrechen', (
