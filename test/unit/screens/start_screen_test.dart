@@ -4,10 +4,10 @@ import 'package:mockito/mockito.dart';
 import 'package:meinbssb/screens/start_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
-// Add this import for Html widget
 import 'dart:typed_data';
 
 import '../helpers/test_helper.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
 
 void main() {
   setUp(() {
@@ -546,11 +546,28 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      // Wait for SnackBar to appear and check for error text
+      // Wait for SnackBar to appear and check for error text in ScaledText
       await tester.pumpAndSettle();
+      final snackBars = tester.widgetList<SnackBar>(find.byType(SnackBar));
+      for (final snackBar in snackBars) {
+        // Print the runtime type and content for debugging
+        // ignore: avoid_print
+        print(
+          'SnackBar content: \\${snackBar.content.runtimeType} - \\${snackBar.content}',
+        );
+        if (snackBar.content is ScaledText) {
+          // ignore: avoid_print
+          print('ScaledText: \\${(snackBar.content as ScaledText).text}');
+        }
+      }
       expect(
-        find.text('Fehler beim Abmelden von der Schulung.'),
-        findsOneWidget,
+        snackBars.any(
+          (snackBar) =>
+              snackBar.content is ScaledText &&
+              (snackBar.content as ScaledText).text ==
+                  'Fehler beim Abmelden von der Schulung.',
+        ),
+        isTrue,
       );
     });
 
@@ -577,9 +594,28 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      // Wait for SnackBar to appear and check for error text
+      // Wait for SnackBar to appear and check for error text in ScaledText
       await tester.pumpAndSettle();
-      expect(find.textContaining('Error:'), findsOneWidget);
+      final snackBars = tester.widgetList<SnackBar>(find.byType(SnackBar));
+      for (final snackBar in snackBars) {
+        // Print the runtime type and content for debugging
+        // ignore: avoid_print
+        print(
+          'SnackBar content: \\${snackBar.content.runtimeType} - \\${snackBar.content}',
+        );
+        if (snackBar.content is ScaledText) {
+          // ignore: avoid_print
+          print('ScaledText: \\${(snackBar.content as ScaledText).text}');
+        }
+      }
+      expect(
+        snackBars.any(
+          (snackBar) =>
+              snackBar.content is ScaledText &&
+              (snackBar.content as ScaledText).text.contains('Error:'),
+        ),
+        isTrue,
+      );
     });
   });
 
