@@ -31,12 +31,14 @@ class AddWaffeBesitzDialog extends StatelessWidget {
       builder: (context, snapshot) {
         final waffenarten = snapshot.data;
         return Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: UIConstants.backgroundColor,
           insetPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 32,
+            horizontal: UIConstants.spacingL,
+            vertical: UIConstants.spacingM,
           ),
-          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+          ),
           child: Center(
             child: Container(
               width: 440,
