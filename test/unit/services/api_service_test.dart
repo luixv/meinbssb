@@ -2950,10 +2950,11 @@ void main() {
       test('createBedDateiZuord delegates to postgrest service', () async {
         final expectedResult = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
+          label: 'Test Label',
         );
         when(
           mockPostgrestService.createBedDateiZuord(
@@ -2961,6 +2962,7 @@ void main() {
             dateiId: anyNamed('dateiId'),
             dateiArt: anyNamed('dateiArt'),
             bedSportId: anyNamed('bedSportId'),
+            label: anyNamed('label'),
           ),
         ).thenAnswer((_) async => expectedResult);
 
@@ -2969,6 +2971,7 @@ void main() {
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
+          label: 'Test Label',
         );
 
         expect(result, equals(expectedResult));
@@ -2978,6 +2981,7 @@ void main() {
             dateiId: 10,
             dateiArt: 'SPORT',
             bedSportId: 5,
+            label: 'Test Label',
           ),
         ).called(1);
       });
@@ -2985,10 +2989,11 @@ void main() {
       test('updateBedDateiZuord delegates to postgrest service', () async {
         final dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 6,
+          label: 'Updated Label',
         );
 
         when(
@@ -3000,105 +3005,108 @@ void main() {
         verify(mockPostgrestService.updateBedDateiZuord(dateiZuord)).called(1);
       });
 
-      test('getBedDateiZuordByAntragsnummer returns list of BeduerfnisseDatei', () async {
+      test('getBedDateiZuordByAntragsnummer returns list of BeduerfnisseDateiZuord', () async {
         final dateiZuordList = [
           BeduerfnisseDateiZuord(
             id: 1,
-            antragsnummer: '123',
+            antragsnummer: 123,
             dateiId: 50,
             dateiArt: 'SPORT',
             bedSportId: 10,
+            label: 'Label 1',
           ),
           BeduerfnisseDateiZuord(
             id: 2,
-            antragsnummer: '123',
+            antragsnummer: 123,
             dateiId: 51,
             dateiArt: 'SPORT',
             bedSportId: 11,
+            label: 'Label 2',
           ),
         ];
-
-        final datei1 = BeduerfnisseDatei(
-          id: 50,
-          antragsnummer: 123,
-          dateiname: 'file1.pdf',
-          fileBytes: [1, 2, 3, 4, 5],
-        );
-
-        final datei2 = BeduerfnisseDatei(
-          id: 51,
-          antragsnummer: 123,
-          dateiname: 'file2.pdf',
-          fileBytes: [6, 7, 8, 9, 10],
-        );
 
         when(
           mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
         ).thenAnswer((_) async => dateiZuordList);
 
-        when(
-          mockPostgrestService.getBedDateiById(50),
-        ).thenAnswer((_) async => datei1);
-
-        when(
-          mockPostgrestService.getBedDateiById(51),
-        ).thenAnswer((_) async => datei2);
-
         final result = await apiService.getBedDateiZuordByAntragsnummer(123, 'SPORT');
 
-        expect(result, isA<List<BeduerfnisseDatei>>());
+        expect(result, isA<List<BeduerfnisseDateiZuord>>());
         expect(result.length, equals(2));
-        expect(result[0].id, equals(50));
-        expect(result[0].dateiname, equals('file1.pdf'));
-        expect(result[0].fileBytes, equals([1, 2, 3, 4, 5]));
-        expect(result[1].id, equals(51));
-        expect(result[1].dateiname, equals('file2.pdf'));
-        expect(result[1].fileBytes, equals([6, 7, 8, 9, 10]));
+        expect(result[0].id, equals(1));
+        expect(result[0].dateiId, equals(50));
+        expect(result[0].dateiArt, equals('SPORT'));
+        expect(result[0].label, equals('Label 1'));
+        expect(result[1].id, equals(2));
+        expect(result[1].dateiId, equals(51));
+        expect(result[1].dateiArt, equals('SPORT'));
+        expect(result[1].label, equals('Label 2'));
         verify(
           mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
         ).called(1);
-        verify(mockPostgrestService.getBedDateiById(50)).called(1);
-        verify(mockPostgrestService.getBedDateiById(51)).called(1);
-      });
-
-      test('getBedDateiZuordByAntragsnummer excludes entries when datei not found', () async {
-        final dateiZuordList = [
-          BeduerfnisseDateiZuord(
-            id: 1,
-            antragsnummer: '123',
-            dateiId: 50,
-            dateiArt: 'SPORT',
-            bedSportId: 10,
-          ),
-        ];
-
-        when(
-          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
-        ).thenAnswer((_) async => dateiZuordList);
-
-        when(
-          mockPostgrestService.getBedDateiById(50),
-        ).thenAnswer((_) async => null);
-
-        final result = await apiService.getBedDateiZuordByAntragsnummer(123, 'SPORT');
-
-        expect(result, isA<List<BeduerfnisseDatei>>());
-        expect(result.isEmpty, isTrue);
-        verify(mockPostgrestService.getBedDateiById(50)).called(1);
+        verifyNever(mockPostgrestService.getBedDateiById(any));
       });
 
       test('getBedDateiZuordByAntragsnummer returns empty list when not found', () async {
         when(
-          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'WBK'),
+          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
         ).thenAnswer((_) async => <BeduerfnisseDateiZuord>[]);
 
-        final result = await apiService.getBedDateiZuordByAntragsnummer(123, 'WBK');
+        final result = await apiService.getBedDateiZuordByAntragsnummer(123, 'SPORT');
 
         expect(result, isEmpty);
         verify(
-          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'WBK'),
+          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
         ).called(1);
-        verifyNever(mockPostgrestService.getBedDateiById(any));
+      });
+
+      test('getBedDateiZuordByAntragsnummer handles exception gracefully', () async {
+        when(
+          mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+        ).thenThrow(Exception('Database error'));
+
+        final result = await apiService.getBedDateiZuordByAntragsnummer(123, 'SPORT');
+
+        expect(result, isEmpty);
+      });
+
+      test('getBedDateiById delegates to postgrest service', () async {
+        final expectedDatei = BeduerfnisseDatei(
+          id: 100,
+          antragsnummer: 123,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3, 4, 5],
+        );
+
+        when(
+          mockPostgrestService.getBedDateiById(100),
+        ).thenAnswer((_) async => expectedDatei);
+
+        final result = await apiService.getBedDateiById(100);
+
+        expect(result, equals(expectedDatei));
+        verify(mockPostgrestService.getBedDateiById(100)).called(1);
+      });
+
+      test('getBedDateiById returns null when not found', () async {
+        when(
+          mockPostgrestService.getBedDateiById(100),
+        ).thenAnswer((_) async => null);
+
+        final result = await apiService.getBedDateiById(100);
+
+        expect(result, isNull);
+        verify(mockPostgrestService.getBedDateiById(100)).called(1);
+      });
+
+      test('getBedDateiById handles exception gracefully', () async {
+        when(
+          mockPostgrestService.getBedDateiById(100),
+        ).thenThrow(Exception('Database error'));
+
+        final result = await apiService.getBedDateiById(100);
+
+        expect(result, isNull);
       });
 
       test('getBedDateiZuordByAntragsnummer handles exception gracefully', () async {
@@ -3114,7 +3122,7 @@ void main() {
       test('hasBedDateiSport returns true when datei exists', () async {
         final dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 50,
           dateiArt: 'SPORT',
           bedSportId: 10,
@@ -3348,7 +3356,7 @@ void main() {
         test('returns true when mapping succeeds', () async {
           final expectedDateiZuord = BeduerfnisseDateiZuord(
             id: 1,
-            antragsnummer: '123',
+            antragsnummer: 123,
             dateiId: 100,
             dateiArt: 'SPORT',
             bedSportId: 5,
@@ -3361,6 +3369,7 @@ void main() {
               dateiId: 100,
               dateiArt: 'SPORT',
               bedSportId: 5,
+              label: anyNamed('label'),
             ),
           ).thenAnswer((_) async => expectedDateiZuord);
 
@@ -3377,6 +3386,7 @@ void main() {
               dateiId: 100,
               dateiArt: 'SPORT',
               bedSportId: 5,
+              label: null,
             ),
           ).called(1);
         });
@@ -3389,6 +3399,7 @@ void main() {
               dateiId: 100,
               dateiArt: 'SPORT',
               bedSportId: 5,
+              label: anyNamed('label'),
             ),
           ).thenThrow(Exception('Failed to create zuord'));
 
@@ -3412,7 +3423,7 @@ void main() {
 
           final expectedDateiZuord = BeduerfnisseDateiZuord(
             id: 2,
-            antragsnummer: '456',
+            antragsnummer: 123,
             dateiId: 200,
             dateiArt: 'WBK',
           );
@@ -3433,6 +3444,7 @@ void main() {
               dateiId: 200,
               dateiArt: 'WBK',
               bedSportId: null,
+              label: anyNamed('label'),
             ),
           ).thenAnswer((_) async => expectedDateiZuord);
 
@@ -3456,6 +3468,7 @@ void main() {
               dateiId: 200,
               dateiArt: 'WBK',
               bedSportId: null,
+              label: null,
             ),
           ).called(1);
         });
@@ -3486,7 +3499,7 @@ void main() {
         () async {
           final dateiZuord = BeduerfnisseDateiZuord(
             id: 1,
-            antragsnummer: '123',
+            antragsnummer: 123,
             dateiId: 50,
             dateiArt: 'SPORT',
             bedSportId: 10,
@@ -3546,7 +3559,7 @@ void main() {
         () async {
           final dateiZuord = BeduerfnisseDateiZuord(
             id: 1,
-            antragsnummer: '123',
+            antragsnummer: 123,
             dateiId: 50,
             dateiArt: 'SPORT',
             bedSportId: 10,
@@ -3578,7 +3591,7 @@ void main() {
         () async {
           final dateiZuord = BeduerfnisseDateiZuord(
             id: 1,
-            antragsnummer: '123',
+            antragsnummer: 123,
             dateiId: 50,
             dateiArt: 'SPORT',
             bedSportId: 10,
@@ -3614,7 +3627,7 @@ void main() {
       test('deleteBedSportById delegates to underlying services', () async {
         final dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 50,
           dateiArt: 'SPORT',
           bedSportId: 10,
@@ -3827,7 +3840,7 @@ void main() {
       test('returns datei when zuord and datei exist', () async {
         final zuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '100',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
@@ -3967,7 +3980,7 @@ void main() {
       test('returns true when mapping succeeds', () async {
         final zuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '100',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
@@ -3979,6 +3992,7 @@ void main() {
             dateiId: 10,
             dateiArt: 'SPORT',
             bedSportId: 5,
+            label: anyNamed('label'),
           ),
         ).thenAnswer((_) async => zuord);
 
@@ -3995,6 +4009,7 @@ void main() {
             dateiId: 10,
             dateiArt: 'SPORT',
             bedSportId: 5,
+            label: null,
           ),
         ).called(1);
       });
@@ -4006,6 +4021,7 @@ void main() {
             dateiId: 10,
             dateiArt: 'SPORT',
             bedSportId: 5,
+            label: anyNamed('label'),
           ),
         ).thenThrow(Exception('Mapping failed'));
 
@@ -4024,7 +4040,7 @@ void main() {
         final dateiResponse = {'id': 123};
         final zuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '100',
+          antragsnummer: 123,
           dateiId: 123,
           dateiArt: 'WBK',
           bedSportId: null,
@@ -4044,6 +4060,7 @@ void main() {
             dateiId: 123,
             dateiArt: 'WBK',
             bedSportId: null,
+            label: anyNamed('label'),
           ),
         ).thenAnswer((_) async => zuord);
 
@@ -4067,6 +4084,7 @@ void main() {
             dateiId: 123,
             dateiArt: 'WBK',
             bedSportId: null,
+            label: null,
           ),
         ).called(1);
       });
@@ -4093,6 +4111,7 @@ void main() {
             dateiId: anyNamed('dateiId'),
             dateiArt: anyNamed('dateiArt'),
             bedSportId: anyNamed('bedSportId'),
+            label: anyNamed('label'),
           ),
         );
       });
@@ -4114,6 +4133,7 @@ void main() {
             dateiId: 123,
             dateiArt: 'WBK',
             bedSportId: null,
+            label: anyNamed('label'),
           ),
         ).thenThrow(Exception('Zuord creation failed'));
 
@@ -4154,7 +4174,7 @@ void main() {
       test('returns true when zuord exists', () async {
         final zuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '100',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,

@@ -1492,10 +1492,11 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': 'A123',
+            'antragsnummer': 123,
             'datei_id': 10,
             'datei_art': 'SPORT',
             'bed_sport_id': 5,
+            'label': 'Test Label',
           },
         ];
         when(mockClient.post(
@@ -1509,14 +1510,16 @@ void main() {
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
+          label: 'Test Label',
         );
 
         expect(result, isA<BeduerfnisseDateiZuord>());
         expect(result.id, equals(1));
-        expect(result.antragsnummer, equals('A123'));
+        expect(result.antragsnummer, equals(123));
         expect(result.dateiId, equals(10));
         expect(result.dateiArt, equals('SPORT'));
         expect(result.bedSportId, equals(5));
+        expect(result.label, equals('Test Label'));
         verify(mockClient.post(
           any,
           headers: anyNamed('headers'),
@@ -1562,7 +1565,7 @@ void main() {
         final mockResponse = [
           {
             'id': 2,
-            'antragsnummer': 'A124',
+            'antragsnummer': 124,
             'datei_id': 11,
             'datei_art': 'WBK',
           },
@@ -1580,8 +1583,40 @@ void main() {
         );
 
         expect(result, isA<BeduerfnisseDateiZuord>());
+        expect(result.antragsnummer, equals(124));
         expect(result.dateiArt, equals('WBK'));
         expect(result.bedSportId, isNull);
+        expect(result.label, isNull);
+      });
+
+      test('createBedDateiZuord works with label only', () async {
+        final mockResponse = [
+          {
+            'id': 3,
+            'antragsnummer': 125,
+            'datei_id': 12,
+            'datei_art': 'WBK',
+            'label': 'WBK Document',
+          },
+        ];
+        when(mockClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+
+        final result = await service.createBedDateiZuord(
+          antragsnummer: 125,
+          dateiId: 12,
+          dateiArt: 'WBK',
+          label: 'WBK Document',
+        );
+
+        expect(result, isA<BeduerfnisseDateiZuord>());
+        expect(result.antragsnummer, equals(125));
+        expect(result.dateiArt, equals('WBK'));
+        expect(result.bedSportId, isNull);
+        expect(result.label, equals('WBK Document'));
       });
 
       test('updateBedDateiZuord updates entry successfully', () async {
@@ -1593,10 +1628,11 @@ void main() {
 
         const dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 6,
+          label: 'Updated Label',
         );
 
         final result = await service.updateBedDateiZuord(dateiZuord);
@@ -1610,9 +1646,10 @@ void main() {
 
       test('updateBedDateiZuord returns false when id is null', () async {
         const dateiZuord = BeduerfnisseDateiZuord(
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
+          label: 'Test Label',
         );
 
         final result = await service.updateBedDateiZuord(dateiZuord);
@@ -1633,9 +1670,10 @@ void main() {
 
         const dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
+          label: 'Test Label',
         );
 
         final result = await service.updateBedDateiZuord(dateiZuord);
@@ -1656,9 +1694,10 @@ void main() {
 
         const dateiZuord = BeduerfnisseDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
+          label: 'Test Label',
         );
 
         final result = await service.updateBedDateiZuord(dateiZuord);
@@ -1669,14 +1708,14 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': '123',
+            'antragsnummer': 123,
             'datei_id': 50,
             'datei_art': 'SPORT',
             'bed_sport_id': 10,
           },
           {
             'id': 2,
-            'antragsnummer': '123',
+            'antragsnummer': 123,
             'datei_id': 51,
             'datei_art': 'SPORT',
             'bed_sport_id': 11,
@@ -1692,9 +1731,15 @@ void main() {
         expect(result, isA<List<BeduerfnisseDateiZuord>>());
         expect(result.length, equals(2));
         expect(result[0].id, equals(1));
-        expect(result[0].antragsnummer, equals('123'));
+        expect(result[0].antragsnummer, equals(123));
+        expect(result[0].dateiId, equals(50));
         expect(result[0].dateiArt, equals('SPORT'));
+        expect(result[0].bedSportId, equals(10));
         expect(result[1].id, equals(2));
+        expect(result[1].antragsnummer, equals(123));
+        expect(result[1].dateiId, equals(51));
+        expect(result[1].dateiArt, equals('SPORT'));
+        expect(result[1].bedSportId, equals(11));
         verify(mockClient.get(
           any,
           headers: anyNamed('headers'),
@@ -1745,7 +1790,7 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': '123',
+            'antragsnummer': 123,
             'datei_id': 50,
             'datei_art': 'SPORT',
             'bed_sport_id': 10,
@@ -1760,6 +1805,7 @@ void main() {
 
         expect(result, isNotNull);
         expect(result!.id, equals(1));
+        expect(result.antragsnummer, equals(123));
         expect(result.dateiId, equals(50));
         expect(result.bedSportId, equals(10));
         verify(mockClient.get(

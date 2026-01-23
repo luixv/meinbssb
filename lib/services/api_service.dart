@@ -832,9 +832,8 @@ class ApiService {
         return null;
       }
 
-      // Get the datei by ID
-      final datei = await _postgrestService.getBedDateiById(zuord.dateiId);
-      return datei;
+      // Get the datei by ID using the api_service method
+      return await getBedDateiById(zuord.dateiId);
     } catch (e) {
       LoggerService.logError(
         'Error getting document for sport_id $bedSportId: $e',
@@ -1148,12 +1147,14 @@ class ApiService {
     required int dateiId,
     required String dateiArt,
     int? bedSportId,
+    String? label,
   }) async {
     return _postgrestService.createBedDateiZuord(
       antragsnummer: antragsnummer,
       dateiId: dateiId,
       dateiArt: dateiArt,
       bedSportId: bedSportId,
+      label: label,
     );
   }
 
@@ -1165,36 +1166,35 @@ class ApiService {
     return _postgrestService.deleteBedDateiZuord(antragsnummer);
   }
 
-  /// Get bed_datei entries by antragsnummer and datei_art
-  /// Returns a list of BeduerfnisseDatei with fileBytes from bed_datei_zuord associations
-  Future<List<BeduerfnisseDatei>> getBedDateiZuordByAntragsnummer(
+  /// Get bed_datei_zuord entries by antragsnummer and datei_art
+  /// Returns a list of BeduerfnisseDateiZuord
+  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByAntragsnummer(
     int antragsnummer,
     String dateiArt,
   ) async {
     try {
-      // Get the bed_datei_zuord entries
-      final dateiZuordList = await _postgrestService.getBedDateiZuordByAntragsnummer(
+      return await _postgrestService.getBedDateiZuordByAntragsnummer(
         antragsnummer,
         dateiArt,
       );
-
-      // Map each datei_zuord to its associated bed_datei
-      final result = <BeduerfnisseDatei>[];
-      for (final dateiZuord in dateiZuordList) {
-        // Get the associated bed_datei to retrieve fileBytes
-        final datei = await _postgrestService.getBedDateiById(dateiZuord.dateiId);
-        
-        if (datei != null) {
-          result.add(datei);
-        }
-      }
-
-      return result;
     } catch (e) {
       LoggerService.logError(
-        'Error getting bed_datei for antragsnummer $antragsnummer and datei_art $dateiArt: $e',
+        'Error getting bed_datei_zuord for antragsnummer $antragsnummer and datei_art $dateiArt: $e',
       );
       return [];
+    }
+  }
+
+  /// Get bed_datei entry by ID
+  /// Returns the BeduerfnisseDatei if found, null otherwise
+  Future<BeduerfnisseDatei?> getBedDateiById(int dateiId) async {
+    try {
+      return await _postgrestService.getBedDateiById(dateiId);
+    } catch (e) {
+      LoggerService.logError(
+        'Error getting bed_datei by id $dateiId: $e',
+      );
+      return null;
     }
   }
 

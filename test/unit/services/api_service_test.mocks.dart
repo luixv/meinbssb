@@ -1933,6 +1933,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
     required int? dateiId,
     required String? dateiArt,
     int? bedSportId,
+    String? label,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createBedDateiZuord, [], {
@@ -1940,6 +1941,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #dateiId: dateiId,
               #dateiArt: dateiArt,
               #bedSportId: bedSportId,
+              #label: label,
             }),
             returnValue: _i3.Future<_i9.BeduerfnisseDateiZuord>.value(
               _FakeBeduerfnisseDateiZuord_8(
@@ -1949,6 +1951,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
                   #dateiId: dateiId,
                   #dateiArt: dateiArt,
                   #bedSportId: bedSportId,
+                  #label: label,
                 }),
               ),
             ),

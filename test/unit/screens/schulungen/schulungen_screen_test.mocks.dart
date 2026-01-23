@@ -1587,6 +1587,7 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
     required int? dateiId,
     required String? dateiArt,
     int? bedSportId,
+    String? label,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#createBedDateiZuord, [], {
@@ -1594,6 +1595,7 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
               #dateiId: dateiId,
               #dateiArt: dateiArt,
               #bedSportId: bedSportId,
+              #label: label,
             }),
             returnValue: _i12.Future<_i10.BeduerfnisseDateiZuord>.value(
               _FakeBeduerfnisseDateiZuord_9(
@@ -1603,6 +1605,7 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
                   #dateiId: dateiId,
                   #dateiArt: dateiArt,
                   #bedSportId: bedSportId,
+                  #label: label,
                 }),
               ),
             ),
@@ -1628,20 +1631,26 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
           as _i12.Future<bool>);
 
   @override
-  _i12.Future<List<_i36.BeduerfnisseDatei>> getBedDateiZuordByAntragsnummer(
-    int? antragsnummer,
-    String? dateiArt,
-  ) =>
+  _i12.Future<List<_i10.BeduerfnisseDateiZuord>>
+  getBedDateiZuordByAntragsnummer(int? antragsnummer, String? dateiArt) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiZuordByAntragsnummer, [
               antragsnummer,
               dateiArt,
             ]),
-            returnValue: _i12.Future<List<_i36.BeduerfnisseDatei>>.value(
-              <_i36.BeduerfnisseDatei>[],
+            returnValue: _i12.Future<List<_i10.BeduerfnisseDateiZuord>>.value(
+              <_i10.BeduerfnisseDateiZuord>[],
             ),
           )
-          as _i12.Future<List<_i36.BeduerfnisseDatei>>);
+          as _i12.Future<List<_i10.BeduerfnisseDateiZuord>>);
+
+  @override
+  _i12.Future<_i36.BeduerfnisseDatei?> getBedDateiById(int? dateiId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiById, [dateiId]),
+            returnValue: _i12.Future<_i36.BeduerfnisseDatei?>.value(),
+          )
+          as _i12.Future<_i36.BeduerfnisseDatei?>);
 
   @override
   _i12.Future<bool> hasBedDateiSport(int? sportId) =>
