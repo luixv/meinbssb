@@ -28,6 +28,45 @@ class _BeduerfnissantragStep3DialogState
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
 
+    // Check if label is empty
+    if (_labelController.text.trim().isEmpty) {
+      await showDialog(
+        context: context,
+        builder:
+            (ctx) => AlertDialog(
+              title: Row(
+                children: const [
+                  Icon(Icons.error, color: UIConstants.errorColor),
+                  SizedBox(width: 12),
+                  Text(
+                    'Fehler',
+                    style: TextStyle(color: UIConstants.errorColor),
+                  ),
+                ],
+              ),
+              content: const Text(
+                'Bitte geben Sie eine Beschreibung für die Datei ein.',
+                style: TextStyle(fontSize: 18, color: UIConstants.errorColor),
+                textAlign: TextAlign.center,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: TextButton.styleFrom(
+                    foregroundColor: UIConstants.buttonTextColor,
+                    backgroundColor: UIConstants.submitButtonBackground,
+                  ),
+                  child: const Text('OK'),
+                ),
+              ],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+              ),
+            ),
+      );
+      return;
+    }
+
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? file = await picker.pickImage(source: ImageSource.gallery);
@@ -121,6 +160,45 @@ class _BeduerfnissantragStep3DialogState
     String documentType,
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
+
+    // Check if label is empty
+    if (_labelController.text.trim().isEmpty) {
+      await showDialog(
+        context: context,
+        builder:
+            (ctx) => AlertDialog(
+              title: Row(
+                children: const [
+                  Icon(Icons.error, color: UIConstants.errorColor),
+                  SizedBox(width: 12),
+                  Text(
+                    'Fehler',
+                    style: TextStyle(color: UIConstants.errorColor),
+                  ),
+                ],
+              ),
+              content: const Text(
+                'Bitte geben Sie eine Beschreibung für die Datei ein.',
+                style: TextStyle(fontSize: 18, color: UIConstants.errorColor),
+                textAlign: TextAlign.center,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: TextButton.styleFrom(
+                    foregroundColor: UIConstants.buttonTextColor,
+                    backgroundColor: UIConstants.submitButtonBackground,
+                  ),
+                  child: const Text('OK'),
+                ),
+              ],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+              ),
+            ),
+      );
+      return;
+    }
 
     try {
       // Scan the document
@@ -250,11 +328,25 @@ class _BeduerfnissantragStep3DialogState
                       ),
                       const SizedBox(height: UIConstants.spacingM),
 
-                      // Datei Beschreibung input field
+                      // Datei Beschreibung input field (compulsory, with asterisk)
                       TextField(
                         controller: _labelController,
                         decoration: InputDecoration(
-                          labelText: 'Datei Beschreibung',
+                          label: RichText(
+                            text: TextSpan(
+                              text: 'Datei Beschreibung',
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontSize: 16 * fontSizeProvider.scaleFactor,
+                              ),
+                              children: const [
+                                TextSpan(
+                                  text: ' *',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
                           hintText: 'Beschreibung des Dokuments',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(

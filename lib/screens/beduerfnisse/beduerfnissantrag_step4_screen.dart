@@ -5,6 +5,7 @@ import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'beduerfnissantrag_step4_dialog_screen.dart';
 
 class BeduerfnissantragStep4Screen extends StatefulWidget {
   const BeduerfnissantragStep4Screen({
@@ -50,101 +51,13 @@ class _BeduerfnissantragStep4ScreenState
   }
 
   Future<void> _showAddWaffeBesitzDialog(BuildContext context) async {
-    final formKey = GlobalKey<FormState>();
-    // Example fields for BeduerfnisseWaffeBesitz
-    final wbkNrController = TextEditingController();
-    final lfdWbkController = TextEditingController();
-    final waffenartIdController = TextEditingController();
-    final kaliberIdController = TextEditingController();
-    final kompensator = ValueNotifier<bool>(false);
-
     await showDialog(
       context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text('Waffenbesitz hinzufügen'),
-          content: Form(
-            key: formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: wbkNrController,
-                    decoration: const InputDecoration(labelText: 'WBK-Nr'),
-                    validator:
-                        (v) => v == null || v.isEmpty ? 'Pflichtfeld' : null,
-                  ),
-                  TextFormField(
-                    controller: lfdWbkController,
-                    decoration: const InputDecoration(labelText: 'lfd WBK'),
-                    validator:
-                        (v) => v == null || v.isEmpty ? 'Pflichtfeld' : null,
-                  ),
-                  TextFormField(
-                    controller: waffenartIdController,
-                    decoration: const InputDecoration(
-                      labelText: 'Waffenart ID',
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator:
-                        (v) => v == null || v.isEmpty ? 'Pflichtfeld' : null,
-                  ),
-                  TextFormField(
-                    controller: kaliberIdController,
-                    decoration: const InputDecoration(labelText: 'Kaliber ID'),
-                    keyboardType: TextInputType.number,
-                    validator:
-                        (v) => v == null || v.isEmpty ? 'Pflichtfeld' : null,
-                  ),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: kompensator,
-                    builder:
-                        (context, value, _) => CheckboxListTile(
-                          title: const Text('Kompensator'),
-                          value: value,
-                          onChanged: (val) => kompensator.value = val ?? false,
-                        ),
-                  ),
-                ],
-              ),
-            ),
+      builder:
+          (ctx) => AddWaffeBesitzDialog(
+            antragsnummer: widget.antrag.antragsnummer,
+            onSaved: _refreshWaffeBesitz,
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Abbrechen'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (formKey.currentState?.validate() ?? false) {
-                  final apiService = Provider.of<ApiService>(
-                    context,
-                    listen: false,
-                  );
-                  await apiService.createBedWaffeBesitz(
-                    antragsnummer: widget.antrag.antragsnummer,
-                    wbkNr: wbkNrController.text,
-                    lfdWbk: lfdWbkController.text,
-                    waffenartId: int.tryParse(waffenartIdController.text) ?? 0,
-                    kaliberId: int.tryParse(kaliberIdController.text) ?? 0,
-                    kompensator: kompensator.value,
-                    hersteller: null,
-                    lauflaengeId: null,
-                    gewicht: null,
-                    beduerfnisgrundId: null,
-                    verbandId: null,
-                    bemerkung: null,
-                  );
-                  Navigator.of(ctx).pop();
-                  _refreshWaffeBesitz();
-                }
-              },
-              child: const Text('Speichern'),
-            ),
-          ],
-        );
-      },
     );
   }
 
