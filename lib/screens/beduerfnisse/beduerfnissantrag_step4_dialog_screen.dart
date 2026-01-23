@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
 
 class AddWaffeBesitzDialog extends StatelessWidget {
   const AddWaffeBesitzDialog({
@@ -23,7 +24,6 @@ class AddWaffeBesitzDialog extends StatelessWidget {
     final apiService = Provider.of<ApiService>(context, listen: false);
 
     return FutureBuilder<List<dynamic>>(
-      // dynamic for BeduerfnisseAuswahl
       future: Provider.of<ApiService>(
         context,
         listen: false,
@@ -31,14 +31,31 @@ class AddWaffeBesitzDialog extends StatelessWidget {
       builder: (context, snapshot) {
         final waffenarten = snapshot.data;
         return Dialog(
-          insetPadding: const EdgeInsets.all(24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
-          child: SizedBox(
-            width: 400,
-            child: SingleChildScrollView(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 32,
+          ),
+          elevation: 0,
+          child: Center(
+            child: Container(
+              width: 440,
+              decoration: BoxDecoration(
+                color: UIConstants.whiteColor,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 28,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 32,
+                ),
                 child: Form(
                   key: formKey,
                   child: Column(
@@ -47,20 +64,26 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                     children: [
                       Text(
                         'Waffenbesitz hinzufügen',
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(color: Theme.of(context).primaryColor),
+                        style: UIStyles.headerStyle,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 28),
                       Row(
                         children: [
                           Expanded(
                             child: TextFormField(
                               controller: wbkNrController,
-                              decoration: const InputDecoration(
+                              style: UIStyles.bodyTextStyle,
+                              decoration: InputDecoration(
                                 labelText: 'WBK-Nr *',
                                 filled: true,
-                                fillColor: Colors.white,
-                                border: OutlineInputBorder(),
+                                fillColor: UIConstants.whiteColor,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
                               ),
                               validator:
                                   (v) =>
@@ -73,11 +96,18 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                           Expanded(
                             child: TextFormField(
                               controller: lfdWbkController,
-                              decoration: const InputDecoration(
+                              style: UIStyles.bodyTextStyle,
+                              decoration: InputDecoration(
                                 labelText: 'lfd WBK *',
                                 filled: true,
-                                fillColor: Colors.white,
-                                border: OutlineInputBorder(),
+                                fillColor: UIConstants.whiteColor,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
                               ),
                               validator:
                                   (v) =>
@@ -113,6 +143,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                         value: wa.id,
                                         child: Text(
                                           wa.beschreibung ?? wa.toString(),
+                                          style: UIStyles.bodyTextStyle,
                                         ),
                                       );
                                     }).toList();
@@ -124,11 +155,17 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                   onChanged: (val) {
                                     selectedWaffenartId = val;
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     labelText: 'Waffenart *',
                                     filled: true,
-                                    fillColor: Colors.white,
-                                    border: OutlineInputBorder(),
+                                    fillColor: UIConstants.whiteColor,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 12,
+                                    ),
                                   ),
                                   validator:
                                       (v) => v == null ? 'Pflichtfeld' : null,
@@ -141,7 +178,6 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                             child: StatefulBuilder(
                               builder: (context, setState) {
                                 return FutureBuilder<List<dynamic>>(
-                                  // dynamic for BeduerfnisseAuswahl
                                   future: apiService.getBedAuswahlByTypId(6),
                                   builder: (context, kaliberSnapshot) {
                                     if (kaliberSnapshot.connectionState ==
@@ -163,6 +199,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                               value: k.id,
                                               child: Text(
                                                 k.beschreibung ?? k.toString(),
+                                                style: UIStyles.bodyTextStyle,
                                               ),
                                             );
                                           },
@@ -177,11 +214,20 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                           selectedKaliberId = val;
                                         });
                                       },
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                         labelText: 'Kaliber *',
                                         filled: true,
-                                        fillColor: Colors.white,
-                                        border: OutlineInputBorder(),
+                                        fillColor: UIConstants.whiteColor,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 12,
+                                            ),
                                       ),
                                       validator:
                                           (v) =>
@@ -203,71 +249,77 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                               (context, value, _) => SwitchListTile(
                                 title: const Text(
                                   'Kompensator',
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
                                 ),
                                 value: value,
-                                onChanged:
-                                    (val) => kompensator.value = val,
+                                onChanged: (val) => kompensator.value = val,
                                 activeColor: UIConstants.primaryColor,
                                 contentPadding: EdgeInsets.zero,
                               ),
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Semantics(
-                            button: true,
-                            label: 'Abbrechen',
-                            hint: 'Dialog schließen ohne zu speichern',
-                            child: FloatingActionButton(
-                              heroTag: 'cancelWaffeBesitzFab',
-                              mini: true,
-                              backgroundColor:
-                                  UIConstants.cancelButtonBackground,
-                              foregroundColor: UIConstants.cancelButtonText,
-                              tooltip: 'Abbrechen',
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Icon(Icons.close),
+                      const SizedBox(height: 28),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Semantics(
+                              button: true,
+                              label: 'Abbrechen',
+                              hint: 'Dialog schließen ohne zu speichern',
+                              child: FloatingActionButton(
+                                heroTag: 'cancelWaffeBesitzFab',
+                                mini: true,
+                                backgroundColor:
+                                    UIConstants.cancelButtonBackground,
+                                foregroundColor: UIConstants.cancelButtonText,
+                                tooltip: 'Abbrechen',
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Icon(Icons.close),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: UIConstants.spacingS),
-                          Semantics(
-                            button: true,
-                            label: 'Speichern',
-                            hint: 'Eingaben speichern',
-                            child: FloatingActionButton(
-                              heroTag: 'saveWaffeBesitzFab',
-                              mini: true,
-                              backgroundColor:
-                                  UIConstants.submitButtonBackground,
-                              foregroundColor: UIConstants.submitButtonText,
-                              tooltip: 'Speichern',
-                              onPressed: () async {
-                                if (formKey.currentState?.validate() ?? false) {
-                                  await apiService.createBedWaffeBesitz(
-                                    antragsnummer: antragsnummer,
-                                    wbkNr: wbkNrController.text,
-                                    lfdWbk: lfdWbkController.text,
-                                    waffenartId: selectedWaffenartId ?? 0,
-                                    kaliberId: selectedKaliberId ?? 0,
-                                    kompensator: kompensator.value,
-                                    hersteller: null,
-                                    lauflaengeId: null,
-                                    gewicht: null,
-                                    beduerfnisgrundId: null,
-                                    verbandId: null,
-                                    bemerkung: null,
-                                  );
-                                  Navigator.of(context).pop();
-                                  if (onSaved != null) onSaved!();
-                                }
-                              },
-                              child: const Icon(Icons.check),
+                            const SizedBox(width: UIConstants.spacingS),
+                            Semantics(
+                              button: true,
+                              label: 'Speichern',
+                              hint: 'Eingaben speichern',
+                              child: FloatingActionButton(
+                                heroTag: 'saveWaffeBesitzFab',
+                                mini: true,
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.submitButtonText,
+                                tooltip: 'Speichern',
+                                onPressed: () async {
+                                  if (formKey.currentState?.validate() ??
+                                      false) {
+                                    await apiService.createBedWaffeBesitz(
+                                      antragsnummer: antragsnummer,
+                                      wbkNr: wbkNrController.text,
+                                      lfdWbk: lfdWbkController.text,
+                                      waffenartId: selectedWaffenartId ?? 0,
+                                      kaliberId: selectedKaliberId ?? 0,
+                                      kompensator: kompensator.value,
+                                      hersteller: null,
+                                      lauflaengeId: null,
+                                      gewicht: null,
+                                      beduerfnisgrundId: null,
+                                      verbandId: null,
+                                      bemerkung: null,
+                                    );
+                                    Navigator.of(context).pop();
+                                    if (onSaved != null) onSaved!();
+                                  }
+                                },
+                                child: const Icon(Icons.check),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
