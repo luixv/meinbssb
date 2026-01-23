@@ -10,6 +10,7 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step3_dialog_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step4_screen.dart';
 import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'dart:typed_data';
@@ -52,13 +53,13 @@ class _BeduerfnissantragStep3ScreenState
     if (widget.antrag?.antragsnummer == null) {
       return [];
     }
-    
+
     // Get the bed_datei_zuord entries
     final dateiZuordList = await apiService.getBedDateiZuordByAntragsnummer(
       widget.antrag!.antragsnummer!,
       'WBK',
     );
-    
+
     // Fetch the actual bed_datei for each zuord
     final result = <BeduerfnisseDatei>[];
     for (final zuord in dateiZuordList) {
@@ -67,7 +68,7 @@ class _BeduerfnissantragStep3ScreenState
         result.add(datei);
       }
     }
-    
+
     return result;
   }
 
@@ -237,9 +238,15 @@ class _BeduerfnissantragStep3ScreenState
                         semanticLabel: 'Weiter Button',
                         semanticHint: 'Weiter zum nächsten Schritt',
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Schritt 3 abgeschlossen'),
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => BeduerfnissantragStep4Screen(
+                                    userData: widget.userData,
+                                    isLoggedIn: widget.isLoggedIn,
+                                    onLogout: widget.onLogout,
+                                    antrag: widget.antrag,
+                                  ),
                             ),
                           );
                         },

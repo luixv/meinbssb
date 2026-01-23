@@ -6,7 +6,6 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meinbssb/widgets/success_dialog.dart';
 
 class BeduerfnissantragStep3Dialog extends StatefulWidget {
   const BeduerfnissantragStep3Dialog({required this.antragsnummer, super.key});
@@ -74,19 +73,7 @@ class _BeduerfnissantragStep3DialogState
           _isUploadingDocument = false;
         });
         if (success) {
-          await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder:
-                (ctx) => SuccessDialog(
-                  title: 'Erfolg',
-                  message: '$documentType erfolgreich hochgeladen',
-                  onClose: () {
-                    Navigator.of(ctx).pop();
-                    Navigator.of(context).pop(true); // Close parent dialog
-                  },
-                ),
-          );
+          Navigator.of(context).pop(true); // Close parent dialog on success
         } else {
           await showDialog(
             context: context,
@@ -178,19 +165,7 @@ class _BeduerfnissantragStep3DialogState
           _isUploadingDocument = false;
         });
         if (success) {
-          await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder:
-                (ctx) => SuccessDialog(
-                  title: 'Erfolg',
-                  message: '$documentType erfolgreich gescannt und hochgeladen',
-                  onClose: () {
-                    Navigator.of(ctx).pop();
-                    Navigator.of(context).pop(true); // Close parent dialog
-                  },
-                ),
-          );
+          Navigator.of(context).pop(true); // Close parent dialog on success
         } else {
           await showDialog(
             context: context,
