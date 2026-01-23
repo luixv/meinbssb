@@ -1868,6 +1868,113 @@ void main() {
 
         expect(result, isFalse);
       });
+
+      test('getBedDateiZuordByDateiId returns list of records', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': 123,
+            'datei_id': 100,
+            'datei_art': 'WBK',
+            'bed_sport_id': null,
+            'label': 'Test Label',
+          },
+          {
+            'id': 2,
+            'antragsnummer': 123,
+            'datei_id': 100,
+            'datei_art': 'SPORT',
+            'bed_sport_id': 10,
+            'label': 'Sport Label',
+          },
+        ];
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedDateiZuordByDateiId(100);
+
+        expect(result, isA<List<BeduerfnisseDateiZuord>>());
+        expect(result.length, equals(2));
+        expect(result[0].id, equals(1));
+        expect(result[0].dateiId, equals(100));
+        expect(result[0].label, equals('Test Label'));
+        expect(result[1].id, equals(2));
+        expect(result[1].dateiId, equals(100));
+        expect(result[1].label, equals('Sport Label'));
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).called(1);
+      });
+
+      test('getBedDateiZuordByDateiId returns empty list when not found', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getBedDateiZuordByDateiId(100);
+
+        expect(result, isEmpty);
+        verify(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).called(1);
+      });
+
+      test('getBedDateiZuordByDateiId handles exception gracefully', () async {
+        when(mockClient.get(
+          any,
+          headers: anyNamed('headers'),
+        )).thenThrow(Exception('Network error'));
+
+        final result = await service.getBedDateiZuordByDateiId(100);
+
+        expect(result, isEmpty);
+      });
+
+      test('deleteBedDateiZuordByDateiId deletes successfully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.deleteBedDateiZuordByDateiId(100);
+
+        expect(result, isTrue);
+        verify(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).called(1);
+      });
+
+      test('deleteBedDateiZuordByDateiId returns false on error', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.deleteBedDateiZuordByDateiId(100);
+
+        expect(result, isFalse);
+      });
+
+      test('deleteBedDateiZuordByDateiId handles exception gracefully', () async {
+        when(mockClient.patch(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        )).thenThrow(Exception('Network error'));
+
+        final result = await service.deleteBedDateiZuordByDateiId(100);
+
+        expect(result, isFalse);
+      });
     });
 
     group('bed_datei Additional Methods', () {

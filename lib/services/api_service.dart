@@ -790,34 +790,38 @@ class ApiService {
   // --- bed_datei Service Methods ---
   //
 
-  Future<Map<String, dynamic>> createBedDatei({
-    required int antragsnummer,
-    required String dateiname,
-    required List<int> fileBytes,
-  }) async {
-    return _postgrestService.createBedDatei(
-      antragsnummer: antragsnummer,
-      dateiname: dateiname,
-      fileBytes: fileBytes,
-    );
-  }
-
-  Future<List<BeduerfnisseDatei>> getBedDateiByAntragsnummer(
-    int antragsnummer,
-  ) async {
-    return _postgrestService.getBedDateiByAntragsnummer(antragsnummer);
-  }
-
-  Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
-    return _postgrestService.updateBedDatei(datei);
-  }
-
-  Future<bool> deleteBedDatei(int antragsnummer) async {
-    return _postgrestService.deleteBedDatei(antragsnummer);
-  }
-
+  /// Delete bed_datei by ID and all associated bed_datei_zuord entries
+  /// First deletes bed_datei_zuord entries, then deletes bed_datei
   Future<bool> deleteBedDateiById(int dateiId) async {
-    return _postgrestService.deleteBedDateiById(dateiId);
+    try {
+      // Step 1: Delete all associated bed_datei_zuord entries
+      final zuordDeleted = await _postgrestService.deleteBedDateiZuordByDateiId(dateiId);
+      if (!zuordDeleted) {
+        LoggerService.logError(
+          'Failed to delete bed_datei_zuord entries for datei_id: $dateiId',
+        );
+        // Continue with datei deletion even if zuord deletion fails
+      }
+
+      // Step 2: Delete the bed_datei entry
+      final dateiDeleted = await _postgrestService.deleteBedDateiById(dateiId);
+      if (!dateiDeleted) {
+        LoggerService.logError(
+          'Failed to delete bed_datei for id: $dateiId',
+        );
+        return false;
+      }
+
+      LoggerService.logInfo(
+        'Successfully deleted bed_datei and associated bed_datei_zuord entries for id: $dateiId',
+      );
+      return true;
+    } catch (e) {
+      LoggerService.logError(
+        'Error deleting bed_datei by id $dateiId: $e',
+      );
+      return false;
+    }
   }
 
   /// Get the document for a specific sport activity
@@ -855,7 +859,7 @@ class ApiService {
       );
 
       // Create bed_datei entry
-      final dateiResponse = await createBedDatei(
+      final dateiResponse = await _postgrestService.createBedDatei(
         antragsnummer: antragsnummer,
         dateiname: dateiname,
         fileBytes: fileBytes,
@@ -922,7 +926,7 @@ class ApiService {
       );
 
       // Step 1: Create bed_datei entry
-      final dateiResponse = await createBedDatei(
+      final dateiResponse = await _postgrestService.createBedDatei(
         antragsnummer: antragsnummer,
         dateiname: dateiname,
         fileBytes: fileBytes,
@@ -958,9 +962,9 @@ class ApiService {
           'Failed to create bed_datei_zuord: $e. Cleaning up bed_datei...',
         );
 
-        // Attempt to delete the created bed_datei
+        // Attempt to delete the created bed_datei (and any associated zuord entries)
         try {
-          await _postgrestService.deleteBedDateiById(dateiId);
+          await deleteBedDateiById(dateiId);
         } catch (cleanupError) {
           LoggerService.logError('Failed to cleanup bed_datei: $cleanupError');
         }
@@ -1005,6 +1009,7 @@ class ApiService {
     return _postgrestService.getBedSportByAntragsnummer(antragsnummer);
   }
 
+  //TODO: delete if not used
   Future<bool> updateBedSport(BeduerfnisseSport sport) async {
     return _postgrestService.updateBedSport(sport);
   }
@@ -1162,10 +1167,6 @@ class ApiService {
 
   Future<bool> updateBedDateiZuord(BeduerfnisseDateiZuord dateiZuord) async {
     return _postgrestService.updateBedDateiZuord(dateiZuord);
-  }
-
-  Future<bool> deleteBedDateiZuord(int antragsnummer) async {
-    return _postgrestService.deleteBedDateiZuord(antragsnummer);
   }
 
   /// Get bed_datei_zuord entries by antragsnummer and datei_art

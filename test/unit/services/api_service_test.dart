@@ -2342,7 +2342,7 @@ void main() {
           ),
         ).thenAnswer((_) async => expectedResult);
 
-        final result = await apiService.createBedDatei(
+        final result = await mockPostgrestService.createBedDatei(
           antragsnummer: 123,
           dateiname: 'doc.pdf',
           fileBytes: fileBytes,
@@ -2379,7 +2379,7 @@ void main() {
             mockPostgrestService.getBedDateiByAntragsnummer(123),
           ).thenAnswer((_) async => expectedList);
 
-          final result = await apiService.getBedDateiByAntragsnummer(123);
+          final result = await mockPostgrestService.getBedDateiByAntragsnummer(123);
           expect(result, equals(expectedList));
           verify(
             mockPostgrestService.getBedDateiByAntragsnummer(123),
@@ -2399,7 +2399,7 @@ void main() {
           mockPostgrestService.updateBedDatei(datei),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedDatei(datei);
+        final result = await mockPostgrestService.updateBedDatei(datei);
         expect(result, isTrue);
         verify(mockPostgrestService.updateBedDatei(datei)).called(1);
       });
@@ -2409,7 +2409,7 @@ void main() {
           mockPostgrestService.deleteBedDatei(1),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.deleteBedDatei(1);
+        final result = await mockPostgrestService.deleteBedDatei(1);
         expect(result, isTrue);
         verify(mockPostgrestService.deleteBedDatei(1)).called(1);
       });
@@ -3676,6 +3676,81 @@ void main() {
           verify(mockPostgrestService.deleteBedDateiById(50)).called(1);
         },
       );
+
+      test('deleteBedDateiById deletes zuord and datei successfully', () async {
+        // Mock deleteBedDateiZuordByDateiId
+        when(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).thenAnswer((_) async => true);
+
+        // Mock deleteBedDateiById
+        when(
+          mockPostgrestService.deleteBedDateiById(100),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBedDateiById(100);
+
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).called(1);
+        verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
+      });
+
+      test('deleteBedDateiById continues even if zuord deletion fails', () async {
+        // Mock deleteBedDateiZuordByDateiId returning false
+        when(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).thenAnswer((_) async => false);
+
+        // Mock deleteBedDateiById
+        when(
+          mockPostgrestService.deleteBedDateiById(100),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBedDateiById(100);
+
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).called(1);
+        verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
+      });
+
+      test('deleteBedDateiById returns false when datei deletion fails', () async {
+        // Mock deleteBedDateiZuordByDateiId
+        when(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).thenAnswer((_) async => true);
+
+        // Mock deleteBedDateiById returning false
+        when(
+          mockPostgrestService.deleteBedDateiById(100),
+        ).thenAnswer((_) async => false);
+
+        final result = await apiService.deleteBedDateiById(100);
+
+        expect(result, isFalse);
+        verify(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).called(1);
+        verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
+      });
+
+      test('deleteBedDateiById handles exception gracefully', () async {
+        // Mock deleteBedDateiZuordByDateiId throwing exception
+        when(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).thenThrow(Exception('Database error'));
+
+        final result = await apiService.deleteBedDateiById(100);
+
+        expect(result, isFalse);
+        verify(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).called(1);
+        verifyNever(mockPostgrestService.deleteBedDateiById(any));
+      });
     });
 
     group('Cascading Delete - Sport and Antrag Tests', () {
@@ -4195,6 +4270,10 @@ void main() {
         ).thenThrow(Exception('Zuord creation failed'));
 
         when(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(123),
+        ).thenAnswer((_) async => true);
+
+        when(
           mockPostgrestService.deleteBedDateiById(123),
         ).thenAnswer((_) async => true);
 
@@ -4206,6 +4285,7 @@ void main() {
         );
 
         expect(result, isFalse);
+        verify(mockPostgrestService.deleteBedDateiZuordByDateiId(123)).called(1);
         verify(mockPostgrestService.deleteBedDateiById(123)).called(1);
       });
 

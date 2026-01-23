@@ -1207,52 +1207,6 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
           as _i12.Future<List<_i35.BeduerfnisseAuswahl>>);
 
   @override
-  _i12.Future<Map<String, dynamic>> createBedDatei({
-    required int? antragsnummer,
-    required String? dateiname,
-    required List<int>? fileBytes,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#createBedDatei, [], {
-              #antragsnummer: antragsnummer,
-              #dateiname: dateiname,
-              #fileBytes: fileBytes,
-            }),
-            returnValue: _i12.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i12.Future<Map<String, dynamic>>);
-
-  @override
-  _i12.Future<List<_i36.BeduerfnisseDatei>> getBedDateiByAntragsnummer(
-    int? antragsnummer,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#getBedDateiByAntragsnummer, [antragsnummer]),
-            returnValue: _i12.Future<List<_i36.BeduerfnisseDatei>>.value(
-              <_i36.BeduerfnisseDatei>[],
-            ),
-          )
-          as _i12.Future<List<_i36.BeduerfnisseDatei>>);
-
-  @override
-  _i12.Future<bool> updateBedDatei(_i36.BeduerfnisseDatei? datei) =>
-      (super.noSuchMethod(
-            Invocation.method(#updateBedDatei, [datei]),
-            returnValue: _i12.Future<bool>.value(false),
-          )
-          as _i12.Future<bool>);
-
-  @override
-  _i12.Future<bool> deleteBedDatei(int? antragsnummer) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedDatei, [antragsnummer]),
-            returnValue: _i12.Future<bool>.value(false),
-          )
-          as _i12.Future<bool>);
-
-  @override
   _i12.Future<bool> deleteBedDateiById(int? dateiId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteBedDateiById, [dateiId]),
@@ -1620,14 +1574,6 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedDateiZuord, [dateiZuord]),
-            returnValue: _i12.Future<bool>.value(false),
-          )
-          as _i12.Future<bool>);
-
-  @override
-  _i12.Future<bool> deleteBedDateiZuord(int? antragsnummer) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedDateiZuord, [antragsnummer]),
             returnValue: _i12.Future<bool>.value(false),
           )
           as _i12.Future<bool>);

@@ -1865,6 +1865,61 @@ class PostgrestService {
     }
   }
 
+  /// Get bed_datei_zuord entries by datei_id
+  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByDateiId(int dateiId) async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(
+          '${_baseUrl}bed_datei_zuord?datei_id=eq.$dateiId&deleted_at=is.null',
+        ),
+        headers: _headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data
+            .map((json) => BeduerfnisseDateiZuord.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } else {
+        LoggerService.logError(
+          'Failed to get bed_datei_zuord by datei_id. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return [];
+      }
+    } catch (e) {
+      LoggerService.logError(
+        'Error getting bed_datei_zuord by datei_id: $e',
+      );
+      return [];
+    }
+  }
+
+  /// Soft delete all bed_datei_zuord entries by datei_id
+  Future<bool> deleteBedDateiZuordByDateiId(int dateiId) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_datei_zuord?datei_id=eq.$dateiId'),
+        headers: _headers,
+        body: jsonEncode({
+          'deleted_at': DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_datei_zuord deleted successfully for datei_id: $dateiId');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_datei_zuord by datei_id. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_datei_zuord by datei_id: $e');
+      return false;
+    }
+  }
+
   // --- Bed Wettkampf Methods ---
   //
   /// Creates a new wettkampf record

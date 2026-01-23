@@ -1488,52 +1488,6 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<List<_i38.BeduerfnisseAuswahl>>);
 
   @override
-  _i13.Future<Map<String, dynamic>> createBedDatei({
-    required int? antragsnummer,
-    required String? dateiname,
-    required List<int>? fileBytes,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#createBedDatei, [], {
-              #antragsnummer: antragsnummer,
-              #dateiname: dateiname,
-              #fileBytes: fileBytes,
-            }),
-            returnValue: _i13.Future<Map<String, dynamic>>.value(
-              <String, dynamic>{},
-            ),
-          )
-          as _i13.Future<Map<String, dynamic>>);
-
-  @override
-  _i13.Future<List<_i39.BeduerfnisseDatei>> getBedDateiByAntragsnummer(
-    int? antragsnummer,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#getBedDateiByAntragsnummer, [antragsnummer]),
-            returnValue: _i13.Future<List<_i39.BeduerfnisseDatei>>.value(
-              <_i39.BeduerfnisseDatei>[],
-            ),
-          )
-          as _i13.Future<List<_i39.BeduerfnisseDatei>>);
-
-  @override
-  _i13.Future<bool> updateBedDatei(_i39.BeduerfnisseDatei? datei) =>
-      (super.noSuchMethod(
-            Invocation.method(#updateBedDatei, [datei]),
-            returnValue: _i13.Future<bool>.value(false),
-          )
-          as _i13.Future<bool>);
-
-  @override
-  _i13.Future<bool> deleteBedDatei(int? antragsnummer) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedDatei, [antragsnummer]),
-            returnValue: _i13.Future<bool>.value(false),
-          )
-          as _i13.Future<bool>);
-
-  @override
   _i13.Future<bool> deleteBedDateiById(int? dateiId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteBedDateiById, [dateiId]),
@@ -1901,14 +1855,6 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedDateiZuord, [dateiZuord]),
-            returnValue: _i13.Future<bool>.value(false),
-          )
-          as _i13.Future<bool>);
-
-  @override
-  _i13.Future<bool> deleteBedDateiZuord(int? antragsnummer) =>
-      (super.noSuchMethod(
-            Invocation.method(#deleteBedDateiZuord, [antragsnummer]),
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
@@ -3735,6 +3681,26 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
   _i13.Future<bool> deleteBedDateiZuordByBedSportId(int? bedSportId) =>
       (super.noSuchMethod(
             Invocation.method(#deleteBedDateiZuordByBedSportId, [bedSportId]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<List<_i11.BeduerfnisseDateiZuord>> getBedDateiZuordByDateiId(
+    int? dateiId,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBedDateiZuordByDateiId, [dateiId]),
+            returnValue: _i13.Future<List<_i11.BeduerfnisseDateiZuord>>.value(
+              <_i11.BeduerfnisseDateiZuord>[],
+            ),
+          )
+          as _i13.Future<List<_i11.BeduerfnisseDateiZuord>>);
+
+  @override
+  _i13.Future<bool> deleteBedDateiZuordByDateiId(int? dateiId) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedDateiZuordByDateiId, [dateiId]),
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
