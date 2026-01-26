@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'beduerfnissantrag_step4_dialog_screen.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 class BeduerfnissantragStep4Screen extends StatefulWidget {
   const BeduerfnissantragStep4Screen({
@@ -29,26 +30,49 @@ class BeduerfnissantragStep4Screen extends StatefulWidget {
 
 class _BeduerfnissantragStep4ScreenState
     extends State<BeduerfnissantragStep4Screen> {
-  late Future<List<dynamic>> _waffeBesitzFuture;
+  late Future<List<dynamic>> _waffeBesitzFuture = Future.value([]);
+  late Future<List<dynamic>> _waffenartFuture = Future.value([]);
+  late Future<List<dynamic>> _kaliberFuture = Future.value([]);
+  late Future<List<dynamic>> _gruendeFuture = Future.value([]);
+  late Future<List<dynamic>> _lauflaengeFuture = Future.value([]);
+  late Future<List<dynamic>> _verbandFuture = Future.value([]);
 
   @override
   void initState() {
     super.initState();
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      _waffenartFuture = apiService.getBedAuswahlByTypId(1);
+      _kaliberFuture = apiService.getBedAuswahlByTypId(6);
+      _gruendeFuture = apiService.getBedAuswahlByTypId(5);
+      _lauflaengeFuture = apiService.getBedAuswahlByTypId(4);
+      _verbandFuture = apiService.getBedAuswahlByTypId(3);
+    } catch (e) {
+      debugPrint('Error initializing futures: $e');
+    }
     _refreshWaffeBesitz();
   }
 
   void _refreshWaffeBesitz() {
-    setState(() {
-      _waffeBesitzFuture = _fetchWaffeBesitz(context);
-    });
+    // Only fetch if antrag is available
+    if (widget.antrag != null && widget.antrag.antragsnummer != null) {
+      setState(() {
+        _waffeBesitzFuture = _fetchWaffeBesitz(context);
+      });
+    }
   }
 
   Future<List<dynamic>> _fetchWaffeBesitz(BuildContext context) async {
     if (widget.antrag == null || widget.antrag.antragsnummer == null) return [];
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    return await apiService.getBedWaffeBesitzByAntragsnummer(
-      widget.antrag.antragsnummer,
-    );
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      return await apiService.getBedWaffeBesitzByAntragsnummer(
+        widget.antrag.antragsnummer,
+      );
+    } catch (e) {
+      debugPrint('Error fetching waffe besitz: $e');
+      return [];
+    }
   }
 
   Future<void> _showAddWaffeBesitzDialog(BuildContext context) async {
@@ -143,108 +167,237 @@ class _BeduerfnissantragStep4ScreenState
 
               // Show BedWaffeBesitz results
               FutureBuilder<List<dynamic>>(
-                future: _waffeBesitzFuture,
+                future: Future.wait([
+                  _waffeBesitzFuture,
+                  _waffenartFuture,
+                  _kaliberFuture,
+                  _gruendeFuture,
+                  _lauflaengeFuture,
+                  _verbandFuture,
+                ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Text('Fehler: \\${snapshot.error}');
+                    return Text('Fehler: ${snapshot.error}');
                   }
-                  final waffen = snapshot.data ?? [];
+                  final data = snapshot.data!;
+                  final waffen = data[0] as List<dynamic>;
+                  final waffenartList = data[1] as List<dynamic>;
+                  final kaliberList = data[2] as List<dynamic>;
+                  final gruendeList = data[3] as List<dynamic>;
+                  final lauflaengeList = data[4] as List<dynamic>;
+                  final verbandList = data[5] as List<dynamic>;
+
+                  // Create lookup maps
+                  final waffenartMap = {
+                    for (var item in waffenartList) item.id: item.beschreibung,
+                  };
+                  final kaliberMap = {
+                    for (var item in kaliberList) item.id: item.beschreibung,
+                  };
+                  final gruendeMap = {
+                    for (var item in gruendeList) item.id: item.beschreibung,
+                  };
+                  final lauflaengeMap = {
+                    for (var item in lauflaengeList)
+                      (item is Map ? item['id'] : item.id):
+                          (item is Map
+                              ? item['beschreibung']
+                              : item.beschreibung),
+                  };
+                  final verbandMap = {
+                    for (var item in verbandList) item.id: item.beschreibung,
+                  };
+
                   if (waffen.isEmpty) {
                     return const ScaledText(
                       'Keine Waffenbesitz-Einträge gefunden.',
                     );
                   }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const ScaledText(
-                        'Waffenbesitz-Einträge:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                      ...waffen.map((w) {
-                        // Try to cast to BeduerfnisseWaffeBesitz, fallback to dynamic
-                        final wb = w;
-                        return Card(
-                          margin: const EdgeInsets.only(
-                            bottom: UIConstants.spacingS,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text('WBK-Nr: 	${wb.wbkNr ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                    Expanded(
-                                      child: Text('LFD WBK: 	${wb.lfdWbk ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text('Waffenart-ID: 	${wb.waffenartId ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                    Expanded(
-                                      child: Text('Kaliber-ID: 	${wb.kaliberId ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text('Hersteller: 	${wb.hersteller ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                    Expanded(
-                                      child: Text('Lauflänge-ID: 	${wb.lauflaengeId ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text('Gewicht: 	${wb.gewicht ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                    Expanded(
-                                      child: Text('Kompensator: 	${wb.kompensator == true ? "Ja" : "Nein"}', style: UIStyles.formValueStyle),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text('Bedürfnisgrund-ID: 	${wb.beduerfnisgrundId ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                    Expanded(
-                                      child: Text('Verband-ID: 	${wb.verbandId ?? ''}', style: UIStyles.formValueStyle),
-                                    ),
-                                  ],
-                                ),
-                                if (wb.bemerkung != null && wb.bemerkung.toString().isNotEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 4.0),
-                                    child: Text('Bemerkung: ${wb.bemerkung}', style: UIStyles.formValueStyle),
-                                  ),
-                              ],
+
+                  return Consumer<FontSizeProvider>(
+                    builder: (context, fontSizeProvider, child) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const ScaledText(
+                            'Waffenbesitz-Einträge:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
                             ),
                           ),
-                        );
-                      }),
-                    ],
+                          const SizedBox(height: UIConstants.spacingM),
+                          ...waffen.map((wb) {
+                            return Card(
+                              margin: const EdgeInsets.only(
+                                bottom: UIConstants.spacingM,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(
+                                  UIConstants.spacingM,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Left column
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              _buildInfoRow(
+                                                Icons.description,
+                                                'WBK: ${wb.wbkNr ?? ""} / ${wb.lfdWbk ?? ""}',
+                                                fontSizeProvider.scaleFactor,
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              _buildInfoRow(
+                                                Icons.adjust,
+                                                waffenartMap[wb.waffenartId] ??
+                                                    'Unbekannt',
+                                                fontSizeProvider.scaleFactor,
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              _buildInfoRow(
+                                                Icons.straighten,
+                                                lauflaengeMap[wb
+                                                        .lauflaengeId] ??
+                                                    'Unbekannt',
+                                                fontSizeProvider.scaleFactor,
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              _buildInfoRow(
+                                                Icons.help_outline,
+                                                gruendeMap[wb
+                                                        .beduerfnisgrundId] ??
+                                                    'Unbekannt',
+                                                fontSizeProvider.scaleFactor,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: UIConstants.spacingXXS,
+                                        ),
+                                        // Right column
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              _buildInfoRow(
+                                                Icons.branding_watermark,
+                                                wb.hersteller ?? '',
+                                                fontSizeProvider.scaleFactor,
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              _buildInfoRow(
+                                                Icons.gps_fixed,
+                                                kaliberMap[wb.kaliberId] ??
+                                                    'Unbekannt',
+                                                fontSizeProvider.scaleFactor,
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              _buildInfoRow(
+                                                Icons.monitor_weight,
+                                                '${wb.gewicht ?? ""} g',
+                                                fontSizeProvider.scaleFactor,
+                                              ),
+                                              const SizedBox(
+                                                height: UIConstants.spacingS,
+                                              ),
+                                              _buildInfoRow(
+                                                Icons.group,
+                                                verbandMap[wb.verbandId] ??
+                                                    'Unbekannt',
+                                                fontSizeProvider.scaleFactor,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: UIConstants.spacingS,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.settings_input_component,
+                                          size:
+                                              UIConstants.iconSizeS *
+                                              fontSizeProvider.scaleFactor,
+                                          color: UIConstants.primaryColor,
+                                        ),
+                                        const SizedBox(
+                                          width: UIConstants.spacingS,
+                                        ),
+                                        ScaledText(
+                                          'Kompensator:',
+                                          style: UIStyles.bodyTextStyle
+                                              .copyWith(
+                                                fontSize:
+                                                    UIStyles
+                                                        .bodyTextStyle
+                                                        .fontSize! *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Icon(
+                                          wb.kompensator == true
+                                              ? Icons.check
+                                              : Icons.close,
+                                          color:
+                                              wb.kompensator == true
+                                                  ? UIConstants.defaultAppColor
+                                                  : Colors.red,
+                                          size:
+                                              UIConstants.iconSizeS *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                      ],
+                                    ),
+                                    if (wb.bemerkung != null &&
+                                        wb.bemerkung.toString().isNotEmpty) ...[
+                                      const SizedBox(
+                                        height: UIConstants.spacingS,
+                                      ),
+                                      Text(
+                                        'Bemerkung: ${wb.bemerkung}',
+                                        style: UIStyles.bodyTextStyle.copyWith(
+                                          fontSize:
+                                              UIStyles.bodyTextStyle.fontSize! *
+                                              fontSizeProvider.scaleFactor,
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      );
+                    },
                   );
                 },
               ),
@@ -253,6 +406,27 @@ class _BeduerfnissantragStep4ScreenState
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text, double scaleFactor) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: UIConstants.iconSizeS * scaleFactor,
+          color: UIConstants.primaryColor,
+        ),
+        const SizedBox(width: UIConstants.spacingS),
+        Expanded(
+          child: ScaledText(
+            text,
+            style: UIStyles.bodyTextStyle.copyWith(
+              fontSize: UIStyles.bodyTextStyle.fontSize! * scaleFactor,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
