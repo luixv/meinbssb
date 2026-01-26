@@ -26,12 +26,11 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
         _selectedWaffenartId != null &&
         _selectedKaliberId != null &&
         _herstellerController.text.isNotEmpty &&
-        _lauflaengeController.text.isNotEmpty &&
-        num.tryParse(_lauflaengeController.text) != null &&
+        _selectedLauflaengeId != null &&
         _gewichtController.text.isNotEmpty &&
         num.tryParse(_gewichtController.text) != null &&
         _selectedBeduerfnisgrundId != null &&
-        _selectedVerband != null;
+        _selectedVerbandId != null;
   }
 
   void _onFieldChanged() {
@@ -45,12 +44,10 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
     _wbkNrController.removeListener(_onFieldChanged);
     _lfdWbkController.removeListener(_onFieldChanged);
     _herstellerController.removeListener(_onFieldChanged);
-    _lauflaengeController.removeListener(_onFieldChanged);
     _gewichtController.removeListener(_onFieldChanged);
     _wbkNrController.addListener(_onFieldChanged);
     _lfdWbkController.addListener(_onFieldChanged);
     _herstellerController.addListener(_onFieldChanged);
-    _lauflaengeController.addListener(_onFieldChanged);
     _gewichtController.addListener(_onFieldChanged);
   }
 
@@ -58,19 +55,21 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
   final _wbkNrController = TextEditingController();
   final _lfdWbkController = TextEditingController();
   final _herstellerController = TextEditingController();
-  final _lauflaengeController = TextEditingController();
   final _gewichtController = TextEditingController();
   final _bemerkungController = TextEditingController();
   bool _kompensator = false;
   int? _selectedWaffenartId;
   int? _selectedKaliberId;
   int? _selectedBeduerfnisgrundId;
-  String? _selectedVerband;
+  int? _selectedLauflaengeId;
+  int? _selectedVerbandId;
   bool _isLoading = false;
 
   late Future<List<dynamic>> _waffenartenFuture;
   late Future<List<dynamic>> _kaliberFuture;
   late Future<List<dynamic>> _gruendeFuture;
+  late Future<List<dynamic>> _lauflaengeFuture;
+  late Future<List<dynamic>> _verbandFuture;
 
   @override
   void initState() {
@@ -79,6 +78,8 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
     _waffenartenFuture = apiService.getBedAuswahlByTypId(1);
     _kaliberFuture = apiService.getBedAuswahlByTypId(6);
     _gruendeFuture = apiService.getBedAuswahlByTypId(5);
+    _lauflaengeFuture = apiService.getBedAuswahlByTypId(4);
+    _verbandFuture = apiService.getBedAuswahlByTypId(3);
   }
 
   @override
@@ -86,7 +87,6 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
     _wbkNrController.dispose();
     _lfdWbkController.dispose();
     _herstellerController.dispose();
-    _lauflaengeController.dispose();
     _gewichtController.dispose();
     _bemerkungController.dispose();
     super.dispose();
@@ -105,10 +105,10 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
           kaliberId: _selectedKaliberId ?? 0,
           kompensator: _kompensator,
           hersteller: _herstellerController.text,
-          lauflaengeId: int.tryParse(_lauflaengeController.text),
+          lauflaengeId: _selectedLauflaengeId,
           gewicht: _gewichtController.text,
           beduerfnisgrundId: _selectedBeduerfnisgrundId,
-          verbandId: _selectedVerband == 'BSSB' ? 1 : 2,
+          verbandId: _selectedVerbandId,
           bemerkung: _bemerkungController.text,
         );
         if (mounted) {
@@ -421,29 +421,151 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: TextFormField(
-                                          controller: _lauflaengeController,
-                                          keyboardType: TextInputType.number,
-                                          decoration: InputDecoration(
-                                            labelText: 'Lauflänge (mm) *',
-                                            filled: true,
-                                            fillColor: UIConstants.whiteColor,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    UIConstants.cornerRadius,
+                                        child: FutureBuilder<List<dynamic>>(
+                                          future: _lauflaengeFuture,
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            }
+                                            // Debugging output for lauflaenge API result
+                                            if (snapshot.hasData) {
+                                              debugPrint(
+                                                'Lauflaenge API result:',
+                                              );
+                                              for (var item in snapshot.data!) {
+                                                debugPrint('Item: $item');
+                                              }
+                                            } else if (snapshot.hasError) {
+                                              debugPrint(
+                                                'Lauflaenge API error: ${snapshot.error}',
+                                              );
+                                            }
+                                            if (snapshot.data == null ||
+                                                snapshot.data!.isEmpty) {
+                                              // Show empty dropdown if no data
+                                              return DropdownButtonFormField<
+                                                int
+                                              >(
+                                                value: null,
+                                                hint: const Text('Lauflänge'),
+                                                items: const [],
+                                                onChanged: null,
+                                                decoration: InputDecoration(
+                                                  labelText: 'Lauflänge *',
+                                                  filled: true,
+                                                  fillColor:
+                                                      UIConstants.whiteColor,
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          UIConstants
+                                                              .cornerRadius,
+                                                        ),
                                                   ),
-                                            ),
-                                          ),
-                                          style: UIStyles.bodyTextStyle,
-                                          validator: (v) {
-                                            if (v == null || v.isEmpty) {
-                                              return 'Pflichtfeld';
+                                                ),
+                                                validator:
+                                                    (v) =>
+                                                        'Keine Werte verfügbar',
+                                              );
                                             }
-                                            if (num.tryParse(v) == null) {
-                                              return 'Nur Zahlen';
-                                            }
-                                            return null;
+                                            final items =
+                                                snapshot.data?.map<
+                                                  DropdownMenuItem<int>
+                                                >((k) {
+                                                  if (k is Map &&
+                                                      k.containsKey('id')) {
+                                                    // Object with id and beschreibung
+                                                    return DropdownMenuItem<
+                                                      int
+                                                    >(
+                                                      value: k['id'] as int,
+                                                      child: Text(
+                                                        k['beschreibung']
+                                                                ?.toString() ??
+                                                            k['id'].toString(),
+                                                        style:
+                                                            UIStyles
+                                                                .bodyTextStyle,
+                                                      ),
+                                                    );
+                                                  } else if (k.id != null) {
+                                                    // Object with id property
+                                                    return DropdownMenuItem<
+                                                      int
+                                                    >(
+                                                      value: k.id,
+                                                      child: Text(
+                                                        k.beschreibung
+                                                                ?.toString() ??
+                                                            k.id.toString(),
+                                                        style:
+                                                            UIStyles
+                                                                .bodyTextStyle,
+                                                      ),
+                                                    );
+                                                  } else if (k is String) {
+                                                    // Plain string value
+                                                    return DropdownMenuItem<
+                                                      int
+                                                    >(
+                                                      value: snapshot.data!
+                                                          .indexOf(k),
+                                                      child: Text(
+                                                        k,
+                                                        style:
+                                                            UIStyles
+                                                                .bodyTextStyle,
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    // Fallback: show toString
+                                                    return DropdownMenuItem<
+                                                      int
+                                                    >(
+                                                      value: snapshot.data!
+                                                          .indexOf(k),
+                                                      child: Text(
+                                                        k.toString(),
+                                                        style:
+                                                            UIStyles
+                                                                .bodyTextStyle,
+                                                      ),
+                                                    );
+                                                  }
+                                                }).toList();
+                                            return DropdownButtonFormField<int>(
+                                              value: _selectedLauflaengeId,
+                                              hint: const Text('Lauflänge'),
+                                              items: items,
+                                              onChanged:
+                                                  (val) => setState(
+                                                    () =>
+                                                        _selectedLauflaengeId =
+                                                            val,
+                                                  ),
+                                              decoration: InputDecoration(
+                                                labelText: 'Lauflänge *',
+                                                filled: true,
+                                                fillColor:
+                                                    UIConstants.whiteColor,
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        UIConstants
+                                                            .cornerRadius,
+                                                      ),
+                                                ),
+                                              ),
+                                              validator:
+                                                  (v) =>
+                                                      v == null
+                                                          ? 'Pflichtfeld'
+                                                          : null,
+                                            );
                                           },
                                         ),
                                       ),
@@ -565,38 +687,87 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                         width: UIConstants.spacingM,
                                       ),
                                       Expanded(
-                                        child: DropdownButtonFormField<String>(
-                                          value: _selectedVerband,
-                                          items: const [
-                                            DropdownMenuItem(
-                                              value: 'BSSB',
-                                              child: Text('BSSB'),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: 'Sonstiges',
-                                              child: Text('Sonstiges'),
-                                            ),
-                                          ],
-                                          onChanged:
-                                              (val) => setState(
-                                                () => _selectedVerband = val,
-                                              ),
-                                          decoration: InputDecoration(
-                                            labelText: 'Verband *',
-                                            filled: true,
-                                            fillColor: UIConstants.whiteColor,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    UIConstants.cornerRadius,
+                                        child: FutureBuilder<List<dynamic>>(
+                                          future: _verbandFuture,
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            }
+                                            if (snapshot.data == null ||
+                                                snapshot.data!.isEmpty) {
+                                              return DropdownButtonFormField<
+                                                int
+                                              >(
+                                                value: null,
+                                                hint: const Text('Verband'),
+                                                items: const [],
+                                                onChanged: null,
+                                                decoration: InputDecoration(
+                                                  labelText: 'Verband *',
+                                                  filled: true,
+                                                  fillColor:
+                                                      UIConstants.whiteColor,
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          UIConstants
+                                                              .cornerRadius,
+                                                        ),
                                                   ),
-                                            ),
-                                          ),
-                                          validator:
-                                              (v) =>
-                                                  v == null
-                                                      ? 'Pflichtfeld'
-                                                      : null,
+                                                ),
+                                                validator:
+                                                    (v) =>
+                                                        'Keine Werte verfügbar',
+                                              );
+                                            }
+                                            final items =
+                                                snapshot.data?.map<
+                                                  DropdownMenuItem<int>
+                                                >((v) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: v.id,
+                                                    child: Text(
+                                                      v.beschreibung ??
+                                                          v.toString(),
+                                                      style:
+                                                          UIStyles
+                                                              .bodyTextStyle,
+                                                    ),
+                                                  );
+                                                }).toList();
+                                            return DropdownButtonFormField<int>(
+                                              value: _selectedVerbandId,
+                                              items: items,
+                                              onChanged:
+                                                  (val) => setState(
+                                                    () =>
+                                                        _selectedVerbandId =
+                                                            val,
+                                                  ),
+                                              decoration: InputDecoration(
+                                                labelText: 'Verband *',
+                                                filled: true,
+                                                fillColor:
+                                                    UIConstants.whiteColor,
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        UIConstants
+                                                            .cornerRadius,
+                                                      ),
+                                                ),
+                                              ),
+                                              validator:
+                                                  (v) =>
+                                                      v == null
+                                                          ? 'Pflichtfeld'
+                                                          : null,
+                                            );
+                                          },
                                         ),
                                       ),
                                     ],
