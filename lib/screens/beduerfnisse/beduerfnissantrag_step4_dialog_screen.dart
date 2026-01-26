@@ -299,6 +299,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                                   );
                                                 }).toList();
                                             return DropdownButtonFormField<int>(
+                                              isExpanded: true,
                                               value: _selectedWaffenartId,
                                               hint: const Text('Waffenart'),
                                               items: items,
@@ -360,6 +361,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                                   );
                                                 }).toList();
                                             return DropdownButtonFormField<int>(
+                                              isExpanded: true,
                                               value: _selectedKaliberId,
                                               hint: const Text('Kaliber'),
                                               items: items,
@@ -538,6 +540,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                                   }
                                                 }).toList();
                                             return DropdownButtonFormField<int>(
+                                              isExpanded: true,
                                               value: _selectedLauflaengeId,
                                               hint: const Text('Lauflänge'),
                                               items: items,
@@ -653,6 +656,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                                   );
                                                 }).toList();
                                             return DropdownButtonFormField<int>(
+                                              isExpanded: true,
                                               value: _selectedBeduerfnisgrundId,
                                               items: items,
                                               onChanged:
@@ -740,6 +744,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                                   );
                                                 }).toList();
                                             return DropdownButtonFormField<int>(
+                                              isExpanded: true,
                                               value: _selectedVerbandId,
                                               items: items,
                                               onChanged:

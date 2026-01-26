@@ -6,6 +6,7 @@ import '/widgets/keyboard_focus_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'beduerfnissantrag_step4_dialog_screen.dart';
+import 'package:meinbssb/constants/ui_styles.dart';
 
 class BeduerfnissantragStep4Screen extends StatefulWidget {
   const BeduerfnissantragStep4Screen({
@@ -167,14 +168,82 @@ class _BeduerfnissantragStep4ScreenState
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingM),
-                      ...waffen.map(
-                        (w) => Card(
+                      ...waffen.map((w) {
+                        // Try to cast to BeduerfnisseWaffeBesitz, fallback to dynamic
+                        final wb = w;
+                        return Card(
                           margin: const EdgeInsets.only(
                             bottom: UIConstants.spacingS,
                           ),
-                          child: ListTile(title: Text(w.toString())),
-                        ),
-                      ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text('WBK-Nr: 	${wb.wbkNr ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                    Expanded(
+                                      child: Text('LFD WBK: 	${wb.lfdWbk ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text('Waffenart-ID: 	${wb.waffenartId ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                    Expanded(
+                                      child: Text('Kaliber-ID: 	${wb.kaliberId ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text('Hersteller: 	${wb.hersteller ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                    Expanded(
+                                      child: Text('Lauflänge-ID: 	${wb.lauflaengeId ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text('Gewicht: 	${wb.gewicht ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                    Expanded(
+                                      child: Text('Kompensator: 	${wb.kompensator == true ? "Ja" : "Nein"}', style: UIStyles.formValueStyle),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text('Bedürfnisgrund-ID: 	${wb.beduerfnisgrundId ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                    Expanded(
+                                      child: Text('Verband-ID: 	${wb.verbandId ?? ''}', style: UIStyles.formValueStyle),
+                                    ),
+                                  ],
+                                ),
+                                if (wb.bemerkung != null && wb.bemerkung.toString().isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4.0),
+                                    child: Text('Bemerkung: ${wb.bemerkung}', style: UIStyles.formValueStyle),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   );
                 },
