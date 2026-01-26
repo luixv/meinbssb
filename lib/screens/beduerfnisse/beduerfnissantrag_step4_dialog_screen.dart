@@ -347,7 +347,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: UIConstants.spacingS),
+                        const SizedBox(height: UIConstants.spacingSM),
                         // Kompensator
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -372,7 +372,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                 ),
                           ),
                         ),
-                        const SizedBox(height: UIConstants.spacingS),
+                        const SizedBox(height: UIConstants.spacingSM),
                         // Bedürfnisgrund und Verband (moved here)
                         Row(
                           children: [
@@ -479,6 +479,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                           maxLines: 2,
                         ),
                         const SizedBox(height: UIConstants.spacingL),
+                        const SizedBox(height: 24),
                         // Action buttons
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
