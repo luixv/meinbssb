@@ -909,8 +909,9 @@ class PostgrestService {
         'bemerkung': bemerkung,
       };
       if (wettkampfartId != null) data['wettkampfart_id'] = wettkampfartId;
-      if (wettkampfergebnis != null)
+      if (wettkampfergebnis != null) {
         data['wettkampfergebnis'] = wettkampfergebnis;
+      }
 
       final response = await _httpClient.post(
         Uri.parse('${_baseUrl}bed_sport'),
@@ -1103,8 +1104,9 @@ class PostgrestService {
       if (hersteller != null) data['hersteller'] = hersteller;
       if (lauflaengeId != null) data['lauflaenge_id'] = lauflaengeId;
       if (gewicht != null) data['gewicht'] = gewicht;
-      if (beduerfnisgrundId != null)
+      if (beduerfnisgrundId != null) {
         data['beduerfnisgrund_id'] = beduerfnisgrundId;
+      }
       if (verbandId != null) data['verband_id'] = verbandId;
       if (bemerkung != null) data['bemerkung'] = bemerkung;
 
@@ -1169,8 +1171,9 @@ class PostgrestService {
   Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
     try {
       if (waffeBesitz.id == null) {
-        LoggerService.logError('Cannot update bed_waffe_besitz without an ID');
-        return false;
+        throw Exception(
+          'Interner Fehler: Datensatz-ID fehlt. Aktualisierung nicht möglich.',
+        );
       }
 
       // Convert to JSON and add changed_at timestamp
@@ -1209,24 +1212,34 @@ class PostgrestService {
         'changed_at': updateData['changed_at'],
       };
 
+      final url = Uri.parse(
+        '${_baseUrl}bed_waffe_besitz?id=eq.${waffeBesitz.id}',
+      );
+
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_waffe_besitz?id=eq.${waffeBesitz.id}'),
+        url,
         headers: _headers,
         body: jsonEncode(snakeCaseData),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
         LoggerService.logInfo('bed_waffe_besitz updated successfully');
         return true;
       } else {
         LoggerService.logError(
           'Failed to update bed_waffe_besitz. Status: ${response.statusCode}, Body: ${response.body}',
         );
-        return false;
+        throw Exception(
+          'Fehler beim Aktualisieren: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
-      LoggerService.logError('Error updating bed_waffe_besitz: $e');
-      return false;
+      LoggerService.logError(
+        'Error updating bed_waffe_besitz by id ${waffeBesitz.id}: $e',
+      );
+      rethrow;
     }
   }
 

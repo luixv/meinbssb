@@ -9,6 +9,7 @@ import 'beduerfnissantrag_step4_dialog_screen.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/delete_confirm_dialog.dart';
+import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
 
 class BeduerfnissantragStep4Screen extends StatefulWidget {
   const BeduerfnissantragStep4Screen({
@@ -76,13 +77,17 @@ class _BeduerfnissantragStep4ScreenState
     }
   }
 
-  Future<void> _showAddWaffeBesitzDialog(BuildContext context) async {
+  Future<void> _showAddWaffeBesitzDialog(
+    BuildContext context, {
+    BeduerfnisseWaffeBesitz? waffeBesitz,
+  }) async {
     await showDialog(
       context: context,
       builder:
           (ctx) => AddWaffeBesitzDialog(
             antragsnummer: widget.antrag.antragsnummer,
             onSaved: _refreshWaffeBesitz,
+            waffeBesitz: waffeBesitz,
           ),
     );
   }
@@ -111,16 +116,16 @@ class _BeduerfnissantragStep4ScreenState
         _refreshWaffeBesitz();
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(
+          ScaffoldMessenger.maybeOf(
             context,
-          ).showSnackBar(const SnackBar(content: Text('Fehler beim Löschen')));
+          )?.showSnackBar(const SnackBar(content: Text('Fehler beim Löschen')));
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
+        ScaffoldMessenger.maybeOf(
           context,
-        ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+        )?.showSnackBar(SnackBar(content: Text('Fehler: $e')));
       }
     }
   }
@@ -460,20 +465,65 @@ class _BeduerfnissantragStep4ScreenState
                                           const SizedBox(
                                             height: UIConstants.spacingS,
                                           ),
-                                          Text(
-                                            'Bemerkung: ${wb.bemerkung}',
-                                            style: UIStyles.bodyTextStyle
-                                                .copyWith(
-                                                  fontSize:
-                                                      UIStyles
-                                                          .bodyTextStyle
-                                                          .fontSize! *
-                                                      fontSizeProvider
-                                                          .scaleFactor,
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.comment,
+                                                size:
+                                                    UIConstants.iconSizeS *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                color: UIConstants.primaryColor,
+                                              ),
+                                              const SizedBox(
+                                                width: UIConstants.spacingS,
+                                              ),
+                                              Expanded(
+                                                child: Text(
+                                                  'Bemerkung: ${wb.bemerkung}',
+                                                  style: UIStyles.bodyTextStyle
+                                                      .copyWith(
+                                                        fontSize:
+                                                            UIStyles
+                                                                .bodyTextStyle
+                                                                .fontSize! *
+                                                            fontSizeProvider
+                                                                .scaleFactor,
+                                                      ),
                                                 ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ],
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 4,
+                                    right: 48,
+                                    child: Semantics(
+                                      button: true,
+                                      label: 'Eintrag bearbeiten',
+                                      child: Tooltip(
+                                        message: 'Bearbeiten',
+                                        child: InkWell(
+                                          onTap:
+                                              () => _showAddWaffeBesitzDialog(
+                                                context,
+                                                waffeBesitz: wb,
+                                              ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Icon(
+                                              Icons.edit,
+                                              color: UIConstants.primaryColor,
+                                              size:
+                                                  UIConstants.iconSizeS *
+                                                  fontSizeProvider.scaleFactor,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   Positioned(
@@ -491,7 +541,7 @@ class _BeduerfnissantragStep4ScreenState
                                             padding: const EdgeInsets.all(8.0),
                                             child: Icon(
                                               Icons.delete_outline,
-                                              color: Colors.red,
+                                              color: UIConstants.deleteIcon,
                                               size:
                                                   UIConstants.iconSizeS *
                                                   fontSizeProvider.scaleFactor,

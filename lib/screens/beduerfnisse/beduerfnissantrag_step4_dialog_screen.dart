@@ -5,15 +5,18 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
 
 class AddWaffeBesitzDialog extends StatefulWidget {
   const AddWaffeBesitzDialog({
     super.key,
     required this.antragsnummer,
     this.onSaved,
+    this.waffeBesitz,
   });
   final int antragsnummer;
   final VoidCallback? onSaved;
+  final BeduerfnisseWaffeBesitz? waffeBesitz;
 
   @override
   State<AddWaffeBesitzDialog> createState() => _AddWaffeBesitzDialogState();
@@ -80,6 +83,21 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
     _gruendeFuture = apiService.getBedAuswahlByTypId(5);
     _lauflaengeFuture = apiService.getBedAuswahlByTypId(4);
     _verbandFuture = apiService.getBedAuswahlByTypId(3);
+
+    if (widget.waffeBesitz != null) {
+      final wb = widget.waffeBesitz!;
+      _wbkNrController.text = wb.wbkNr;
+      _lfdWbkController.text = wb.lfdWbk;
+      _herstellerController.text = wb.hersteller ?? '';
+      _gewichtController.text = wb.gewicht ?? '';
+      _bemerkungController.text = wb.bemerkung ?? '';
+      _kompensator = wb.kompensator;
+      _selectedWaffenartId = wb.waffenartId;
+      _selectedKaliberId = wb.kaliberId;
+      _selectedBeduerfnisgrundId = wb.beduerfnisgrundId;
+      _selectedLauflaengeId = wb.lauflaengeId;
+      _selectedVerbandId = wb.verbandId;
+    }
   }
 
   @override
@@ -97,50 +115,52 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
       setState(() => _isLoading = true);
       try {
         final apiService = Provider.of<ApiService>(context, listen: false);
-        await apiService.createBedWaffeBesitz(
-          antragsnummer: widget.antragsnummer,
-          wbkNr: _wbkNrController.text,
-          lfdWbk: _lfdWbkController.text,
-          waffenartId: _selectedWaffenartId ?? 0,
-          kaliberId: _selectedKaliberId ?? 0,
-          kompensator: _kompensator,
-          hersteller: _herstellerController.text,
-          lauflaengeId: _selectedLauflaengeId,
-          gewicht: _gewichtController.text,
-          beduerfnisgrundId: _selectedBeduerfnisgrundId,
-          verbandId: _selectedVerbandId,
-          bemerkung: _bemerkungController.text,
-        );
+        if (widget.waffeBesitz != null) {
+          final updatedWb = BeduerfnisseWaffeBesitz(
+            id: widget.waffeBesitz!.id,
+            antragsnummer: widget.antragsnummer,
+            wbkNr: _wbkNrController.text,
+            lfdWbk: _lfdWbkController.text,
+            waffenartId: _selectedWaffenartId ?? 0,
+            kaliberId: _selectedKaliberId ?? 0,
+            kompensator: _kompensator,
+            hersteller: _herstellerController.text,
+            lauflaengeId: _selectedLauflaengeId,
+            gewicht: _gewichtController.text,
+            beduerfnisgrundId: _selectedBeduerfnisgrundId,
+            verbandId: _selectedVerbandId,
+            bemerkung: _bemerkungController.text,
+          );
+
+          if (updatedWb.id == null) {
+            throw Exception(
+              'Fehler: Die ID des Eintrags konnte nicht ermittelt werden.',
+            );
+          }
+
+          await apiService.updateBedWaffeBesitz(updatedWb);
+        } else {
+          await apiService.createBedWaffeBesitz(
+            antragsnummer: widget.antragsnummer,
+            wbkNr: _wbkNrController.text,
+            lfdWbk: _lfdWbkController.text,
+            waffenartId: _selectedWaffenartId ?? 0,
+            kaliberId: _selectedKaliberId ?? 0,
+            kompensator: _kompensator,
+            hersteller: _herstellerController.text,
+            lauflaengeId: _selectedLauflaengeId,
+            gewicht: _gewichtController.text,
+            beduerfnisgrundId: _selectedBeduerfnisgrundId,
+            verbandId: _selectedVerbandId,
+            bemerkung: _bemerkungController.text,
+          );
+        }
         if (mounted) {
           Navigator.of(context).pop();
           if (widget.onSaved != null) widget.onSaved!();
         }
       } catch (e) {
         if (mounted) {
-          // Show SnackBar if possible, else fallback to dialog
-          final messenger = ScaffoldMessenger.maybeOf(context);
-          if (messenger != null) {
-            messenger.showSnackBar(
-              SnackBar(content: Text('Fehler beim Speichern: $e')),
-            );
-          } else {
-            showDialog(
-              context: context,
-              builder:
-                  (ctx) => AlertDialog(
-                    title: const Text('Fehler'),
-                    content: Text('Fehler beim Speichern: $e'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(ctx).pop(),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-            );
-          }
-        } else {
-          // If not mounted, fallback to dialog
           showDialog(
             context: context,
             builder:
@@ -202,9 +222,14 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                   // Title
                                   Semantics(
                                     header: true,
-                                    label: 'Waffenbesitz hinzufügen',
+                                    label:
+                                        widget.waffeBesitz != null
+                                            ? 'Waffenbesitz bearbeiten'
+                                            : 'Waffenbesitz hinzufügen',
                                     child: ScaledText(
-                                      'Waffenbesitz hinzufügen',
+                                      widget.waffeBesitz != null
+                                          ? 'Waffenbesitz bearbeiten'
+                                          : 'Waffenbesitz hinzufügen',
                                       style: UIStyles.titleStyle.copyWith(
                                         fontSize:
                                             UIStyles.titleStyle.fontSize! *
@@ -247,8 +272,10 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                         child: TextFormField(
                                           controller: _lfdWbkController,
                                           style: UIStyles.bodyTextStyle,
+                                          maxLength: 3,
                                           decoration: InputDecoration(
                                             labelText: 'lfd WBK *',
+                                            counterText: '',
                                             filled: true,
                                             fillColor: UIConstants.whiteColor,
                                             border: OutlineInputBorder(
