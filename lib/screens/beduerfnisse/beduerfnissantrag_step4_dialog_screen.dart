@@ -20,6 +20,40 @@ class AddWaffeBesitzDialog extends StatefulWidget {
 }
 
 class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
+  bool get _allRequiredFieldsFilled {
+    return _wbkNrController.text.isNotEmpty &&
+        _lfdWbkController.text.isNotEmpty &&
+        _selectedWaffenartId != null &&
+        _selectedKaliberId != null &&
+        _herstellerController.text.isNotEmpty &&
+        _lauflaengeController.text.isNotEmpty &&
+        num.tryParse(_lauflaengeController.text) != null &&
+        _gewichtController.text.isNotEmpty &&
+        num.tryParse(_gewichtController.text) != null &&
+        _selectedBeduerfnisgrundId != null &&
+        _selectedVerband != null;
+  }
+
+  void _onFieldChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Add listeners to text controllers for compulsory fields
+    _wbkNrController.removeListener(_onFieldChanged);
+    _lfdWbkController.removeListener(_onFieldChanged);
+    _herstellerController.removeListener(_onFieldChanged);
+    _lauflaengeController.removeListener(_onFieldChanged);
+    _gewichtController.removeListener(_onFieldChanged);
+    _wbkNrController.addListener(_onFieldChanged);
+    _lfdWbkController.addListener(_onFieldChanged);
+    _herstellerController.addListener(_onFieldChanged);
+    _lauflaengeController.addListener(_onFieldChanged);
+    _gewichtController.addListener(_onFieldChanged);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _wbkNrController = TextEditingController();
   final _lfdWbkController = TextEditingController();
@@ -100,6 +134,8 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
   Widget build(BuildContext context) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
+        // The Dropdowns' onChanged will also call setState, so no extra listeners needed for them.
+        // The FAB will be enabled only if all required fields are filled and not loading.
         return Dialog(
           insetPadding: const EdgeInsets.symmetric(
             horizontal: UIConstants.spacingL,
@@ -588,25 +624,42 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                         Semantics(
                           button: true,
                           label: 'Speichern',
-                          child: FloatingActionButton(
-                            heroTag: 'fab_save_waffe',
-                            mini: true,
-                            backgroundColor: UIConstants.submitButtonBackground,
-                            onPressed: _isLoading ? null : _save,
-                            child:
-                                _isLoading
-                                    ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
+                          child: AbsorbPointer(
+                            absorbing: !_allRequiredFieldsFilled || _isLoading,
+                            child: FloatingActionButton(
+                              heroTag: 'fab_save_waffe',
+                              mini: true,
+                              backgroundColor:
+                                  _allRequiredFieldsFilled && !_isLoading
+                                      ? UIConstants.submitButtonBackground
+                                      : UIConstants.disabledBackgroundColor,
+                              onPressed:
+                                  (_allRequiredFieldsFilled && !_isLoading)
+                                      ? _save
+                                      : null,
+                              foregroundColor:
+                                  _allRequiredFieldsFilled && !_isLoading
+                                      ? UIConstants.buttonTextColor
+                                      : Colors.white,
+                              child:
+                                  _isLoading
+                                      ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                      : Icon(
+                                        Icons.check,
+                                        color:
+                                            _allRequiredFieldsFilled &&
+                                                    !_isLoading
+                                                ? UIConstants.buttonTextColor
+                                                : Colors.white,
                                       ),
-                                    )
-                                    : const Icon(
-                                      Icons.check,
-                                      color: UIConstants.buttonTextColor,
-                                    ),
+                            ),
                           ),
                         ),
                       ],
