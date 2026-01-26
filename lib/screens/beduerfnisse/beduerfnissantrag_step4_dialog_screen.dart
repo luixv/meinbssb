@@ -137,22 +137,25 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                           ),
                           // Bemerkung (free text, two rows, full width)
                           const SizedBox(height: UIConstants.spacingL),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Bemerkung',
-                              filled: true,
-                              fillColor: UIConstants.whiteColor,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
+                          SizedBox(
+                            width: double.infinity,
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Bemerkung',
+                                filled: true,
+                                fillColor: UIConstants.whiteColor,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
                               ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
+                              style: UIStyles.bodyTextStyle,
+                              minLines: 2,
+                              maxLines: 2,
                             ),
-                            style: UIStyles.bodyTextStyle,
-                            minLines: 2,
-                            maxLines: 2,
                           ),
                         ],
                       ),
