@@ -27,7 +27,7 @@ class _BeduerfnissantragStep3DialogState
   bool _isUploadingDocument = false;
   final TextEditingController _labelController = TextEditingController();
 
-  Future<void> _uploadDocument(
+  Future<void> _scanAndUploadDocument(
     BuildContext context,
     String documentType,
   ) async {
@@ -44,12 +44,16 @@ class _BeduerfnissantragStep3DialogState
     }
 
     try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+      // Pick image using image picker (simulate scanning)
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
-      if (file == null) {
+      if (pickedFile == null) {
+        // User cancelled
         return;
       }
+
+      final bytes = await pickedFile.readAsBytes();
 
       if (widget.antragsnummer == null) {
         if (mounted) {
@@ -65,12 +69,10 @@ class _BeduerfnissantragStep3DialogState
         _isUploadingDocument = true;
       });
 
-      final bytes = await file.readAsBytes();
-
-      // Upload the document
+      // Upload the scanned document
       final success = await apiService.uploadBedDateiForWBK(
         antragsnummer: widget.antragsnummer!,
-        dateiname: file.name,
+        dateiname: pickedFile.name,
         fileBytes: bytes,
         label: _labelController.text.trim(),
       );
@@ -95,13 +97,13 @@ class _BeduerfnissantragStep3DialogState
         });
         ErrorService.showErrorSnackBar(
           scaffoldContext,
-          'Fehler beim Hochladen: $e',
+          'Fehler beim Scannen: $e',
         );
       }
     }
   }
 
-  Future<void> _scanAndUploadDocument(
+  Future<void> _uploadDocument(
     BuildContext context,
     String documentType,
   ) async {
@@ -262,77 +264,82 @@ class _BeduerfnissantragStep3DialogState
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingL),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                      Row(
                         children: [
-                          ElevatedButton.icon(
-                            onPressed:
-                                _isUploadingDocument
-                                    ? null
-                                    : () => _uploadDocument(context, 'WBK'),
-                            icon: Icon(
-                              Icons.upload_file,
-                              color: UIConstants.buttonTextColor,
-                            ),
-                            label: ScaledText(
-                              'Hochladen',
-                              style: UIStyles.bodyTextStyle.copyWith(
-                                fontSize:
-                                    UIConstants.buttonFontSize *
-                                    fontSizeProvider.scaleFactor,
-                                color: Colors.white,
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  _isUploadingDocument
+                                      ? null
+                                      : () => _uploadDocument(context, 'WBK'),
+                              icon: Icon(
+                                Icons.upload_file,
+                                color: UIConstants.buttonTextColor,
                               ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  UIConstants.submitButtonBackground,
-                              foregroundColor: UIConstants.buttonTextColor,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: UIConstants.spacingM,
-                                vertical: UIConstants.spacingM,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  UIConstants.cornerRadius,
+                              label: ScaledText(
+                                'Hochladen',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIConstants.buttonFontSize *
+                                      fontSizeProvider.scaleFactor,
+                                  color: Colors.white,
                                 ),
                               ),
-                              elevation: 2,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                ),
+                                elevation: 2,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: UIConstants.spacingM),
-                          ElevatedButton.icon(
-                            onPressed:
-                                _isUploadingDocument
-                                    ? null
-                                    : () =>
-                                        _scanAndUploadDocument(context, 'WBK'),
-                            icon: Icon(
-                              Icons.camera_alt,
-                              color: UIConstants.buttonTextColor,
-                            ),
-                            label: ScaledText(
-                              'Scannen',
-                              style: UIStyles.bodyTextStyle.copyWith(
-                                fontSize:
-                                    UIConstants.buttonFontSize *
-                                    fontSizeProvider.scaleFactor,
-                                color: Colors.white,
+                          const SizedBox(width: UIConstants.spacingM),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  _isUploadingDocument
+                                      ? null
+                                      : () => _scanAndUploadDocument(
+                                        context,
+                                        'WBK',
+                                      ),
+                              icon: Icon(
+                                Icons.camera_alt,
+                                color: UIConstants.buttonTextColor,
                               ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  UIConstants.submitButtonBackground,
-                              foregroundColor: UIConstants.buttonTextColor,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: UIConstants.spacingM,
-                                vertical: UIConstants.spacingM,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  UIConstants.cornerRadius,
+                              label: ScaledText(
+                                'Scannen',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIConstants.buttonFontSize *
+                                      fontSizeProvider.scaleFactor,
+                                  color: Colors.white,
                                 ),
                               ),
-                              elevation: 2,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                ),
+                                elevation: 2,
+                              ),
                             ),
                           ),
                         ],

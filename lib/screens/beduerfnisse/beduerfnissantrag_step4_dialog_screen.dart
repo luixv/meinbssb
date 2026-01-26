@@ -62,11 +62,29 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Waffenbesitz hinzufügen',
-                        style: UIStyles.headerStyle,
+                      // Header with icon and title
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.security,
+                            color: UIConstants.defaultAppColor,
+                            size: 28,
+                          ),
+                          const SizedBox(width: UIConstants.spacingM),
+                          Expanded(
+                            child: Text(
+                              'Waffenbesitz hinzufügen',
+                              style: UIStyles.headerStyle.copyWith(
+                                color: UIConstants.defaultAppColor,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: UIConstants.spacingL),
+                      // WBK fields
                       Row(
                         children: [
                           Expanded(
@@ -118,7 +136,8 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: UIConstants.spacingM),
+                      // Waffenart and Kaliber
                       Row(
                         children: [
                           Expanded(
@@ -240,7 +259,8 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: UIConstants.spacingM),
+                      // Kompensator
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: ValueListenableBuilder<bool>(
@@ -264,65 +284,70 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                               ),
                         ),
                       ),
-                      const SizedBox(height: 28),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Semantics(
-                              button: true,
-                              label: 'Abbrechen',
-                              hint: 'Dialog schließen ohne zu speichern',
-                              child: FloatingActionButton(
-                                heroTag: 'cancelWaffeBesitzFab',
-                                mini: true,
-                                backgroundColor:
-                                    UIConstants.cancelButtonBackground,
-                                foregroundColor: UIConstants.cancelButtonText,
-                                tooltip: 'Abbrechen',
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Icon(Icons.close),
+                      const SizedBox(height: UIConstants.spacingL),
+                      // Action buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.close),
+                            label: const Text('Abbrechen'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  UIConstants.cancelButtonBackground,
+                              foregroundColor: UIConstants.cancelButtonText,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 14,
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: UIConstants.buttonFontSize,
+                                fontWeight: FontWeight.w600,
+                                color: UIConstants.cancelButtonText,
                               ),
                             ),
-                            const SizedBox(width: UIConstants.spacingS),
-                            Semantics(
-                              button: true,
-                              label: 'Speichern',
-                              hint: 'Eingaben speichern',
-                              child: FloatingActionButton(
-                                heroTag: 'saveWaffeBesitzFab',
-                                mini: true,
-                                backgroundColor:
-                                    UIConstants.submitButtonBackground,
-                                foregroundColor: UIConstants.submitButtonText,
-                                tooltip: 'Speichern',
-                                onPressed: () async {
-                                  if (formKey.currentState?.validate() ??
-                                      false) {
-                                    await apiService.createBedWaffeBesitz(
-                                      antragsnummer: antragsnummer,
-                                      wbkNr: wbkNrController.text,
-                                      lfdWbk: lfdWbkController.text,
-                                      waffenartId: selectedWaffenartId ?? 0,
-                                      kaliberId: selectedKaliberId ?? 0,
-                                      kompensator: kompensator.value,
-                                      hersteller: null,
-                                      lauflaengeId: null,
-                                      gewicht: null,
-                                      beduerfnisgrundId: null,
-                                      verbandId: null,
-                                      bemerkung: null,
-                                    );
-                                    Navigator.of(context).pop();
-                                    if (onSaved != null) onSaved!();
-                                  }
-                                },
-                                child: const Icon(Icons.check),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          const SizedBox(width: UIConstants.spacingS),
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.check),
+                            label: const Text('Speichern'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  UIConstants.submitButtonBackground,
+                              foregroundColor: UIConstants.submitButtonText,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 14,
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: UIConstants.buttonFontSize,
+                                fontWeight: FontWeight.w600,
+                                color: UIConstants.submitButtonText,
                               ),
                             ),
-                          ],
-                        ),
+                            onPressed: () async {
+                              if (formKey.currentState?.validate() ?? false) {
+                                await apiService.createBedWaffeBesitz(
+                                  antragsnummer: antragsnummer,
+                                  wbkNr: wbkNrController.text,
+                                  lfdWbk: lfdWbkController.text,
+                                  waffenartId: selectedWaffenartId ?? 0,
+                                  kaliberId: selectedKaliberId ?? 0,
+                                  kompensator: kompensator.value,
+                                  hersteller: null,
+                                  lauflaengeId: null,
+                                  gewicht: null,
+                                  beduerfnisgrundId: null,
+                                  verbandId: null,
+                                  bemerkung: null,
+                                );
+                                Navigator.of(context).pop();
+                                if (onSaved != null) onSaved!();
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),

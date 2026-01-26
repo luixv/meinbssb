@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -91,9 +92,14 @@ class _BeduerfnissantragStep2DialogScreenState
   // Scan a single document with edge detection
   Future<void> _scanDocument(BuildContext buttonContext) async {
     if (widget.antragsnummer == null) {
-      ScaffoldMessenger.of(buttonContext).showSnackBar(
-        const SnackBar(content: Text('Fehler: Antragsnummer fehlt')),
-      );
+      // Only show SnackBar if not web and Scaffold is present
+      final isMobile = !kIsWeb;
+      final hasScaffold = ScaffoldMessenger.maybeOf(buttonContext) != null;
+      if (isMobile && hasScaffold) {
+        ScaffoldMessenger.of(buttonContext).showSnackBar(
+          const SnackBar(content: Text('Fehler: Antragsnummer fehlt')),
+        );
+      }
       return;
     }
 
@@ -120,27 +126,33 @@ class _BeduerfnissantragStep2DialogScreenState
       );
 
       if (mounted) {
+        final isMobile = !kIsWeb;
+        final hasScaffold = ScaffoldMessenger.maybeOf(buttonContext) != null;
         if (dateiId != null) {
           setState(() {
             _uploadedDateiId = dateiId;
             _documentUploaded = true;
             _isUploadingDocument = false;
           });
-          ScaffoldMessenger.of(buttonContext).showSnackBar(
-            const SnackBar(
-              content: Text('Dokument erfolgreich gescannt und hochgeladen'),
-              duration: Duration(seconds: 1),
-            ),
-          );
+          if (isMobile && hasScaffold) {
+            ScaffoldMessenger.of(buttonContext).showSnackBar(
+              const SnackBar(
+                content: Text('Dokument erfolgreich gescannt und hochgeladen'),
+                duration: Duration(seconds: 1),
+              ),
+            );
+          }
         } else {
           setState(() {
             _isUploadingDocument = false;
           });
-          ScaffoldMessenger.of(buttonContext).showSnackBar(
-            const SnackBar(
-              content: Text('Fehler beim Hochladen des Dokuments'),
-            ),
-          );
+          if (isMobile && hasScaffold) {
+            ScaffoldMessenger.of(buttonContext).showSnackBar(
+              const SnackBar(
+                content: Text('Fehler beim Hochladen des Dokuments'),
+              ),
+            );
+          }
         }
       }
     } on UnsupportedPlatformException catch (e) {
@@ -148,30 +160,42 @@ class _BeduerfnissantragStep2DialogScreenState
         _isUploadingDocument = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(buttonContext).showSnackBar(
-          SnackBar(
-            content: Text(e.message),
-            duration: const Duration(seconds: 4),
-          ),
-        );
+        final isMobile = !kIsWeb;
+        final hasScaffold = ScaffoldMessenger.maybeOf(buttonContext) != null;
+        if (isMobile && hasScaffold) {
+          ScaffoldMessenger.of(buttonContext).showSnackBar(
+            SnackBar(
+              content: Text(e.message),
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
     } on ScanException catch (e) {
       setState(() {
         _isUploadingDocument = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(
-          buttonContext,
-        ).showSnackBar(SnackBar(content: Text(e.message)));
+        final isMobile = !kIsWeb;
+        final hasScaffold = ScaffoldMessenger.maybeOf(buttonContext) != null;
+        if (isMobile && hasScaffold) {
+          ScaffoldMessenger.of(
+            buttonContext,
+          ).showSnackBar(SnackBar(content: Text(e.message)));
+        }
       }
     } catch (e) {
       setState(() {
         _isUploadingDocument = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(
-          buttonContext,
-        ).showSnackBar(SnackBar(content: Text('Fehler beim Scannen: $e')));
+        final isMobile = !kIsWeb;
+        final hasScaffold = ScaffoldMessenger.maybeOf(buttonContext) != null;
+        if (isMobile && hasScaffold) {
+          ScaffoldMessenger.of(
+            buttonContext,
+          ).showSnackBar(SnackBar(content: Text('Fehler beim Scannen: $e')));
+        }
       }
     }
   }
@@ -1322,11 +1346,13 @@ class _BeduerfnissantragStep2DialogScreenState
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
                                                         _documentUploaded
-                                                            ? Colors.lightGreen
+                                                            ? UIConstants
+                                                                .disabledBackgroundColor
                                                             : UIConstants
-                                                                .defaultAppColor,
+                                                                .submitButtonBackground,
                                                     disabledBackgroundColor:
-                                                        Colors.lightGreen,
+                                                        UIConstants
+                                                            .disabledBackgroundColor,
                                                     padding:
                                                         const EdgeInsets.symmetric(
                                                           vertical:
@@ -1353,14 +1379,11 @@ class _BeduerfnissantragStep2DialogScreenState
                                                   label: ScaledText(
                                                     'Hochladen',
                                                     style: UIStyles
-                                                        .bodyTextStyle
+                                                        .dialogButtonTextStyle
                                                         .copyWith(
-                                                          color:
-                                                              UIConstants
-                                                                  .buttonTextColor,
                                                           fontSize:
                                                               UIStyles
-                                                                  .bodyTextStyle
+                                                                  .dialogButtonTextStyle
                                                                   .fontSize! *
                                                               fontSizeProvider
                                                                   .scaleFactor,
@@ -1397,11 +1420,13 @@ class _BeduerfnissantragStep2DialogScreenState
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
                                                         _documentUploaded
-                                                            ? Colors.lightGreen
+                                                            ? UIConstants
+                                                                .disabledBackgroundColor
                                                             : UIConstants
-                                                                .defaultAppColor,
+                                                                .submitButtonBackground,
                                                     disabledBackgroundColor:
-                                                        Colors.lightGreen,
+                                                        UIConstants
+                                                            .disabledBackgroundColor,
                                                     padding:
                                                         const EdgeInsets.symmetric(
                                                           vertical:
@@ -1428,14 +1453,11 @@ class _BeduerfnissantragStep2DialogScreenState
                                                   label: ScaledText(
                                                     'Scannen',
                                                     style: UIStyles
-                                                        .bodyTextStyle
+                                                        .dialogButtonTextStyle
                                                         .copyWith(
-                                                          color:
-                                                              UIConstants
-                                                                  .buttonTextColor,
                                                           fontSize:
                                                               UIStyles
-                                                                  .bodyTextStyle
+                                                                  .dialogButtonTextStyle
                                                                   .fontSize! *
                                                               fontSizeProvider
                                                                   .scaleFactor,
