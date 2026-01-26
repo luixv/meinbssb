@@ -223,8 +223,9 @@ class _BeduerfnissantragStep3ScreenState
                           showDialog(
                             context: context,
                             builder:
-                                (context) => BeduerfnissantragStep3Dialog(
+                                (dialogContext) => BeduerfnissantragStep3Dialog(
                                   antragsnummer: widget.antrag?.antragsnummer,
+                                  parentContext: context,
                                 ),
                           ).then((_) {
                             // Refresh document list after dialog is closed

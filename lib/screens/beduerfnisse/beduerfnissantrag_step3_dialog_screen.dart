@@ -5,12 +5,17 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:meinbssb/services/core/error_service.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BeduerfnissantragStep3Dialog extends StatefulWidget {
-  const BeduerfnissantragStep3Dialog({required this.antragsnummer, super.key});
-
+  const BeduerfnissantragStep3Dialog({
+    required this.antragsnummer,
+    this.parentContext,
+    super.key,
+  });
   final int? antragsnummer;
+  final BuildContext? parentContext;
 
   @override
   State<BeduerfnissantragStep3Dialog> createState() =>
@@ -27,42 +32,13 @@ class _BeduerfnissantragStep3DialogState
     String documentType,
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
+    final BuildContext scaffoldContext = widget.parentContext ?? context;
 
     // Check if label is empty
     if (_labelController.text.trim().isEmpty) {
-      await showDialog(
-        context: context,
-        builder:
-            (ctx) => AlertDialog(
-              title: Row(
-                children: const [
-                  Icon(Icons.error, color: UIConstants.errorColor),
-                  SizedBox(width: 12),
-                  Text(
-                    'Fehler',
-                    style: TextStyle(color: UIConstants.errorColor),
-                  ),
-                ],
-              ),
-              content: const Text(
-                'Bitte geben Sie eine Beschreibung für die Datei ein.',
-                style: TextStyle(fontSize: 18, color: UIConstants.errorColor),
-                textAlign: TextAlign.center,
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  style: TextButton.styleFrom(
-                    foregroundColor: UIConstants.buttonTextColor,
-                    backgroundColor: UIConstants.submitButtonBackground,
-                  ),
-                  child: const Text('OK'),
-                ),
-              ],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-              ),
-            ),
+      ErrorService.showErrorSnackBar(
+        scaffoldContext,
+        'Bitte geben Sie eine Beschreibung für die Datei ein.',
       );
       return;
     }
@@ -77,19 +53,9 @@ class _BeduerfnissantragStep3DialogState
 
       if (widget.antragsnummer == null) {
         if (mounted) {
-          await showDialog(
-            context: context,
-            builder:
-                (ctx) => AlertDialog(
-                  title: const Text('Fehler'),
-                  content: const Text('Antragsnummer nicht gefunden'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
+          ErrorService.showErrorSnackBar(
+            scaffoldContext,
+            'Antragsnummer nicht gefunden',
           );
         }
         return;
@@ -116,19 +82,9 @@ class _BeduerfnissantragStep3DialogState
         if (success) {
           Navigator.of(context).pop(true); // Close parent dialog on success
         } else {
-          await showDialog(
-            context: context,
-            builder:
-                (ctx) => AlertDialog(
-                  title: const Text('Fehler'),
-                  content: const Text('Fehler beim Hochladen'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
+          ErrorService.showErrorSnackBar(
+            scaffoldContext,
+            'Fehler beim Hochladen',
           );
         }
       }
@@ -137,19 +93,9 @@ class _BeduerfnissantragStep3DialogState
         setState(() {
           _isUploadingDocument = false;
         });
-        await showDialog(
-          context: context,
-          builder:
-              (ctx) => AlertDialog(
-                title: const Text('Fehler'),
-                content: Text('Fehler beim Hochladen: $e'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(),
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
+        ErrorService.showErrorSnackBar(
+          scaffoldContext,
+          'Fehler beim Hochladen: $e',
         );
       }
     }
@@ -160,42 +106,13 @@ class _BeduerfnissantragStep3DialogState
     String documentType,
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
+    final BuildContext scaffoldContext = widget.parentContext ?? context;
 
     // Check if label is empty
     if (_labelController.text.trim().isEmpty) {
-      await showDialog(
-        context: context,
-        builder:
-            (ctx) => AlertDialog(
-              title: Row(
-                children: const [
-                  Icon(Icons.error, color: UIConstants.errorColor),
-                  SizedBox(width: 12),
-                  Text(
-                    'Fehler',
-                    style: TextStyle(color: UIConstants.errorColor),
-                  ),
-                ],
-              ),
-              content: const Text(
-                'Bitte geben Sie eine Beschreibung für die Datei ein.',
-                style: TextStyle(fontSize: 18, color: UIConstants.errorColor),
-                textAlign: TextAlign.center,
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  style: TextButton.styleFrom(
-                    foregroundColor: UIConstants.buttonTextColor,
-                    backgroundColor: UIConstants.submitButtonBackground,
-                  ),
-                  child: const Text('OK'),
-                ),
-              ],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-              ),
-            ),
+      ErrorService.showErrorSnackBar(
+        scaffoldContext,
+        'Bitte geben Sie eine Beschreibung für die Datei ein.',
       );
       return;
     }
@@ -211,19 +128,9 @@ class _BeduerfnissantragStep3DialogState
 
       if (widget.antragsnummer == null) {
         if (mounted) {
-          await showDialog(
-            context: context,
-            builder:
-                (ctx) => AlertDialog(
-                  title: const Text('Fehler'),
-                  content: const Text('Antragsnummer nicht gefunden'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
+          ErrorService.showErrorSnackBar(
+            scaffoldContext,
+            'Antragsnummer nicht gefunden',
           );
         }
         return;
@@ -248,19 +155,9 @@ class _BeduerfnissantragStep3DialogState
         if (success) {
           Navigator.of(context).pop(true); // Close parent dialog on success
         } else {
-          await showDialog(
-            context: context,
-            builder:
-                (ctx) => AlertDialog(
-                  title: const Text('Fehler'),
-                  content: const Text('Fehler beim Hochladen'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
+          ErrorService.showErrorSnackBar(
+            scaffoldContext,
+            'Fehler beim Hochladen',
           );
         }
       }
@@ -269,19 +166,9 @@ class _BeduerfnissantragStep3DialogState
         setState(() {
           _isUploadingDocument = false;
         });
-        await showDialog(
-          context: context,
-          builder:
-              (ctx) => AlertDialog(
-                title: const Text('Fehler'),
-                content: Text('Fehler beim Scannen: $e'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(),
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
+        ErrorService.showErrorSnackBar(
+          scaffoldContext,
+          'Fehler beim Scannen: $e',
         );
       }
     }
@@ -307,7 +194,7 @@ class _BeduerfnissantragStep3DialogState
           ),
           backgroundColor: UIConstants.backgroundColor,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: const BoxConstraints(maxWidth: 420),
             child: Stack(
               children: [
                 Padding(
@@ -317,36 +204,32 @@ class _BeduerfnissantragStep3DialogState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Dialog Title
-                      ScaledText(
-                        'WBK hochladen',
-                        style: UIStyles.titleStyle.copyWith(
-                          fontSize:
-                              UIStyles.titleStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                          color: UIConstants.defaultAppColor,
-                        ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.file_upload,
+                            color: UIConstants.defaultAppColor,
+                            size: 28,
+                          ),
+                          const SizedBox(width: UIConstants.spacingM),
+                          ScaledText(
+                            'WBK-Dokument hochladen',
+                            style: UIStyles.titleStyle.copyWith(
+                              fontSize:
+                                  UIStyles.titleStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
+                              color: UIConstants.defaultAppColor,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: UIConstants.spacingM),
 
-                      // Datei Beschreibung input field (compulsory, with asterisk)
+                      const SizedBox(height: UIConstants.spacingXS),
                       TextField(
                         controller: _labelController,
                         decoration: InputDecoration(
-                          label: RichText(
-                            text: TextSpan(
-                              text: 'Datei Beschreibung',
-                              style: TextStyle(
-                                color: Colors.grey[700],
-                                fontSize: 16 * fontSizeProvider.scaleFactor,
-                              ),
-                              children: const [
-                                TextSpan(
-                                  text: ' *',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
+                          labelText: 'Beschreibung *',
                           hintText: 'Beschreibung des Dokuments',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(
@@ -358,17 +241,17 @@ class _BeduerfnissantragStep3DialogState
                             vertical: UIConstants.spacingM,
                           ),
                         ),
-                        style: TextStyle(
-                          fontSize: 16 * fontSizeProvider.scaleFactor,
+                        style: UIStyles.bodyTextStyle.copyWith(
+                          fontSize:
+                              UIStyles.bodyTextStyle.fontSize! *
+                              fontSizeProvider.scaleFactor,
                         ),
                       ),
                       const SizedBox(height: UIConstants.spacingL),
-
-                      // WBK Section
                       ScaledText(
-                        'Hochladen oder scannen der vorhanden WBK (Vorder und Rückseite)',
+                        'Bitte laden Sie Vorder- und Rückseite Ihrer WBK hoch oder scannen Sie diese ein.',
                         style: UIStyles.bodyTextStyle.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.normal,
                           fontSize:
                               UIStyles.bodyTextStyle.fontSize! *
                               fontSizeProvider.scaleFactor,
@@ -383,11 +266,17 @@ class _BeduerfnissantragStep3DialogState
                                   _isUploadingDocument
                                       ? null
                                       : () => _uploadDocument(context, 'WBK'),
-                              icon: const Icon(Icons.upload_file),
+                              icon: Icon(
+                                Icons.upload_file,
+                                color: UIConstants.buttonTextColor,
+                              ),
                               label: ScaledText(
                                 'Hochladen',
-                                style: TextStyle(
-                                  fontSize: 16 * fontSizeProvider.scaleFactor,
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIConstants.buttonFontSize *
+                                      fontSizeProvider.scaleFactor,
+                                  color: Colors.white,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
@@ -398,6 +287,12 @@ class _BeduerfnissantragStep3DialogState
                                   horizontal: UIConstants.spacingM,
                                   vertical: UIConstants.spacingM,
                                 ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                ),
+                                elevation: 2,
                               ),
                             ),
                           ),
@@ -411,11 +306,17 @@ class _BeduerfnissantragStep3DialogState
                                         context,
                                         'WBK',
                                       ),
-                              icon: const Icon(Icons.camera_alt),
+                              icon: Icon(
+                                Icons.camera_alt,
+                                color: UIConstants.buttonTextColor,
+                              ),
                               label: ScaledText(
                                 'Scannen',
-                                style: TextStyle(
-                                  fontSize: 16 * fontSizeProvider.scaleFactor,
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIConstants.buttonFontSize *
+                                      fontSizeProvider.scaleFactor,
+                                  color: Colors.white,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
@@ -426,6 +327,12 @@ class _BeduerfnissantragStep3DialogState
                                   horizontal: UIConstants.spacingM,
                                   vertical: UIConstants.spacingM,
                                 ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                ),
+                                elevation: 2,
                               ),
                             ),
                           ),
@@ -470,9 +377,9 @@ class _BeduerfnissantragStep3DialogState
                               ),
                             ),
                             const SizedBox(height: UIConstants.spacingM),
-                            const Text(
+                            ScaledText(
                               'Wird hochgeladen...',
-                              style: TextStyle(
+                              style: UIStyles.bodyTextStyle.copyWith(
                                 color: Colors.white,
                                 fontSize: 16,
                               ),

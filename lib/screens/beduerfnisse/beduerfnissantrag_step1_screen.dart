@@ -39,6 +39,28 @@ class BeduerfnissantragStep1Screen extends StatefulWidget {
 
 class _BeduerfnissantragStep1ScreenState
     extends State<BeduerfnissantragStep1Screen> {
+  /// Returns true if the form has unsaved changes compared to the original antrag (or initial values)
+  bool _isDirty() {
+    final antrag = widget.antrag ?? _createdAntrag;
+    final beduerfnisartValue =
+        _weaponType == 'kurz' ? 'kurzwaffe' : 'langwaffe';
+    final anzahl = int.tryParse(_anzahlController.text) ?? 0;
+    if (antrag == null) {
+      // If no antrag exists yet, consider dirty if any field is not default
+      return _wbkType != 'neu' ||
+          _wbkColor != 'gelb' ||
+          _weaponType != 'kurz' ||
+          anzahl != 0;
+    }
+    if ((antrag.wbkNeu == true ? 'neu' : 'bestehend') != _wbkType) return true;
+    if ((antrag.wbkArt ?? 'gelb') != _wbkColor) return true;
+    if ((antrag.beduerfnisart ?? 'kurzwaffe') != beduerfnisartValue)
+      return true;
+    if ((antrag.anzahlWaffen ?? 0) != anzahl) return true;
+    // Verein and other fields can be added if needed
+    return false;
+  }
+
   String? _wbkType = 'neu'; // 'neu' or 'bestehend'
   String? _wbkColor = 'gelb'; // 'gelb' or 'gruen'
   String? _weaponType = 'kurz'; // 'kurz' or 'lang'
@@ -759,8 +781,10 @@ class _BeduerfnissantragStep1ScreenState
   Future<void> _proceedToStep2() async {
     if (!mounted) return;
 
-    // First save the antrag
-    await _saveAntrag();
+    // Only save if there are changes
+    if (_isDirty()) {
+      await _saveAntrag();
+    }
 
     // Get the antrag to pass to Step 2
     final antragForStep2 = widget.antrag ?? _createdAntrag;

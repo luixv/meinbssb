@@ -603,31 +603,33 @@ class _BeduerfnissantragStep2DialogScreenState
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
         return Dialog(
-          insetPadding: const EdgeInsets.all(UIConstants.spacingM),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: UIConstants.spacingL,
+            vertical: UIConstants.spacingM,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
           ),
           backgroundColor: UIConstants.backgroundColor,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Scaffold(
-              backgroundColor: UIConstants.backgroundColor,
-              body: Semantics(
-                container: true,
-                liveRegion: true,
-                label: 'Dialog - Schießaktivität hinzufügen',
-                hint:
-                    'Formular zum Hinzufügen einer neuen Schießaktivität. Füllen Sie alle Pflichtfelder aus',
-                child: Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.all(
-                                UIConstants.spacingL,
-                              ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: UIConstants.dialogMaxWidthWide,
+            ),
+            child: Semantics(
+              container: true,
+              liveRegion: true,
+              label: 'Dialog - Schießaktivität hinzufügen',
+              hint:
+                  'Formular zum Hinzufügen einer neuen Schießaktivität. Füllen Sie alle Pflichtfelder aus',
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(UIConstants.spacingL),
+                    child: Form(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1175,7 +1177,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                             builder:
                                                 (
                                                   buttonContext,
-                                                ) => ElevatedButton(
+                                                ) => ElevatedButton.icon(
                                                   onPressed:
                                                       _documentUploaded
                                                           ? null
@@ -1194,12 +1196,10 @@ class _BeduerfnissantragStep2DialogScreenState
                                                               );
                                                               return;
                                                             }
-
                                                             setState(() {
                                                               _isUploadingDocument =
                                                                   true;
                                                             });
-
                                                             try {
                                                               final ImagePicker
                                                               picker =
@@ -1211,7 +1211,6 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                         ImageSource
                                                                             .gallery,
                                                                   );
-
                                                               if (file ==
                                                                   null) {
                                                                 setState(() {
@@ -1220,13 +1219,11 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                 });
                                                                 return;
                                                               }
-
                                                               final bytes =
                                                                   await file
                                                                       .readAsBytes();
                                                               final fileName =
                                                                   file.name;
-
                                                               if (bytes
                                                                   .isEmpty) {
                                                                 setState(() {
@@ -1246,7 +1243,6 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                 }
                                                                 return;
                                                               }
-
                                                               final apiService =
                                                                   Provider.of<
                                                                     ApiService
@@ -1255,7 +1251,6 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                     listen:
                                                                         false,
                                                                   );
-
                                                               final dateiId = await apiService
                                                                   .uploadBedDatei(
                                                                     antragsnummer:
@@ -1266,7 +1261,6 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                     fileBytes:
                                                                         bytes,
                                                                   );
-
                                                               if (mounted) {
                                                                 if (dateiId !=
                                                                     null) {
@@ -1350,11 +1344,27 @@ class _BeduerfnissantragStep2DialogScreenState
                                                           ),
                                                     ),
                                                   ),
-                                                  child: const Icon(
+                                                  icon: const Icon(
                                                     Icons.upload_file,
                                                     color:
                                                         UIConstants
                                                             .buttonTextColor,
+                                                  ),
+                                                  label: ScaledText(
+                                                    'Hochladen',
+                                                    style: UIStyles
+                                                        .bodyTextStyle
+                                                        .copyWith(
+                                                          color:
+                                                              UIConstants
+                                                                  .buttonTextColor,
+                                                          fontSize:
+                                                              UIStyles
+                                                                  .bodyTextStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
                                                   ),
                                                 ),
                                           ),
@@ -1377,7 +1387,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                             builder:
                                                 (
                                                   buttonContext,
-                                                ) => ElevatedButton(
+                                                ) => ElevatedButton.icon(
                                                   onPressed:
                                                       _documentUploaded
                                                           ? null
@@ -1409,11 +1419,27 @@ class _BeduerfnissantragStep2DialogScreenState
                                                           ),
                                                     ),
                                                   ),
-                                                  child: const Icon(
+                                                  icon: const Icon(
                                                     Icons.camera_alt,
                                                     color:
                                                         UIConstants
                                                             .buttonTextColor,
+                                                  ),
+                                                  label: ScaledText(
+                                                    'Scannen',
+                                                    style: UIStyles
+                                                        .bodyTextStyle
+                                                        .copyWith(
+                                                          color:
+                                                              UIConstants
+                                                                  .buttonTextColor,
+                                                          fontSize:
+                                                              UIStyles
+                                                                  .bodyTextStyle
+                                                                  .fontSize! *
+                                                              fontSizeProvider
+                                                                  .scaleFactor,
+                                                        ),
                                                   ),
                                                 ),
                                           ),
@@ -1425,165 +1451,167 @@ class _BeduerfnissantragStep2DialogScreenState
                                     const SizedBox(
                                       height: UIConstants.spacingL,
                                     ),
+                                  const SizedBox(
+                                    height: UIConstants.spacingXXXL,
+                                  ),
                                 ],
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // FABs at bottom
+                  Positioned(
+                    bottom: UIConstants.spacingM,
+                    right: UIConstants.spacingM,
+                    child: DialogFABs(
+                      children: [
+                        Semantics(
+                          button: true,
+                          enabled: !_isLoading,
+                          label: 'Abbrechen',
+                          hint:
+                              'Doppeltippen um den Dialog zu schließen ohne zu speichern',
+                          child: FloatingActionButton(
+                            heroTag: 'cancelBedSportFab',
+                            mini: true,
+                            tooltip: 'Abbrechen',
+                            backgroundColor: UIConstants.submitButtonBackground,
+                            onPressed:
+                                _isLoading
+                                    ? null
+                                    : () async {
+                                      // Clean up uploaded document if not mapped
+                                      if (_uploadedDateiId != null) {
+                                        final apiService =
+                                            Provider.of<ApiService>(
+                                              context,
+                                              listen: false,
+                                            );
+                                        await apiService.deleteBedDateiById(
+                                          _uploadedDateiId!,
+                                        );
+                                      }
+                                      if (mounted) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    },
+                            child: const Icon(
+                              Icons.close,
+                              color: UIConstants.buttonTextColor,
+                            ),
+                          ),
                         ),
-                        // FABs at bottom
-                        Container(
-                          padding: const EdgeInsets.all(UIConstants.spacingM),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              DialogFABs(
-                                children: [
-                                  Semantics(
-                                    button: true,
-                                    enabled: !_isLoading,
-                                    label: 'Abbrechen',
-                                    hint:
-                                        'Doppeltippen um den Dialog zu schließen ohne zu speichern',
-                                    child: FloatingActionButton(
-                                      heroTag: 'cancelBedSportFab',
-                                      mini: true,
-                                      tooltip: 'Abbrechen',
-                                      backgroundColor:
-                                          UIConstants.defaultAppColor,
-                                      onPressed:
-                                          _isLoading
-                                              ? null
-                                              : () async {
-                                                // Clean up uploaded document if not mapped
-                                                if (_uploadedDateiId != null) {
-                                                  final apiService =
-                                                      Provider.of<ApiService>(
-                                                        context,
-                                                        listen: false,
-                                                      );
-                                                  await apiService
-                                                      .deleteBedDateiById(
-                                                        _uploadedDateiId!,
-                                                      );
-                                                }
-                                                if (mounted) {
-                                                  Navigator.of(context).pop();
-                                                }
-                                              },
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: UIConstants.whiteColor,
+                        Semantics(
+                          button: true,
+                          enabled:
+                              !_isLoading &&
+                              !_isUploadingDocument &&
+                              _areAllCompulsoryFieldsFilled(),
+                          label: 'Schießaktivität speichern',
+                          hint:
+                              _areAllCompulsoryFieldsFilled()
+                                  ? 'Doppeltippen um die Schießaktivität zu speichern und den Dialog zu schließen'
+                                  : 'Nicht verfügbar: Bitte füllen Sie alle Pflichtfelder aus',
+                          child: FloatingActionButton(
+                            key: const ValueKey('saveBedSportFab'),
+                            heroTag: 'saveBedSportFab',
+                            mini: true,
+                            tooltip: 'Speichern',
+                            backgroundColor:
+                                _isLoading ||
+                                        !_areAllCompulsoryFieldsFilled() ||
+                                        _isUploadingDocument
+                                    ? UIConstants.disabledBackgroundColor
+                                    : UIConstants.submitButtonBackground,
+                            onPressed:
+                                _isLoading || _isUploadingDocument
+                                    ? null
+                                    : (_areAllCompulsoryFieldsFilled()
+                                        ? _saveBedSport
+                                        : null),
+                            child:
+                                _isLoading
+                                    ? const SizedBox(
+                                      width: UIConstants.loadingIndicatorSize,
+                                      height: UIConstants.loadingIndicatorSize,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              UIConstants.buttonTextColor,
+                                            ),
                                       ),
+                                    )
+                                    : const Icon(
+                                      Icons.check,
+                                      color: UIConstants.buttonTextColor,
                                     ),
-                                  ),
-                                  Semantics(
-                                    button: true,
-                                    enabled:
-                                        !_isLoading &&
-                                        !_isUploadingDocument &&
-                                        _areAllCompulsoryFieldsFilled(),
-                                    label: 'Schießaktivität speichern',
-                                    hint:
-                                        _areAllCompulsoryFieldsFilled()
-                                            ? 'Doppeltippen um die Schießaktivität zu speichern und den Dialog zu schließen'
-                                            : 'Nicht verfügbar: Bitte füllen Sie alle Pflichtfelder aus',
-                                    child: FloatingActionButton(
-                                      key: const ValueKey('saveBedSportFab'),
-                                      heroTag: 'saveBedSportFab',
-                                      mini: true,
-                                      tooltip: 'Speichern',
-                                      backgroundColor:
-                                          _isLoading ||
-                                                  !_areAllCompulsoryFieldsFilled() ||
-                                                  _isUploadingDocument
-                                              ? UIConstants
-                                                  .disabledBackgroundColor
-                                              : UIConstants.defaultAppColor,
-                                      onPressed:
-                                          _isLoading || _isUploadingDocument
-                                              ? null
-                                              : (_areAllCompulsoryFieldsFilled()
-                                                  ? _saveBedSport
-                                                  : null),
-                                      child:
-                                          _isLoading
-                                              ? const SizedBox(
-                                                width:
-                                                    UIConstants
-                                                        .loadingIndicatorSize,
-                                                height:
-                                                    UIConstants
-                                                        .loadingIndicatorSize,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                        Color
-                                                      >(UIConstants.whiteColor),
-                                                ),
-                                              )
-                                              : const Icon(
-                                                Icons.check,
-                                                color: UIConstants.whiteColor,
-                                              ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
                           ),
                         ),
                       ],
                     ),
-                    // Loading overlay
-                    if (_isLoading)
-                      Positioned.fill(
-                        child: AbsorbPointer(
-                          absorbing: true,
-                          child: Container(
+                  ),
+                  // Loading overlay
+                  if (_isLoading)
+                    Positioned.fill(
+                      child: AbsorbPointer(
+                        absorbing: true,
+                        child: Container(
+                          decoration: BoxDecoration(
                             color: UIConstants.overlayColor,
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  UIConstants.circularProgressIndicator,
+                            borderRadius: BorderRadius.circular(
+                              UIConstants.cornerRadius,
+                            ),
+                          ),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                UIConstants.circularProgressIndicator,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  // Document upload loading overlay
+                  if (_isUploadingDocument)
+                    Positioned.fill(
+                      child: AbsorbPointer(
+                        absorbing: true,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: UIConstants.overlayColor,
+                            borderRadius: BorderRadius.circular(
+                              UIConstants.cornerRadius,
+                            ),
+                          ),
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    UIConstants.circularProgressIndicator,
+                                  ),
                                 ),
-                              ),
+                                SizedBox(height: UIConstants.spacingM),
+                                Text(
+                                  'Dokument wird hochgeladen...',
+                                  style: TextStyle(
+                                    color: UIConstants.whiteColor,
+                                    fontSize: UIConstants.bodyFontSize,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                    // Document upload loading overlay
-                    if (_isUploadingDocument)
-                      Positioned.fill(
-                        child: AbsorbPointer(
-                          absorbing: true,
-                          child: Container(
-                            color: UIConstants.overlayColor,
-                            child: const Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      UIConstants.circularProgressIndicator,
-                                    ),
-                                  ),
-                                  SizedBox(height: UIConstants.spacingM),
-                                  Text(
-                                    'Dokument wird hochgeladen...',
-                                    style: TextStyle(
-                                      color: UIConstants.whiteColor,
-                                      fontSize: UIConstants.bodyFontSize,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             ),
           ),
