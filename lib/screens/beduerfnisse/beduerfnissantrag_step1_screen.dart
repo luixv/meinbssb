@@ -54,8 +54,9 @@ class _BeduerfnissantragStep1ScreenState
     }
     if ((antrag.wbkNeu == true ? 'neu' : 'bestehend') != _wbkType) return true;
     if ((antrag.wbkArt ?? 'gelb') != _wbkColor) return true;
-    if ((antrag.beduerfnisart ?? 'kurzwaffe') != beduerfnisartValue)
+    if ((antrag.beduerfnisart ?? 'kurzwaffe') != beduerfnisartValue) {
       return true;
+    }
     if ((antrag.anzahlWaffen ?? 0) != anzahl) return true;
     // Verein and other fields can be added if needed
     return false;
