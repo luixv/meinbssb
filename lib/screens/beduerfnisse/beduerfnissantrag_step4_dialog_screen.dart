@@ -84,92 +84,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: UIConstants.spacingL),
-                      // Bedürfnisgrund und Verband
-                      Row(
-                        children: [
-                          // Bedürfnisgrund Dropdown
-                          Expanded(
-                            child: FutureBuilder<List<dynamic>>(
-                              future: apiService.getBedAuswahlByTypId(5),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-                                if (snapshot.hasError) {
-                                  return const Text(
-                                    'Fehler beim Laden der Gründe',
-                                  );
-                                }
-                                final items =
-                                    snapshot.data?.map<DropdownMenuItem<int>>((
-                                      g,
-                                    ) {
-                                      return DropdownMenuItem<int>(
-                                        value: g.id,
-                                        child: Text(
-                                          g.beschreibung ?? g.toString(),
-                                          style: UIStyles.bodyTextStyle,
-                                        ),
-                                      );
-                                    }).toList();
-                                return DropdownButtonFormField<int>(
-                                  items: items,
-                                  onChanged: (val) {},
-                                  decoration: InputDecoration(
-                                    labelText: 'Bedürfnisgrund *',
-                                    filled: true,
-                                    fillColor: UIConstants.whiteColor,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  validator:
-                                      (v) => v == null ? 'Pflichtfeld' : null,
-                                );
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          // Verband Dropdown
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              items: const [
-                                DropdownMenuItem(
-                                  value: 'BSSB',
-                                  child: Text('BSSB'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'Sonstiges',
-                                  child: Text('Sonstiges'),
-                                ),
-                              ],
-                              onChanged: (val) {},
-                              decoration: InputDecoration(
-                                labelText: 'Verband *',
-                                filled: true,
-                                fillColor: UIConstants.whiteColor,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 12,
-                                ),
-                              ),
-                              validator:
-                                  (v) => v == null ? 'Pflichtfeld' : null,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: UIConstants.spacingL),
+                      // ...existing code...
                       // WBK fields
                       Row(
                         children: [
@@ -453,6 +368,93 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                               ),
                         ),
                       ),
+                      const SizedBox(height: UIConstants.spacingL),
+                      // Bedürfnisgrund und Verband (moved here)
+                      Row(
+                        children: [
+                          // Bedürfnisgrund Dropdown
+                          Expanded(
+                            child: FutureBuilder<List<dynamic>>(
+                              future: apiService.getBedAuswahlByTypId(5),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text(
+                                    'Fehler beim Laden der Gründe',
+                                  );
+                                }
+                                final items =
+                                    snapshot.data?.map<DropdownMenuItem<int>>((
+                                      g,
+                                    ) {
+                                      return DropdownMenuItem<int>(
+                                        value: g.id,
+                                        child: Text(
+                                          g.beschreibung ?? g.toString(),
+                                          style: UIStyles.bodyTextStyle,
+                                        ),
+                                      );
+                                    }).toList();
+                                return DropdownButtonFormField<int>(
+                                  items: items,
+                                  onChanged: (val) {},
+                                  decoration: InputDecoration(
+                                    labelText: 'Bedürfnisgrund *',
+                                    filled: true,
+                                    fillColor: UIConstants.whiteColor,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  validator:
+                                      (v) => v == null ? 'Pflichtfeld' : null,
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // Verband Dropdown
+                          Expanded(
+                            child: DropdownButtonFormField<String>(
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 'BSSB',
+                                  child: Text('BSSB'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'Sonstiges',
+                                  child: Text('Sonstiges'),
+                                ),
+                              ],
+                              onChanged: (val) {},
+                              decoration: InputDecoration(
+                                labelText: 'Verband *',
+                                filled: true,
+                                fillColor: UIConstants.whiteColor,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
+                              ),
+                              validator:
+                                  (v) => v == null ? 'Pflichtfeld' : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: UIConstants.spacingL),
                       const SizedBox(height: UIConstants.spacingL),
                       // Action buttons
                       Row(
