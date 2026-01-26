@@ -137,25 +137,6 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: UIConstants.spacingL),
-                      // Bemerkung (free text, two rows, full width)
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Bemerkung',
-                          filled: true,
-                          fillColor: UIConstants.whiteColor,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 12,
-                          ),
-                        ),
-                        style: UIStyles.bodyTextStyle,
-                        minLines: 2,
-                        maxLines: 2,
-                      ),
                       const SizedBox(height: UIConstants.spacingM),
                       // Waffenart and Kaliber
                       Row(
