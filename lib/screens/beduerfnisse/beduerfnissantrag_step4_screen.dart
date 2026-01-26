@@ -256,6 +256,7 @@ class _BeduerfnissantragStep4ScreenState
                                                 Icons.description,
                                                 'WBK: ${wb.wbkNr ?? ""} / ${wb.lfdWbk ?? ""}',
                                                 fontSizeProvider.scaleFactor,
+                                                'WBK-Nr / lfd WBK',
                                               ),
                                               const SizedBox(
                                                 height: UIConstants.spacingS,
@@ -265,6 +266,7 @@ class _BeduerfnissantragStep4ScreenState
                                                 waffenartMap[wb.waffenartId] ??
                                                     'Unbekannt',
                                                 fontSizeProvider.scaleFactor,
+                                                'Waffenart',
                                               ),
                                               const SizedBox(
                                                 height: UIConstants.spacingS,
@@ -275,6 +277,7 @@ class _BeduerfnissantragStep4ScreenState
                                                         .lauflaengeId] ??
                                                     'Unbekannt',
                                                 fontSizeProvider.scaleFactor,
+                                                'Lauflänge',
                                               ),
                                               const SizedBox(
                                                 height: UIConstants.spacingS,
@@ -285,6 +288,7 @@ class _BeduerfnissantragStep4ScreenState
                                                         .beduerfnisgrundId] ??
                                                     'Unbekannt',
                                                 fontSizeProvider.scaleFactor,
+                                                'Bedürfnisgrund',
                                               ),
                                             ],
                                           ),
@@ -302,6 +306,7 @@ class _BeduerfnissantragStep4ScreenState
                                                 Icons.branding_watermark,
                                                 wb.hersteller ?? '',
                                                 fontSizeProvider.scaleFactor,
+                                                'Hersteller/Modell',
                                               ),
                                               const SizedBox(
                                                 height: UIConstants.spacingS,
@@ -311,6 +316,7 @@ class _BeduerfnissantragStep4ScreenState
                                                 kaliberMap[wb.kaliberId] ??
                                                     'Unbekannt',
                                                 fontSizeProvider.scaleFactor,
+                                                'Kaliber',
                                               ),
                                               const SizedBox(
                                                 height: UIConstants.spacingS,
@@ -319,6 +325,7 @@ class _BeduerfnissantragStep4ScreenState
                                                 Icons.monitor_weight,
                                                 '${wb.gewicht ?? ""} g',
                                                 fontSizeProvider.scaleFactor,
+                                                'Gewicht',
                                               ),
                                               const SizedBox(
                                                 height: UIConstants.spacingS,
@@ -328,6 +335,7 @@ class _BeduerfnissantragStep4ScreenState
                                                 verbandMap[wb.verbandId] ??
                                                     'Unbekannt',
                                                 fontSizeProvider.scaleFactor,
+                                                'Verband',
                                               ),
                                             ],
                                           ),
@@ -339,12 +347,15 @@ class _BeduerfnissantragStep4ScreenState
                                     ),
                                     Row(
                                       children: [
-                                        Icon(
-                                          Icons.settings_input_component,
-                                          size:
-                                              UIConstants.iconSizeS *
-                                              fontSizeProvider.scaleFactor,
-                                          color: UIConstants.primaryColor,
+                                        Tooltip(
+                                          message: 'Kompensator',
+                                          child: Icon(
+                                            Icons.settings_input_component,
+                                            size:
+                                                UIConstants.iconSizeS *
+                                                fontSizeProvider.scaleFactor,
+                                            color: UIConstants.primaryColor,
+                                          ),
                                         ),
                                         const SizedBox(
                                           width: UIConstants.spacingS,
@@ -362,17 +373,24 @@ class _BeduerfnissantragStep4ScreenState
                                               ),
                                         ),
                                         const SizedBox(width: 8),
-                                        Icon(
-                                          wb.kompensator == true
-                                              ? Icons.check
-                                              : Icons.close,
-                                          color:
+                                        Tooltip(
+                                          message:
                                               wb.kompensator == true
-                                                  ? UIConstants.defaultAppColor
-                                                  : Colors.red,
-                                          size:
-                                              UIConstants.iconSizeS *
-                                              fontSizeProvider.scaleFactor,
+                                                  ? 'Kompensator vorhanden'
+                                                  : 'Kein Kompensator',
+                                          child: Icon(
+                                            wb.kompensator == true
+                                                ? Icons.check
+                                                : Icons.close,
+                                            color:
+                                                wb.kompensator == true
+                                                    ? UIConstants
+                                                        .defaultAppColor
+                                                    : Colors.red,
+                                            size:
+                                                UIConstants.iconSizeS *
+                                                fontSizeProvider.scaleFactor,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -409,13 +427,21 @@ class _BeduerfnissantragStep4ScreenState
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String text, double scaleFactor) {
+  Widget _buildInfoRow(
+    IconData icon,
+    String text,
+    double scaleFactor,
+    String tooltip,
+  ) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: UIConstants.iconSizeS * scaleFactor,
-          color: UIConstants.primaryColor,
+        Tooltip(
+          message: tooltip,
+          child: Icon(
+            icon,
+            size: UIConstants.iconSizeS * scaleFactor,
+            color: UIConstants.primaryColor,
+          ),
         ),
         const SizedBox(width: UIConstants.spacingS),
         Expanded(
