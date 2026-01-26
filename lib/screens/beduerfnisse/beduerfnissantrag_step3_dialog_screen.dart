@@ -5,17 +5,11 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/services/core/error_service.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BeduerfnissantragStep3Dialog extends StatefulWidget {
-  const BeduerfnissantragStep3Dialog({
-    required this.antragsnummer,
-    this.parentContext,
-    super.key,
-  });
+  const BeduerfnissantragStep3Dialog({required this.antragsnummer, super.key});
   final int? antragsnummer;
-  final BuildContext? parentContext;
 
   @override
   State<BeduerfnissantragStep3Dialog> createState() =>
@@ -32,13 +26,13 @@ class _BeduerfnissantragStep3DialogState
     String documentType,
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final BuildContext scaffoldContext = widget.parentContext ?? context;
-
     // Check if label is empty
     if (_labelController.text.trim().isEmpty) {
-      ErrorService.showErrorSnackBar(
-        scaffoldContext,
-        'Bitte geben Sie eine Beschreibung für die Datei ein.',
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bitte geben Sie eine Beschreibung für die Datei ein.'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -57,9 +51,11 @@ class _BeduerfnissantragStep3DialogState
 
       if (widget.antragsnummer == null) {
         if (mounted) {
-          ErrorService.showErrorSnackBar(
-            scaffoldContext,
-            'Antragsnummer nicht gefunden',
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Antragsnummer nicht gefunden'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
         return;
@@ -84,9 +80,11 @@ class _BeduerfnissantragStep3DialogState
         if (success) {
           Navigator.of(context).pop(true); // Close parent dialog on success
         } else {
-          ErrorService.showErrorSnackBar(
-            scaffoldContext,
-            'Fehler beim Hochladen',
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Fehler beim Hochladen'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -95,9 +93,11 @@ class _BeduerfnissantragStep3DialogState
         setState(() {
           _isUploadingDocument = false;
         });
-        ErrorService.showErrorSnackBar(
-          scaffoldContext,
-          'Fehler beim Scannen: $e',
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fehler beim Scannen: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -108,31 +108,36 @@ class _BeduerfnissantragStep3DialogState
     String documentType,
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    final BuildContext scaffoldContext = widget.parentContext ?? context;
-
     // Check if label is empty
     if (_labelController.text.trim().isEmpty) {
-      ErrorService.showErrorSnackBar(
-        scaffoldContext,
-        'Bitte geben Sie eine Beschreibung für die Datei ein.',
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bitte geben Sie eine Beschreibung für die Datei ein.'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
 
     try {
-      // Scan the document
-      final scanResult = await apiService.scanDocument();
+      // Open file explorer to pick a file
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-      if (scanResult == null) {
-        // User cancelled scanning
+      if (pickedFile == null) {
+        // User cancelled
         return;
       }
 
+      final bytes = await pickedFile.readAsBytes();
+
       if (widget.antragsnummer == null) {
         if (mounted) {
-          ErrorService.showErrorSnackBar(
-            scaffoldContext,
-            'Antragsnummer nicht gefunden',
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Antragsnummer nicht gefunden'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
         return;
@@ -142,11 +147,11 @@ class _BeduerfnissantragStep3DialogState
         _isUploadingDocument = true;
       });
 
-      // Upload the scanned document
+      // Upload the selected document
       final success = await apiService.uploadBedDateiForWBK(
         antragsnummer: widget.antragsnummer!,
-        dateiname: scanResult.fileName,
-        fileBytes: scanResult.bytes,
+        dateiname: pickedFile.name,
+        fileBytes: bytes,
         label: _labelController.text.trim(),
       );
 
@@ -157,9 +162,11 @@ class _BeduerfnissantragStep3DialogState
         if (success) {
           Navigator.of(context).pop(true); // Close parent dialog on success
         } else {
-          ErrorService.showErrorSnackBar(
-            scaffoldContext,
-            'Fehler beim Hochladen',
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Fehler beim Hochladen'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -168,9 +175,11 @@ class _BeduerfnissantragStep3DialogState
         setState(() {
           _isUploadingDocument = false;
         });
-        ErrorService.showErrorSnackBar(
-          scaffoldContext,
-          'Fehler beim Scannen: $e',
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fehler beim Scannen: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -344,7 +353,7 @@ class _BeduerfnissantragStep3DialogState
                           ),
                         ],
                       ),
-                      const SizedBox(height: UIConstants.spacingXL),
+                      const SizedBox(height: UIConstants.spacingXXL),
                     ],
                   ),
                 ),

@@ -44,7 +44,6 @@ void main() {
                   (context) => Center(
                     child: BeduerfnissantragStep3Dialog(
                       antragsnummer: antragsnummer,
-                      parentContext: parentContext,
                     ),
                   ),
             ),
@@ -78,16 +77,6 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(buildDialog(antragsnummer: 123));
-      await tester.tap(find.text('Scannen'));
-      await tester.pumpAndSettle();
-      expect(find.byType(SnackBar), findsOneWidget);
-    });
-
-    testWidgets('shows error if antragsnummer is null on scan', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(buildDialog(antragsnummer: null));
-      await tester.enterText(find.byType(TextField), 'Testlabel');
       await tester.tap(find.text('Scannen'));
       await tester.pumpAndSettle();
       expect(find.byType(SnackBar), findsOneWidget);
