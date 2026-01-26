@@ -108,10 +108,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
           lauflaengeId: int.tryParse(_lauflaengeController.text),
           gewicht: _gewichtController.text,
           beduerfnisgrundId: _selectedBeduerfnisgrundId,
-          verbandId:
-              _selectedVerband == 'BSSB'
-                  ? 1
-                  : 2, // Assuming mapping or adjust as needed
+          verbandId: _selectedVerband == 'BSSB' ? 1 : 2,
           bemerkung: _bemerkungController.text,
         );
         if (mounted) {
@@ -120,9 +117,44 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Fehler beim Speichern: $e')));
+          // Show SnackBar if possible, else fallback to dialog
+          final messenger = ScaffoldMessenger.maybeOf(context);
+          if (messenger != null) {
+            messenger.showSnackBar(
+              SnackBar(content: Text('Fehler beim Speichern: $e')),
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder:
+                  (ctx) => AlertDialog(
+                    title: const Text('Fehler'),
+                    content: Text('Fehler beim Speichern: $e'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+            );
+          }
+        } else {
+          // If not mounted, fallback to dialog
+          showDialog(
+            context: context,
+            builder:
+                (ctx) => AlertDialog(
+                  title: const Text('Fehler'),
+                  content: Text('Fehler beim Speichern: $e'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+          );
         }
       } finally {
         if (mounted) setState(() => _isLoading = false);
