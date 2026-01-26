@@ -1186,7 +1186,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                     .antragsnummer ==
                                                                 null) {
                                                               ScaffoldMessenger.of(
-                                                                buttonContext,
+                                                                context,
                                                               ).showSnackBar(
                                                                 const SnackBar(
                                                                   content: Text(
@@ -1232,7 +1232,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                 });
                                                                 if (mounted) {
                                                                   ScaffoldMessenger.of(
-                                                                    buttonContext,
+                                                                    context,
                                                                   ).showSnackBar(
                                                                     const SnackBar(
                                                                       content: Text(
@@ -1273,7 +1273,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                         false;
                                                                   });
                                                                   ScaffoldMessenger.of(
-                                                                    buttonContext,
+                                                                    context,
                                                                   ).showSnackBar(
                                                                     const SnackBar(
                                                                       content: Text(
@@ -1291,7 +1291,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                                                         false;
                                                                   });
                                                                   ScaffoldMessenger.of(
-                                                                    buttonContext,
+                                                                    context,
                                                                   ).showSnackBar(
                                                                     const SnackBar(
                                                                       content: Text(
@@ -1308,7 +1308,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                                               });
                                                               if (mounted) {
                                                                 ScaffoldMessenger.of(
-                                                                  buttonContext,
+                                                                  context,
                                                                 ).showSnackBar(
                                                                   SnackBar(
                                                                     content: Text(
@@ -1392,7 +1392,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                                       _documentUploaded
                                                           ? null
                                                           : () => _scanDocument(
-                                                            buttonContext,
+                                                            context,
                                                           ),
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
