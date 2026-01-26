@@ -135,6 +135,25 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                                           : null,
                             ),
                           ),
+                          // Bemerkung (free text, two rows, full width)
+                          const SizedBox(height: UIConstants.spacingL),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Bemerkung',
+                              filled: true,
+                              fillColor: UIConstants.whiteColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                            ),
+                            style: UIStyles.bodyTextStyle,
+                            minLines: 2,
+                            maxLines: 2,
+                          ),
                         ],
                       ),
                       const SizedBox(height: UIConstants.spacingM),
@@ -343,7 +362,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: UIConstants.spacingM),
+                      const SizedBox(height: UIConstants.spacingS),
                       // Kompensator
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -368,7 +387,7 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                               ),
                         ),
                       ),
-                      const SizedBox(height: UIConstants.spacingL),
+                      const SizedBox(height: UIConstants.spacingS),
                       // Bedürfnisgrund und Verband (moved here)
                       Row(
                         children: [
@@ -454,7 +473,6 @@ class AddWaffeBesitzDialog extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: UIConstants.spacingL),
                       const SizedBox(height: UIConstants.spacingL),
                       // Action buttons
                       Row(
