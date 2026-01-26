@@ -8,6 +8,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'beduerfnissantrag_step4_dialog_screen.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:meinbssb/widgets/delete_confirm_dialog.dart';
 
 class BeduerfnissantragStep4Screen extends StatefulWidget {
   const BeduerfnissantragStep4Screen({
@@ -84,6 +85,44 @@ class _BeduerfnissantragStep4ScreenState
             onSaved: _refreshWaffeBesitz,
           ),
     );
+  }
+
+  Future<void> _deleteWaffeBesitz(int? id) async {
+    if (id == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (ctx) => DeleteConfirmDialog(
+            title: 'Eintrag löschen',
+            message: 'Möchten Sie diesen Eintrag wirklich löschen?',
+            onCancel: () => Navigator.of(ctx).pop(false),
+            onDelete: () => Navigator.of(ctx).pop(true),
+          ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      final apiService = Provider.of<ApiService>(context, listen: false);
+      final success = await apiService.deleteBedWaffeBesitzById(id);
+      if (success) {
+        _refreshWaffeBesitz();
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Fehler beim Löschen')));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+      }
+    }
   }
 
   @override
@@ -235,181 +274,234 @@ class _BeduerfnissantragStep4ScreenState
                               margin: const EdgeInsets.only(
                                 bottom: UIConstants.spacingM,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(
-                                  UIConstants.spacingM,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
+                              child: Stack(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(
+                                      UIConstants.spacingM,
+                                    ),
+                                    child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        // Left column
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              _buildInfoRow(
-                                                Icons.description,
-                                                'WBK: ${wb.wbkNr ?? ""} / ${wb.lfdWbk ?? ""}',
-                                                fontSizeProvider.scaleFactor,
-                                                'WBK-Nr / lfd WBK',
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // Left column
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  _buildInfoRow(
+                                                    Icons.description,
+                                                    'WBK: ${wb.wbkNr ?? ""} / ${wb.lfdWbk ?? ""}',
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                    'WBK-Nr / lfd WBK',
+                                                  ),
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  _buildInfoRow(
+                                                    Icons.adjust,
+                                                    waffenartMap[wb
+                                                            .waffenartId] ??
+                                                        'Unbekannt',
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                    'Waffenart',
+                                                  ),
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  _buildInfoRow(
+                                                    Icons.straighten,
+                                                    lauflaengeMap[wb
+                                                            .lauflaengeId] ??
+                                                        'Unbekannt',
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                    'Lauflänge',
+                                                  ),
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  _buildInfoRow(
+                                                    Icons.help_outline,
+                                                    gruendeMap[wb
+                                                            .beduerfnisgrundId] ??
+                                                        'Unbekannt',
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                    'Bedürfnisgrund',
+                                                  ),
+                                                ],
                                               ),
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
+                                            ),
+                                            const SizedBox(
+                                              width: UIConstants.spacingXXS,
+                                            ),
+                                            // Right column
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  _buildInfoRow(
+                                                    Icons.branding_watermark,
+                                                    wb.hersteller ?? '',
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                    'Hersteller/Modell',
+                                                  ),
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  _buildInfoRow(
+                                                    Icons.gps_fixed,
+                                                    kaliberMap[wb.kaliberId] ??
+                                                        'Unbekannt',
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                    'Kaliber',
+                                                  ),
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  _buildInfoRow(
+                                                    Icons.monitor_weight,
+                                                    '${wb.gewicht ?? ""} g',
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                    'Gewicht',
+                                                  ),
+                                                  const SizedBox(
+                                                    height:
+                                                        UIConstants.spacingS,
+                                                  ),
+                                                  _buildInfoRow(
+                                                    Icons.group,
+                                                    verbandMap[wb.verbandId] ??
+                                                        'Unbekannt',
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                    'Verband',
+                                                  ),
+                                                ],
                                               ),
-                                              _buildInfoRow(
-                                                Icons.adjust,
-                                                waffenartMap[wb.waffenartId] ??
-                                                    'Unbekannt',
-                                                fontSizeProvider.scaleFactor,
-                                                'Waffenart',
-                                              ),
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              _buildInfoRow(
-                                                Icons.straighten,
-                                                lauflaengeMap[wb
-                                                        .lauflaengeId] ??
-                                                    'Unbekannt',
-                                                fontSizeProvider.scaleFactor,
-                                                'Lauflänge',
-                                              ),
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              _buildInfoRow(
-                                                Icons.help_outline,
-                                                gruendeMap[wb
-                                                        .beduerfnisgrundId] ??
-                                                    'Unbekannt',
-                                                fontSizeProvider.scaleFactor,
-                                                'Bedürfnisgrund',
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                         const SizedBox(
-                                          width: UIConstants.spacingXXS,
+                                          height: UIConstants.spacingS,
                                         ),
-                                        // Right column
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              _buildInfoRow(
-                                                Icons.branding_watermark,
-                                                wb.hersteller ?? '',
-                                                fontSizeProvider.scaleFactor,
-                                                'Hersteller/Modell',
+                                        Row(
+                                          children: [
+                                            Tooltip(
+                                              message: 'Kompensator',
+                                              child: Icon(
+                                                Icons.settings_input_component,
+                                                size:
+                                                    UIConstants.iconSizeS *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                                color: UIConstants.primaryColor,
                                               ),
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              _buildInfoRow(
-                                                Icons.gps_fixed,
-                                                kaliberMap[wb.kaliberId] ??
-                                                    'Unbekannt',
-                                                fontSizeProvider.scaleFactor,
-                                                'Kaliber',
-                                              ),
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              _buildInfoRow(
-                                                Icons.monitor_weight,
-                                                '${wb.gewicht ?? ""} g',
-                                                fontSizeProvider.scaleFactor,
-                                                'Gewicht',
-                                              ),
-                                              const SizedBox(
-                                                height: UIConstants.spacingS,
-                                              ),
-                                              _buildInfoRow(
-                                                Icons.group,
-                                                verbandMap[wb.verbandId] ??
-                                                    'Unbekannt',
-                                                fontSizeProvider.scaleFactor,
-                                                'Verband',
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: UIConstants.spacingS,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Tooltip(
-                                          message: 'Kompensator',
-                                          child: Icon(
-                                            Icons.settings_input_component,
-                                            size:
-                                                UIConstants.iconSizeS *
-                                                fontSizeProvider.scaleFactor,
-                                            color: UIConstants.primaryColor,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: UIConstants.spacingS,
-                                        ),
-                                        ScaledText(
-                                          'Kompensator:',
-                                          style: UIStyles.bodyTextStyle
-                                              .copyWith(
-                                                fontSize:
-                                                    UIStyles
-                                                        .bodyTextStyle
-                                                        .fontSize! *
+                                            ),
+                                            const SizedBox(
+                                              width: UIConstants.spacingS,
+                                            ),
+                                            ScaledText(
+                                              'Kompensator:',
+                                              style: UIStyles.bodyTextStyle
+                                                  .copyWith(
+                                                    fontSize:
+                                                        UIStyles
+                                                            .bodyTextStyle
+                                                            .fontSize! *
+                                                        fontSizeProvider
+                                                            .scaleFactor,
+                                                  ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Tooltip(
+                                              message:
+                                                  wb.kompensator == true
+                                                      ? 'Kompensator vorhanden'
+                                                      : 'Kein Kompensator',
+                                              child: Icon(
+                                                wb.kompensator == true
+                                                    ? Icons.check
+                                                    : Icons.close,
+                                                color:
+                                                    wb.kompensator == true
+                                                        ? UIConstants
+                                                            .defaultAppColor
+                                                        : Colors.red,
+                                                size:
+                                                    UIConstants.iconSizeS *
                                                     fontSizeProvider
                                                         .scaleFactor,
                                               ),
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(width: 8),
-                                        Tooltip(
-                                          message:
-                                              wb.kompensator == true
-                                                  ? 'Kompensator vorhanden'
-                                                  : 'Kein Kompensator',
-                                          child: Icon(
-                                            wb.kompensator == true
-                                                ? Icons.check
-                                                : Icons.close,
-                                            color:
-                                                wb.kompensator == true
-                                                    ? UIConstants
-                                                        .defaultAppColor
-                                                    : Colors.red,
-                                            size:
-                                                UIConstants.iconSizeS *
-                                                fontSizeProvider.scaleFactor,
+                                        if (wb.bemerkung != null &&
+                                            wb.bemerkung
+                                                .toString()
+                                                .isNotEmpty) ...[
+                                          const SizedBox(
+                                            height: UIConstants.spacingS,
                                           ),
-                                        ),
+                                          Text(
+                                            'Bemerkung: ${wb.bemerkung}',
+                                            style: UIStyles.bodyTextStyle
+                                                .copyWith(
+                                                  fontSize:
+                                                      UIStyles
+                                                          .bodyTextStyle
+                                                          .fontSize! *
+                                                      fontSizeProvider
+                                                          .scaleFactor,
+                                                ),
+                                          ),
+                                        ],
                                       ],
                                     ),
-                                    if (wb.bemerkung != null &&
-                                        wb.bemerkung.toString().isNotEmpty) ...[
-                                      const SizedBox(
-                                        height: UIConstants.spacingS,
-                                      ),
-                                      Text(
-                                        'Bemerkung: ${wb.bemerkung}',
-                                        style: UIStyles.bodyTextStyle.copyWith(
-                                          fontSize:
-                                              UIStyles.bodyTextStyle.fontSize! *
-                                              fontSizeProvider.scaleFactor,
+                                  ),
+                                  Positioned(
+                                    top: 4,
+                                    right: 4,
+                                    child: Semantics(
+                                      button: true,
+                                      label: 'Eintrag löschen',
+                                      child: Tooltip(
+                                        message: 'Löschen',
+                                        child: InkWell(
+                                          onTap:
+                                              () => _deleteWaffeBesitz(wb.id),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Icon(
+                                              Icons.delete_outline,
+                                              color: Colors.red,
+                                              size:
+                                                  UIConstants.iconSizeS *
+                                                  fontSizeProvider.scaleFactor,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ],
-                                  ],
-                                ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
                           }),

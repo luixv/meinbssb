@@ -795,7 +795,9 @@ class ApiService {
   Future<bool> deleteBedDateiById(int dateiId) async {
     try {
       // Step 1: Delete all associated bed_datei_zuord entries
-      final zuordDeleted = await _postgrestService.deleteBedDateiZuordByDateiId(dateiId);
+      final zuordDeleted = await _postgrestService.deleteBedDateiZuordByDateiId(
+        dateiId,
+      );
       if (!zuordDeleted) {
         LoggerService.logError(
           'Failed to delete bed_datei_zuord entries for datei_id: $dateiId',
@@ -806,9 +808,7 @@ class ApiService {
       // Step 2: Delete the bed_datei entry
       final dateiDeleted = await _postgrestService.deleteBedDateiById(dateiId);
       if (!dateiDeleted) {
-        LoggerService.logError(
-          'Failed to delete bed_datei for id: $dateiId',
-        );
+        LoggerService.logError('Failed to delete bed_datei for id: $dateiId');
         return false;
       }
 
@@ -817,9 +817,7 @@ class ApiService {
       );
       return true;
     } catch (e) {
-      LoggerService.logError(
-        'Error deleting bed_datei by id $dateiId: $e',
-      );
+      LoggerService.logError('Error deleting bed_datei by id $dateiId: $e');
       return false;
     }
   }
@@ -1061,6 +1059,10 @@ class ApiService {
   Future<bool> deleteBedWaffeBesitz(int antragsnummer) async {
     return _postgrestService.deleteBedWaffeBesitz(antragsnummer);
   }
+
+  Future<bool> deleteBedWaffeBesitzById(int id) async {
+    return _postgrestService.deleteBedWaffeBesitzById(id);
+  }
   //
   // --- bed_antrag Service Methods ---
   //
@@ -1194,9 +1196,7 @@ class ApiService {
     try {
       return await _postgrestService.getBedDateiById(dateiId);
     } catch (e) {
-      LoggerService.logError(
-        'Error getting bed_datei by id $dateiId: $e',
-      );
+      LoggerService.logError('Error getting bed_datei by id $dateiId: $e');
       return null;
     }
   }

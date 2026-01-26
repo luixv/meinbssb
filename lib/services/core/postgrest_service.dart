@@ -13,10 +13,8 @@ import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
 import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
 
 class PostgrestService {
-  PostgrestService({
-    required this.configService,
-    http.Client? client,
-  }) : _httpClient = client ?? http.Client();
+  PostgrestService({required this.configService, http.Client? client})
+    : _httpClient = client ?? http.Client();
   // Expose cache for testing
   Map<String, Uint8List> get profilePhotoCache => _profilePhotoCache;
   // Simple in-memory cache for profile photos
@@ -42,7 +40,8 @@ class PostgrestService {
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Prefer': 'return=representation', // This tells PostgREST to return the affected rows
+      'Prefer':
+          'return=representation', // This tells PostgREST to return the affected rows
       if (apiKey != null && apiKey.isNotEmpty) 'X-API-Key': apiKey,
     };
   }
@@ -116,7 +115,9 @@ class PostgrestService {
   Future<Map<String, dynamic>?> getUserByPersonId(String personId) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}users?person_id=eq.$personId&is_deleted=eq.false'),
+        Uri.parse(
+          '${_baseUrl}users?person_id=eq.$personId&is_deleted=eq.false',
+        ),
         headers: _headers,
       );
 
@@ -138,9 +139,10 @@ class PostgrestService {
   /// Get user by pass number (excludes deleted users)
   Future<Map<String, dynamic>?> getUserByPassNumber(String? passNumber) async {
     try {
-      
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}users?pass_number=eq.$passNumber&is_deleted=eq.false'),
+        Uri.parse(
+          '${_baseUrl}users?pass_number=eq.$passNumber&is_deleted=eq.false',
+        ),
         headers: _headers,
       );
       LoggerService.logInfo(
@@ -166,9 +168,7 @@ class PostgrestService {
     LoggerService.logInfo('Verifying user');
     try {
       final response = await _httpClient.patch(
-        Uri.parse(
-          '${_baseUrl}users?verification_token=eq.$verificationToken',
-        ),
+        Uri.parse('${_baseUrl}users?verification_token=eq.$verificationToken'),
         headers: _headers,
         body: jsonEncode({
           'is_verified': true,
@@ -298,8 +298,9 @@ class PostgrestService {
     try {
       final response = await _httpClient.patch(
         Uri.parse(
-            // ignore: require_trailing_commas
-            '${_baseUrl}password_reset?verification_token=eq.$verificationToken'),
+          // ignore: require_trailing_commas
+          '${_baseUrl}password_reset?verification_token=eq.$verificationToken',
+        ),
         headers: _headers,
         body: jsonEncode({
           'is_used': true,
@@ -394,7 +395,9 @@ class PostgrestService {
   Future<Map<String, dynamic>?> getEmailValidationByToken(String token) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}user_email_validation?verification_token=eq.$token'),
+        Uri.parse(
+          '${_baseUrl}user_email_validation?verification_token=eq.$token',
+        ),
         headers: _headers,
       );
 
@@ -408,7 +411,9 @@ class PostgrestService {
         return null;
       }
     } catch (e) {
-      LoggerService.logError('Error getting email validation entry by token: $e');
+      LoggerService.logError(
+        'Error getting email validation entry by token: $e',
+      );
       return null;
     }
   }
@@ -417,7 +422,9 @@ class PostgrestService {
   Future<bool> markEmailValidationAsValidated(String verificationToken) async {
     try {
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}user_email_validation?verification_token=eq.$verificationToken'),
+        Uri.parse(
+          '${_baseUrl}user_email_validation?verification_token=eq.$verificationToken',
+        ),
         headers: _headers,
         body: jsonEncode({
           'validated': true,
@@ -507,9 +514,7 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}users?person_id=eq.$userId'),
         headers: _headers,
-        body: jsonEncode({
-          'profile_photo': null,
-        }),
+        body: jsonEncode({'profile_photo': null}),
       );
       if (response.statusCode == 200) {
         LoggerService.logInfo('Profile photo deleted successfully');
@@ -534,13 +539,13 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}users?person_id=eq.$personId'),
         headers: _headers,
-        body: jsonEncode({
-          'is_deleted': true,
-        }),
+        body: jsonEncode({'is_deleted': true}),
       );
 
       if (response.statusCode == 200) {
-        LoggerService.logInfo('User soft deleted successfully for person_id: $personId');
+        LoggerService.logInfo(
+          'User soft deleted successfully for person_id: $personId',
+        );
         // Clear cache for this user
         _profilePhotoCache.remove(personId);
         return true;
@@ -562,7 +567,7 @@ class PostgrestService {
     required String apiBaseServer,
     required String apiBasePath,
     required String apiBasePort,
-    required String endpoint
+    required String endpoint,
   }) async {
     try {
       final logData = {
@@ -570,7 +575,7 @@ class PostgrestService {
         'apiBaseServer': apiBaseServer,
         'apiBasePath': apiBasePath,
         'apiBasePort': apiBasePort,
-        'endpoint': endpoint
+        'endpoint': endpoint,
       };
 
       final response = await _httpClient.post(
@@ -648,12 +653,9 @@ class PostgrestService {
   //--- Beduerfnisse Service Methods ---
   //
 
-
-
   //
   // --- bed_auswahl Service Methods ---
   //
-
 
   /// Get bed_auswahl by type ID
   Future<List<BeduerfnisseAuswahl>> getBedAuswahlByTypId(int typId) async {
@@ -666,7 +668,10 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> items = jsonDecode(response.body);
         return items
-            .map((json) => BeduerfnisseAuswahl.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseAuswahl.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -679,7 +684,7 @@ class PostgrestService {
       return [];
     }
   }
-  
+
   //
   // --- bed_datei Service Methods ---
   //
@@ -697,7 +702,8 @@ class PostgrestService {
         body: jsonEncode({
           'antragsnummer': antragsnummer,
           'dateiname': dateiname,
-          'file_bytes': '\\x${fileBytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('')}',
+          'file_bytes':
+              '\\x${fileBytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('')}',
           'created_at': DateTime.now().toIso8601String(),
         }),
       );
@@ -724,14 +730,19 @@ class PostgrestService {
   ) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_datei?antragsnummer=eq.$antragsnummer&deleted_at=is.null'),
+        Uri.parse(
+          '${_baseUrl}bed_datei?antragsnummer=eq.$antragsnummer&deleted_at=is.null',
+        ),
         headers: _headers,
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> files = jsonDecode(response.body);
         return files
-            .map((json) => BeduerfnisseDatei.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseDatei.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -745,7 +756,7 @@ class PostgrestService {
     }
   }
 
-    /// Get bed_datei entry by ID
+  /// Get bed_datei entry by ID
   Future<BeduerfnisseDatei?> getBedDateiById(int id) async {
     try {
       final response = await _httpClient.get(
@@ -793,9 +804,11 @@ class PostgrestService {
 
       // Convert keys to snake_case for PostgREST
       final snakeCaseData = {
-        if (updateData['DATEINAME'] != null) 'dateiname': updateData['DATEINAME'],
-        if (updateData['FILE_BYTES'] != null) 
-          'file_bytes': '\\x${(updateData['FILE_BYTES'] as List<int>).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('')}',
+        if (updateData['DATEINAME'] != null)
+          'dateiname': updateData['DATEINAME'],
+        if (updateData['FILE_BYTES'] != null)
+          'file_bytes':
+              '\\x${(updateData['FILE_BYTES'] as List<int>).map((byte) => byte.toRadixString(16).padLeft(2, '0')).join('')}',
         'changed_at': updateData['changed_at'],
       };
 
@@ -826,9 +839,7 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_datei?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
@@ -852,13 +863,13 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_datei?id=eq.$dateiId'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_datei deleted successfully for id: $dateiId');
+        LoggerService.logInfo(
+          'bed_datei deleted successfully for id: $dateiId',
+        );
         return true;
       } else {
         LoggerService.logError(
@@ -898,7 +909,8 @@ class PostgrestService {
         'bemerkung': bemerkung,
       };
       if (wettkampfartId != null) data['wettkampfart_id'] = wettkampfartId;
-      if (wettkampfergebnis != null) data['wettkampfergebnis'] = wettkampfergebnis;
+      if (wettkampfergebnis != null)
+        data['wettkampfergebnis'] = wettkampfergebnis;
 
       final response = await _httpClient.post(
         Uri.parse('${_baseUrl}bed_sport'),
@@ -928,14 +940,19 @@ class PostgrestService {
   ) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_sport?antragsnummer=eq.$antragsnummer&deleted_at=is.null'),
+        Uri.parse(
+          '${_baseUrl}bed_sport?antragsnummer=eq.$antragsnummer&deleted_at=is.null',
+        ),
         headers: _headers,
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> records = jsonDecode(response.body);
         return records
-            .map((json) => BeduerfnisseSport.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseSport.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -971,12 +988,17 @@ class PostgrestService {
 
       // Convert keys to snake_case for PostgREST
       final snakeCaseData = {
-        if (updateData['SCHIESSDATUM'] != null) 'schiessdatum': updateData['SCHIESSDATUM'],
-        if (updateData['WAFFENART_ID'] != null) 'waffenart_id': updateData['WAFFENART_ID'],
-        if (updateData['DISZIPLIN_ID'] != null) 'disziplin_id': updateData['DISZIPLIN_ID'],
+        if (updateData['SCHIESSDATUM'] != null)
+          'schiessdatum': updateData['SCHIESSDATUM'],
+        if (updateData['WAFFENART_ID'] != null)
+          'waffenart_id': updateData['WAFFENART_ID'],
+        if (updateData['DISZIPLIN_ID'] != null)
+          'disziplin_id': updateData['DISZIPLIN_ID'],
         if (updateData['TRAINING'] != null) 'training': updateData['TRAINING'],
-        if (updateData['WETTKAMPFART_ID'] != null) 'wettkampfart_id': updateData['WETTKAMPFART_ID'],
-        if (updateData['WETTKAMPFERGEBNIS'] != null) 'wettkampfergebnis': updateData['WETTKAMPFERGEBNIS'],
+        if (updateData['WETTKAMPFART_ID'] != null)
+          'wettkampfart_id': updateData['WETTKAMPFART_ID'],
+        if (updateData['WETTKAMPFERGEBNIS'] != null)
+          'wettkampfergebnis': updateData['WETTKAMPFERGEBNIS'],
         'changed_at': updateData['changed_at'],
       };
 
@@ -1007,9 +1029,7 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_sport?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
@@ -1027,15 +1047,13 @@ class PostgrestService {
     }
   }
 
-/// Soft delete bed_sport by ID
+  /// Soft delete bed_sport by ID
   Future<bool> deleteBedSportById(int id) async {
     try {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_sport?id=eq.$id'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
@@ -1085,7 +1103,8 @@ class PostgrestService {
       if (hersteller != null) data['hersteller'] = hersteller;
       if (lauflaengeId != null) data['lauflaenge_id'] = lauflaengeId;
       if (gewicht != null) data['gewicht'] = gewicht;
-      if (beduerfnisgrundId != null) data['beduerfnisgrund_id'] = beduerfnisgrundId;
+      if (beduerfnisgrundId != null)
+        data['beduerfnisgrund_id'] = beduerfnisgrundId;
       if (verbandId != null) data['verband_id'] = verbandId;
       if (bemerkung != null) data['bemerkung'] = bemerkung;
 
@@ -1117,14 +1136,20 @@ class PostgrestService {
   ) async {
     try {
       final response = await _httpClient.get(
-        Uri.parse('${_baseUrl}bed_waffe_besitz?antragsnummer=eq.$antragsnummer&deleted_at=is.null'),
+        Uri.parse(
+          '${_baseUrl}bed_waffe_besitz?antragsnummer=eq.$antragsnummer&deleted_at=is.null',
+        ),
         headers: _headers,
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> records = jsonDecode(response.body);
         return records
-            .map((json) => BeduerfnisseWaffeBesitz.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) => BeduerfnisseWaffeBesitz.fromJson(
+                json as Map<String, dynamic>,
+              ),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1133,7 +1158,9 @@ class PostgrestService {
         return [];
       }
     } catch (e) {
-      LoggerService.logError('Error getting bed_waffe_besitz by antragsnummer: $e');
+      LoggerService.logError(
+        'Error getting bed_waffe_besitz by antragsnummer: $e',
+      );
       return [];
     }
   }
@@ -1162,15 +1189,23 @@ class PostgrestService {
       final snakeCaseData = {
         if (updateData['WBK_NR'] != null) 'wbk_nr': updateData['WBK_NR'],
         if (updateData['LFD_WBK'] != null) 'lfd_wbk': updateData['LFD_WBK'],
-        if (updateData['WAFFENART_ID'] != null) 'waffenart_id': updateData['WAFFENART_ID'],
-        if (updateData['HERSTELLER'] != null) 'hersteller': updateData['HERSTELLER'],
-        if (updateData['KALIBER_ID'] != null) 'kaliber_id': updateData['KALIBER_ID'],
-        if (updateData['LAUFLAENGE_ID'] != null) 'lauflaenge_id': updateData['LAUFLAENGE_ID'],
+        if (updateData['WAFFENART_ID'] != null)
+          'waffenart_id': updateData['WAFFENART_ID'],
+        if (updateData['HERSTELLER'] != null)
+          'hersteller': updateData['HERSTELLER'],
+        if (updateData['KALIBER_ID'] != null)
+          'kaliber_id': updateData['KALIBER_ID'],
+        if (updateData['LAUFLAENGE_ID'] != null)
+          'lauflaenge_id': updateData['LAUFLAENGE_ID'],
         if (updateData['GEWICHT'] != null) 'gewicht': updateData['GEWICHT'],
-        if (updateData['KOMPENSATOR'] != null) 'kompensator': updateData['KOMPENSATOR'],
-        if (updateData['BEDUERFNISGRUND_ID'] != null) 'beduerfnisgrund_id': updateData['BEDUERFNISGRUND_ID'],
-        if (updateData['VERBAND_ID'] != null) 'verband_id': updateData['VERBAND_ID'],
-        if (updateData['BEMERKUNG'] != null) 'bemerkung': updateData['BEMERKUNG'],
+        if (updateData['KOMPENSATOR'] != null)
+          'kompensator': updateData['KOMPENSATOR'],
+        if (updateData['BEDUERFNISGRUND_ID'] != null)
+          'beduerfnisgrund_id': updateData['BEDUERFNISGRUND_ID'],
+        if (updateData['VERBAND_ID'] != null)
+          'verband_id': updateData['VERBAND_ID'],
+        if (updateData['BEMERKUNG'] != null)
+          'bemerkung': updateData['BEMERKUNG'],
         'changed_at': updateData['changed_at'],
       };
 
@@ -1195,15 +1230,39 @@ class PostgrestService {
     }
   }
 
-  /// Soft delete bed_waffe_besitz by ID
+  /// Soft delete bed_waffe_besitz by antragsnummer
   Future<bool> deleteBedWaffeBesitz(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_waffe_besitz?antragsnummer=eq.$antragsnummer'),
+        Uri.parse(
+          '${_baseUrl}bed_waffe_besitz?antragsnummer=eq.$antragsnummer',
+        ),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
+      );
+
+      if (response.statusCode == 200) {
+        LoggerService.logInfo('bed_waffe_besitz deleted successfully');
+        return true;
+      } else {
+        LoggerService.logError(
+          'Failed to delete bed_waffe_besitz. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_waffe_besitz: $e');
+      return false;
+    }
+  }
+
+  /// Soft delete bed_waffe_besitz by ID
+  Future<bool> deleteBedWaffeBesitzById(int id) async {
+    try {
+      final response = await _httpClient.patch(
+        Uri.parse('${_baseUrl}bed_waffe_besitz?id=eq.$id'),
+        headers: _headers,
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
@@ -1294,7 +1353,10 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data
-            .map((json) => BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1321,7 +1383,10 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data
-            .map((json) => BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1348,7 +1413,10 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data
-            .map((json) => BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1410,17 +1478,25 @@ class PostgrestService {
 
       // Convert keys to snake_case for PostgREST
       final snakeCaseData = {
-        if (updateData['PERSON_ID'] != null) 'person_id': updateData['PERSON_ID'],
-        if (updateData['STATUS_ID'] != null) 'status_id': updateData['STATUS_ID'],
+        if (updateData['PERSON_ID'] != null)
+          'person_id': updateData['PERSON_ID'],
+        if (updateData['STATUS_ID'] != null)
+          'status_id': updateData['STATUS_ID'],
         if (updateData['WBK_NEU'] != null) 'wbk_neu': updateData['WBK_NEU'],
         if (updateData['WBK_ART'] != null) 'wbk_art': updateData['WBK_ART'],
-        if (updateData['BEDUERFNISART'] != null) 'beduerfnisart': updateData['BEDUERFNISART'],
-        if (updateData['ANZAHL_WAFFEN'] != null) 'anzahl_waffen': updateData['ANZAHL_WAFFEN'],
-        if (updateData['VEREINSNUMMER'] != null) 'vereinsnummer': updateData['VEREINSNUMMER'],
+        if (updateData['BEDUERFNISART'] != null)
+          'beduerfnisart': updateData['BEDUERFNISART'],
+        if (updateData['ANZAHL_WAFFEN'] != null)
+          'anzahl_waffen': updateData['ANZAHL_WAFFEN'],
+        if (updateData['VEREINSNUMMER'] != null)
+          'vereinsnummer': updateData['VEREINSNUMMER'],
         if (updateData['EMAIL'] != null) 'email': updateData['EMAIL'],
-        if (updateData['BANKDATEN'] != null) 'bankdaten': updateData['BANKDATEN'],
-        if (updateData['ABBUCHUNG_ERFOLGT'] != null) 'abbuchung_erfolgt': updateData['ABBUCHUNG_ERFOLGT'],
-        if (updateData['BEMERKUNG'] != null) 'bemerkung': updateData['BEMERKUNG'],
+        if (updateData['BANKDATEN'] != null)
+          'bankdaten': updateData['BANKDATEN'],
+        if (updateData['ABBUCHUNG_ERFOLGT'] != null)
+          'abbuchung_erfolgt': updateData['ABBUCHUNG_ERFOLGT'],
+        if (updateData['BEMERKUNG'] != null)
+          'bemerkung': updateData['BEMERKUNG'],
         'changed_at': updateData['changed_at'],
       };
 
@@ -1451,9 +1527,7 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_antrag?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
@@ -1505,7 +1579,9 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         LoggerService.logInfo('bed_antrag_person created successfully');
         if (data.isNotEmpty) {
-          return BeduerfnisseAntragPerson.fromJson(data[0] as Map<String, dynamic>);
+          return BeduerfnisseAntragPerson.fromJson(
+            data[0] as Map<String, dynamic>,
+          );
         }
         throw Exception('Empty response from create bed_antrag_person');
       } else {
@@ -1535,7 +1611,11 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data
-            .map((json) => BeduerfnisseAntragPerson.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) => BeduerfnisseAntragPerson.fromJson(
+                json as Map<String, dynamic>,
+              ),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1544,13 +1624,17 @@ class PostgrestService {
         return [];
       }
     } catch (e) {
-      LoggerService.logError('Error fetching bed_antrag_person by antragsnummer: $e');
+      LoggerService.logError(
+        'Error fetching bed_antrag_person by antragsnummer: $e',
+      );
       return [];
     }
   }
 
   /// Get bed_antrag_person entries by person_id
-  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByPersonId(int personId) async {
+  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByPersonId(
+    int personId,
+  ) async {
     try {
       final response = await _httpClient.get(
         Uri.parse(
@@ -1562,7 +1646,11 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data
-            .map((json) => BeduerfnisseAntragPerson.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) => BeduerfnisseAntragPerson.fromJson(
+                json as Map<String, dynamic>,
+              ),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1571,13 +1659,17 @@ class PostgrestService {
         return [];
       }
     } catch (e) {
-      LoggerService.logError('Error fetching bed_antrag_person by person_id: $e');
+      LoggerService.logError(
+        'Error fetching bed_antrag_person by person_id: $e',
+      );
       return [];
     }
   }
 
   /// Update a bed_antrag_person entry
-  Future<bool> updateBedAntragPerson(BeduerfnisseAntragPerson bedAntragPerson) async {
+  Future<bool> updateBedAntragPerson(
+    BeduerfnisseAntragPerson bedAntragPerson,
+  ) async {
     try {
       if (bedAntragPerson.id == null) {
         LoggerService.logError('Cannot update bed_antrag_person without an ID');
@@ -1597,11 +1689,14 @@ class PostgrestService {
 
       // Convert keys to snake_case for PostgREST
       final snakeCaseData = {
-        if (updateData['PERSON_ID'] != null) 'person_id': updateData['PERSON_ID'],
-        if (updateData['STATUS_ID'] != null) 'status_id': updateData['STATUS_ID'],
+        if (updateData['PERSON_ID'] != null)
+          'person_id': updateData['PERSON_ID'],
+        if (updateData['STATUS_ID'] != null)
+          'status_id': updateData['STATUS_ID'],
         if (updateData['VORNAME'] != null) 'name': updateData['VORNAME'],
         if (updateData['NACHNAME'] != null) 'nachname': updateData['NACHNAME'],
-        if (updateData['VEREINSNAME'] != null) 'vereinsname': updateData['VEREINSNAME'],
+        if (updateData['VEREINSNAME'] != null)
+          'vereinsname': updateData['VEREINSNAME'],
         'changed_at': updateData['changed_at'],
       };
 
@@ -1630,11 +1725,11 @@ class PostgrestService {
   Future<bool> deleteBedAntragPerson(int antragsnummer) async {
     try {
       final response = await _httpClient.patch(
-        Uri.parse('${_baseUrl}bed_antrag_person?antragsnummer=eq.$antragsnummer'),
+        Uri.parse(
+          '${_baseUrl}bed_antrag_person?antragsnummer=eq.$antragsnummer',
+        ),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
@@ -1684,7 +1779,9 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         LoggerService.logInfo('bed_datei_zuord created successfully');
         if (data.isNotEmpty) {
-          return BeduerfnisseDateiZuord.fromJson(data[0] as Map<String, dynamic>);
+          return BeduerfnisseDateiZuord.fromJson(
+            data[0] as Map<String, dynamic>,
+          );
         }
         throw Exception('Empty response from create bed_datei_zuord');
       } else {
@@ -1722,8 +1819,10 @@ class PostgrestService {
       // Convert keys to snake_case for PostgREST
       final snakeCaseData = {
         if (updateData['DATEI_ID'] != null) 'datei_id': updateData['DATEI_ID'],
-        if (updateData['DATEI_ART'] != null) 'datei_art': updateData['DATEI_ART'],
-        if (updateData['BED_SPORT_ID'] != null) 'bed_sport_id': updateData['BED_SPORT_ID'],
+        if (updateData['DATEI_ART'] != null)
+          'datei_art': updateData['DATEI_ART'],
+        if (updateData['BED_SPORT_ID'] != null)
+          'bed_sport_id': updateData['BED_SPORT_ID'],
         if (updateData['LABEL'] != null) 'label': updateData['LABEL'],
         'changed_at': updateData['changed_at'],
       };
@@ -1755,13 +1854,13 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_datei_zuord?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_datei_zuord deleted successfully for antragsnummer: $antragsnummer');
+        LoggerService.logInfo(
+          'bed_datei_zuord deleted successfully for antragsnummer: $antragsnummer',
+        );
         return true;
       } else {
         LoggerService.logError(
@@ -1791,7 +1890,10 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data
-            .map((json) => BeduerfnisseDateiZuord.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseDateiZuord.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1824,7 +1926,9 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
-          return BeduerfnisseDateiZuord.fromJson(data[0] as Map<String, dynamic>);
+          return BeduerfnisseDateiZuord.fromJson(
+            data[0] as Map<String, dynamic>,
+          );
         }
         return null;
       } else {
@@ -1834,7 +1938,9 @@ class PostgrestService {
         return null;
       }
     } catch (e) {
-      LoggerService.logError('Error getting bed_datei_zuord by bed_sport_id: $e');
+      LoggerService.logError(
+        'Error getting bed_datei_zuord by bed_sport_id: $e',
+      );
       return null;
     }
   }
@@ -1845,13 +1951,13 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_datei_zuord?bed_sport_id=eq.$bedSportId'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_datei_zuord deleted successfully for bed_sport_id: $bedSportId');
+        LoggerService.logInfo(
+          'bed_datei_zuord deleted successfully for bed_sport_id: $bedSportId',
+        );
         return true;
       } else {
         LoggerService.logError(
@@ -1860,13 +1966,17 @@ class PostgrestService {
         return false;
       }
     } catch (e) {
-      LoggerService.logError('Error deleting bed_datei_zuord by bed_sport_id: $e');
+      LoggerService.logError(
+        'Error deleting bed_datei_zuord by bed_sport_id: $e',
+      );
       return false;
     }
   }
 
   /// Get bed_datei_zuord entries by datei_id
-  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByDateiId(int dateiId) async {
+  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByDateiId(
+    int dateiId,
+  ) async {
     try {
       final response = await _httpClient.get(
         Uri.parse(
@@ -1878,7 +1988,10 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data
-            .map((json) => BeduerfnisseDateiZuord.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseDateiZuord.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1887,9 +2000,7 @@ class PostgrestService {
         return [];
       }
     } catch (e) {
-      LoggerService.logError(
-        'Error getting bed_datei_zuord by datei_id: $e',
-      );
+      LoggerService.logError('Error getting bed_datei_zuord by datei_id: $e');
       return [];
     }
   }
@@ -1900,13 +2011,13 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_datei_zuord?datei_id=eq.$dateiId'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
-        LoggerService.logInfo('bed_datei_zuord deleted successfully for datei_id: $dateiId');
+        LoggerService.logInfo(
+          'bed_datei_zuord deleted successfully for datei_id: $dateiId',
+        );
         return true;
       } else {
         LoggerService.logError(
@@ -1950,7 +2061,9 @@ class PostgrestService {
       if (response.statusCode == 201) {
         LoggerService.logInfo('bed_wettkampf created successfully');
         final data = jsonDecode(response.body) as List<dynamic>;
-        return BeduerfnisseWettkampf.fromJson(data.first as Map<String, dynamic>);
+        return BeduerfnisseWettkampf.fromJson(
+          data.first as Map<String, dynamic>,
+        );
       } else {
         LoggerService.logError(
           'Failed to create bed_wettkampf. Status: ${response.statusCode}, Body: ${response.body}',
@@ -1978,7 +2091,10 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as List<dynamic>;
         return data
-            .map((json) => BeduerfnisseWettkampf.fromJson(json as Map<String, dynamic>))
+            .map(
+              (json) =>
+                  BeduerfnisseWettkampf.fromJson(json as Map<String, dynamic>),
+            )
             .toList();
       } else {
         LoggerService.logError(
@@ -1987,7 +2103,9 @@ class PostgrestService {
         return [];
       }
     } catch (e) {
-      LoggerService.logError('Error fetching bed_wettkampf by antragsnummer: $e');
+      LoggerService.logError(
+        'Error fetching bed_wettkampf by antragsnummer: $e',
+      );
       return [];
     }
   }
@@ -2038,9 +2156,7 @@ class PostgrestService {
       final response = await _httpClient.patch(
         Uri.parse('${_baseUrl}bed_wettkampf?antragsnummer=eq.$antragsnummer'),
         headers: _headers,
-        body: jsonEncode({
-          'deleted_at': DateTime.now().toIso8601String(),
-        }),
+        body: jsonEncode({'deleted_at': DateTime.now().toIso8601String()}),
       );
 
       if (response.statusCode == 200) {
