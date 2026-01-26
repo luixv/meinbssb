@@ -251,6 +251,8 @@ class _BeduerfnissantragStep3ScreenState
                                   isLoggedIn: widget.isLoggedIn,
                                   onLogout: widget.onLogout,
                                   antrag: widget.antrag,
+                                  userRole: widget.userRole,
+                                  readOnly: widget.readOnly,
                                 );
                               },
                             ),

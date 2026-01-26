@@ -9,6 +9,9 @@ import 'beduerfnissantrag_step4_dialog_screen.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/delete_confirm_dialog.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
 
 class BeduerfnissantragStep4Screen extends StatefulWidget {
@@ -18,12 +21,16 @@ class BeduerfnissantragStep4Screen extends StatefulWidget {
     this.isLoggedIn = false,
     this.onLogout,
     this.antrag,
+    this.userRole = WorkflowRole.mitglied,
+    this.readOnly = false,
   });
 
   final dynamic userData;
   final bool isLoggedIn;
   final VoidCallback? onLogout;
-  final dynamic antrag;
+  final BeduerfnisseAntrag? antrag;
+  final WorkflowRole userRole;
+  final bool readOnly;
 
   @override
   State<BeduerfnissantragStep4Screen> createState() =>
@@ -57,7 +64,7 @@ class _BeduerfnissantragStep4ScreenState
 
   void _refreshWaffeBesitz() {
     // Only fetch if antrag is available
-    if (widget.antrag != null && widget.antrag.antragsnummer != null) {
+    if (widget.antrag != null && widget.antrag?.antragsnummer != null) {
       setState(() {
         _waffeBesitzFuture = _fetchWaffeBesitz(context);
       });
@@ -65,11 +72,13 @@ class _BeduerfnissantragStep4ScreenState
   }
 
   Future<List<dynamic>> _fetchWaffeBesitz(BuildContext context) async {
-    if (widget.antrag == null || widget.antrag.antragsnummer == null) return [];
+    if (widget.antrag == null || widget.antrag?.antragsnummer == null) {
+      return [];
+    }
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       return await apiService.getBedWaffeBesitzByAntragsnummer(
-        widget.antrag.antragsnummer,
+        widget.antrag!.antragsnummer!,
       );
     } catch (e) {
       debugPrint('Error fetching waffe besitz: $e');
@@ -81,11 +90,12 @@ class _BeduerfnissantragStep4ScreenState
     BuildContext context, {
     BeduerfnisseWaffeBesitz? waffeBesitz,
   }) async {
+    if (widget.antrag?.antragsnummer == null) return;
     await showDialog(
       context: context,
       builder:
           (ctx) => AddWaffeBesitzDialog(
-            antragsnummer: widget.antrag.antragsnummer,
+            antragsnummer: widget.antrag!.antragsnummer!,
             onSaved: _refreshWaffeBesitz,
             waffeBesitz: waffeBesitz,
           ),
@@ -157,17 +167,21 @@ class _BeduerfnissantragStep4ScreenState
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                KeyboardFocusFAB(
-                  heroTag: 'addWaffeBesitzFab',
-                  tooltip: 'Waffenbesitz hinzufügen',
-                  semanticLabel: 'Waffenbesitz hinzufügen',
-                  semanticHint: 'Neuen Waffenbesitz-Eintrag hinzufügen',
-                  onPressed: () {
-                    _showAddWaffeBesitzDialog(context);
-                  },
-                  icon: Icons.add,
-                ),
-                const SizedBox(height: 12),
+                if (!widget.readOnly &&
+                    widget.antrag?.statusId == BeduerfnisAntragStatus.entwurf)
+                  KeyboardFocusFAB(
+                    heroTag: 'addWaffeBesitzFab',
+                    tooltip: 'Waffenbesitz hinzufügen',
+                    semanticLabel: 'Waffenbesitz hinzufügen',
+                    semanticHint: 'Neuen Waffenbesitz-Eintrag hinzufügen',
+                    onPressed: () {
+                      _showAddWaffeBesitzDialog(context);
+                    },
+                    icon: Icons.add,
+                  ),
+                if (!widget.readOnly &&
+                    widget.antrag?.statusId == BeduerfnisAntragStatus.entwurf)
+                  const SizedBox(height: 12),
                 KeyboardFocusFAB(
                   heroTag: 'nextFromStep4Fab',
                   tooltip: 'Weiter',
@@ -480,7 +494,7 @@ class _BeduerfnissantragStep4ScreenState
                                               ),
                                               Expanded(
                                                 child: Text(
-                                                  'Bemerkung: ${wb.bemerkung}',
+                                                  ' ${wb.bemerkung}',
                                                   style: UIStyles.bodyTextStyle
                                                       .copyWith(
                                                         fontSize:
@@ -498,59 +512,71 @@ class _BeduerfnissantragStep4ScreenState
                                       ],
                                     ),
                                   ),
-                                  Positioned(
-                                    top: 4,
-                                    right: 48,
-                                    child: Semantics(
-                                      button: true,
-                                      label: 'Eintrag bearbeiten',
-                                      child: Tooltip(
-                                        message: 'Bearbeiten',
-                                        child: InkWell(
-                                          onTap:
-                                              () => _showAddWaffeBesitzDialog(
-                                                context,
-                                                waffeBesitz: wb,
+                                  if (!widget.readOnly &&
+                                      widget.antrag?.statusId ==
+                                          BeduerfnisAntragStatus.entwurf)
+                                    Positioned(
+                                      top: 4,
+                                      right: 48,
+                                      child: Semantics(
+                                        button: true,
+                                        label: 'Eintrag bearbeiten',
+                                        child: Tooltip(
+                                          message: 'Bearbeiten',
+                                          child: InkWell(
+                                            onTap:
+                                                () => _showAddWaffeBesitzDialog(
+                                                  context,
+                                                  waffeBesitz: wb,
+                                                ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
                                               ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Icon(
-                                              Icons.edit,
-                                              color: UIConstants.primaryColor,
-                                              size:
-                                                  UIConstants.iconSizeS *
-                                                  fontSizeProvider.scaleFactor,
+                                              child: Icon(
+                                                Icons.edit,
+                                                color: UIConstants.primaryColor,
+                                                size:
+                                                    UIConstants.iconSizeS *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    top: 4,
-                                    right: 4,
-                                    child: Semantics(
-                                      button: true,
-                                      label: 'Eintrag löschen',
-                                      child: Tooltip(
-                                        message: 'Löschen',
-                                        child: InkWell(
-                                          onTap:
-                                              () => _deleteWaffeBesitz(wb.id),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Icon(
-                                              Icons.delete_outline,
-                                              color: UIConstants.deleteIcon,
-                                              size:
-                                                  UIConstants.iconSizeS *
-                                                  fontSizeProvider.scaleFactor,
+                                  if (!widget.readOnly &&
+                                      widget.antrag?.statusId ==
+                                          BeduerfnisAntragStatus.entwurf)
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: Semantics(
+                                        button: true,
+                                        label: 'Eintrag löschen',
+                                        child: Tooltip(
+                                          message: 'Löschen',
+                                          child: InkWell(
+                                            onTap:
+                                                () => _deleteWaffeBesitz(wb.id),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: Icon(
+                                                Icons.delete_outline,
+                                                color: UIConstants.deleteIcon,
+                                                size:
+                                                    UIConstants.iconSizeS *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             );
