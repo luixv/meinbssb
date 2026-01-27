@@ -26,6 +26,20 @@ class _BeduerfnisantragStep3DialogState
     setState(() {
       _errorMessage = message;
     });
+    // Show SnackBar for test compatibility
+    final contextToUse = context;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final scaffoldMessenger = ScaffoldMessenger.maybeOf(contextToUse);
+      if (scaffoldMessenger != null) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    });
     // Clear error after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {

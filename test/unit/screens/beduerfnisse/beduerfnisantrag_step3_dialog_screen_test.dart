@@ -68,8 +68,8 @@ void main() {
       await tester.pumpWidget(buildDialog(antragsnummer: 123));
       await tester.tap(find.text('Hochladen'));
       await tester.pumpAndSettle();
-      // ErrorService.showErrorSnackBar should be called, but we cannot intercept static calls easily
-      // So we check for SnackBar
+      // Wait for the error timer to complete
+      await tester.pump(const Duration(seconds: 3));
       expect(find.byType(SnackBar), findsOneWidget);
     });
 
@@ -79,6 +79,7 @@ void main() {
       await tester.pumpWidget(buildDialog(antragsnummer: 123));
       await tester.tap(find.text('Scannen'));
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 3));
       expect(find.byType(SnackBar), findsOneWidget);
     });
 
