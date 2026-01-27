@@ -13,7 +13,9 @@ import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step3_dialog_scre
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step4_screen.dart';
 import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
 import 'package:meinbssb/services/api_service.dart';
+
 import 'dart:typed_data';
+import 'package:meinbssb/widgets/antrag_type_summary_box.dart';
 
 class BeduerfnisantragStep3Screen extends StatefulWidget {
   const BeduerfnisantragStep3Screen({
@@ -40,6 +42,8 @@ class BeduerfnisantragStep3Screen extends StatefulWidget {
 
 class _BeduerfnisantragStep3ScreenState
     extends State<BeduerfnisantragStep3Screen> {
+  // Removed buildAntragTypeSummaryBox; now using AntragTypeSummaryBox widget.
+
   late Future<List<BeduerfnisDateiZuord>> _documentsFuture;
 
   @override
@@ -300,52 +304,15 @@ class _BeduerfnisantragStep3ScreenState
                       const SizedBox(height: UIConstants.spacingM),
                     ],
 
+                    /*
                     // Display Bedürfnisantrag type summary
-                    if (widget.antrag != null)
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(UIConstants.spacingM),
-                        decoration: BoxDecoration(
-                          color: UIConstants.cardColor,
-                          borderRadius: BorderRadius.circular(
-                            UIConstants.cornerRadius,
-                          ),
-                          border: Border.all(
-                            color: UIConstants.defaultAppColor,
-                            width: 2,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ScaledText(
-                              'Bedürfnisantrag:',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18 * fontSizeProvider.scaleFactor,
-                              ),
-                            ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            SizedBox(
-                              width: double.infinity,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: ScaledText(
-                                  widget.antrag!.wbkNeu == true
-                                      ? 'Ich beantrage ein Bedürfnis für eine neue WBK'
-                                      : 'Ich beantrage ein Bedürfnis für eine bestehende WBK',
-                                  style: TextStyle(
-                                    fontSize: 16 * fontSizeProvider.scaleFactor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                    if (widget.userData != null)
+                      AntragTypeSummaryBox(
+                        wbkNeu: widget.userData?.wbkNeu,
+                        antragWbkNeu: widget.antrag?.wbkNeu,
                       ),
                     const SizedBox(height: UIConstants.spacingL),
-
+*/
                     // Document List Section
                     Semantics(
                       header: true,

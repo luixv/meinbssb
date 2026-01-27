@@ -20,6 +20,21 @@ class _BeduerfnisantragStep3DialogState
     extends State<BeduerfnisantragStep3Dialog> {
   bool _isUploadingDocument = false;
   final TextEditingController _labelController = TextEditingController();
+  String? _errorMessage;
+
+  void _showError(String message) {
+    setState(() {
+      _errorMessage = message;
+    });
+    // Clear error after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          _errorMessage = null;
+        });
+      }
+    });
+  }
 
   Future<void> _scanAndUploadDocument(
     BuildContext context,
@@ -28,12 +43,7 @@ class _BeduerfnisantragStep3DialogState
     final apiService = Provider.of<ApiService>(context, listen: false);
     // Check if label is empty
     if (_labelController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Bitte geben Sie eine Beschreibung für die Datei ein.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showError('Bitte geben Sie eine Beschreibung für die Datei ein.');
       return;
     }
 
@@ -51,12 +61,7 @@ class _BeduerfnisantragStep3DialogState
 
       if (widget.antragsnummer == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Antragsnummer nicht gefunden'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          _showError('Antragsnummer nicht gefunden');
         }
         return;
       }
@@ -80,12 +85,7 @@ class _BeduerfnisantragStep3DialogState
         if (success) {
           Navigator.of(context).pop(true); // Close parent dialog on success
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Fehler beim Hochladen'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          _showError('Fehler beim Hochladen');
         }
       }
     } catch (e) {
@@ -93,12 +93,7 @@ class _BeduerfnisantragStep3DialogState
         setState(() {
           _isUploadingDocument = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fehler beim Scannen: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showError('Fehler beim Scannen: $e');
       }
     }
   }
@@ -110,12 +105,7 @@ class _BeduerfnisantragStep3DialogState
     final apiService = Provider.of<ApiService>(context, listen: false);
     // Check if label is empty
     if (_labelController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Bitte geben Sie eine Beschreibung für die Datei ein.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showError('Bitte geben Sie eine Beschreibung für die Datei ein.');
       return;
     }
 
@@ -133,12 +123,7 @@ class _BeduerfnisantragStep3DialogState
 
       if (widget.antragsnummer == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Antragsnummer nicht gefunden'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          _showError('Antragsnummer nicht gefunden');
         }
         return;
       }
@@ -162,12 +147,7 @@ class _BeduerfnisantragStep3DialogState
         if (success) {
           Navigator.of(context).pop(true); // Close parent dialog on success
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Fehler beim Hochladen'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          _showError('Fehler beim Hochladen');
         }
       }
     } catch (e) {
@@ -175,12 +155,7 @@ class _BeduerfnisantragStep3DialogState
         setState(() {
           _isUploadingDocument = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fehler beim Scannen: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showError('Fehler beim Scannen: $e');
       }
     }
   }
@@ -238,6 +213,39 @@ class _BeduerfnisantragStep3DialogState
                           ),
                         ],
                       ),
+                      if (_errorMessage != null) ...[
+                        const SizedBox(height: UIConstants.spacingS),
+                        Container(
+                          padding: const EdgeInsets.all(UIConstants.spacingS),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(
+                              UIConstants.cornerRadius,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                              const SizedBox(width: UIConstants.spacingS),
+                              Expanded(
+                                child: Text(
+                                  _errorMessage!,
+                                  style: UIStyles.bodyTextStyle.copyWith(
+                                    color: Colors.red,
+                                    fontSize:
+                                        UIStyles.bodyTextStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: UIConstants.spacingM),
 
                       const SizedBox(height: UIConstants.spacingXS),

@@ -9,7 +9,6 @@ import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step2_screen.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step5_screen.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -819,39 +818,22 @@ class _BeduerfnisantragStep1ScreenState
     final freshAntrag = antragsList.first;
     const userRole = WorkflowRole.mitglied;
 
-    // Decide next step based only on _wbkType (radio selection)
+    // Always go to step 2
     if (mounted) {
-      if (_wbkType == 'neu') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BeduerfnisantragStep5Screen(
-                  userData: widget.userData,
-                  antrag: freshAntrag,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                  userRole: userRole,
-                  readOnly: widget.readOnly,
-                ),
-          ),
-        );
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BeduerfnisantragStep2Screen(
-                  userData: widget.userData,
-                  antrag: freshAntrag,
-                  isLoggedIn: widget.isLoggedIn,
-                  onLogout: widget.onLogout,
-                  userRole: userRole,
-                  readOnly: widget.readOnly,
-                ),
-          ),
-        );
-      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => BeduerfnisantragStep2Screen(
+                userData: widget.userData,
+                antrag: freshAntrag,
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+                userRole: userRole,
+                readOnly: widget.readOnly,
+              ),
+        ),
+      );
     }
   }
 }

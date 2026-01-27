@@ -8,8 +8,9 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+
 import 'package:meinbssb/services/api/workflow_service.dart';
+import 'package:meinbssb/widgets/antrag_type_summary_box.dart';
 
 class BeduerfnisantragStep5Screen extends StatefulWidget {
   const BeduerfnisantragStep5Screen({
@@ -98,15 +99,38 @@ class _BeduerfnisantragStep5ScreenState
                 ),
               ),
               const SizedBox(height: UIConstants.spacingM),
-              const ScaledText(
-                'Schritt 5: Weitere Angaben',
-                style: TextStyle(fontSize: 16),
-              ),
+
+              /*
               const SizedBox(height: UIConstants.spacingM),
-              // TODO: Add content for step 5 here
-              const ScaledText(
-                'Hier können weitere Angaben für die Bedürfnisbescheinigung gemacht werden.',
-                style: TextStyle(fontSize: 16),
+              // Display the Antrag type summary box if antrag is available
+              if (widget.userData != null )
+                              AntragTypeSummaryBox(
+                  wbkNeu: widget.userData?.wbkNeu,
+                  antragWbkNeu: widget.antrag?.wbkNeu,
+                ),
+
+              */
+              const SizedBox(height: UIConstants.spacingL),
+              Consumer<FontSizeProvider>(
+                builder:
+                    (context, fontSizeProvider, _) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ScaledText(
+                          'Wettkampfteilnahme',
+                          style: UIStyles.titleStyle.copyWith(
+                            fontSize:
+                                UIStyles.titleStyle.fontSize! *
+                                fontSizeProvider.scaleFactor,
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingS),
+                        const ScaledText(
+                          'Grundsätzlich müssen zwei Wettkämpfe mit der beantragten Waffenart in den letzten 24 Monaten geschossen worden sein. Die Teilnahme kann durch Urkunden, Ergebnislisten, usw. belegt werden. Alternativ können Sie die Daten manuell erfassen.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
               ),
               const SizedBox(height: UIConstants.spacingXXXL),
             ],
