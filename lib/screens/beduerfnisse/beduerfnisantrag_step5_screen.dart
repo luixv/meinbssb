@@ -76,6 +76,8 @@ class _BeduerfnisantragStep5ScreenState
                         builder:
                             (context) => BeduerfnisantragStep5DialogScreen(
                               antragsnummer: widget.antrag?.antragsnummer,
+                              onSaved:
+                                  (result) {}, // No-op since save is disabled
                             ),
                       );
                     },
