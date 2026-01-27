@@ -5,7 +5,7 @@ import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
 
 class AddWaffeBesitzDialog extends StatefulWidget {
   const AddWaffeBesitzDialog({

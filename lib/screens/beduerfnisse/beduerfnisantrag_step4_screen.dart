@@ -9,10 +9,10 @@ import 'beduerfnisantrag_step4_dialog_screen.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/delete_confirm_dialog.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step5_screen.dart';
 
 class BeduerfnisantragStep4Screen extends StatefulWidget {

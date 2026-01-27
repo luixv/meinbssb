@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
 
 void main() {
   group('BeduerfnisseAuswahl', () {

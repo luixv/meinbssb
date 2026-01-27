@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
@@ -11,7 +11,7 @@ import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step3_dialog_screen.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step4_screen.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 
 import 'dart:typed_data';

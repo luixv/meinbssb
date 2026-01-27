@@ -8,15 +8,15 @@ import 'dart:typed_data' as _i16;
 
 import 'package:http/http.dart' as _i6;
 import 'package:meinbssb/models/bank_data.dart' as _i30;
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart' as _i7;
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart' as _i8;
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart' as _i52;
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart' as _i37;
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart' as _i38;
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart' as _i9;
-import 'package:meinbssb/models/beduerfnisse_sport_data.dart' as _i39;
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart' as _i40;
-import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart' as _i10;
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart' as _i7;
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart' as _i8;
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart' as _i52;
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart' as _i37;
+import 'package:meinbssb/models/beduerfnis_datei_data.dart' as _i38;
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart' as _i9;
+import 'package:meinbssb/models/beduerfnis_sport_data.dart' as _i39;
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart' as _i40;
+import 'package:meinbssb/models/beduerfnis_wettkampf_data.dart' as _i10;
 import 'package:meinbssb/models/bezirk_data.dart' as _i47;
 import 'package:meinbssb/models/contact_data.dart' as _i22;
 import 'package:meinbssb/models/disziplin_data.dart' as _i29;
@@ -115,9 +115,9 @@ class _FakeBeduerfnisAntrag_6 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeBeduerfnisseAntragPerson_7 extends _i1.SmartFake
-    implements _i8.BeduerfnisseAntragPerson {
-  _FakeBeduerfnisseAntragPerson_7(Object parent, Invocation parentInvocation)
+class _FakeBeduerfnisAntragPerson_7 extends _i1.SmartFake
+    implements _i8.BeduerfnisAntragPerson {
+  _FakeBeduerfnisAntragPerson_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -127,9 +127,9 @@ class _FakeBeduerfnisDateiZuord_8 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeBeduerfnisseWettkampf_9 extends _i1.SmartFake
-    implements _i10.BeduerfnisseWettkampf {
-  _FakeBeduerfnisseWettkampf_9(Object parent, Invocation parentInvocation)
+class _FakeBeduerfnisWettkampf_9 extends _i1.SmartFake
+    implements _i10.BeduerfnisWettkampf {
+  _FakeBeduerfnisWettkampf_9(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -1860,7 +1860,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<bool>);
 
   @override
-  _i3.Future<_i8.BeduerfnisseAntragPerson> createBedAntragPerson({
+  _i3.Future<_i8.BeduerfnisAntragPerson> createBedAntragPerson({
     required String? antragsnummer,
     required int? personId,
     int? statusId,
@@ -1877,8 +1877,8 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #nachname: nachname,
               #vereinsname: vereinsname,
             }),
-            returnValue: _i3.Future<_i8.BeduerfnisseAntragPerson>.value(
-              _FakeBeduerfnisseAntragPerson_7(
+            returnValue: _i3.Future<_i8.BeduerfnisAntragPerson>.value(
+              _FakeBeduerfnisAntragPerson_7(
                 this,
                 Invocation.method(#createBedAntragPerson, [], {
                   #antragsnummer: antragsnummer,
@@ -1891,36 +1891,36 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               ),
             ),
           )
-          as _i3.Future<_i8.BeduerfnisseAntragPerson>);
+          as _i3.Future<_i8.BeduerfnisAntragPerson>);
 
   @override
-  _i3.Future<List<_i8.BeduerfnisseAntragPerson>>
+  _i3.Future<List<_i8.BeduerfnisAntragPerson>>
   getBedAntragPersonByAntragsnummer(String? antragsnummer) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragPersonByAntragsnummer, [
               antragsnummer,
             ]),
-            returnValue: _i3.Future<List<_i8.BeduerfnisseAntragPerson>>.value(
-              <_i8.BeduerfnisseAntragPerson>[],
+            returnValue: _i3.Future<List<_i8.BeduerfnisAntragPerson>>.value(
+              <_i8.BeduerfnisAntragPerson>[],
             ),
           )
-          as _i3.Future<List<_i8.BeduerfnisseAntragPerson>>);
+          as _i3.Future<List<_i8.BeduerfnisAntragPerson>>);
 
   @override
-  _i3.Future<List<_i8.BeduerfnisseAntragPerson>> getBedAntragPersonByPersonId(
+  _i3.Future<List<_i8.BeduerfnisAntragPerson>> getBedAntragPersonByPersonId(
     int? personId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragPersonByPersonId, [personId]),
-            returnValue: _i3.Future<List<_i8.BeduerfnisseAntragPerson>>.value(
-              <_i8.BeduerfnisseAntragPerson>[],
+            returnValue: _i3.Future<List<_i8.BeduerfnisAntragPerson>>.value(
+              <_i8.BeduerfnisAntragPerson>[],
             ),
           )
-          as _i3.Future<List<_i8.BeduerfnisseAntragPerson>>);
+          as _i3.Future<List<_i8.BeduerfnisAntragPerson>>);
 
   @override
   _i3.Future<bool> updateBedAntragPerson(
-    _i8.BeduerfnisseAntragPerson? bedAntragPerson,
+    _i8.BeduerfnisAntragPerson? bedAntragPerson,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedAntragPerson, [bedAntragPerson]),
@@ -2038,7 +2038,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<bool>);
 
   @override
-  _i3.Future<_i10.BeduerfnisseWettkampf> createBedWettkampf({
+  _i3.Future<_i10.BeduerfnisWettkampf> createBedWettkampf({
     required int? antragsnummer,
     required DateTime? schiessdatum,
     required String? wettkampfart,
@@ -2055,8 +2055,8 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #wettkampfergebnis: wettkampfergebnis,
               #bemerkung: bemerkung,
             }),
-            returnValue: _i3.Future<_i10.BeduerfnisseWettkampf>.value(
-              _FakeBeduerfnisseWettkampf_9(
+            returnValue: _i3.Future<_i10.BeduerfnisWettkampf>.value(
+              _FakeBeduerfnisWettkampf_9(
                 this,
                 Invocation.method(#createBedWettkampf, [], {
                   #antragsnummer: antragsnummer,
@@ -2069,22 +2069,22 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               ),
             ),
           )
-          as _i3.Future<_i10.BeduerfnisseWettkampf>);
+          as _i3.Future<_i10.BeduerfnisWettkampf>);
 
   @override
-  _i3.Future<List<_i10.BeduerfnisseWettkampf>> getBedWettkampfByAntragsnummer(
+  _i3.Future<List<_i10.BeduerfnisWettkampf>> getBedWettkampfByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedWettkampfByAntragsnummer, [antragsnummer]),
-            returnValue: _i3.Future<List<_i10.BeduerfnisseWettkampf>>.value(
-              <_i10.BeduerfnisseWettkampf>[],
+            returnValue: _i3.Future<List<_i10.BeduerfnisWettkampf>>.value(
+              <_i10.BeduerfnisWettkampf>[],
             ),
           )
-          as _i3.Future<List<_i10.BeduerfnisseWettkampf>>);
+          as _i3.Future<List<_i10.BeduerfnisWettkampf>>);
 
   @override
-  _i3.Future<bool> updateBedWettkampf(_i10.BeduerfnisseWettkampf? wettkampf) =>
+  _i3.Future<bool> updateBedWettkampf(_i10.BeduerfnisWettkampf? wettkampf) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedWettkampf, [wettkampf]),
             returnValue: _i3.Future<bool>.value(false),

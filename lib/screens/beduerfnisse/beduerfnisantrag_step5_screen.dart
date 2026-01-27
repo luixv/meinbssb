@@ -6,7 +6,7 @@ import '/widgets/keyboard_focus_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
 import 'beduerfnisantrag_step5_dialog_screen.dart';
 
 import 'package:meinbssb/services/api/workflow_service.dart';

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step4_screen.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step5_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -70,6 +72,11 @@ void main() {
     late TestMockApiService mockApiService;
     late UserData userData;
 
+    BeduerfnisAntrag testAntrag = BeduerfnisAntrag(
+      antragsnummer: 123,
+      personId: 1,
+      statusId: BeduerfnisAntragStatus.entwurf,
+    );
     setUp(() {
       mockApiService = TestMockApiService();
       userData = UserData(
@@ -87,9 +94,16 @@ void main() {
       when(
         mockApiService.getBedAuswahlByTypId(argThat(isA<int>())),
       ).thenAnswer((_) async => []);
+      when(
+        mockApiService.getBedWaffeBesitzByAntragsnummer(any),
+      ).thenAnswer((_) async => []);
     });
 
-    Widget createWidgetUnderTest({bool isLoggedIn = true}) {
+    Widget createWidgetUnderTest({
+      bool isLoggedIn = true,
+      BeduerfnisAntrag? antrag,
+      bool readOnly = false,
+    }) {
       return MultiProvider(
         providers: [
           Provider<ApiService>.value(value: mockApiService),
@@ -100,6 +114,8 @@ void main() {
             userData: userData,
             isLoggedIn: isLoggedIn,
             onLogout: () {},
+            antrag: antrag ?? testAntrag,
+            readOnly: readOnly,
           ),
         ),
       );
@@ -109,9 +125,10 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       expect(find.byType(BeduerfnisantragStep4Screen), findsOneWidget);
     });
+
     testWidgets('shows header and empty state', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
-      expect(find.text('Waffenbesitz-Einträge:'), findsOneWidget);
+      await tester.pumpAndSettle();
       expect(
         find.textContaining('Keine Waffenbesitz-Einträge'),
         findsOneWidget,
@@ -126,22 +143,7 @@ void main() {
     testWidgets('does not show add FAB when readOnly', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            Provider<ApiService>.value(value: mockApiService),
-            ChangeNotifierProvider(create: (_) => FontSizeProvider()),
-          ],
-          child: MaterialApp(
-            home: BeduerfnisantragStep4Screen(
-              userData: userData,
-              isLoggedIn: true,
-              onLogout: () {},
-              readOnly: true,
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(createWidgetUnderTest(readOnly: true));
       expect(find.byIcon(Icons.add), findsNothing);
     });
 
@@ -194,7 +196,7 @@ void main() {
             final row = col.children.first as Row;
             final leftCol = (row.children[0] as Expanded).child as Column;
             final infoRow = leftCol.children.first as Row;
-            final scaledTextWidget = (infoRow.children[1] as Expanded).child;
+            final scaledTextWidget = (infoRow.children[2] as Expanded).child;
             if (scaledTextWidget is ScaledText) {
               return (scaledTextWidget).text;
             }

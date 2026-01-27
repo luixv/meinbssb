@@ -48,15 +48,15 @@ import 'package:meinbssb/services/core/calendar_service.dart';
 import 'package:meinbssb/services/core/document_scanner_service.dart';
 
 import 'package:meinbssb/models/person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
-import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
-import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnis_sport_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_wettkampf_data.dart';
 
 @GenerateMocks([
   AuthService,
@@ -2841,7 +2841,7 @@ void main() {
 
     group('bed_antrag_person Service Tests', () {
       test('createBedAntragPerson delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseAntragPerson(
+        final expectedResult = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: 'A123',
           personId: 100,
@@ -2885,7 +2885,7 @@ void main() {
         'getBedAntragPersonByAntragsnummer delegates to postgrest service',
         () async {
           final expectedList = [
-            BeduerfnisseAntragPerson(
+            BeduerfnisAntragPerson(
               id: 1,
               antragsnummer: 'A123',
               personId: 100,
@@ -2910,11 +2910,7 @@ void main() {
         'getBedAntragPersonByPersonId delegates to postgrest service',
         () async {
           final expectedList = [
-            BeduerfnisseAntragPerson(
-              id: 1,
-              antragsnummer: 'A123',
-              personId: 100,
-            ),
+            BeduerfnisAntragPerson(id: 1, antragsnummer: 'A123', personId: 100),
           ];
           when(
             mockPostgrestService.getBedAntragPersonByPersonId(100),
@@ -2929,7 +2925,7 @@ void main() {
       );
 
       test('updateBedAntragPerson delegates to postgrest service', () async {
-        final antragPerson = BeduerfnisseAntragPerson(
+        final antragPerson = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: 'A123',
           personId: 100,
@@ -3194,7 +3190,7 @@ void main() {
 
     group('bed_wettkampf Service Tests', () {
       test('createBedWettkampf delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseWettkampf(
+        final expectedResult = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 123,
           schiessdatum: DateTime(2024, 1, 15),
@@ -3238,7 +3234,7 @@ void main() {
         'getBedWettkampfByAntragsnummer delegates to postgrest service',
         () async {
           final expectedList = [
-            BeduerfnisseWettkampf(
+            BeduerfnisWettkampf(
               id: 1,
               antragsnummer: 123,
               schiessdatum: DateTime(2024, 1, 15),
@@ -3260,7 +3256,7 @@ void main() {
       );
 
       test('updateBedWettkampf delegates to postgrest service', () async {
-        final wettkampf = BeduerfnisseWettkampf(
+        final wettkampf = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 123,
           schiessdatum: DateTime(2024, 1, 15),

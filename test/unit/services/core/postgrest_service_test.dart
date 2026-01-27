@@ -7,14 +7,14 @@ import 'package:http/http.dart' as http;
 
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
-import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_data.dart';
+import 'package:meinbssb/models/beduerfnis_sport_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
 
 @GenerateMocks([ConfigService, http.Client])
 import 'postgrest_service_test.mocks.dart';
@@ -1363,7 +1363,7 @@ void main() {
           vereinsname: 'SV Test',
         );
 
-        expect(result, isA<BeduerfnisseAntragPerson>());
+        expect(result, isA<BeduerfnisAntragPerson>());
         expect(result.id, equals(1));
         expect(result.antragsnummer, equals('A123'));
         expect(result.personId, equals(100));
@@ -1442,7 +1442,7 @@ void main() {
 
         final result = await service.getBedAntragPersonByAntragsnummer('A123');
         expect(result, hasLength(2));
-        expect(result[0], isA<BeduerfnisseAntragPerson>());
+        expect(result[0], isA<BeduerfnisAntragPerson>());
         expect(result[0].antragsnummer, equals('A123'));
         expect(result[0].vorname, equals('Max'));
         expect(result[1].vorname, equals('Maria'));
@@ -1484,7 +1484,7 @@ void main() {
 
         final result = await service.getBedAntragPersonByPersonId(100);
         expect(result, hasLength(2));
-        expect(result[0], isA<BeduerfnisseAntragPerson>());
+        expect(result[0], isA<BeduerfnisAntragPerson>());
         expect(result[0].personId, equals(100));
         expect(result[0].antragsnummer, equals('A123'));
         expect(result[1].antragsnummer, equals('A124'));
@@ -1512,7 +1512,7 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('[]', 200));
 
-        const antragPerson = BeduerfnisseAntragPerson(
+        const antragPerson = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: '123',
           personId: 100,
@@ -1531,7 +1531,7 @@ void main() {
       });
 
       test('updateBedAntragPerson returns false when id is null', () async {
-        const antragPerson = BeduerfnisseAntragPerson(
+        const antragPerson = BeduerfnisAntragPerson(
           antragsnummer: '123',
           personId: 100,
         );
@@ -1556,7 +1556,7 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response('Error', 500));
 
-        const antragPerson = BeduerfnisseAntragPerson(
+        const antragPerson = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: '123',
           personId: 100,
@@ -1582,7 +1582,7 @@ void main() {
           ),
         ).thenThrow(Exception('Network error'));
 
-        const antragPerson = BeduerfnisseAntragPerson(
+        const antragPerson = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: '123',
           personId: 100,

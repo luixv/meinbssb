@@ -10,7 +10,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/document_scanner_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:meinbssb/widgets/dialog_fabs.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 
 class BeduerfnisantragStep5DialogScreen extends StatefulWidget {

@@ -33,15 +33,15 @@ import 'package:meinbssb/models/person_data.dart';
 import 'package:meinbssb/models/result_data.dart';
 import 'package:meinbssb/models/bezirk_data.dart';
 import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
-import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
-import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_data.dart';
+import 'package:meinbssb/models/beduerfnis_sport_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnis_wettkampf_data.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -1112,7 +1112,7 @@ class ApiService {
   // --- bed_antrag_person Service Methods ---
   //
 
-  Future<BeduerfnisseAntragPerson> createBedAntragPerson({
+  Future<BeduerfnisAntragPerson> createBedAntragPerson({
     required String antragsnummer,
     required int personId,
     int? statusId,
@@ -1130,20 +1130,20 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByAntragsnummer(
+  Future<List<BeduerfnisAntragPerson>> getBedAntragPersonByAntragsnummer(
     String antragsnummer,
   ) async {
     return _postgrestService.getBedAntragPersonByAntragsnummer(antragsnummer);
   }
 
-  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByPersonId(
+  Future<List<BeduerfnisAntragPerson>> getBedAntragPersonByPersonId(
     int personId,
   ) async {
     return _postgrestService.getBedAntragPersonByPersonId(personId);
   }
 
   Future<bool> updateBedAntragPerson(
-    BeduerfnisseAntragPerson bedAntragPerson,
+    BeduerfnisAntragPerson bedAntragPerson,
   ) async {
     return _postgrestService.updateBedAntragPerson(bedAntragPerson);
   }
@@ -1218,7 +1218,7 @@ class ApiService {
   }
 
   // --- Bed Wettkampf ---
-  Future<BeduerfnisseWettkampf> createBedWettkampf({
+  Future<BeduerfnisWettkampf> createBedWettkampf({
     required int antragsnummer,
     required DateTime schiessdatum,
     required String wettkampfart,
@@ -1236,13 +1236,13 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseWettkampf>> getBedWettkampfByAntragsnummer(
+  Future<List<BeduerfnisWettkampf>> getBedWettkampfByAntragsnummer(
     int antragsnummer,
   ) async {
     return _postgrestService.getBedWettkampfByAntragsnummer(antragsnummer);
   }
 
-  Future<bool> updateBedWettkampf(BeduerfnisseWettkampf wettkampf) async {
+  Future<bool> updateBedWettkampf(BeduerfnisWettkampf wettkampf) async {
     return _postgrestService.updateBedWettkampf(wettkampf);
   }
 

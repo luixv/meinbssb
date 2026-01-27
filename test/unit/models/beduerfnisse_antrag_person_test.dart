@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart';
 
 void main() {
   group('BeduerfnisseAntragPerson', () {
@@ -16,10 +16,16 @@ void main() {
         'nachname': 'Mustermann',
         'vereinsname': 'SV Test',
       };
-      final antragPerson = BeduerfnisseAntragPerson.fromJson(json);
+      final antragPerson = BeduerfnisAntragPerson.fromJson(json);
       expect(antragPerson.id, 1);
-      expect(antragPerson.createdAt, DateTime.parse('2024-01-01T10:00:00.000Z'));
-      expect(antragPerson.changedAt, DateTime.parse('2024-01-02T12:00:00.000Z'));
+      expect(
+        antragPerson.createdAt,
+        DateTime.parse('2024-01-01T10:00:00.000Z'),
+      );
+      expect(
+        antragPerson.changedAt,
+        DateTime.parse('2024-01-02T12:00:00.000Z'),
+      );
       expect(antragPerson.deletedAt, isNull);
       expect(antragPerson.antragsnummer, 'A123');
       expect(antragPerson.personId, 100);
@@ -42,10 +48,16 @@ void main() {
         'NACHNAME': 'Muster',
         'VEREINSNAME': 'TSV Test',
       };
-      final antragPerson = BeduerfnisseAntragPerson.fromJson(json);
+      final antragPerson = BeduerfnisAntragPerson.fromJson(json);
       expect(antragPerson.id, 2);
-      expect(antragPerson.createdAt, DateTime.parse('2024-01-01T10:00:00.000Z'));
-      expect(antragPerson.changedAt, DateTime.parse('2024-01-02T12:00:00.000Z'));
+      expect(
+        antragPerson.createdAt,
+        DateTime.parse('2024-01-01T10:00:00.000Z'),
+      );
+      expect(
+        antragPerson.changedAt,
+        DateTime.parse('2024-01-02T12:00:00.000Z'),
+      );
       expect(antragPerson.deletedAt, isNull);
       expect(antragPerson.antragsnummer, 'A124');
       expect(antragPerson.personId, 101);
@@ -65,7 +77,7 @@ void main() {
         'nachname': null,
         'vereinsname': null,
       };
-      final antragPerson = BeduerfnisseAntragPerson.fromJson(json);
+      final antragPerson = BeduerfnisAntragPerson.fromJson(json);
       expect(antragPerson.id, 3);
       expect(antragPerson.antragsnummer, 'A125');
       expect(antragPerson.personId, 102);
@@ -76,12 +88,8 @@ void main() {
     });
 
     test('fromJson handles null id', () {
-      final json = {
-        'id': null,
-        'antragsnummer': 'A126',
-        'person_id': 103,
-      };
-      final antragPerson = BeduerfnisseAntragPerson.fromJson(json);
+      final json = {'id': null, 'antragsnummer': 'A126', 'person_id': 103};
+      final antragPerson = BeduerfnisAntragPerson.fromJson(json);
       expect(antragPerson.id, isNull);
       expect(antragPerson.antragsnummer, 'A126');
       expect(antragPerson.personId, 103);
@@ -96,7 +104,7 @@ void main() {
         'antragsnummer': 'A127',
         'person_id': 104,
       };
-      final antragPerson = BeduerfnisseAntragPerson.fromJson(json);
+      final antragPerson = BeduerfnisAntragPerson.fromJson(json);
       expect(antragPerson.id, 4);
       expect(antragPerson.createdAt, isNull);
       expect(antragPerson.changedAt, isNull);
@@ -106,7 +114,7 @@ void main() {
     });
 
     test('constructor creates correct object with required fields only', () {
-      const antragPerson = BeduerfnisseAntragPerson(
+      const antragPerson = BeduerfnisAntragPerson(
         antragsnummer: 'A123',
         personId: 100,
       );
@@ -123,7 +131,7 @@ void main() {
       final createdAt = DateTime(2024, 1, 1, 10, 0, 0);
       final changedAt = DateTime(2024, 1, 2, 12, 0, 0);
       final deletedAt = DateTime(2024, 1, 3, 14, 0, 0);
-      final antragPerson = BeduerfnisseAntragPerson(
+      final antragPerson = BeduerfnisAntragPerson(
         id: 1,
         createdAt: createdAt,
         changedAt: changedAt,
@@ -150,7 +158,7 @@ void main() {
     test('toJson returns correct map with all fields', () {
       final createdAt = DateTime(2024, 1, 1, 10, 0, 0);
       final changedAt = DateTime(2024, 1, 2, 12, 0, 0);
-      final antragPerson = BeduerfnisseAntragPerson(
+      final antragPerson = BeduerfnisAntragPerson(
         id: 1,
         createdAt: createdAt,
         changedAt: changedAt,
@@ -174,7 +182,7 @@ void main() {
     });
 
     test('toJson handles null values', () {
-      const antragPerson = BeduerfnisseAntragPerson(
+      const antragPerson = BeduerfnisAntragPerson(
         id: null,
         antragsnummer: 'A123',
         personId: 100,
@@ -196,12 +204,12 @@ void main() {
     });
 
     test('inequality with different antragsnummer', () {
-      const antragPerson1 = BeduerfnisseAntragPerson(
+      const antragPerson1 = BeduerfnisAntragPerson(
         id: 1,
         antragsnummer: 'A123',
         personId: 100,
       );
-      const antragPerson2 = BeduerfnisseAntragPerson(
+      const antragPerson2 = BeduerfnisAntragPerson(
         id: 1,
         antragsnummer: 'A124',
         personId: 100,
@@ -210,12 +218,12 @@ void main() {
     });
 
     test('inequality with different personId', () {
-      const antragPerson1 = BeduerfnisseAntragPerson(
+      const antragPerson1 = BeduerfnisAntragPerson(
         id: 1,
         antragsnummer: 'A123',
         personId: 100,
       );
-      const antragPerson2 = BeduerfnisseAntragPerson(
+      const antragPerson2 = BeduerfnisAntragPerson(
         id: 1,
         antragsnummer: 'A123',
         personId: 101,
@@ -224,13 +232,13 @@ void main() {
     });
 
     test('inequality with different vorname', () {
-      const antragPerson1 = BeduerfnisseAntragPerson(
+      const antragPerson1 = BeduerfnisAntragPerson(
         id: 1,
         antragsnummer: 'A123',
         personId: 100,
         vorname: 'Max',
       );
-      const antragPerson2 = BeduerfnisseAntragPerson(
+      const antragPerson2 = BeduerfnisAntragPerson(
         id: 1,
         antragsnummer: 'A123',
         personId: 100,
@@ -240,13 +248,13 @@ void main() {
     });
 
     test('inequality with different vereinsname', () {
-      const antragPerson1 = BeduerfnisseAntragPerson(
+      const antragPerson1 = BeduerfnisAntragPerson(
         id: 1,
         antragsnummer: 'A123',
         personId: 100,
         vereinsname: 'SV Test',
       );
-      const antragPerson2 = BeduerfnisseAntragPerson(
+      const antragPerson2 = BeduerfnisAntragPerson(
         id: 1,
         antragsnummer: 'A123',
         personId: 100,
@@ -257,7 +265,7 @@ void main() {
 
     test('roundtrip JSON serialization preserves data', () {
       final createdAt = DateTime(2024, 1, 1, 10, 0, 0);
-      final original = BeduerfnisseAntragPerson(
+      final original = BeduerfnisAntragPerson(
         id: 1,
         createdAt: createdAt,
         antragsnummer: 'A123',
@@ -267,12 +275,15 @@ void main() {
         nachname: 'Mustermann',
         vereinsname: 'SV Test',
       );
-      
+
       final json = original.toJson();
-      final restored = BeduerfnisseAntragPerson.fromJson(json);
-      
+      final restored = BeduerfnisAntragPerson.fromJson(json);
+
       expect(restored.id, original.id);
-      expect(restored.createdAt?.toIso8601String(), original.createdAt?.toIso8601String());
+      expect(
+        restored.createdAt?.toIso8601String(),
+        original.createdAt?.toIso8601String(),
+      );
       expect(restored.antragsnummer, original.antragsnummer);
       expect(restored.personId, original.personId);
       expect(restored.statusId, original.statusId);

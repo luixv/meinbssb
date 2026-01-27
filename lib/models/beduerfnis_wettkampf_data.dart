@@ -2,20 +2,29 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a competition record (bed_wettkampf) in the BSSB system.
 @immutable
-class BeduerfnisseWettkampf {
-  /// Creates a [BeduerfnisseWettkampf] instance from a JSON map.
-  factory BeduerfnisseWettkampf.fromJson(Map<String, dynamic> json) {
-    return BeduerfnisseWettkampf(
+class BeduerfnisWettkampf {
+  /// Creates a [BeduerfnisWettkampf] instance from a JSON map.
+  factory BeduerfnisWettkampf.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisWettkampf(
       id: (json['ID'] ?? json['id']) as int?,
-      createdAt: (json['CREATED_AT'] ?? json['created_at']) == null
-          ? null
-          : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
-      changedAt: (json['CHANGED_AT'] ?? json['changed_at']) == null
-          ? null
-          : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
-      deletedAt: (json['DELETED_AT'] ?? json['deleted_at']) == null
-          ? null
-          : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+      createdAt:
+          (json['CREATED_AT'] ?? json['created_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['CREATED_AT'] ?? json['created_at']) as String,
+              ),
+      changedAt:
+          (json['CHANGED_AT'] ?? json['changed_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['CHANGED_AT'] ?? json['changed_at']) as String,
+              ),
+      deletedAt:
+          (json['DELETED_AT'] ?? json['deleted_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['DELETED_AT'] ?? json['deleted_at']) as String,
+              ),
       antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
       schiessdatum: DateTime.parse(
         (json['SCHIESSDATUM'] ?? json['schiessdatum']) as String,
@@ -26,17 +35,17 @@ class BeduerfnisseWettkampf {
           (json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis']) == null
               ? null
               : (json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis']) is int
-                  ? ((json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis'])
-                          as int)
-                      .toDouble()
-                  : (json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis'])
-                      as double,
+              ? ((json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis'])
+                      as int)
+                  .toDouble()
+              : (json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis'])
+                  as double,
       bemerkung: (json['BEMERKUNG'] ?? json['bemerkung']) as String?,
     );
   }
 
-  /// Creates a new instance of [BeduerfnisseWettkampf].
-  const BeduerfnisseWettkampf({
+  /// Creates a new instance of [BeduerfnisWettkampf].
+  const BeduerfnisWettkampf({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -79,7 +88,7 @@ class BeduerfnisseWettkampf {
   /// Remarks (nullable).
   final String? bemerkung;
 
-  /// Converts the [BeduerfnisseWettkampf] instance to a JSON map.
+  /// Converts the [BeduerfnisWettkampf] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,
@@ -98,7 +107,7 @@ class BeduerfnisseWettkampf {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is BeduerfnisseWettkampf &&
+      other is BeduerfnisWettkampf &&
           runtimeType == other.runtimeType &&
           id == other.id &&
           createdAt == other.createdAt &&

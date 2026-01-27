@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
+import 'package:meinbssb/models/beduerfnis_wettkampf_data.dart';
 
 void main() {
   group('BeduerfnisseWettkampf', () {
@@ -18,7 +18,7 @@ void main() {
           'bemerkung': 'Test competition',
         };
 
-        final wettkampf = BeduerfnisseWettkampf.fromJson(json);
+        final wettkampf = BeduerfnisWettkampf.fromJson(json);
 
         expect(wettkampf.id, 1);
         expect(wettkampf.createdAt, DateTime.parse('2024-01-01T10:00:00.000Z'));
@@ -49,7 +49,7 @@ void main() {
           'BEMERKUNG': 'Good result',
         };
 
-        final wettkampf = BeduerfnisseWettkampf.fromJson(json);
+        final wettkampf = BeduerfnisWettkampf.fromJson(json);
 
         expect(wettkampf.id, 2);
         expect(wettkampf.createdAt, DateTime.parse('2024-02-01T10:00:00.000Z'));
@@ -80,7 +80,7 @@ void main() {
           'bemerkung': null,
         };
 
-        final wettkampf = BeduerfnisseWettkampf.fromJson(json);
+        final wettkampf = BeduerfnisWettkampf.fromJson(json);
 
         expect(wettkampf.id, isNull);
         expect(wettkampf.createdAt, isNull);
@@ -106,7 +106,7 @@ void main() {
           'wettkampfergebnis': 90, // int value
         };
 
-        final wettkampf = BeduerfnisseWettkampf.fromJson(json);
+        final wettkampf = BeduerfnisWettkampf.fromJson(json);
 
         expect(wettkampf.wettkampfergebnis, isA<double>());
         expect(wettkampf.wettkampfergebnis, 90.0);
@@ -121,7 +121,7 @@ void main() {
           'wettkampfergebnis': 92.75, // double value
         };
 
-        final wettkampf = BeduerfnisseWettkampf.fromJson(json);
+        final wettkampf = BeduerfnisWettkampf.fromJson(json);
 
         expect(wettkampf.wettkampfergebnis, isA<double>());
         expect(wettkampf.wettkampfergebnis, 92.75);
@@ -132,7 +132,7 @@ void main() {
       test('creates correct object with required fields', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf = BeduerfnisseWettkampf(
+        final wettkampf = BeduerfnisWettkampf(
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
           wettkampfart: 'Meisterschaft',
@@ -157,7 +157,7 @@ void main() {
         final deletedAt = DateTime(2024, 1, 3, 10, 0, 0);
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf = BeduerfnisseWettkampf(
+        final wettkampf = BeduerfnisWettkampf(
           id: 1,
           createdAt: createdAt,
           changedAt: changedAt,
@@ -190,7 +190,7 @@ void main() {
         final deletedAt = DateTime(2024, 1, 3, 10, 0, 0);
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf = BeduerfnisseWettkampf(
+        final wettkampf = BeduerfnisWettkampf(
           id: 1,
           createdAt: createdAt,
           changedAt: changedAt,
@@ -220,7 +220,7 @@ void main() {
       test('handles null values', () {
         final schiessdatum = DateTime(2024, 7, 20);
 
-        final wettkampf = BeduerfnisseWettkampf(
+        final wettkampf = BeduerfnisWettkampf(
           id: null,
           createdAt: null,
           changedAt: null,
@@ -253,7 +253,7 @@ void main() {
         final createdAt = DateTime(2024, 1, 1);
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           createdAt: createdAt,
           changedAt: null,
@@ -266,7 +266,7 @@ void main() {
           bemerkung: 'Test',
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 1,
           createdAt: createdAt,
           changedAt: null,
@@ -286,7 +286,7 @@ void main() {
       test('objects with different id are not equal', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -294,7 +294,7 @@ void main() {
           disziplinId: 5,
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 2,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -308,7 +308,7 @@ void main() {
       test('objects with different antragsnummer are not equal', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -316,7 +316,7 @@ void main() {
           disziplinId: 5,
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100001,
           schiessdatum: schiessdatum,
@@ -331,7 +331,7 @@ void main() {
         final schiessdatum1 = DateTime(2024, 6, 15);
         final schiessdatum2 = DateTime(2024, 6, 16);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum1,
@@ -339,7 +339,7 @@ void main() {
           disziplinId: 5,
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum2,
@@ -353,7 +353,7 @@ void main() {
       test('objects with different wettkampfart are not equal', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -361,7 +361,7 @@ void main() {
           disziplinId: 5,
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -375,7 +375,7 @@ void main() {
       test('objects with different disziplinId are not equal', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -383,7 +383,7 @@ void main() {
           disziplinId: 5,
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -397,7 +397,7 @@ void main() {
       test('objects with different wettkampfergebnis are not equal', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -406,7 +406,7 @@ void main() {
           wettkampfergebnis: 95.0,
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -421,7 +421,7 @@ void main() {
       test('objects with different bemerkung are not equal', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -430,7 +430,7 @@ void main() {
           bemerkung: 'Good',
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -445,7 +445,7 @@ void main() {
       test('same object reference is equal to itself', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf = BeduerfnisseWettkampf(
+        final wettkampf = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -462,7 +462,7 @@ void main() {
         final createdAt = DateTime(2024, 1, 1);
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           createdAt: createdAt,
           antragsnummer: 100000,
@@ -472,7 +472,7 @@ void main() {
           wettkampfergebnis: 95.0,
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 1,
           createdAt: createdAt,
           antragsnummer: 100000,
@@ -488,7 +488,7 @@ void main() {
       test('different objects have different hashCode', () {
         final schiessdatum = DateTime(2024, 6, 15);
 
-        final wettkampf1 = BeduerfnisseWettkampf(
+        final wettkampf1 = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -496,7 +496,7 @@ void main() {
           disziplinId: 5,
         );
 
-        final wettkampf2 = BeduerfnisseWettkampf(
+        final wettkampf2 = BeduerfnisWettkampf(
           id: 2,
           antragsnummer: 100000,
           schiessdatum: schiessdatum,
@@ -523,11 +523,11 @@ void main() {
           'bemerkung': 'Weather was perfect',
         };
 
-        final wettkampf = BeduerfnisseWettkampf.fromJson(originalJson);
+        final wettkampf = BeduerfnisWettkampf.fromJson(originalJson);
         final serializedJson = wettkampf.toJson();
 
         // Parse back again
-        final wettkampfAgain = BeduerfnisseWettkampf.fromJson({
+        final wettkampfAgain = BeduerfnisWettkampf.fromJson({
           'id': serializedJson['ID'],
           'created_at': serializedJson['CREATED_AT'],
           'changed_at': serializedJson['CHANGED_AT'],

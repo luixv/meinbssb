@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'beduerfnisse_antrag_status_data.dart';
+import 'beduerfnis_antrag_status_data.dart';
 
 /// Represents an application/request (bed_antrag) in the BSSB system.
 @immutable

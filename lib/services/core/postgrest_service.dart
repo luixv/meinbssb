@@ -3,14 +3,14 @@ import 'package:http/http.dart' as http;
 import 'logger_service.dart';
 import 'config_service.dart';
 import 'dart:typed_data'; // Import Uint8List
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
-import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
-import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_data.dart';
+import 'package:meinbssb/models/beduerfnis_sport_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnis_wettkampf_data.dart';
 
 class PostgrestService {
   PostgrestService({required this.configService, http.Client? client})
@@ -1557,7 +1557,7 @@ class PostgrestService {
   //
 
   /// Create a new bed_antrag_person entry
-  Future<BeduerfnisseAntragPerson> createBedAntragPerson({
+  Future<BeduerfnisAntragPerson> createBedAntragPerson({
     required String antragsnummer,
     required int personId,
     int? statusId,
@@ -1586,7 +1586,7 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         LoggerService.logInfo('bed_antrag_person created successfully');
         if (data.isNotEmpty) {
-          return BeduerfnisseAntragPerson.fromJson(
+          return BeduerfnisAntragPerson.fromJson(
             data[0] as Map<String, dynamic>,
           );
         }
@@ -1604,7 +1604,7 @@ class PostgrestService {
   }
 
   /// Get bed_antrag_person entries by antragsnummer
-  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByAntragsnummer(
+  Future<List<BeduerfnisAntragPerson>> getBedAntragPersonByAntragsnummer(
     String antragsnummer,
   ) async {
     try {
@@ -1619,9 +1619,8 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         return data
             .map(
-              (json) => BeduerfnisseAntragPerson.fromJson(
-                json as Map<String, dynamic>,
-              ),
+              (json) =>
+                  BeduerfnisAntragPerson.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -1639,7 +1638,7 @@ class PostgrestService {
   }
 
   /// Get bed_antrag_person entries by person_id
-  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByPersonId(
+  Future<List<BeduerfnisAntragPerson>> getBedAntragPersonByPersonId(
     int personId,
   ) async {
     try {
@@ -1654,9 +1653,8 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         return data
             .map(
-              (json) => BeduerfnisseAntragPerson.fromJson(
-                json as Map<String, dynamic>,
-              ),
+              (json) =>
+                  BeduerfnisAntragPerson.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -1675,7 +1673,7 @@ class PostgrestService {
 
   /// Update a bed_antrag_person entry
   Future<bool> updateBedAntragPerson(
-    BeduerfnisseAntragPerson bedAntragPerson,
+    BeduerfnisAntragPerson bedAntragPerson,
   ) async {
     try {
       if (bedAntragPerson.id == null) {
@@ -2037,7 +2035,7 @@ class PostgrestService {
   // --- Bed Wettkampf Methods ---
   //
   /// Creates a new wettkampf record
-  Future<BeduerfnisseWettkampf> createBedWettkampf({
+  Future<BeduerfnisWettkampf> createBedWettkampf({
     required int antragsnummer,
     required DateTime schiessdatum,
     required String wettkampfart,
@@ -2064,9 +2062,7 @@ class PostgrestService {
       if (response.statusCode == 201) {
         LoggerService.logInfo('bed_wettkampf created successfully');
         final data = jsonDecode(response.body) as List<dynamic>;
-        return BeduerfnisseWettkampf.fromJson(
-          data.first as Map<String, dynamic>,
-        );
+        return BeduerfnisWettkampf.fromJson(data.first as Map<String, dynamic>);
       } else {
         LoggerService.logError(
           'Failed to create bed_wettkampf. Status: ${response.statusCode}, Body: ${response.body}',
@@ -2080,7 +2076,7 @@ class PostgrestService {
   }
 
   /// Gets wettkampf records by antragsnummer
-  Future<List<BeduerfnisseWettkampf>> getBedWettkampfByAntragsnummer(
+  Future<List<BeduerfnisWettkampf>> getBedWettkampfByAntragsnummer(
     int antragsnummer,
   ) async {
     try {
@@ -2096,7 +2092,7 @@ class PostgrestService {
         return data
             .map(
               (json) =>
-                  BeduerfnisseWettkampf.fromJson(json as Map<String, dynamic>),
+                  BeduerfnisWettkampf.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -2114,7 +2110,7 @@ class PostgrestService {
   }
 
   /// Updates a wettkampf record using the model
-  Future<bool> updateBedWettkampf(BeduerfnisseWettkampf wettkampf) async {
+  Future<bool> updateBedWettkampf(BeduerfnisWettkampf wettkampf) async {
     try {
       if (wettkampf.id == null) {
         LoggerService.logError('Cannot update bed_wettkampf without an ID');
