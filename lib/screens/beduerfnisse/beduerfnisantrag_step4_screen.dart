@@ -13,6 +13,7 @@ import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step5_screen.dart';
 
 class BeduerfnisantragStep4Screen extends StatefulWidget {
   const BeduerfnisantragStep4Screen({
@@ -188,7 +189,19 @@ class _BeduerfnisantragStep4ScreenState
                   semanticLabel: 'Weiter Button',
                   semanticHint: 'Weiter zum nächsten Schritt',
                   onPressed: () {
-                    // TODO: Implement navigation to step 5 or finish
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (_) => BeduerfnisantragStep5Screen(
+                              userData: widget.userData,
+                              isLoggedIn: widget.isLoggedIn,
+                              onLogout: widget.onLogout,
+                              antrag: widget.antrag,
+                              userRole: widget.userRole,
+                              readOnly: widget.readOnly,
+                            ),
+                      ),
+                    );
                   },
                   icon: Icons.arrow_forward,
                 ),

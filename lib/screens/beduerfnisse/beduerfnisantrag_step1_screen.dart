@@ -9,6 +9,7 @@ import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step2_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step5_screen.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -180,7 +181,7 @@ class _BeduerfnisantragStep1ScreenState
                           semanticLabel: 'Weiter Button',
                           semanticHint: 'Weiter zum nächsten Schritt',
                           onPressed: () {
-                            _proceedToStep2();
+                            _proceedToNextStep();
                           },
                           icon: Icons.arrow_forward,
                         ),
@@ -777,8 +778,8 @@ class _BeduerfnisantragStep1ScreenState
     }
   }
 
-  /// Proceeds to Step 2 (for both create and edit modes)
-  Future<void> _proceedToStep2() async {
+  /// Proceeds to Step 2 or Step 5 depending on WBK type
+  Future<void> _proceedToNextStep() async {
     if (!mounted) return;
 
     // Only save if there are changes
@@ -786,10 +787,10 @@ class _BeduerfnisantragStep1ScreenState
       await _saveAntrag();
     }
 
-    // Get the antrag to pass to Step 2
-    final antragForStep2 = widget.antrag ?? _createdAntrag;
+    // Get the antrag to pass to next step
+    final antragForNext = widget.antrag ?? _createdAntrag;
 
-    if (antragForStep2 == null) {
+    if (antragForNext == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -803,7 +804,7 @@ class _BeduerfnisantragStep1ScreenState
     // Fetch fresh antrag data from API to ensure we have the latest values
     final apiService = Provider.of<ApiService>(context, listen: false);
     final antragsList = await apiService.getBedAntragByAntragsnummer(
-      antragForStep2.antragsnummer!,
+      antragForNext.antragsnummer!,
     );
 
     if (antragsList.isEmpty) {
@@ -816,26 +817,41 @@ class _BeduerfnisantragStep1ScreenState
     }
 
     final freshAntrag = antragsList.first;
-
-    // For now, assume the user is a "mitglied" - in the future this will come from user roles
     const userRole = WorkflowRole.mitglied;
 
-    // Navigate to step 2 screen
+    // Decide next step based only on _wbkType (radio selection)
     if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => BeduerfnisantragStep2Screen(
-                userData: widget.userData,
-                antrag: freshAntrag,
-                isLoggedIn: widget.isLoggedIn,
-                onLogout: widget.onLogout,
-                userRole: userRole,
-                readOnly: widget.readOnly,
-              ),
-        ),
-      );
+      if (_wbkType == 'neu') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => BeduerfnisantragStep5Screen(
+                  userData: widget.userData,
+                  antrag: freshAntrag,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                  userRole: userRole,
+                  readOnly: widget.readOnly,
+                ),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => BeduerfnisantragStep2Screen(
+                  userData: widget.userData,
+                  antrag: freshAntrag,
+                  isLoggedIn: widget.isLoggedIn,
+                  onLogout: widget.onLogout,
+                  userRole: userRole,
+                  readOnly: widget.readOnly,
+                ),
+          ),
+        );
+      }
     }
   }
 }
