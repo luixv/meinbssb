@@ -33,7 +33,7 @@ class _BeduerfnisantragStep5DialogScreenState
   final TextEditingController _datumController = TextEditingController();
   final TextEditingController _wettkampfergebnisController =
       TextEditingController();
-  bool _training = false;
+
   bool _isLoading = false;
   bool _documentUploaded = false;
   bool _isUploadingDocument = false;
@@ -77,10 +77,9 @@ class _BeduerfnisantragStep5DialogScreenState
   }
 
   bool _areAllCompulsoryFieldsFilled() {
-    // Wettkampfart and Wettkampfergebnis are required only if training is NOT checked
-    final wettkampfartRequired = !_training && _selectedWettkampfartId == null;
-    final wettkampfergebnisRequired =
-        !_training && _wettkampfergebnisController.text.isEmpty;
+    // Wettkampfart and Wettkampfergebnis are always required as training is disabled
+    final wettkampfartRequired = _selectedWettkampfartId == null;
+    final wettkampfergebnisRequired = _wettkampfergebnisController.text.isEmpty;
 
     return _datumController.text.isNotEmpty &&
         _selectedWaffenartId != null &&
@@ -554,7 +553,7 @@ class _BeduerfnisantragStep5DialogScreenState
         schiessdatum: schiessdatumForDb,
         waffenartId: _selectedWaffenartId!,
         disziplinId: _selectedDisziplinId!,
-        training: _training,
+        training: false,
         wettkampfartId: _selectedWettkampfartId,
         wettkampfergebnis:
             _wettkampfergebnisController.text.isNotEmpty
@@ -600,7 +599,7 @@ class _BeduerfnisantragStep5DialogScreenState
           'schiessdatum': _datumController.text,
           'waffenartId': _selectedWaffenartId!,
           'disziplinId': _selectedDisziplinId!,
-          'training': _training,
+          'training': false,
           'wettkampfartId': _selectedWettkampfartId,
           'wettkampfergebnis':
               _wettkampfergebnisController.text.isNotEmpty
@@ -678,7 +677,7 @@ class _BeduerfnisantragStep5DialogScreenState
                                       height: UIConstants.spacingM,
                                     ),
 
-                                    // Datum with Training Checkbox
+                                    // Datum
                                     Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
@@ -745,58 +744,6 @@ class _BeduerfnisantragStep5DialogScreenState
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
-                                          width: UIConstants.spacingXS,
-                                        ),
-                                        // Training Checkbox
-                                        Expanded(
-                                          flex: 2,
-                                          child: Semantics(
-                                            checked: _training,
-                                            enabled: true,
-                                            label:
-                                                'Training${_training ? ", aktiviert" : ""}',
-                                            hint:
-                                                'Wettkampfart und Ergebnis sind Pflichtfelder',
-                                            onTap: () {
-                                              setState(() {
-                                                _training = !_training;
-                                              });
-                                            },
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Checkbox(
-                                                  value: _training,
-                                                  activeColor:
-                                                      UIConstants
-                                                          .defaultAppColor,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      _training =
-                                                          value ?? false;
-                                                    });
-                                                  },
-                                                ),
-                                                Flexible(
-                                                  child: ScaledText(
-                                                    'Training',
-                                                    style: UIStyles
-                                                        .bodyTextStyle
-                                                        .copyWith(
-                                                          fontSize:
-                                                              UIStyles
-                                                                  .bodyTextStyle
-                                                                  .fontSize! *
-                                                              fontSizeProvider
-                                                                  .scaleFactor,
-                                                        ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
                                       ],
                                     ),
                                     const SizedBox(
@@ -850,7 +797,7 @@ class _BeduerfnisantragStep5DialogScreenState
                                                   return DropdownMenuItem<int>(
                                                     value: waffenart.id,
                                                     child: ScaledText(
-                                                      '${waffenart.id} - ${waffenart.beschreibung}',
+                                                      waffenart.beschreibung,
                                                       style: UIStyles
                                                           .bodyTextStyle
                                                           .copyWith(

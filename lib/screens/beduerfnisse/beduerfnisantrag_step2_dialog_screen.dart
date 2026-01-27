@@ -852,7 +852,7 @@ class _BeduerfnisantragStep2DialogScreenState
                                                   return DropdownMenuItem<int>(
                                                     value: waffenart.id,
                                                     child: ScaledText(
-                                                      '${waffenart.id} - ${waffenart.beschreibung}',
+                                                      waffenart.beschreibung,
                                                       style: UIStyles
                                                           .bodyTextStyle
                                                           .copyWith(
