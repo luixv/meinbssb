@@ -1388,6 +1388,14 @@ class MockApiService extends _i1.Mock implements _i13.ApiService {
           as _i12.Future<bool>);
 
   @override
+  _i12.Future<bool> deleteBedWaffeBesitzById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedWaffeBesitzById, [id]),
+            returnValue: _i12.Future<bool>.value(false),
+          )
+          as _i12.Future<bool>);
+
+  @override
   _i12.Future<_i8.BeduerfnisseAntrag> createBedAntrag({
     required int? personId,
     int? statusId,

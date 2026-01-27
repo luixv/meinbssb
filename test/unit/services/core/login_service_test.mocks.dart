@@ -1993,6 +1993,14 @@ class MockPostgrestService extends _i1.Mock implements _i4.PostgrestService {
           as _i2.Future<bool>);
 
   @override
+  _i2.Future<bool> deleteBedWaffeBesitzById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedWaffeBesitzById, [id]),
+            returnValue: _i2.Future<bool>.value(false),
+          )
+          as _i2.Future<bool>);
+
+  @override
   _i2.Future<_i8.BeduerfnisseAntrag> createBedAntrag({
     required int? personId,
     int? statusId,

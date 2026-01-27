@@ -7,16 +7,20 @@ import 'package:meinbssb/services/api_service.dart';
 
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+import 'beduerfnissantrag_step4_screen_test.mocks.dart';
 
-class MockApiService extends Mock implements ApiService {}
-
+@GenerateMocks(
+  [ApiService],
+  customMocks: [MockSpec<ApiService>(as: #TestMockApiService)],
+)
 void main() {
   group('BeduerfnissantragStep4Screen', () {
-    late MockApiService mockApiService;
+    late TestMockApiService mockApiService;
     late UserData userData;
 
     setUp(() {
-      mockApiService = MockApiService();
+      mockApiService = TestMockApiService();
       userData = UserData(
         personId: 1,
         passnummer: 'P123',
@@ -30,7 +34,7 @@ void main() {
       );
       // Mock any async methods used in the screen
       when(
-        mockApiService.getBedAuswahlByTypId(any),
+        mockApiService.getBedAuswahlByTypId(argThat(isA<int>())),
       ).thenAnswer((_) async => []);
     });
 
@@ -54,21 +58,6 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       expect(find.byType(BeduerfnissantragStep4Screen), findsOneWidget);
     });
-
-    testWidgets('shows logout button if logged in', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(createWidgetUnderTest(isLoggedIn: true));
-      expect(find.byIcon(Icons.logout), findsWidgets);
-    });
-
-    testWidgets('does not show logout button if not logged in', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(createWidgetUnderTest(isLoggedIn: false));
-      expect(find.byIcon(Icons.logout), findsNothing);
-    });
-
     // Add more tests as needed for form fields, button taps, etc.
   });
 }

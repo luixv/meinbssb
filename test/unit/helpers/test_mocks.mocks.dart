@@ -1669,6 +1669,14 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
+  _i13.Future<bool> deleteBedWaffeBesitzById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedWaffeBesitzById, [id]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
   _i13.Future<_i9.BeduerfnisseAntrag> createBedAntrag({
     required int? personId,
     int? statusId,
@@ -3414,6 +3422,14 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
   _i13.Future<bool> deleteBedWaffeBesitz(int? antragsnummer) =>
       (super.noSuchMethod(
             Invocation.method(#deleteBedWaffeBesitz, [antragsnummer]),
+            returnValue: _i13.Future<bool>.value(false),
+          )
+          as _i13.Future<bool>);
+
+  @override
+  _i13.Future<bool> deleteBedWaffeBesitzById(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteBedWaffeBesitzById, [id]),
             returnValue: _i13.Future<bool>.value(false),
           )
           as _i13.Future<bool>);
