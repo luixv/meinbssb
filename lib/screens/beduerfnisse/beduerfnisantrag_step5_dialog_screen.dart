@@ -757,9 +757,7 @@ class _BeduerfnisantragStep5DialogScreenState
                                             label:
                                                 'Training${_training ? ", aktiviert" : ""}',
                                             hint:
-                                                _training
-                                                    ? 'Wettkampfart und Ergebnis sind optional'
-                                                    : 'Wettkampfart und Ergebnis sind Pflichtfelder',
+                                                'Wettkampfart und Ergebnis sind Pflichtfelder',
                                             onTap: () {
                                               setState(() {
                                                 _training = !_training;
@@ -1052,7 +1050,7 @@ class _BeduerfnisantragStep5DialogScreenState
                                         return Semantics(
                                           button: true,
                                           label:
-                                              'Wettkampfart auswählen${_training ? " (optional)" : " (Pflichtfeld)"}${_selectedWettkampfartId != null ? ", ausgewählt: ${selectedWettkampfart.beschreibung}" : ""}',
+                                              'Wettkampfart auswählen (Pflichtfeld)${_selectedWettkampfartId != null ? ", ausgewählt: ${selectedWettkampfart.beschreibung}" : ""}',
                                           hint:
                                               'Doppeltippen um Wettkampfart aus der Liste auszuwählen',
                                           child: DropdownButtonFormField<int>(
@@ -1091,10 +1089,7 @@ class _BeduerfnisantragStep5DialogScreenState
                                               });
                                             },
                                             decoration: InputDecoration(
-                                              labelText:
-                                                  _training
-                                                      ? 'Wettkampfart (optional)'
-                                                      : 'Wettkampfart *',
+                                              labelText: 'Wettkampfart *',
                                               filled: true,
                                               fillColor: Colors.white,
                                               border: OutlineInputBorder(
@@ -1129,14 +1124,13 @@ class _BeduerfnisantragStep5DialogScreenState
                                       height: UIConstants.spacingM,
                                     ),
 
-                                    // Wettkampfergebnis (required if not training)
                                     Row(
                                       children: [
                                         Expanded(
                                           child: Semantics(
                                             textField: true,
                                             label:
-                                                'Wettkampfergebnis eingeben${_training ? " (optional)" : " (Pflichtfeld)"}',
+                                                'Wettkampfergebnis eingeben (Pflichtfeld)',
                                             hint:
                                                 'Geben Sie das Ergebnis als Zahl ein${_wettkampfergebnisController.text.isNotEmpty ? ". Aktueller Wert: ${_wettkampfergebnisController.text}" : ""}',
                                             child: TextField(
@@ -1162,9 +1156,7 @@ class _BeduerfnisantragStep5DialogScreenState
                                                   ),
                                               decoration: InputDecoration(
                                                 labelText:
-                                                    _training
-                                                        ? 'Wettkampfergebnis (optional)'
-                                                        : 'Wettkampfergebnis *',
+                                                    'Wettkampfergebnis *',
                                                 filled: true,
                                                 fillColor: Colors.white,
                                                 border: OutlineInputBorder(
@@ -1510,10 +1502,7 @@ class _BeduerfnisantragStep5DialogScreenState
                                         ),
                                       ],
                                     ),
-                                    if (!_training)
-                                      const SizedBox(
-                                        height: UIConstants.spacingL,
-                                      ),
+
                                     const SizedBox(
                                       height: UIConstants.spacingXXXL,
                                     ),
