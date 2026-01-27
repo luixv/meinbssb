@@ -421,7 +421,7 @@ class _MeineBeduerfnisantraegeScreenState
             if (antrag.statusId != BeduerfnisAntragStatus.entwurf)
               IconButton(
                 icon: const Icon(
-                  Icons.visibility,
+                  Icons.preview,
                   color: UIConstants.defaultAppColor,
                 ),
                 onPressed: () async {

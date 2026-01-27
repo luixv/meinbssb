@@ -899,7 +899,7 @@ class _BeduerfnisantragStep2ScreenState
                                                                               }
                                                                             },
                                                                             child: Icon(
-                                                                              Icons.remove_red_eye,
+                                                                              Icons.preview,
                                                                               size:
                                                                                   UIConstants.iconSizeS *
                                                                                   fontSizeProvider.scaleFactor,
@@ -1004,7 +1004,7 @@ class _BeduerfnisantragStep2ScreenState
                                                                                 }
                                                                               },
                                                                               child: Icon(
-                                                                                Icons.remove_red_eye,
+                                                                                Icons.preview,
                                                                                 size:
                                                                                     UIConstants.iconSizeS *
                                                                                     fontSizeProvider.scaleFactor,

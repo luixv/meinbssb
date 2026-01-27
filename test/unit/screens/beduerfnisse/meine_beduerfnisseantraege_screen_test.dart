@@ -276,7 +276,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.visibility), findsOneWidget);
+      expect(find.byIcon(Icons.preview), findsOneWidget);
       expect(find.byIcon(Icons.edit), findsNothing);
       expect(find.byIcon(Icons.delete_outline), findsNothing);
     });
@@ -301,7 +301,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.visibility), findsOneWidget);
+      expect(find.byIcon(Icons.preview), findsOneWidget);
       expect(find.byIcon(Icons.edit), findsNothing);
       expect(find.byIcon(Icons.delete_outline), findsNothing);
     });

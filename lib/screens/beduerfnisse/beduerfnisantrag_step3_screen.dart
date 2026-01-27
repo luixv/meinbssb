@@ -372,7 +372,7 @@ class _BeduerfnisantragStep3ScreenState
                                   children: [
                                     IconButton(
                                       icon: const Icon(
-                                        Icons.remove_red_eye,
+                                        Icons.preview,
                                         color: UIConstants.primaryColor,
                                       ),
                                       onPressed:

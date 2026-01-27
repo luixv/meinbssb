@@ -756,7 +756,7 @@ void main() {
       // Should display the sport entry
       expect(find.byType(Card), findsOneWidget);
       // Should not show view document button
-      expect(find.byIcon(Icons.remove_red_eye), findsNothing);
+      expect(find.byIcon(Icons.preview), findsNothing);
     });
 
     testWidgets('shows view document button when document exists', (
@@ -789,7 +789,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show the view document button
-      final viewButton = find.byIcon(Icons.remove_red_eye);
+      final viewButton = find.byIcon(Icons.preview);
       expect(viewButton, findsOneWidget);
 
       // Tap the view button
@@ -825,7 +825,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      final viewButton = find.byIcon(Icons.remove_red_eye);
+      final viewButton = find.byIcon(Icons.preview);
       expect(viewButton, findsOneWidget);
 
       await tester.tap(viewButton);
