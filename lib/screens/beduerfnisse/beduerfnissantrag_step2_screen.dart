@@ -181,6 +181,23 @@ class _BeduerfnissantragStep2ScreenState
     );
   }
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Fehler'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+    );
+  }
+
   Future<void> _deleteBedSport(int? sportId) async {
     if (sportId == null) {
       showDialog(
@@ -857,16 +874,30 @@ class _BeduerfnissantragStep2ScreenState
                                                                                 listen:
                                                                                     false,
                                                                               );
-                                                                              final doc = await apiService.getBedDateiBySportId(
-                                                                                sport.id!,
-                                                                              );
-                                                                              if (doc !=
-                                                                                      null &&
-                                                                                  context.mounted) {
-                                                                                _viewDocument(
-                                                                                  context,
-                                                                                  doc,
+                                                                              try {
+                                                                                final doc = await apiService.getBedDateiBySportId(
+                                                                                  sport.id!,
                                                                                 );
+                                                                                if (doc !=
+                                                                                        null &&
+                                                                                    context.mounted) {
+                                                                                  _viewDocument(
+                                                                                    context,
+                                                                                    doc,
+                                                                                  );
+                                                                                } else if (context.mounted) {
+                                                                                  _showErrorDialog(
+                                                                                    'Dokument nicht gefunden.',
+                                                                                  );
+                                                                                }
+                                                                              } catch (
+                                                                                e
+                                                                              ) {
+                                                                                if (context.mounted) {
+                                                                                  _showErrorDialog(
+                                                                                    'Fehler beim Laden des Dokuments.',
+                                                                                  );
+                                                                                }
                                                                               }
                                                                             },
                                                                             child: Icon(
@@ -948,16 +979,30 @@ class _BeduerfnissantragStep2ScreenState
                                                                                   listen:
                                                                                       false,
                                                                                 );
-                                                                                final doc = await apiService.getBedDateiBySportId(
-                                                                                  sport.id!,
-                                                                                );
-                                                                                if (doc !=
-                                                                                        null &&
-                                                                                    context.mounted) {
-                                                                                  _viewDocument(
-                                                                                    context,
-                                                                                    doc,
+                                                                                try {
+                                                                                  final doc = await apiService.getBedDateiBySportId(
+                                                                                    sport.id!,
                                                                                   );
+                                                                                  if (doc !=
+                                                                                          null &&
+                                                                                      context.mounted) {
+                                                                                    _viewDocument(
+                                                                                      context,
+                                                                                      doc,
+                                                                                    );
+                                                                                  } else if (context.mounted) {
+                                                                                    _showErrorDialog(
+                                                                                      'Dokument nicht gefunden.',
+                                                                                    );
+                                                                                  }
+                                                                                } catch (
+                                                                                  e
+                                                                                ) {
+                                                                                  if (context.mounted) {
+                                                                                    _showErrorDialog(
+                                                                                      'Fehler beim Laden des Dokuments.',
+                                                                                    );
+                                                                                  }
                                                                                 }
                                                                               },
                                                                               child: Icon(

@@ -8,6 +8,7 @@ import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
@@ -754,10 +755,110 @@ void main() {
 
       // Should display the sport entry
       expect(find.byType(Card), findsOneWidget);
+      // Should not show view document button
+      expect(find.byIcon(Icons.remove_red_eye), findsNothing);
+    });
+
+    testWidgets('shows view document button when document exists', (
+      WidgetTester tester,
+    ) async {
+      final sportData = BeduerfnisseSport(
+        id: 2,
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 2, 20),
+        waffenartId: 2,
+        disziplinId: 2,
+        training: false,
+      );
+
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+      when(mockApiService.hasBedDateiSport(2)).thenAnswer((_) async => true);
+      // Simulate document fetch success
+      when(mockApiService.getBedDateiBySportId(2)).thenAnswer(
+        (_) async => BeduerfnisseDatei(
+          id: 10,
+          antragsnummer: 100,
+          dateiname: 'doc.pdf',
+          fileBytes: [1, 2, 3],
+        ),
+      );
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should show the view document button
+      final viewButton = find.byIcon(Icons.remove_red_eye);
+      expect(viewButton, findsOneWidget);
+
+      // Tap the view button
+      await tester.tap(viewButton);
+      await tester.pumpAndSettle();
+
+      // Should show a dialog or some UI indicating document view (implementation dependent)
+      // For now, just ensure the tap does not throw and UI updates
+      expect(find.byType(Card), findsOneWidget);
+    });
+
+    testWidgets('shows error if viewing document fails', (
+      WidgetTester tester,
+    ) async {
+      final sportData = BeduerfnisseSport(
+        id: 3,
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 3, 10),
+        waffenartId: 3,
+        disziplinId: 3,
+        training: true,
+      );
+
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+      when(mockApiService.hasBedDateiSport(3)).thenAnswer((_) async => true);
+      // Simulate document fetch failure
+      when(
+        mockApiService.getBedDateiBySportId(3),
+      ).thenThrow(Exception('Failed to load document'));
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      final viewButton = find.byIcon(Icons.remove_red_eye);
+      expect(viewButton, findsOneWidget);
+
+      await tester.tap(viewButton);
+      await tester.pumpAndSettle();
+
+      // Should show error message (implementation dependent, adjust as needed)
+      expect(find.textContaining('Fehler'), findsWidgets);
     });
   });
 
   group('BeduerfnissantragStep2Screen - Continue to Step 3', () {
+    group('BeduerfnissantragStep2Screen - Loading State', () {
+      testWidgets('shows loading indicator while waiting for data', (
+        WidgetTester tester,
+      ) async {
+        // Simulate a delayed Future
+        when(mockApiService.getBedSportByAntragsnummer(any)).thenAnswer((
+          _,
+        ) async {
+          await Future.delayed(const Duration(milliseconds: 500));
+          return [];
+        });
+
+        await tester.pumpWidget(createTestWidget());
+        // Only pump a short time so FutureBuilder is still loading
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+        // Now let the future complete
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pumpAndSettle();
+      });
+    });
     testWidgets('displays continue FAB', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
