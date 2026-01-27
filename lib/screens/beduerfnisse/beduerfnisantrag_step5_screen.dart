@@ -4,13 +4,12 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
+import 'beduerfnisantrag_step5_dialog_screen.dart';
 
 import 'package:meinbssb/services/api/workflow_service.dart';
-import 'package:meinbssb/widgets/antrag_type_summary_box.dart';
 
 class BeduerfnisantragStep5Screen extends StatefulWidget {
   const BeduerfnisantragStep5Screen({
@@ -64,6 +63,26 @@ class _BeduerfnisantragStep5ScreenState
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Only show add button when not in read-only mode
+                if (!widget.readOnly)
+                  KeyboardFocusFAB(
+                    heroTag: 'addStep5DialogFab',
+                    tooltip: 'Dokument hinzufügen',
+                    semanticLabel: 'Dokument hinzufügen Button',
+                    semanticHint: 'Neues Dokument für WBK/Wettkampf hinzufügen',
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder:
+                            (context) => BeduerfnisantragStep5DialogScreen(
+                              antragsnummer: widget.antrag?.antragsnummer,
+                            ),
+                      );
+                    },
+                    icon: Icons.add,
+                  ),
+                if (!widget.readOnly)
+                  const SizedBox(height: UIConstants.spacingS),
                 KeyboardFocusFAB(
                   heroTag: 'nextFromStep5Fab',
                   tooltip: 'Weiter',
@@ -100,17 +119,6 @@ class _BeduerfnisantragStep5ScreenState
               ),
               const SizedBox(height: UIConstants.spacingM),
 
-              /*
-              const SizedBox(height: UIConstants.spacingM),
-              // Display the Antrag type summary box if antrag is available
-              if (widget.userData != null )
-                              AntragTypeSummaryBox(
-                  wbkNeu: widget.userData?.wbkNeu,
-                  antragWbkNeu: widget.antrag?.wbkNeu,
-                ),
-
-              */
-              const SizedBox(height: UIConstants.spacingL),
               Consumer<FontSizeProvider>(
                 builder:
                     (context, fontSizeProvider, _) => Column(

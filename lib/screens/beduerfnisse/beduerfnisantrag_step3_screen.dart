@@ -15,7 +15,6 @@ import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 
 import 'dart:typed_data';
-import 'package:meinbssb/widgets/antrag_type_summary_box.dart';
 
 class BeduerfnisantragStep3Screen extends StatefulWidget {
   const BeduerfnisantragStep3Screen({

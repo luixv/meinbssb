@@ -7,17 +7,20 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:image_picker/image_picker.dart';
 
-class BeduerfnisantragStep3Dialog extends StatefulWidget {
-  const BeduerfnisantragStep3Dialog({required this.antragsnummer, super.key});
+class BeduerfnisantragStep5DialogScreen extends StatefulWidget {
+  const BeduerfnisantragStep5DialogScreen({
+    required this.antragsnummer,
+    super.key,
+  });
   final int? antragsnummer;
 
   @override
-  State<BeduerfnisantragStep3Dialog> createState() =>
-      _BeduerfnisantragStep3DialogState();
+  State<BeduerfnisantragStep5DialogScreen> createState() =>
+      _BeduerfnisantragStep5DialogScreenState();
 }
 
-class _BeduerfnisantragStep3DialogState
-    extends State<BeduerfnisantragStep3Dialog> {
+class _BeduerfnisantragStep5DialogScreenState
+    extends State<BeduerfnisantragStep5DialogScreen> {
   bool _isUploadingDocument = false;
   final TextEditingController _labelController = TextEditingController();
 
@@ -107,82 +110,8 @@ class _BeduerfnisantragStep3DialogState
     BuildContext context,
     String documentType,
   ) async {
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    // Check if label is empty
-    if (_labelController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Bitte geben Sie eine Beschreibung für die Datei ein.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    try {
-      // Open file explorer to pick a file
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-      if (pickedFile == null) {
-        // User cancelled
-        return;
-      }
-
-      final bytes = await pickedFile.readAsBytes();
-
-      if (widget.antragsnummer == null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Antragsnummer nicht gefunden'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-        return;
-      }
-
-      setState(() {
-        _isUploadingDocument = true;
-      });
-
-      // Upload the selected document
-      final success = await apiService.uploadBedDateiForWBK(
-        antragsnummer: widget.antragsnummer!,
-        dateiname: pickedFile.name,
-        fileBytes: bytes,
-        label: _labelController.text.trim(),
-      );
-
-      if (mounted) {
-        setState(() {
-          _isUploadingDocument = false;
-        });
-        if (success) {
-          Navigator.of(context).pop(true); // Close parent dialog on success
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Fehler beim Hochladen'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isUploadingDocument = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fehler beim Scannen: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+    // Save button intentionally does nothing for now
+    return;
   }
 
   @override
