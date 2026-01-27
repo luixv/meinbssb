@@ -254,7 +254,17 @@ class _BeduerfnisantragStep4ScreenState
                     return Text('Fehler: ${snapshot.error}');
                   }
                   final data = snapshot.data!;
-                  final waffen = data[0] as List<dynamic>;
+                  final waffen = List<dynamic>.from(data[0] as List<dynamic>);
+                  // Sort by wbkNr, then lfdWbk
+                  waffen.sort((a, b) {
+                    final wbkNrA = a.wbkNr?.toString() ?? '';
+                    final wbkNrB = b.wbkNr?.toString() ?? '';
+                    final lfdWbkA = a.lfdWbk?.toString() ?? '';
+                    final lfdWbkB = b.lfdWbk?.toString() ?? '';
+                    final wbkCompare = wbkNrA.compareTo(wbkNrB);
+                    if (wbkCompare != 0) return wbkCompare;
+                    return lfdWbkA.compareTo(lfdWbkB);
+                  });
                   final waffenartList = data[1] as List<dynamic>;
                   final kaliberList = data[2] as List<dynamic>;
                   final gruendeList = data[3] as List<dynamic>;
