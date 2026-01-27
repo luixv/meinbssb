@@ -527,41 +527,7 @@ class _BeduerfnisantragStep4ScreenState
                                   ),
                                   if (!widget.readOnly &&
                                       widget.antrag?.statusId ==
-                                          BeduerfnisAntragStatus.entwurf)
-                                    Positioned(
-                                      top: 4,
-                                      right: 48,
-                                      child: Semantics(
-                                        button: true,
-                                        label: 'Eintrag bearbeiten',
-                                        child: Tooltip(
-                                          message: 'Bearbeiten',
-                                          child: InkWell(
-                                            onTap:
-                                                () => _showAddWaffeBesitzDialog(
-                                                  context,
-                                                  waffeBesitz: wb,
-                                                ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(
-                                                8.0,
-                                              ),
-                                              child: Icon(
-                                                Icons.edit,
-                                                color: UIConstants.primaryColor,
-                                                size:
-                                                    UIConstants.iconSizeS *
-                                                    fontSizeProvider
-                                                        .scaleFactor,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  if (!widget.readOnly &&
-                                      widget.antrag?.statusId ==
-                                          BeduerfnisAntragStatus.entwurf)
+                                          BeduerfnisAntragStatus.entwurf) ...[
                                     Positioned(
                                       top: 4,
                                       right: 4,
@@ -590,6 +556,38 @@ class _BeduerfnisantragStep4ScreenState
                                         ),
                                       ),
                                     ),
+                                    Positioned(
+                                      top: 44, // 4 + icon + padding (approx)
+                                      right: 4,
+                                      child: Semantics(
+                                        button: true,
+                                        label: 'Eintrag bearbeiten',
+                                        child: Tooltip(
+                                          message: 'Bearbeiten',
+                                          child: InkWell(
+                                            onTap:
+                                                () => _showAddWaffeBesitzDialog(
+                                                  context,
+                                                  waffeBesitz: wb,
+                                                ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: Icon(
+                                                Icons.edit,
+                                                color: UIConstants.primaryColor,
+                                                size:
+                                                    UIConstants.iconSizeS *
+                                                    fontSizeProvider
+                                                        .scaleFactor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             );
