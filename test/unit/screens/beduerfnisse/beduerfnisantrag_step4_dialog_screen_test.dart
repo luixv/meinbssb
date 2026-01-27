@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step4_dialog_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step4_dialog_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'beduerfnissantrag_step4_dialog_screen_test.mocks.dart';
+import 'beduerfnisantrag_step4_dialog_screen_test.mocks.dart';
 
 @GenerateMocks([ApiService])
 void main() {
@@ -41,7 +41,7 @@ void main() {
       ).thenAnswer((_) async => true);
     });
 
-    Widget createDialog({BeduerfnisseWaffeBesitz? waffeBesitz}) {
+    Widget createDialog({BeduerfnisWaffeBesitz? waffeBesitz}) {
       return MultiProvider(
         providers: [
           Provider<ApiService>.value(value: mockApiService),
@@ -69,7 +69,7 @@ void main() {
     testWidgets('shows edit title if waffeBesitz is provided', (
       WidgetTester tester,
     ) async {
-      final waffe = BeduerfnisseWaffeBesitz(
+      final waffe = BeduerfnisWaffeBesitz(
         id: 1,
         antragsnummer: 1,
         wbkNr: 'A',

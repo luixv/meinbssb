@@ -16,7 +16,7 @@ class AddWaffeBesitzDialog extends StatefulWidget {
   });
   final int antragsnummer;
   final VoidCallback? onSaved;
-  final BeduerfnisseWaffeBesitz? waffeBesitz;
+  final BeduerfnisWaffeBesitz? waffeBesitz;
 
   @override
   State<AddWaffeBesitzDialog> createState() => _AddWaffeBesitzDialogState();
@@ -116,7 +116,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
       try {
         final apiService = Provider.of<ApiService>(context, listen: false);
         if (widget.waffeBesitz != null) {
-          final updatedWb = BeduerfnisseWaffeBesitz(
+          final updatedWb = BeduerfnisWaffeBesitz(
             id: widget.waffeBesitz!.id,
             antragsnummer: widget.antragsnummer,
             wbkNr: _wbkNrController.text,

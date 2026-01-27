@@ -2,14 +2,16 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a file record (bed_datei) in the BSSB system.
 @immutable
-class BeduerfnisseDatei {
-  /// Creates a [BeduerfnisseDatei] instance from a JSON map.
-  factory BeduerfnisseDatei.fromJson(Map<String, dynamic> json) {
+class BeduerfnisDatei {
+  /// Creates a [BeduerfnisDatei] instance from a JSON map.
+  factory BeduerfnisDatei.fromJson(Map<String, dynamic> json) {
     // Helper to parse file_bytes which can be a hex string or list
     List<int> parseFileBytes(dynamic value) {
       if (value == null) return [];
       if (value is List) {
-        return value.map((e) => e is int ? e : int.tryParse(e.toString()) ?? 0).toList();
+        return value
+            .map((e) => e is int ? e : int.tryParse(e.toString()) ?? 0)
+            .toList();
       }
       if (value is String) {
         // Handle hex string format like '\x...'
@@ -26,28 +28,34 @@ class BeduerfnisseDatei {
       return [];
     }
 
-    return BeduerfnisseDatei(
+    return BeduerfnisDatei(
       id: (json['ID'] ?? json['id']) as int?,
       createdAt:
           (json['CREATED_AT'] ?? json['created_at']) == null
               ? null
-              : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
+              : DateTime.parse(
+                (json['CREATED_AT'] ?? json['created_at']) as String,
+              ),
       changedAt:
           (json['CHANGED_AT'] ?? json['changed_at']) == null
               ? null
-              : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
+              : DateTime.parse(
+                (json['CHANGED_AT'] ?? json['changed_at']) as String,
+              ),
       deletedAt:
           (json['DELETED_AT'] ?? json['deleted_at']) == null
               ? null
-              : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+              : DateTime.parse(
+                (json['DELETED_AT'] ?? json['deleted_at']) as String,
+              ),
       antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
       dateiname: (json['DATEINAME'] ?? json['dateiname']) as String,
       fileBytes: parseFileBytes(json['FILE_BYTES'] ?? json['file_bytes']),
     );
   }
 
-  /// Creates a new instance of [BeduerfnisseDatei].
-  const BeduerfnisseDatei({
+  /// Creates a new instance of [BeduerfnisDatei].
+  const BeduerfnisDatei({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -78,7 +86,7 @@ class BeduerfnisseDatei {
   /// The file bytes (binary data).
   final List<int> fileBytes;
 
-  /// Converts the [BeduerfnisseDatei] instance to a JSON map.
+  /// Converts the [BeduerfnisDatei] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

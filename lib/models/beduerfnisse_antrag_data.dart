@@ -3,8 +3,8 @@ import 'beduerfnisse_antrag_status_data.dart';
 
 /// Represents an application/request (bed_antrag) in the BSSB system.
 @immutable
-class BeduerfnisseAntrag {
-  factory BeduerfnisseAntrag.fromJson(Map<String, dynamic> json) {
+class BeduerfnisAntrag {
+  factory BeduerfnisAntrag.fromJson(Map<String, dynamic> json) {
     // Helper function to convert statusId (int) to enum
     BeduerfnisAntragStatus? parseStatusId(dynamic value) {
       if (value == null) return null;
@@ -33,7 +33,7 @@ class BeduerfnisseAntrag {
       }
     }
 
-    return BeduerfnisseAntrag(
+    return BeduerfnisAntrag(
       id: (json['ID'] ?? json['id']) as int?,
       createdAt:
           json['CREATED_AT'] ?? json['created_at'] == null
@@ -72,8 +72,8 @@ class BeduerfnisseAntrag {
     );
   }
 
-  /// Creates a new instance of [BeduerfnisseAntrag].
-  const BeduerfnisseAntrag({
+  /// Creates a new instance of [BeduerfnisAntrag].
+  const BeduerfnisAntrag({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -140,8 +140,8 @@ class BeduerfnisseAntrag {
   /// Additional remarks.
   final String? bemerkung;
 
-  /// Creates a copy of this [BeduerfnisseAntrag] with the given fields replaced by new values.
-  BeduerfnisseAntrag copyWith({
+  /// Creates a copy of this [BeduerfnisAntrag] with the given fields replaced by new values.
+  BeduerfnisAntrag copyWith({
     int? id,
     DateTime? createdAt,
     DateTime? changedAt,
@@ -159,7 +159,7 @@ class BeduerfnisseAntrag {
     bool? abbuchungErfolgt,
     String? bemerkung,
   }) {
-    return BeduerfnisseAntrag(
+    return BeduerfnisAntrag(
       id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
       changedAt: changedAt ?? this.changedAt,
@@ -179,7 +179,7 @@ class BeduerfnisseAntrag {
     );
   }
 
-  /// Converts the [BeduerfnisseAntrag] instance to a JSON map.
+  /// Converts the [BeduerfnisAntrag] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

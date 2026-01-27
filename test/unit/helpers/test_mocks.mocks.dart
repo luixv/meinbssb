@@ -112,9 +112,9 @@ class _FakeRegisterSchulungenTeilnehmerResponse_7 extends _i1.SmartFake
   ) : super(parent, parentInvocation);
 }
 
-class _FakeBeduerfnisseAntrag_8 extends _i1.SmartFake
-    implements _i9.BeduerfnisseAntrag {
-  _FakeBeduerfnisseAntrag_8(Object parent, Invocation parentInvocation)
+class _FakeBeduerfnisAntrag_8 extends _i1.SmartFake
+    implements _i9.BeduerfnisAntrag {
+  _FakeBeduerfnisAntrag_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -124,9 +124,9 @@ class _FakeBeduerfnisseAntragPerson_9 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeBeduerfnisseDateiZuord_10 extends _i1.SmartFake
-    implements _i11.BeduerfnisseDateiZuord {
-  _FakeBeduerfnisseDateiZuord_10(Object parent, Invocation parentInvocation)
+class _FakeBeduerfnisDateiZuord_10 extends _i1.SmartFake
+    implements _i11.BeduerfnisDateiZuord {
+  _FakeBeduerfnisDateiZuord_10(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -1476,16 +1476,14 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<void>);
 
   @override
-  _i13.Future<List<_i38.BeduerfnisseAuswahl>> getBedAuswahlByTypId(
-    int? typId,
-  ) =>
+  _i13.Future<List<_i38.BeduerfnisAuswahl>> getBedAuswahlByTypId(int? typId) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAuswahlByTypId, [typId]),
-            returnValue: _i13.Future<List<_i38.BeduerfnisseAuswahl>>.value(
-              <_i38.BeduerfnisseAuswahl>[],
+            returnValue: _i13.Future<List<_i38.BeduerfnisAuswahl>>.value(
+              <_i38.BeduerfnisAuswahl>[],
             ),
           )
-          as _i13.Future<List<_i38.BeduerfnisseAuswahl>>);
+          as _i13.Future<List<_i38.BeduerfnisAuswahl>>);
 
   @override
   _i13.Future<bool> deleteBedDateiById(int? dateiId) =>
@@ -1496,12 +1494,12 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<_i39.BeduerfnisseDatei?> getBedDateiBySportId(int? bedSportId) =>
+  _i13.Future<_i39.BeduerfnisDatei?> getBedDateiBySportId(int? bedSportId) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiBySportId, [bedSportId]),
-            returnValue: _i13.Future<_i39.BeduerfnisseDatei?>.value(),
+            returnValue: _i13.Future<_i39.BeduerfnisDatei?>.value(),
           )
-          as _i13.Future<_i39.BeduerfnisseDatei?>);
+          as _i13.Future<_i39.BeduerfnisDatei?>);
 
   @override
   _i13.Future<int?> uploadBedDatei({
@@ -1582,19 +1580,19 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<Map<String, dynamic>>);
 
   @override
-  _i13.Future<List<_i40.BeduerfnisseSport>> getBedSportByAntragsnummer(
+  _i13.Future<List<_i40.BeduerfnisSport>> getBedSportByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedSportByAntragsnummer, [antragsnummer]),
-            returnValue: _i13.Future<List<_i40.BeduerfnisseSport>>.value(
-              <_i40.BeduerfnisseSport>[],
+            returnValue: _i13.Future<List<_i40.BeduerfnisSport>>.value(
+              <_i40.BeduerfnisSport>[],
             ),
           )
-          as _i13.Future<List<_i40.BeduerfnisseSport>>);
+          as _i13.Future<List<_i40.BeduerfnisSport>>);
 
   @override
-  _i13.Future<bool> updateBedSport(_i40.BeduerfnisseSport? sport) =>
+  _i13.Future<bool> updateBedSport(_i40.BeduerfnisSport? sport) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedSport, [sport]),
             returnValue: _i13.Future<bool>.value(false),
@@ -1638,21 +1636,21 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<Map<String, dynamic>>);
 
   @override
-  _i13.Future<List<_i41.BeduerfnisseWaffeBesitz>>
+  _i13.Future<List<_i41.BeduerfnisWaffeBesitz>>
   getBedWaffeBesitzByAntragsnummer(int? antragsnummer) =>
       (super.noSuchMethod(
             Invocation.method(#getBedWaffeBesitzByAntragsnummer, [
               antragsnummer,
             ]),
-            returnValue: _i13.Future<List<_i41.BeduerfnisseWaffeBesitz>>.value(
-              <_i41.BeduerfnisseWaffeBesitz>[],
+            returnValue: _i13.Future<List<_i41.BeduerfnisWaffeBesitz>>.value(
+              <_i41.BeduerfnisWaffeBesitz>[],
             ),
           )
-          as _i13.Future<List<_i41.BeduerfnisseWaffeBesitz>>);
+          as _i13.Future<List<_i41.BeduerfnisWaffeBesitz>>);
 
   @override
   _i13.Future<bool> updateBedWaffeBesitz(
-    _i41.BeduerfnisseWaffeBesitz? waffeBesitz,
+    _i41.BeduerfnisWaffeBesitz? waffeBesitz,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedWaffeBesitz, [waffeBesitz]),
@@ -1677,7 +1675,7 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<_i9.BeduerfnisseAntrag> createBedAntrag({
+  _i13.Future<_i9.BeduerfnisAntrag> createBedAntrag({
     required int? personId,
     int? statusId,
     bool? wbkNeu,
@@ -1704,8 +1702,8 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
               #abbuchungErfolgt: abbuchungErfolgt,
               #bemerkung: bemerkung,
             }),
-            returnValue: _i13.Future<_i9.BeduerfnisseAntrag>.value(
-              _FakeBeduerfnisseAntrag_8(
+            returnValue: _i13.Future<_i9.BeduerfnisAntrag>.value(
+              _FakeBeduerfnisAntrag_8(
                 this,
                 Invocation.method(#createBedAntrag, [], {
                   #personId: personId,
@@ -1723,34 +1721,34 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
               ),
             ),
           )
-          as _i13.Future<_i9.BeduerfnisseAntrag>);
+          as _i13.Future<_i9.BeduerfnisAntrag>);
 
   @override
-  _i13.Future<List<_i9.BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
+  _i13.Future<List<_i9.BeduerfnisAntrag>> getBedAntragByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragByAntragsnummer, [antragsnummer]),
-            returnValue: _i13.Future<List<_i9.BeduerfnisseAntrag>>.value(
-              <_i9.BeduerfnisseAntrag>[],
+            returnValue: _i13.Future<List<_i9.BeduerfnisAntrag>>.value(
+              <_i9.BeduerfnisAntrag>[],
             ),
           )
-          as _i13.Future<List<_i9.BeduerfnisseAntrag>>);
+          as _i13.Future<List<_i9.BeduerfnisAntrag>>);
 
   @override
-  _i13.Future<List<_i9.BeduerfnisseAntrag>> getBedAntragByPersonId(
+  _i13.Future<List<_i9.BeduerfnisAntrag>> getBedAntragByPersonId(
     int? personId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragByPersonId, [personId]),
-            returnValue: _i13.Future<List<_i9.BeduerfnisseAntrag>>.value(
-              <_i9.BeduerfnisseAntrag>[],
+            returnValue: _i13.Future<List<_i9.BeduerfnisAntrag>>.value(
+              <_i9.BeduerfnisAntrag>[],
             ),
           )
-          as _i13.Future<List<_i9.BeduerfnisseAntrag>>);
+          as _i13.Future<List<_i9.BeduerfnisAntrag>>);
 
   @override
-  _i13.Future<bool> updateBedAntrag(_i9.BeduerfnisseAntrag? antrag) =>
+  _i13.Future<bool> updateBedAntrag(_i9.BeduerfnisAntrag? antrag) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedAntrag, [antrag]),
             returnValue: _i13.Future<bool>.value(false),
@@ -1827,7 +1825,7 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<_i11.BeduerfnisseDateiZuord> createBedDateiZuord({
+  _i13.Future<_i11.BeduerfnisDateiZuord> createBedDateiZuord({
     required int? antragsnummer,
     required int? dateiId,
     required String? dateiArt,
@@ -1842,8 +1840,8 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
               #bedSportId: bedSportId,
               #label: label,
             }),
-            returnValue: _i13.Future<_i11.BeduerfnisseDateiZuord>.value(
-              _FakeBeduerfnisseDateiZuord_10(
+            returnValue: _i13.Future<_i11.BeduerfnisDateiZuord>.value(
+              _FakeBeduerfnisDateiZuord_10(
                 this,
                 Invocation.method(#createBedDateiZuord, [], {
                   #antragsnummer: antragsnummer,
@@ -1855,11 +1853,11 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
               ),
             ),
           )
-          as _i13.Future<_i11.BeduerfnisseDateiZuord>);
+          as _i13.Future<_i11.BeduerfnisDateiZuord>);
 
   @override
   _i13.Future<bool> updateBedDateiZuord(
-    _i11.BeduerfnisseDateiZuord? dateiZuord,
+    _i11.BeduerfnisDateiZuord? dateiZuord,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedDateiZuord, [dateiZuord]),
@@ -1868,26 +1866,28 @@ class MockApiService extends _i1.Mock implements _i17.ApiService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<List<_i11.BeduerfnisseDateiZuord>>
-  getBedDateiZuordByAntragsnummer(int? antragsnummer, String? dateiArt) =>
+  _i13.Future<List<_i11.BeduerfnisDateiZuord>> getBedDateiZuordByAntragsnummer(
+    int? antragsnummer,
+    String? dateiArt,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiZuordByAntragsnummer, [
               antragsnummer,
               dateiArt,
             ]),
-            returnValue: _i13.Future<List<_i11.BeduerfnisseDateiZuord>>.value(
-              <_i11.BeduerfnisseDateiZuord>[],
+            returnValue: _i13.Future<List<_i11.BeduerfnisDateiZuord>>.value(
+              <_i11.BeduerfnisDateiZuord>[],
             ),
           )
-          as _i13.Future<List<_i11.BeduerfnisseDateiZuord>>);
+          as _i13.Future<List<_i11.BeduerfnisDateiZuord>>);
 
   @override
-  _i13.Future<_i39.BeduerfnisseDatei?> getBedDateiById(int? dateiId) =>
+  _i13.Future<_i39.BeduerfnisDatei?> getBedDateiById(int? dateiId) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiById, [dateiId]),
-            returnValue: _i13.Future<_i39.BeduerfnisseDatei?>.value(),
+            returnValue: _i13.Future<_i39.BeduerfnisDatei?>.value(),
           )
-          as _i13.Future<_i39.BeduerfnisseDatei?>);
+          as _i13.Future<_i39.BeduerfnisDatei?>);
 
   @override
   _i13.Future<bool> hasBedDateiSport(int? sportId) =>
@@ -3222,16 +3222,14 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<_i19.Uint8List?>);
 
   @override
-  _i13.Future<List<_i38.BeduerfnisseAuswahl>> getBedAuswahlByTypId(
-    int? typId,
-  ) =>
+  _i13.Future<List<_i38.BeduerfnisAuswahl>> getBedAuswahlByTypId(int? typId) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAuswahlByTypId, [typId]),
-            returnValue: _i13.Future<List<_i38.BeduerfnisseAuswahl>>.value(
-              <_i38.BeduerfnisseAuswahl>[],
+            returnValue: _i13.Future<List<_i38.BeduerfnisAuswahl>>.value(
+              <_i38.BeduerfnisAuswahl>[],
             ),
           )
-          as _i13.Future<List<_i38.BeduerfnisseAuswahl>>);
+          as _i13.Future<List<_i38.BeduerfnisAuswahl>>);
 
   @override
   _i13.Future<Map<String, dynamic>> createBedDatei({
@@ -3252,27 +3250,27 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<Map<String, dynamic>>);
 
   @override
-  _i13.Future<List<_i39.BeduerfnisseDatei>> getBedDateiByAntragsnummer(
+  _i13.Future<List<_i39.BeduerfnisDatei>> getBedDateiByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiByAntragsnummer, [antragsnummer]),
-            returnValue: _i13.Future<List<_i39.BeduerfnisseDatei>>.value(
-              <_i39.BeduerfnisseDatei>[],
+            returnValue: _i13.Future<List<_i39.BeduerfnisDatei>>.value(
+              <_i39.BeduerfnisDatei>[],
             ),
           )
-          as _i13.Future<List<_i39.BeduerfnisseDatei>>);
+          as _i13.Future<List<_i39.BeduerfnisDatei>>);
 
   @override
-  _i13.Future<_i39.BeduerfnisseDatei?> getBedDateiById(int? id) =>
+  _i13.Future<_i39.BeduerfnisDatei?> getBedDateiById(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiById, [id]),
-            returnValue: _i13.Future<_i39.BeduerfnisseDatei?>.value(),
+            returnValue: _i13.Future<_i39.BeduerfnisDatei?>.value(),
           )
-          as _i13.Future<_i39.BeduerfnisseDatei?>);
+          as _i13.Future<_i39.BeduerfnisDatei?>);
 
   @override
-  _i13.Future<bool> updateBedDatei(_i39.BeduerfnisseDatei? datei) =>
+  _i13.Future<bool> updateBedDatei(_i39.BeduerfnisDatei? datei) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedDatei, [datei]),
             returnValue: _i13.Future<bool>.value(false),
@@ -3324,19 +3322,19 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<Map<String, dynamic>>);
 
   @override
-  _i13.Future<List<_i40.BeduerfnisseSport>> getBedSportByAntragsnummer(
+  _i13.Future<List<_i40.BeduerfnisSport>> getBedSportByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedSportByAntragsnummer, [antragsnummer]),
-            returnValue: _i13.Future<List<_i40.BeduerfnisseSport>>.value(
-              <_i40.BeduerfnisseSport>[],
+            returnValue: _i13.Future<List<_i40.BeduerfnisSport>>.value(
+              <_i40.BeduerfnisSport>[],
             ),
           )
-          as _i13.Future<List<_i40.BeduerfnisseSport>>);
+          as _i13.Future<List<_i40.BeduerfnisSport>>);
 
   @override
-  _i13.Future<bool> updateBedSport(_i40.BeduerfnisseSport? sport) =>
+  _i13.Future<bool> updateBedSport(_i40.BeduerfnisSport? sport) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedSport, [sport]),
             returnValue: _i13.Future<bool>.value(false),
@@ -3396,21 +3394,21 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<Map<String, dynamic>>);
 
   @override
-  _i13.Future<List<_i41.BeduerfnisseWaffeBesitz>>
+  _i13.Future<List<_i41.BeduerfnisWaffeBesitz>>
   getBedWaffeBesitzByAntragsnummer(int? antragsnummer) =>
       (super.noSuchMethod(
             Invocation.method(#getBedWaffeBesitzByAntragsnummer, [
               antragsnummer,
             ]),
-            returnValue: _i13.Future<List<_i41.BeduerfnisseWaffeBesitz>>.value(
-              <_i41.BeduerfnisseWaffeBesitz>[],
+            returnValue: _i13.Future<List<_i41.BeduerfnisWaffeBesitz>>.value(
+              <_i41.BeduerfnisWaffeBesitz>[],
             ),
           )
-          as _i13.Future<List<_i41.BeduerfnisseWaffeBesitz>>);
+          as _i13.Future<List<_i41.BeduerfnisWaffeBesitz>>);
 
   @override
   _i13.Future<bool> updateBedWaffeBesitz(
-    _i41.BeduerfnisseWaffeBesitz? waffeBesitz,
+    _i41.BeduerfnisWaffeBesitz? waffeBesitz,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedWaffeBesitz, [waffeBesitz]),
@@ -3435,7 +3433,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<_i9.BeduerfnisseAntrag> createBedAntrag({
+  _i13.Future<_i9.BeduerfnisAntrag> createBedAntrag({
     required int? personId,
     int? statusId,
     bool? wbkNeu,
@@ -3462,8 +3460,8 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #abbuchungErfolgt: abbuchungErfolgt,
               #bemerkung: bemerkung,
             }),
-            returnValue: _i13.Future<_i9.BeduerfnisseAntrag>.value(
-              _FakeBeduerfnisseAntrag_8(
+            returnValue: _i13.Future<_i9.BeduerfnisAntrag>.value(
+              _FakeBeduerfnisAntrag_8(
                 this,
                 Invocation.method(#createBedAntrag, [], {
                   #personId: personId,
@@ -3481,54 +3479,54 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               ),
             ),
           )
-          as _i13.Future<_i9.BeduerfnisseAntrag>);
+          as _i13.Future<_i9.BeduerfnisAntrag>);
 
   @override
-  _i13.Future<List<_i9.BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
+  _i13.Future<List<_i9.BeduerfnisAntrag>> getBedAntragByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragByAntragsnummer, [antragsnummer]),
-            returnValue: _i13.Future<List<_i9.BeduerfnisseAntrag>>.value(
-              <_i9.BeduerfnisseAntrag>[],
+            returnValue: _i13.Future<List<_i9.BeduerfnisAntrag>>.value(
+              <_i9.BeduerfnisAntrag>[],
             ),
           )
-          as _i13.Future<List<_i9.BeduerfnisseAntrag>>);
+          as _i13.Future<List<_i9.BeduerfnisAntrag>>);
 
   @override
-  _i13.Future<List<_i9.BeduerfnisseAntrag>> getBedAntragByPersonId(
+  _i13.Future<List<_i9.BeduerfnisAntrag>> getBedAntragByPersonId(
     int? personId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragByPersonId, [personId]),
-            returnValue: _i13.Future<List<_i9.BeduerfnisseAntrag>>.value(
-              <_i9.BeduerfnisseAntrag>[],
+            returnValue: _i13.Future<List<_i9.BeduerfnisAntrag>>.value(
+              <_i9.BeduerfnisAntrag>[],
             ),
           )
-          as _i13.Future<List<_i9.BeduerfnisseAntrag>>);
+          as _i13.Future<List<_i9.BeduerfnisAntrag>>);
 
   @override
-  _i13.Future<List<_i9.BeduerfnisseAntrag>> getBedAntragByStatusId(
+  _i13.Future<List<_i9.BeduerfnisAntrag>> getBedAntragByStatusId(
     int? statusId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragByStatusId, [statusId]),
-            returnValue: _i13.Future<List<_i9.BeduerfnisseAntrag>>.value(
-              <_i9.BeduerfnisseAntrag>[],
+            returnValue: _i13.Future<List<_i9.BeduerfnisAntrag>>.value(
+              <_i9.BeduerfnisAntrag>[],
             ),
           )
-          as _i13.Future<List<_i9.BeduerfnisseAntrag>>);
+          as _i13.Future<List<_i9.BeduerfnisAntrag>>);
 
   @override
-  _i13.Future<_i9.BeduerfnisseAntrag?> getBedAntragById(int? id) =>
+  _i13.Future<_i9.BeduerfnisAntrag?> getBedAntragById(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragById, [id]),
-            returnValue: _i13.Future<_i9.BeduerfnisseAntrag?>.value(),
+            returnValue: _i13.Future<_i9.BeduerfnisAntrag?>.value(),
           )
-          as _i13.Future<_i9.BeduerfnisseAntrag?>);
+          as _i13.Future<_i9.BeduerfnisAntrag?>);
 
   @override
-  _i13.Future<bool> updateBedAntrag(_i9.BeduerfnisseAntrag? antrag) =>
+  _i13.Future<bool> updateBedAntrag(_i9.BeduerfnisAntrag? antrag) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedAntrag, [antrag]),
             returnValue: _i13.Future<bool>.value(false),
@@ -3621,7 +3619,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<_i11.BeduerfnisseDateiZuord> createBedDateiZuord({
+  _i13.Future<_i11.BeduerfnisDateiZuord> createBedDateiZuord({
     required int? antragsnummer,
     required int? dateiId,
     required String? dateiArt,
@@ -3636,8 +3634,8 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #bedSportId: bedSportId,
               #label: label,
             }),
-            returnValue: _i13.Future<_i11.BeduerfnisseDateiZuord>.value(
-              _FakeBeduerfnisseDateiZuord_10(
+            returnValue: _i13.Future<_i11.BeduerfnisDateiZuord>.value(
+              _FakeBeduerfnisDateiZuord_10(
                 this,
                 Invocation.method(#createBedDateiZuord, [], {
                   #antragsnummer: antragsnummer,
@@ -3649,11 +3647,11 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               ),
             ),
           )
-          as _i13.Future<_i11.BeduerfnisseDateiZuord>);
+          as _i13.Future<_i11.BeduerfnisDateiZuord>);
 
   @override
   _i13.Future<bool> updateBedDateiZuord(
-    _i11.BeduerfnisseDateiZuord? dateiZuord,
+    _i11.BeduerfnisDateiZuord? dateiZuord,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedDateiZuord, [dateiZuord]),
@@ -3670,28 +3668,30 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<List<_i11.BeduerfnisseDateiZuord>>
-  getBedDateiZuordByAntragsnummer(int? antragsnummer, String? dateiArt) =>
+  _i13.Future<List<_i11.BeduerfnisDateiZuord>> getBedDateiZuordByAntragsnummer(
+    int? antragsnummer,
+    String? dateiArt,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiZuordByAntragsnummer, [
               antragsnummer,
               dateiArt,
             ]),
-            returnValue: _i13.Future<List<_i11.BeduerfnisseDateiZuord>>.value(
-              <_i11.BeduerfnisseDateiZuord>[],
+            returnValue: _i13.Future<List<_i11.BeduerfnisDateiZuord>>.value(
+              <_i11.BeduerfnisDateiZuord>[],
             ),
           )
-          as _i13.Future<List<_i11.BeduerfnisseDateiZuord>>);
+          as _i13.Future<List<_i11.BeduerfnisDateiZuord>>);
 
   @override
-  _i13.Future<_i11.BeduerfnisseDateiZuord?> getBedDateiZuordByBedSportId(
+  _i13.Future<_i11.BeduerfnisDateiZuord?> getBedDateiZuordByBedSportId(
     int? bedSportId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiZuordByBedSportId, [bedSportId]),
-            returnValue: _i13.Future<_i11.BeduerfnisseDateiZuord?>.value(),
+            returnValue: _i13.Future<_i11.BeduerfnisDateiZuord?>.value(),
           )
-          as _i13.Future<_i11.BeduerfnisseDateiZuord?>);
+          as _i13.Future<_i11.BeduerfnisDateiZuord?>);
 
   @override
   _i13.Future<bool> deleteBedDateiZuordByBedSportId(int? bedSportId) =>
@@ -3702,16 +3702,16 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i13.Future<bool>);
 
   @override
-  _i13.Future<List<_i11.BeduerfnisseDateiZuord>> getBedDateiZuordByDateiId(
+  _i13.Future<List<_i11.BeduerfnisDateiZuord>> getBedDateiZuordByDateiId(
     int? dateiId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiZuordByDateiId, [dateiId]),
-            returnValue: _i13.Future<List<_i11.BeduerfnisseDateiZuord>>.value(
-              <_i11.BeduerfnisseDateiZuord>[],
+            returnValue: _i13.Future<List<_i11.BeduerfnisDateiZuord>>.value(
+              <_i11.BeduerfnisDateiZuord>[],
             ),
           )
-          as _i13.Future<List<_i11.BeduerfnisseDateiZuord>>);
+          as _i13.Future<List<_i11.BeduerfnisDateiZuord>>);
 
   @override
   _i13.Future<bool> deleteBedDateiZuordByDateiId(int? dateiId) =>

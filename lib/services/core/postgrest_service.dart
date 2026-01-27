@@ -658,7 +658,7 @@ class PostgrestService {
   //
 
   /// Get bed_auswahl by type ID
-  Future<List<BeduerfnisseAuswahl>> getBedAuswahlByTypId(int typId) async {
+  Future<List<BeduerfnisAuswahl>> getBedAuswahlByTypId(int typId) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_auswahl?typ_id=eq.$typId&deleted_at=is.null'),
@@ -670,7 +670,7 @@ class PostgrestService {
         return items
             .map(
               (json) =>
-                  BeduerfnisseAuswahl.fromJson(json as Map<String, dynamic>),
+                  BeduerfnisAuswahl.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -725,7 +725,7 @@ class PostgrestService {
   }
 
   /// Get bed_datei entries by antragsnummer (excludes deleted)
-  Future<List<BeduerfnisseDatei>> getBedDateiByAntragsnummer(
+  Future<List<BeduerfnisDatei>> getBedDateiByAntragsnummer(
     int antragsnummer,
   ) async {
     try {
@@ -740,8 +740,7 @@ class PostgrestService {
         final List<dynamic> files = jsonDecode(response.body);
         return files
             .map(
-              (json) =>
-                  BeduerfnisseDatei.fromJson(json as Map<String, dynamic>),
+              (json) => BeduerfnisDatei.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -757,7 +756,7 @@ class PostgrestService {
   }
 
   /// Get bed_datei entry by ID
-  Future<BeduerfnisseDatei?> getBedDateiById(int id) async {
+  Future<BeduerfnisDatei?> getBedDateiById(int id) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_datei?id=eq.$id&deleted_at=is.null'),
@@ -767,7 +766,7 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> files = jsonDecode(response.body);
         if (files.isNotEmpty) {
-          return BeduerfnisseDatei.fromJson(files[0] as Map<String, dynamic>);
+          return BeduerfnisDatei.fromJson(files[0] as Map<String, dynamic>);
         }
         return null;
       } else {
@@ -783,7 +782,7 @@ class PostgrestService {
   }
 
   /// Update bed_datei by ID
-  Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
+  Future<bool> updateBedDatei(BeduerfnisDatei datei) async {
     try {
       if (datei.id == null) {
         LoggerService.logError('Cannot update bed_datei without an ID');
@@ -936,7 +935,7 @@ class PostgrestService {
   }
 
   /// Get bed_sport entries by antragsnummer (excludes deleted)
-  Future<List<BeduerfnisseSport>> getBedSportByAntragsnummer(
+  Future<List<BeduerfnisSport>> getBedSportByAntragsnummer(
     int antragsnummer,
   ) async {
     try {
@@ -951,8 +950,7 @@ class PostgrestService {
         final List<dynamic> records = jsonDecode(response.body);
         return records
             .map(
-              (json) =>
-                  BeduerfnisseSport.fromJson(json as Map<String, dynamic>),
+              (json) => BeduerfnisSport.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -968,7 +966,7 @@ class PostgrestService {
   }
 
   /// Update bed_sport by ID
-  Future<bool> updateBedSport(BeduerfnisseSport sport) async {
+  Future<bool> updateBedSport(BeduerfnisSport sport) async {
     try {
       if (sport.id == null) {
         LoggerService.logError('Cannot update bed_sport without an ID');
@@ -1133,7 +1131,7 @@ class PostgrestService {
   }
 
   /// Get bed_waffe_besitz entries by antragsnummer (excludes deleted)
-  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
+  Future<List<BeduerfnisWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
     int antragsnummer,
   ) async {
     try {
@@ -1148,9 +1146,8 @@ class PostgrestService {
         final List<dynamic> records = jsonDecode(response.body);
         return records
             .map(
-              (json) => BeduerfnisseWaffeBesitz.fromJson(
-                json as Map<String, dynamic>,
-              ),
+              (json) =>
+                  BeduerfnisWaffeBesitz.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -1168,7 +1165,7 @@ class PostgrestService {
   }
 
   /// Update bed_waffe_besitz by ID
-  Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
+  Future<bool> updateBedWaffeBesitz(BeduerfnisWaffeBesitz waffeBesitz) async {
     try {
       if (waffeBesitz.id == null) {
         throw Exception(
@@ -1298,7 +1295,7 @@ class PostgrestService {
   //
 
   /// Create a new bed_antrag entry
-  Future<BeduerfnisseAntrag> createBedAntrag({
+  Future<BeduerfnisAntrag> createBedAntrag({
     required int personId,
     int? statusId,
     bool? wbkNeu,
@@ -1336,7 +1333,7 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         LoggerService.logInfo('bed_antrag created successfully');
         if (data.isNotEmpty) {
-          return BeduerfnisseAntrag.fromJson(data[0] as Map<String, dynamic>);
+          return BeduerfnisAntrag.fromJson(data[0] as Map<String, dynamic>);
         }
         throw Exception('Empty response from create bed_antrag');
       } else {
@@ -1352,7 +1349,7 @@ class PostgrestService {
   }
 
   /// Get bed_antrag entries by antragsnummer
-  Future<List<BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
+  Future<List<BeduerfnisAntrag>> getBedAntragByAntragsnummer(
     int antragsnummer,
   ) async {
     try {
@@ -1367,8 +1364,7 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         return data
             .map(
-              (json) =>
-                  BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>),
+              (json) => BeduerfnisAntrag.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -1384,7 +1380,7 @@ class PostgrestService {
   }
 
   /// Get bed_antrag entries by person_id
-  Future<List<BeduerfnisseAntrag>> getBedAntragByPersonId(int personId) async {
+  Future<List<BeduerfnisAntrag>> getBedAntragByPersonId(int personId) async {
     try {
       final response = await _httpClient.get(
         Uri.parse(
@@ -1397,8 +1393,7 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         return data
             .map(
-              (json) =>
-                  BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>),
+              (json) => BeduerfnisAntrag.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -1414,7 +1409,7 @@ class PostgrestService {
   }
 
   /// Get bed_antrag entries by status_id
-  Future<List<BeduerfnisseAntrag>> getBedAntragByStatusId(int statusId) async {
+  Future<List<BeduerfnisAntrag>> getBedAntragByStatusId(int statusId) async {
     try {
       final response = await _httpClient.get(
         Uri.parse(
@@ -1427,8 +1422,7 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         return data
             .map(
-              (json) =>
-                  BeduerfnisseAntrag.fromJson(json as Map<String, dynamic>),
+              (json) => BeduerfnisAntrag.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -1444,7 +1438,7 @@ class PostgrestService {
   }
 
   /// Get a bed_antrag entry by ID
-  Future<BeduerfnisseAntrag?> getBedAntragById(int id) async {
+  Future<BeduerfnisAntrag?> getBedAntragById(int id) async {
     try {
       final response = await _httpClient.get(
         Uri.parse('${_baseUrl}bed_antrag?id=eq.$id&deleted_at=is.null'),
@@ -1454,7 +1448,7 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
-          return BeduerfnisseAntrag.fromJson(data[0] as Map<String, dynamic>);
+          return BeduerfnisAntrag.fromJson(data[0] as Map<String, dynamic>);
         }
         return null;
       } else {
@@ -1470,7 +1464,7 @@ class PostgrestService {
   }
 
   /// Update a bed_antrag entry
-  Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
+  Future<bool> updateBedAntrag(BeduerfnisAntrag antrag) async {
     try {
       if (antrag.id == null) {
         LoggerService.logError('Cannot update bed_antrag without an ID');
@@ -1765,7 +1759,7 @@ class PostgrestService {
   //
 
   /// Create a new bed_datei_zuord entry
-  Future<BeduerfnisseDateiZuord> createBedDateiZuord({
+  Future<BeduerfnisDateiZuord> createBedDateiZuord({
     required int antragsnummer,
     required int dateiId,
     required String dateiArt,
@@ -1792,9 +1786,7 @@ class PostgrestService {
         final List<dynamic> data = jsonDecode(response.body);
         LoggerService.logInfo('bed_datei_zuord created successfully');
         if (data.isNotEmpty) {
-          return BeduerfnisseDateiZuord.fromJson(
-            data[0] as Map<String, dynamic>,
-          );
+          return BeduerfnisDateiZuord.fromJson(data[0] as Map<String, dynamic>);
         }
         throw Exception('Empty response from create bed_datei_zuord');
       } else {
@@ -1810,7 +1802,7 @@ class PostgrestService {
   }
 
   /// Update a bed_datei_zuord entry
-  Future<bool> updateBedDateiZuord(BeduerfnisseDateiZuord dateiZuord) async {
+  Future<bool> updateBedDateiZuord(BeduerfnisDateiZuord dateiZuord) async {
     try {
       if (dateiZuord.id == null) {
         LoggerService.logError('Cannot update bed_datei_zuord without an ID');
@@ -1888,7 +1880,7 @@ class PostgrestService {
   }
 
   /// Get bed_datei_zuord entries by antragsnummer and datei_art
-  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByAntragsnummer(
+  Future<List<BeduerfnisDateiZuord>> getBedDateiZuordByAntragsnummer(
     int antragsnummer,
     String dateiArt,
   ) async {
@@ -1905,7 +1897,7 @@ class PostgrestService {
         return data
             .map(
               (json) =>
-                  BeduerfnisseDateiZuord.fromJson(json as Map<String, dynamic>),
+                  BeduerfnisDateiZuord.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {
@@ -1925,7 +1917,7 @@ class PostgrestService {
   /// Get bed_datei_zuord entry by bed_sport_id
   /// Returns a single BeduerfnisseDateiZuord or null if not found
   /// (There can only be one datei per bed_sport)
-  Future<BeduerfnisseDateiZuord?> getBedDateiZuordByBedSportId(
+  Future<BeduerfnisDateiZuord?> getBedDateiZuordByBedSportId(
     int bedSportId,
   ) async {
     try {
@@ -1939,9 +1931,7 @@ class PostgrestService {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
-          return BeduerfnisseDateiZuord.fromJson(
-            data[0] as Map<String, dynamic>,
-          );
+          return BeduerfnisDateiZuord.fromJson(data[0] as Map<String, dynamic>);
         }
         return null;
       } else {
@@ -1987,7 +1977,7 @@ class PostgrestService {
   }
 
   /// Get bed_datei_zuord entries by datei_id
-  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByDateiId(
+  Future<List<BeduerfnisDateiZuord>> getBedDateiZuordByDateiId(
     int dateiId,
   ) async {
     try {
@@ -2003,7 +1993,7 @@ class PostgrestService {
         return data
             .map(
               (json) =>
-                  BeduerfnisseDateiZuord.fromJson(json as Map<String, dynamic>),
+                  BeduerfnisDateiZuord.fromJson(json as Map<String, dynamic>),
             )
             .toList();
       } else {

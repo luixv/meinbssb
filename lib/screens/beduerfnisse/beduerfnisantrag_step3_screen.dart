@@ -9,14 +9,14 @@ import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step3_dialog_screen.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step4_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step3_dialog_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step4_screen.dart';
 import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'dart:typed_data';
 
-class BeduerfnissantragStep3Screen extends StatefulWidget {
-  const BeduerfnissantragStep3Screen({
+class BeduerfnisantragStep3Screen extends StatefulWidget {
+  const BeduerfnisantragStep3Screen({
     this.userData,
     this.antrag,
     required this.isLoggedIn,
@@ -27,20 +27,20 @@ class BeduerfnissantragStep3Screen extends StatefulWidget {
   });
 
   final UserData? userData;
-  final BeduerfnisseAntrag? antrag;
+  final BeduerfnisAntrag? antrag;
   final bool isLoggedIn;
   final Function() onLogout;
   final WorkflowRole userRole;
   final bool readOnly;
 
   @override
-  State<BeduerfnissantragStep3Screen> createState() =>
-      _BeduerfnissantragStep3ScreenState();
+  State<BeduerfnisantragStep3Screen> createState() =>
+      _BeduerfnisantragStep3ScreenState();
 }
 
-class _BeduerfnissantragStep3ScreenState
-    extends State<BeduerfnissantragStep3Screen> {
-  late Future<List<BeduerfnisseDateiZuord>> _documentsFuture;
+class _BeduerfnisantragStep3ScreenState
+    extends State<BeduerfnisantragStep3Screen> {
+  late Future<List<BeduerfnisDateiZuord>> _documentsFuture;
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class _BeduerfnissantragStep3ScreenState
     _documentsFuture = _fetchDocuments();
   }
 
-  Future<List<BeduerfnisseDateiZuord>> _fetchDocuments() async {
+  Future<List<BeduerfnisDateiZuord>> _fetchDocuments() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
     if (widget.antrag?.antragsnummer == null) {
       return [];
@@ -63,7 +63,7 @@ class _BeduerfnissantragStep3ScreenState
 
   void _viewDocument(
     BuildContext context,
-    BeduerfnisseDateiZuord document,
+    BeduerfnisDateiZuord document,
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
 
@@ -147,7 +147,7 @@ class _BeduerfnissantragStep3ScreenState
     );
   }
 
-  Future<void> _deleteDocument(BeduerfnisseDateiZuord document) async {
+  Future<void> _deleteDocument(BeduerfnisDateiZuord document) async {
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -223,7 +223,7 @@ class _BeduerfnissantragStep3ScreenState
                           showDialog(
                             context: context,
                             builder:
-                                (dialogContext) => BeduerfnissantragStep3Dialog(
+                                (dialogContext) => BeduerfnisantragStep3Dialog(
                                   antragsnummer: widget.antrag?.antragsnummer,
                                 ),
                           ).then((_) {
@@ -246,7 +246,7 @@ class _BeduerfnissantragStep3ScreenState
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (BuildContext context) {
-                                return BeduerfnissantragStep4Screen(
+                                return BeduerfnisantragStep4Screen(
                                   userData: widget.userData,
                                   isLoggedIn: widget.isLoggedIn,
                                   onLogout: widget.onLogout,
@@ -361,7 +361,7 @@ class _BeduerfnissantragStep3ScreenState
                     ),
                     const SizedBox(height: UIConstants.spacingM),
 
-                    FutureBuilder<List<BeduerfnisseDateiZuord>>(
+                    FutureBuilder<List<BeduerfnisDateiZuord>>(
                       future: _documentsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==

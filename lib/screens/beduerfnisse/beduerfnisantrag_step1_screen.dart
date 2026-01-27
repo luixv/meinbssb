@@ -8,14 +8,14 @@ import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step2_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step2_screen.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 
-class BeduerfnissantragStep1Screen extends StatefulWidget {
-  const BeduerfnissantragStep1Screen({
+class BeduerfnisantragStep1Screen extends StatefulWidget {
+  const BeduerfnisantragStep1Screen({
     this.userData,
     required this.isLoggedIn,
     required this.onLogout,
@@ -29,16 +29,16 @@ class BeduerfnissantragStep1Screen extends StatefulWidget {
   final bool isLoggedIn;
   final Function() onLogout;
   final VoidCallback? onBack;
-  final BeduerfnisseAntrag? antrag;
+  final BeduerfnisAntrag? antrag;
   final bool readOnly;
 
   @override
-  State<BeduerfnissantragStep1Screen> createState() =>
-      _BeduerfnissantragStep1ScreenState();
+  State<BeduerfnisantragStep1Screen> createState() =>
+      _BeduerfnisantragStep1ScreenState();
 }
 
-class _BeduerfnissantragStep1ScreenState
-    extends State<BeduerfnissantragStep1Screen> {
+class _BeduerfnisantragStep1ScreenState
+    extends State<BeduerfnisantragStep1Screen> {
   /// Returns true if the form has unsaved changes compared to the original antrag (or initial values)
   bool _isDirty() {
     final antrag = widget.antrag ?? _createdAntrag;
@@ -70,8 +70,7 @@ class _BeduerfnissantragStep1ScreenState
   );
   String? _selectedVerein;
   // Tracks if new antrag has been created/saved
-  BeduerfnisseAntrag?
-  _createdAntrag; // Stores the created antrag in create mode
+  BeduerfnisAntrag? _createdAntrag; // Stores the created antrag in create mode
 
   @override
   void initState() {
@@ -690,7 +689,7 @@ class _BeduerfnissantragStep1ScreenState
       if (widget.antrag != null || _createdAntrag != null) {
         try {
           final antrag = widget.antrag ?? _createdAntrag!;
-          final updatedAntrag = BeduerfnisseAntrag(
+          final updatedAntrag = BeduerfnisAntrag(
             id: antrag.id,
             createdAt: antrag.createdAt,
             changedAt: DateTime.now(),
@@ -827,7 +826,7 @@ class _BeduerfnissantragStep1ScreenState
         context,
         MaterialPageRoute(
           builder:
-              (context) => BeduerfnissantragStep2Screen(
+              (context) => BeduerfnisantragStep2Screen(
                 userData: widget.userData,
                 antrag: freshAntrag,
                 isLoggedIn: widget.isLoggedIn,

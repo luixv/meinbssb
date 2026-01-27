@@ -53,7 +53,7 @@ void main() {
         Provider<ApiService>.value(value: mockApiService),
       ],
       child: MaterialApp(
-        home: MeineBeduerfnisseantraegeScreen(
+        home: MeineBeduerfnisantraegeScreen(
           userData: userData ?? testUserData,
           isLoggedIn: isLoggedIn,
           onLogout: () {},
@@ -112,14 +112,14 @@ void main() {
   group('MeineBeduerfnisseantraegeScreen - List Display', () {
     testWidgets('displays list of antrags', (WidgetTester tester) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
           statusId: BeduerfnisAntragStatus.entwurf,
           createdAt: DateTime(2026, 1, 15),
         ),
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 2,
           antragsnummer: 101,
           personId: 123,
@@ -145,14 +145,14 @@ void main() {
       WidgetTester tester,
     ) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
           statusId: BeduerfnisAntragStatus.entwurf,
           createdAt: DateTime(2026, 1, 15),
         ),
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 2,
           antragsnummer: 101,
           personId: 123,
@@ -177,21 +177,21 @@ void main() {
       WidgetTester tester,
     ) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 3,
           antragsnummer: 102,
           personId: 123,
           statusId: BeduerfnisAntragStatus.entwurf,
           createdAt: DateTime(2026, 1, 20),
         ),
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
           statusId: BeduerfnisAntragStatus.entwurf,
           createdAt: DateTime(2026, 1, 15),
         ),
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 2,
           antragsnummer: 101,
           personId: 123,
@@ -235,7 +235,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -260,7 +260,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -285,7 +285,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -310,7 +310,7 @@ void main() {
   group('MeineBeduerfnisseantraegeScreen - Delete Functionality', () {
     testWidgets('deletes antrag successfully', (WidgetTester tester) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -345,7 +345,7 @@ void main() {
 
     testWidgets('handles delete API error', (WidgetTester tester) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -378,7 +378,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -458,21 +458,21 @@ void main() {
       WidgetTester tester,
     ) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
           statusId: BeduerfnisAntragStatus.entwurf,
           createdAt: DateTime(2026, 1, 15),
         ),
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 2,
           antragsnummer: 101,
           personId: 123,
           statusId: BeduerfnisAntragStatus.genehmight,
           createdAt: DateTime(2026, 1, 16),
         ),
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 3,
           antragsnummer: 102,
           personId: 123,
@@ -516,7 +516,7 @@ void main() {
   group('MeineBeduerfnisseantraegeScreen - Edge Cases', () {
     testWidgets('handles antrags with null dates', (WidgetTester tester) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -540,7 +540,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: null,
           personId: 123,
@@ -561,7 +561,7 @@ void main() {
 
     testWidgets('handles unknown status', (WidgetTester tester) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -584,7 +584,7 @@ void main() {
   group('MeineBeduerfnisseantraegeScreen - Accessibility', () {
     testWidgets('has semantic labels', (WidgetTester tester) async {
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,
@@ -622,7 +622,7 @@ void main() {
       fontSizeProvider.setScaleFactor(1.5);
 
       final testAntrags = [
-        BeduerfnisseAntrag(
+        BeduerfnisAntrag(
           id: 1,
           antragsnummer: 100,
           personId: 123,

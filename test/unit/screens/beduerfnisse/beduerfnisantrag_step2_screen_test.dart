@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step2_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step2_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
@@ -16,7 +16,7 @@ import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'beduerfnissantrag_step2_screen_test.mocks.dart';
+import 'beduerfnisantrag_step2_screen_test.mocks.dart';
 
 @GenerateMocks([ApiService])
 void main() {
@@ -40,7 +40,7 @@ void main() {
   );
 
   // Dummy antrag for testing
-  final dummyAntrag = BeduerfnisseAntrag(
+  final dummyAntrag = BeduerfnisAntrag(
     antragsnummer: 100,
     personId: 12345,
     statusId: BeduerfnisAntragStatus.entwurf,
@@ -71,7 +71,7 @@ void main() {
   /// Helper function to create a test widget with necessary providers
   Widget createTestWidget({
     UserData? userData = dummyUserData,
-    BeduerfnisseAntrag? antrag,
+    BeduerfnisAntrag? antrag,
     bool isLoggedIn = true,
     WorkflowRole userRole = WorkflowRole.mitglied,
     bool readOnly = false,
@@ -82,7 +82,7 @@ void main() {
         Provider<ApiService>.value(value: mockApiService),
       ],
       child: MaterialApp(
-        home: BeduerfnissantragStep2Screen(
+        home: BeduerfnisantragStep2Screen(
           userData: userData,
           antrag: antrag ?? dummyAntrag,
           isLoggedIn: isLoggedIn,
@@ -136,7 +136,7 @@ void main() {
     testWidgets('displays bed sport data when available', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -148,7 +148,7 @@ void main() {
         bemerkung: 'Test bemerkung',
       );
 
-      final waffenart = BeduerfnisseAuswahl(
+      final waffenart = BeduerfnisAuswahl(
         id: 1,
         typId: 1,
         beschreibung: 'Pistole',
@@ -185,7 +185,7 @@ void main() {
     testWidgets('shows training icon with check when training is true', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -209,7 +209,7 @@ void main() {
     testWidgets('shows wettkampf data when available', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -220,7 +220,7 @@ void main() {
         wettkampfergebnis: 95.5,
       );
 
-      final wettkampfart = BeduerfnisseAuswahl(
+      final wettkampfart = BeduerfnisAuswahl(
         id: 1,
         typId: 2,
         beschreibung: 'Bundesliga',
@@ -286,7 +286,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify navigation happened (screen should be popped)
-      expect(find.byType(BeduerfnissantragStep2Screen), findsNothing);
+      expect(find.byType(BeduerfnisantragStep2Screen), findsNothing);
     });
 
     testWidgets('add FAB opens dialog', (WidgetTester tester) async {
@@ -308,7 +308,7 @@ void main() {
     testWidgets('shows delete icon in Entwurf status', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -336,7 +336,7 @@ void main() {
     testWidgets('does not show delete icon in read-only mode', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -358,7 +358,7 @@ void main() {
     testWidgets('does not show delete icon when status is not Entwurf', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -403,7 +403,7 @@ void main() {
 
   group('BeduerfnissantragStep2Screen - Error Handling', () {
     testWidgets('shows error on failed delete', (WidgetTester tester) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -448,7 +448,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // After navigation, step 2 screen should no longer be visible
-      expect(find.byType(BeduerfnissantragStep2Screen), findsNothing);
+      expect(find.byType(BeduerfnisantragStep2Screen), findsNothing);
     });
   });
 
@@ -470,7 +470,7 @@ void main() {
     });
 
     testWidgets('handles empty antragsnummer', (WidgetTester tester) async {
-      final antragNoNumber = BeduerfnisseAntrag(
+      final antragNoNumber = BeduerfnisAntrag(
         antragsnummer: null,
         personId: 12345,
         statusId: BeduerfnisAntragStatus.entwurf,
@@ -484,7 +484,7 @@ void main() {
     });
 
     testWidgets('handles multiple sport entries', (WidgetTester tester) async {
-      final sportData1 = BeduerfnisseSport(
+      final sportData1 = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -493,7 +493,7 @@ void main() {
         training: true,
       );
 
-      final sportData2 = BeduerfnisseSport(
+      final sportData2 = BeduerfnisSport(
         id: 2,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 2, 20),
@@ -571,7 +571,7 @@ void main() {
     testWidgets('handles null antragsnummer gracefully', (
       WidgetTester tester,
     ) async {
-      final antragWithoutNummer = BeduerfnisseAntrag(
+      final antragWithoutNummer = BeduerfnisAntrag(
         antragsnummer: null,
         personId: 12345,
         statusId: BeduerfnisAntragStatus.entwurf,
@@ -593,7 +593,7 @@ void main() {
     testWidgets('shows error when deleting with null sportId', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: null, // null ID
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -621,7 +621,7 @@ void main() {
     testWidgets('successfully deletes bed sport entry', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -665,7 +665,7 @@ void main() {
     });
 
     testWidgets('shows error when deletion fails', (WidgetTester tester) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -700,7 +700,7 @@ void main() {
     testWidgets('cancels deletion when user clicks Abbrechen', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -735,7 +735,7 @@ void main() {
     testWidgets('displays sport entries without documents', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 1,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 1, 15),
@@ -762,7 +762,7 @@ void main() {
     testWidgets('shows view document button when document exists', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 2,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 2, 20),
@@ -777,7 +777,7 @@ void main() {
       when(mockApiService.hasBedDateiSport(2)).thenAnswer((_) async => true);
       // Simulate document fetch success
       when(mockApiService.getBedDateiBySportId(2)).thenAnswer(
-        (_) async => BeduerfnisseDatei(
+        (_) async => BeduerfnisDatei(
           id: 10,
           antragsnummer: 100,
           dateiname: 'doc.pdf',
@@ -804,7 +804,7 @@ void main() {
     testWidgets('shows error if viewing document fails', (
       WidgetTester tester,
     ) async {
-      final sportData = BeduerfnisseSport(
+      final sportData = BeduerfnisSport(
         id: 3,
         antragsnummer: 100,
         schiessdatum: DateTime(2024, 3, 10),

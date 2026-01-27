@@ -5,7 +5,7 @@ import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/services/api_service.dart';
-import 'beduerfnissantrag_step4_dialog_screen.dart';
+import 'beduerfnisantrag_step4_dialog_screen.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/widgets/delete_confirm_dialog.dart';
@@ -14,8 +14,8 @@ import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
 
-class BeduerfnissantragStep4Screen extends StatefulWidget {
-  const BeduerfnissantragStep4Screen({
+class BeduerfnisantragStep4Screen extends StatefulWidget {
+  const BeduerfnisantragStep4Screen({
     super.key,
     this.userData,
     this.isLoggedIn = false,
@@ -28,17 +28,17 @@ class BeduerfnissantragStep4Screen extends StatefulWidget {
   final dynamic userData;
   final bool isLoggedIn;
   final VoidCallback? onLogout;
-  final BeduerfnisseAntrag? antrag;
+  final BeduerfnisAntrag? antrag;
   final WorkflowRole userRole;
   final bool readOnly;
 
   @override
-  State<BeduerfnissantragStep4Screen> createState() =>
-      _BeduerfnissantragStep4ScreenState();
+  State<BeduerfnisantragStep4Screen> createState() =>
+      _BeduerfnisantragStep4ScreenState();
 }
 
-class _BeduerfnissantragStep4ScreenState
-    extends State<BeduerfnissantragStep4Screen> {
+class _BeduerfnisantragStep4ScreenState
+    extends State<BeduerfnisantragStep4Screen> {
   late Future<List<dynamic>> _waffeBesitzFuture = Future.value([]);
   late Future<List<dynamic>> _waffenartFuture = Future.value([]);
   late Future<List<dynamic>> _kaliberFuture = Future.value([]);
@@ -88,7 +88,7 @@ class _BeduerfnissantragStep4ScreenState
 
   Future<void> _showAddWaffeBesitzDialog(
     BuildContext context, {
-    BeduerfnisseWaffeBesitz? waffeBesitz,
+    BeduerfnisWaffeBesitz? waffeBesitz,
   }) async {
     if (widget.antrag?.antragsnummer == null) return;
     await showDialog(

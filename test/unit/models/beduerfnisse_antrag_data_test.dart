@@ -23,7 +23,7 @@ void main() {
         'abbuchung_erfolgt': true,
         'bemerkung': 'Another bemerkung',
       };
-      final antrag = BeduerfnisseAntrag.fromJson(json);
+      final antrag = BeduerfnisAntrag.fromJson(json);
       expect(antrag.id, 2);
       expect(antrag.createdAt, DateTime.parse('2024-01-01T10:00:00.000Z'));
       expect(antrag.changedAt, isNull);
@@ -58,7 +58,7 @@ void main() {
         'abbuchung_erfolgt': null,
         'bemerkung': null,
       };
-      final antrag = BeduerfnisseAntrag.fromJson(json);
+      final antrag = BeduerfnisAntrag.fromJson(json);
       expect(antrag.id, 3);
       expect(antrag.antragsnummer, 100001);
       expect(antrag.personId, 102);
@@ -82,21 +82,21 @@ void main() {
         'wbk_neu': null,
         'abbuchung_erfolgt': null,
       };
-      final antrag = BeduerfnisseAntrag.fromJson(json);
+      final antrag = BeduerfnisAntrag.fromJson(json);
       expect(antrag.wbkNeu, false);
       expect(antrag.abbuchungErfolgt, false);
     });
 
     test('fromJson handles null id', () {
       final json = {'id': null, 'antragsnummer': 100003, 'person_id': 104};
-      final antrag = BeduerfnisseAntrag.fromJson(json);
+      final antrag = BeduerfnisAntrag.fromJson(json);
       expect(antrag.id, isNull);
       expect(antrag.antragsnummer, 100003);
       expect(antrag.personId, 104);
     });
 
     test('constructor creates correct object with required fields', () {
-      const antrag = BeduerfnisseAntrag(antragsnummer: 100000, personId: 100);
+      const antrag = BeduerfnisAntrag(antragsnummer: 100000, personId: 100);
       expect(antrag.antragsnummer, 100000);
       expect(antrag.personId, 100);
       expect(antrag.id, isNull);
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('constructor creates correct object with all fields', () {
-      const antrag = BeduerfnisseAntrag(
+      const antrag = BeduerfnisAntrag(
         id: 1,
         createdAt: null,
         changedAt: null,
@@ -142,7 +142,7 @@ void main() {
       final changedAt = DateTime(2024, 1, 2, 10, 0, 0);
       final deletedAt = DateTime(2024, 1, 3, 10, 0, 0);
       final bankdaten = {'iban': 'DE1234567890'};
-      final antrag = BeduerfnisseAntrag(
+      final antrag = BeduerfnisAntrag(
         id: 1,
         createdAt: createdAt,
         changedAt: changedAt,
@@ -180,7 +180,7 @@ void main() {
     });
 
     test('toJson handles null values', () {
-      const antrag = BeduerfnisseAntrag(
+      const antrag = BeduerfnisAntrag(
         id: null,
         antragsnummer: 100000,
         personId: 100,
@@ -209,12 +209,12 @@ void main() {
     });
 
     test('inequality with different antragsnummer', () {
-      const antrag1 = BeduerfnisseAntrag(
+      const antrag1 = BeduerfnisAntrag(
         id: 1,
         antragsnummer: 100000,
         personId: 100,
       );
-      const antrag2 = BeduerfnisseAntrag(
+      const antrag2 = BeduerfnisAntrag(
         id: 1,
         antragsnummer: 100001,
         personId: 100,
@@ -223,12 +223,12 @@ void main() {
     });
 
     test('inequality with different personId', () {
-      const antrag1 = BeduerfnisseAntrag(
+      const antrag1 = BeduerfnisAntrag(
         id: 1,
         antragsnummer: 100000,
         personId: 100,
       );
-      const antrag2 = BeduerfnisseAntrag(
+      const antrag2 = BeduerfnisAntrag(
         id: 1,
         antragsnummer: 100000,
         personId: 101,
@@ -237,13 +237,13 @@ void main() {
     });
 
     test('inequality with different bankdaten', () {
-      const antrag1 = BeduerfnisseAntrag(
+      const antrag1 = BeduerfnisAntrag(
         id: 1,
         antragsnummer: 100000,
         personId: 100,
         bankdaten: {'iban': 'DE1234567890'},
       );
-      const antrag2 = BeduerfnisseAntrag(
+      const antrag2 = BeduerfnisAntrag(
         id: 1,
         antragsnummer: 100000,
         personId: 100,

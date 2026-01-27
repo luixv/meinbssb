@@ -783,7 +783,7 @@ class ApiService {
   // --- bed_auswahl Service Methods ---
   //
 
-  Future<List<BeduerfnisseAuswahl>> getBedAuswahlByTypId(int typId) async {
+  Future<List<BeduerfnisAuswahl>> getBedAuswahlByTypId(int typId) async {
     return _postgrestService.getBedAuswahlByTypId(typId);
   }
   //
@@ -824,7 +824,7 @@ class ApiService {
 
   /// Get the document for a specific sport activity
   /// Returns the document if one exists, null otherwise
-  Future<BeduerfnisseDatei?> getBedDateiBySportId(int bedSportId) async {
+  Future<BeduerfnisDatei?> getBedDateiBySportId(int bedSportId) async {
     try {
       // Get the zuord entry to find the datei_id
       final zuord = await _postgrestService.getBedDateiZuordByBedSportId(
@@ -1001,14 +1001,14 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseSport>> getBedSportByAntragsnummer(
+  Future<List<BeduerfnisSport>> getBedSportByAntragsnummer(
     int antragsnummer,
   ) async {
     return _postgrestService.getBedSportByAntragsnummer(antragsnummer);
   }
 
   //TODO: delete if not used
-  Future<bool> updateBedSport(BeduerfnisseSport sport) async {
+  Future<bool> updateBedSport(BeduerfnisSport sport) async {
     return _postgrestService.updateBedSport(sport);
   }
 
@@ -1046,13 +1046,13 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
+  Future<List<BeduerfnisWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
     int antragsnummer,
   ) async {
     return _postgrestService.getBedWaffeBesitzByAntragsnummer(antragsnummer);
   }
 
-  Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
+  Future<bool> updateBedWaffeBesitz(BeduerfnisWaffeBesitz waffeBesitz) async {
     return _postgrestService.updateBedWaffeBesitz(waffeBesitz);
   }
 
@@ -1067,7 +1067,7 @@ class ApiService {
   // --- bed_antrag Service Methods ---
   //
 
-  Future<BeduerfnisseAntrag> createBedAntrag({
+  Future<BeduerfnisAntrag> createBedAntrag({
     required int personId,
     int? statusId,
     bool? wbkNeu,
@@ -1095,17 +1095,17 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
+  Future<List<BeduerfnisAntrag>> getBedAntragByAntragsnummer(
     int antragsnummer,
   ) async {
     return _postgrestService.getBedAntragByAntragsnummer(antragsnummer);
   }
 
-  Future<List<BeduerfnisseAntrag>> getBedAntragByPersonId(int personId) async {
+  Future<List<BeduerfnisAntrag>> getBedAntragByPersonId(int personId) async {
     return _postgrestService.getBedAntragByPersonId(personId);
   }
 
-  Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
+  Future<bool> updateBedAntrag(BeduerfnisAntrag antrag) async {
     return _postgrestService.updateBedAntrag(antrag);
   }
   //
@@ -1151,7 +1151,7 @@ class ApiService {
   // --- bed_datei_zuord Service Methods ---
   //
 
-  Future<BeduerfnisseDateiZuord> createBedDateiZuord({
+  Future<BeduerfnisDateiZuord> createBedDateiZuord({
     required int antragsnummer,
     required int dateiId,
     required String dateiArt,
@@ -1167,13 +1167,13 @@ class ApiService {
     );
   }
 
-  Future<bool> updateBedDateiZuord(BeduerfnisseDateiZuord dateiZuord) async {
+  Future<bool> updateBedDateiZuord(BeduerfnisDateiZuord dateiZuord) async {
     return _postgrestService.updateBedDateiZuord(dateiZuord);
   }
 
   /// Get bed_datei_zuord entries by antragsnummer and datei_art
   /// Returns a list of BeduerfnisseDateiZuord
-  Future<List<BeduerfnisseDateiZuord>> getBedDateiZuordByAntragsnummer(
+  Future<List<BeduerfnisDateiZuord>> getBedDateiZuordByAntragsnummer(
     int antragsnummer,
     String dateiArt,
   ) async {
@@ -1192,7 +1192,7 @@ class ApiService {
 
   /// Get bed_datei entry by ID
   /// Returns the BeduerfnisseDatei if found, null otherwise
-  Future<BeduerfnisseDatei?> getBedDateiById(int dateiId) async {
+  Future<BeduerfnisDatei?> getBedDateiById(int dateiId) async {
     try {
       return await _postgrestService.getBedDateiById(dateiId);
     } catch (e) {

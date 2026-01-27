@@ -109,9 +109,9 @@ class _FakeResponse_5 extends _i1.SmartFake implements _i6.Response {
     : super(parent, parentInvocation);
 }
 
-class _FakeBeduerfnisseAntrag_6 extends _i1.SmartFake
-    implements _i7.BeduerfnisseAntrag {
-  _FakeBeduerfnisseAntrag_6(Object parent, Invocation parentInvocation)
+class _FakeBeduerfnisAntrag_6 extends _i1.SmartFake
+    implements _i7.BeduerfnisAntrag {
+  _FakeBeduerfnisAntrag_6(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -121,9 +121,9 @@ class _FakeBeduerfnisseAntragPerson_7 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeBeduerfnisseDateiZuord_8 extends _i1.SmartFake
-    implements _i9.BeduerfnisseDateiZuord {
-  _FakeBeduerfnisseDateiZuord_8(Object parent, Invocation parentInvocation)
+class _FakeBeduerfnisDateiZuord_8 extends _i1.SmartFake
+    implements _i9.BeduerfnisDateiZuord {
+  _FakeBeduerfnisDateiZuord_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -1539,14 +1539,14 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<_i16.Uint8List?>);
 
   @override
-  _i3.Future<List<_i37.BeduerfnisseAuswahl>> getBedAuswahlByTypId(int? typId) =>
+  _i3.Future<List<_i37.BeduerfnisAuswahl>> getBedAuswahlByTypId(int? typId) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAuswahlByTypId, [typId]),
-            returnValue: _i3.Future<List<_i37.BeduerfnisseAuswahl>>.value(
-              <_i37.BeduerfnisseAuswahl>[],
+            returnValue: _i3.Future<List<_i37.BeduerfnisAuswahl>>.value(
+              <_i37.BeduerfnisAuswahl>[],
             ),
           )
-          as _i3.Future<List<_i37.BeduerfnisseAuswahl>>);
+          as _i3.Future<List<_i37.BeduerfnisAuswahl>>);
 
   @override
   _i3.Future<Map<String, dynamic>> createBedDatei({
@@ -1567,27 +1567,27 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<List<_i38.BeduerfnisseDatei>> getBedDateiByAntragsnummer(
+  _i3.Future<List<_i38.BeduerfnisDatei>> getBedDateiByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiByAntragsnummer, [antragsnummer]),
-            returnValue: _i3.Future<List<_i38.BeduerfnisseDatei>>.value(
-              <_i38.BeduerfnisseDatei>[],
+            returnValue: _i3.Future<List<_i38.BeduerfnisDatei>>.value(
+              <_i38.BeduerfnisDatei>[],
             ),
           )
-          as _i3.Future<List<_i38.BeduerfnisseDatei>>);
+          as _i3.Future<List<_i38.BeduerfnisDatei>>);
 
   @override
-  _i3.Future<_i38.BeduerfnisseDatei?> getBedDateiById(int? id) =>
+  _i3.Future<_i38.BeduerfnisDatei?> getBedDateiById(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiById, [id]),
-            returnValue: _i3.Future<_i38.BeduerfnisseDatei?>.value(),
+            returnValue: _i3.Future<_i38.BeduerfnisDatei?>.value(),
           )
-          as _i3.Future<_i38.BeduerfnisseDatei?>);
+          as _i3.Future<_i38.BeduerfnisDatei?>);
 
   @override
-  _i3.Future<bool> updateBedDatei(_i38.BeduerfnisseDatei? datei) =>
+  _i3.Future<bool> updateBedDatei(_i38.BeduerfnisDatei? datei) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedDatei, [datei]),
             returnValue: _i3.Future<bool>.value(false),
@@ -1639,19 +1639,19 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<List<_i39.BeduerfnisseSport>> getBedSportByAntragsnummer(
+  _i3.Future<List<_i39.BeduerfnisSport>> getBedSportByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedSportByAntragsnummer, [antragsnummer]),
-            returnValue: _i3.Future<List<_i39.BeduerfnisseSport>>.value(
-              <_i39.BeduerfnisseSport>[],
+            returnValue: _i3.Future<List<_i39.BeduerfnisSport>>.value(
+              <_i39.BeduerfnisSport>[],
             ),
           )
-          as _i3.Future<List<_i39.BeduerfnisseSport>>);
+          as _i3.Future<List<_i39.BeduerfnisSport>>);
 
   @override
-  _i3.Future<bool> updateBedSport(_i39.BeduerfnisseSport? sport) =>
+  _i3.Future<bool> updateBedSport(_i39.BeduerfnisSport? sport) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedSport, [sport]),
             returnValue: _i3.Future<bool>.value(false),
@@ -1711,21 +1711,22 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<Map<String, dynamic>>);
 
   @override
-  _i3.Future<List<_i40.BeduerfnisseWaffeBesitz>>
-  getBedWaffeBesitzByAntragsnummer(int? antragsnummer) =>
+  _i3.Future<List<_i40.BeduerfnisWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
+    int? antragsnummer,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedWaffeBesitzByAntragsnummer, [
               antragsnummer,
             ]),
-            returnValue: _i3.Future<List<_i40.BeduerfnisseWaffeBesitz>>.value(
-              <_i40.BeduerfnisseWaffeBesitz>[],
+            returnValue: _i3.Future<List<_i40.BeduerfnisWaffeBesitz>>.value(
+              <_i40.BeduerfnisWaffeBesitz>[],
             ),
           )
-          as _i3.Future<List<_i40.BeduerfnisseWaffeBesitz>>);
+          as _i3.Future<List<_i40.BeduerfnisWaffeBesitz>>);
 
   @override
   _i3.Future<bool> updateBedWaffeBesitz(
-    _i40.BeduerfnisseWaffeBesitz? waffeBesitz,
+    _i40.BeduerfnisWaffeBesitz? waffeBesitz,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedWaffeBesitz, [waffeBesitz]),
@@ -1750,7 +1751,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<bool>);
 
   @override
-  _i3.Future<_i7.BeduerfnisseAntrag> createBedAntrag({
+  _i3.Future<_i7.BeduerfnisAntrag> createBedAntrag({
     required int? personId,
     int? statusId,
     bool? wbkNeu,
@@ -1777,8 +1778,8 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #abbuchungErfolgt: abbuchungErfolgt,
               #bemerkung: bemerkung,
             }),
-            returnValue: _i3.Future<_i7.BeduerfnisseAntrag>.value(
-              _FakeBeduerfnisseAntrag_6(
+            returnValue: _i3.Future<_i7.BeduerfnisAntrag>.value(
+              _FakeBeduerfnisAntrag_6(
                 this,
                 Invocation.method(#createBedAntrag, [], {
                   #personId: personId,
@@ -1796,54 +1797,54 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               ),
             ),
           )
-          as _i3.Future<_i7.BeduerfnisseAntrag>);
+          as _i3.Future<_i7.BeduerfnisAntrag>);
 
   @override
-  _i3.Future<List<_i7.BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
+  _i3.Future<List<_i7.BeduerfnisAntrag>> getBedAntragByAntragsnummer(
     int? antragsnummer,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragByAntragsnummer, [antragsnummer]),
-            returnValue: _i3.Future<List<_i7.BeduerfnisseAntrag>>.value(
-              <_i7.BeduerfnisseAntrag>[],
+            returnValue: _i3.Future<List<_i7.BeduerfnisAntrag>>.value(
+              <_i7.BeduerfnisAntrag>[],
             ),
           )
-          as _i3.Future<List<_i7.BeduerfnisseAntrag>>);
+          as _i3.Future<List<_i7.BeduerfnisAntrag>>);
 
   @override
-  _i3.Future<List<_i7.BeduerfnisseAntrag>> getBedAntragByPersonId(
+  _i3.Future<List<_i7.BeduerfnisAntrag>> getBedAntragByPersonId(
     int? personId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragByPersonId, [personId]),
-            returnValue: _i3.Future<List<_i7.BeduerfnisseAntrag>>.value(
-              <_i7.BeduerfnisseAntrag>[],
+            returnValue: _i3.Future<List<_i7.BeduerfnisAntrag>>.value(
+              <_i7.BeduerfnisAntrag>[],
             ),
           )
-          as _i3.Future<List<_i7.BeduerfnisseAntrag>>);
+          as _i3.Future<List<_i7.BeduerfnisAntrag>>);
 
   @override
-  _i3.Future<List<_i7.BeduerfnisseAntrag>> getBedAntragByStatusId(
+  _i3.Future<List<_i7.BeduerfnisAntrag>> getBedAntragByStatusId(
     int? statusId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragByStatusId, [statusId]),
-            returnValue: _i3.Future<List<_i7.BeduerfnisseAntrag>>.value(
-              <_i7.BeduerfnisseAntrag>[],
+            returnValue: _i3.Future<List<_i7.BeduerfnisAntrag>>.value(
+              <_i7.BeduerfnisAntrag>[],
             ),
           )
-          as _i3.Future<List<_i7.BeduerfnisseAntrag>>);
+          as _i3.Future<List<_i7.BeduerfnisAntrag>>);
 
   @override
-  _i3.Future<_i7.BeduerfnisseAntrag?> getBedAntragById(int? id) =>
+  _i3.Future<_i7.BeduerfnisAntrag?> getBedAntragById(int? id) =>
       (super.noSuchMethod(
             Invocation.method(#getBedAntragById, [id]),
-            returnValue: _i3.Future<_i7.BeduerfnisseAntrag?>.value(),
+            returnValue: _i3.Future<_i7.BeduerfnisAntrag?>.value(),
           )
-          as _i3.Future<_i7.BeduerfnisseAntrag?>);
+          as _i3.Future<_i7.BeduerfnisAntrag?>);
 
   @override
-  _i3.Future<bool> updateBedAntrag(_i7.BeduerfnisseAntrag? antrag) =>
+  _i3.Future<bool> updateBedAntrag(_i7.BeduerfnisAntrag? antrag) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedAntrag, [antrag]),
             returnValue: _i3.Future<bool>.value(false),
@@ -1936,7 +1937,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<bool>);
 
   @override
-  _i3.Future<_i9.BeduerfnisseDateiZuord> createBedDateiZuord({
+  _i3.Future<_i9.BeduerfnisDateiZuord> createBedDateiZuord({
     required int? antragsnummer,
     required int? dateiId,
     required String? dateiArt,
@@ -1951,8 +1952,8 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               #bedSportId: bedSportId,
               #label: label,
             }),
-            returnValue: _i3.Future<_i9.BeduerfnisseDateiZuord>.value(
-              _FakeBeduerfnisseDateiZuord_8(
+            returnValue: _i3.Future<_i9.BeduerfnisDateiZuord>.value(
+              _FakeBeduerfnisDateiZuord_8(
                 this,
                 Invocation.method(#createBedDateiZuord, [], {
                   #antragsnummer: antragsnummer,
@@ -1964,12 +1965,10 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               ),
             ),
           )
-          as _i3.Future<_i9.BeduerfnisseDateiZuord>);
+          as _i3.Future<_i9.BeduerfnisDateiZuord>);
 
   @override
-  _i3.Future<bool> updateBedDateiZuord(
-    _i9.BeduerfnisseDateiZuord? dateiZuord,
-  ) =>
+  _i3.Future<bool> updateBedDateiZuord(_i9.BeduerfnisDateiZuord? dateiZuord) =>
       (super.noSuchMethod(
             Invocation.method(#updateBedDateiZuord, [dateiZuord]),
             returnValue: _i3.Future<bool>.value(false),
@@ -1985,7 +1984,7 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<bool>);
 
   @override
-  _i3.Future<List<_i9.BeduerfnisseDateiZuord>> getBedDateiZuordByAntragsnummer(
+  _i3.Future<List<_i9.BeduerfnisDateiZuord>> getBedDateiZuordByAntragsnummer(
     int? antragsnummer,
     String? dateiArt,
   ) =>
@@ -1994,21 +1993,21 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
               antragsnummer,
               dateiArt,
             ]),
-            returnValue: _i3.Future<List<_i9.BeduerfnisseDateiZuord>>.value(
-              <_i9.BeduerfnisseDateiZuord>[],
+            returnValue: _i3.Future<List<_i9.BeduerfnisDateiZuord>>.value(
+              <_i9.BeduerfnisDateiZuord>[],
             ),
           )
-          as _i3.Future<List<_i9.BeduerfnisseDateiZuord>>);
+          as _i3.Future<List<_i9.BeduerfnisDateiZuord>>);
 
   @override
-  _i3.Future<_i9.BeduerfnisseDateiZuord?> getBedDateiZuordByBedSportId(
+  _i3.Future<_i9.BeduerfnisDateiZuord?> getBedDateiZuordByBedSportId(
     int? bedSportId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiZuordByBedSportId, [bedSportId]),
-            returnValue: _i3.Future<_i9.BeduerfnisseDateiZuord?>.value(),
+            returnValue: _i3.Future<_i9.BeduerfnisDateiZuord?>.value(),
           )
-          as _i3.Future<_i9.BeduerfnisseDateiZuord?>);
+          as _i3.Future<_i9.BeduerfnisDateiZuord?>);
 
   @override
   _i3.Future<bool> deleteBedDateiZuordByBedSportId(int? bedSportId) =>
@@ -2019,16 +2018,16 @@ class MockPostgrestService extends _i1.Mock implements _i2.PostgrestService {
           as _i3.Future<bool>);
 
   @override
-  _i3.Future<List<_i9.BeduerfnisseDateiZuord>> getBedDateiZuordByDateiId(
+  _i3.Future<List<_i9.BeduerfnisDateiZuord>> getBedDateiZuordByDateiId(
     int? dateiId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getBedDateiZuordByDateiId, [dateiId]),
-            returnValue: _i3.Future<List<_i9.BeduerfnisseDateiZuord>>.value(
-              <_i9.BeduerfnisseDateiZuord>[],
+            returnValue: _i3.Future<List<_i9.BeduerfnisDateiZuord>>.value(
+              <_i9.BeduerfnisDateiZuord>[],
             ),
           )
-          as _i3.Future<List<_i9.BeduerfnisseDateiZuord>>);
+          as _i3.Future<List<_i9.BeduerfnisDateiZuord>>);
 
   @override
   _i3.Future<bool> deleteBedDateiZuordByDateiId(int? dateiId) =>

@@ -51,7 +51,7 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder:
-                          (context) => MeineBeduerfnisseantraegeScreen(
+                          (context) => MeineBeduerfnisantraegeScreen(
                             userData: userData,
                             isLoggedIn: isLoggedIn,
                             onLogout: onLogout,

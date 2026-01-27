@@ -13,8 +13,8 @@ import 'package:meinbssb/widgets/dialog_fabs.dart';
 import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 
-class BeduerfnissantragStep2DialogScreen extends StatefulWidget {
-  const BeduerfnissantragStep2DialogScreen({
+class BeduerfnisantragStep2DialogScreen extends StatefulWidget {
+  const BeduerfnisantragStep2DialogScreen({
     required this.antragsnummer,
     required this.onSaved,
     super.key,
@@ -24,12 +24,12 @@ class BeduerfnissantragStep2DialogScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onSaved;
 
   @override
-  State<BeduerfnissantragStep2DialogScreen> createState() =>
-      _BeduerfnissantragStep2DialogScreenState();
+  State<BeduerfnisantragStep2DialogScreen> createState() =>
+      _BeduerfnisantragStep2DialogScreenState();
 }
 
-class _BeduerfnissantragStep2DialogScreenState
-    extends State<BeduerfnissantragStep2DialogScreen> {
+class _BeduerfnisantragStep2DialogScreenState
+    extends State<BeduerfnisantragStep2DialogScreen> {
   final TextEditingController _datumController = TextEditingController();
   final TextEditingController _wettkampfergebnisController =
       TextEditingController();
@@ -41,8 +41,8 @@ class _BeduerfnissantragStep2DialogScreenState
   _uploadedDateiId; // Stores the datei_id from uploadBedDatei (before mapping to sport)
   int? _selectedWaffenartId;
   int? _selectedDisziplinId;
-  late Future<List<BeduerfnisseAuswahl>> _waffenartFuture;
-  late Future<List<BeduerfnisseAuswahl>> _auswahlFuture;
+  late Future<List<BeduerfnisAuswahl>> _waffenartFuture;
+  late Future<List<BeduerfnisAuswahl>> _auswahlFuture;
   late Future<List<Disziplin>> _disziplinenFuture;
   int? _selectedWettkampfartId;
 
@@ -794,7 +794,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                   const SizedBox(height: UIConstants.spacingM),
 
                                   // Waffenart Dropdown
-                                  FutureBuilder<List<BeduerfnisseAuswahl>>(
+                                  FutureBuilder<List<BeduerfnisAuswahl>>(
                                     future: _waffenartFuture,
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
@@ -814,7 +814,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                           .firstWhere(
                                             (w) => w.id == _selectedWaffenartId,
                                             orElse:
-                                                () => BeduerfnisseAuswahl(
+                                                () => BeduerfnisAuswahl(
                                                   id: 0,
                                                   typId: 0,
                                                   kuerzel: '',
@@ -992,7 +992,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                   const SizedBox(height: UIConstants.spacingM),
 
                                   // Wettkampfart Dropdown
-                                  FutureBuilder<List<BeduerfnisseAuswahl>>(
+                                  FutureBuilder<List<BeduerfnisAuswahl>>(
                                     future: _auswahlFuture,
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
@@ -1014,7 +1014,7 @@ class _BeduerfnissantragStep2DialogScreenState
                                             (w) =>
                                                 w.id == _selectedWettkampfartId,
                                             orElse:
-                                                () => BeduerfnisseAuswahl(
+                                                () => BeduerfnisAuswahl(
                                                   id: 0,
                                                   typId: 0,
                                                   kuerzel: '',

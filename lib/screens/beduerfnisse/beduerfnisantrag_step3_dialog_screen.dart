@@ -7,17 +7,17 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:image_picker/image_picker.dart';
 
-class BeduerfnissantragStep3Dialog extends StatefulWidget {
-  const BeduerfnissantragStep3Dialog({required this.antragsnummer, super.key});
+class BeduerfnisantragStep3Dialog extends StatefulWidget {
+  const BeduerfnisantragStep3Dialog({required this.antragsnummer, super.key});
   final int? antragsnummer;
 
   @override
-  State<BeduerfnissantragStep3Dialog> createState() =>
-      _BeduerfnissantragStep3DialogState();
+  State<BeduerfnisantragStep3Dialog> createState() =>
+      _BeduerfnisantragStep3DialogState();
 }
 
-class _BeduerfnissantragStep3DialogState
-    extends State<BeduerfnissantragStep3Dialog> {
+class _BeduerfnisantragStep3DialogState
+    extends State<BeduerfnisantragStep3Dialog> {
   bool _isUploadingDocument = false;
   final TextEditingController _labelController = TextEditingController();
 

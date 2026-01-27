@@ -15,14 +15,14 @@ import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step3_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step3_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
-import 'beduerfnissantrag_step2_dialog_screen.dart';
+import 'beduerfnisantrag_step2_dialog_screen.dart';
 
-class BeduerfnissantragStep2Screen extends StatefulWidget {
-  const BeduerfnissantragStep2Screen({
+class BeduerfnisantragStep2Screen extends StatefulWidget {
+  const BeduerfnisantragStep2Screen({
     this.userData,
     this.antrag,
     required this.isLoggedIn,
@@ -33,22 +33,22 @@ class BeduerfnissantragStep2Screen extends StatefulWidget {
   });
 
   final UserData? userData;
-  final BeduerfnisseAntrag? antrag;
+  final BeduerfnisAntrag? antrag;
   final bool isLoggedIn;
   final Function() onLogout;
   final WorkflowRole userRole;
   final bool readOnly;
 
   @override
-  State<BeduerfnissantragStep2Screen> createState() =>
-      _BeduerfnissantragStep2ScreenState();
+  State<BeduerfnisantragStep2Screen> createState() =>
+      _BeduerfnisantragStep2ScreenState();
 }
 
-class _BeduerfnissantragStep2ScreenState
-    extends State<BeduerfnissantragStep2Screen> {
-  late Future<List<BeduerfnisseSport>> _bedSportFuture;
-  late Future<List<BeduerfnisseAuswahl>> _waffenartFuture;
-  late Future<List<BeduerfnisseAuswahl>> _wettkampfartFuture;
+class _BeduerfnisantragStep2ScreenState
+    extends State<BeduerfnisantragStep2Screen> {
+  late Future<List<BeduerfnisSport>> _bedSportFuture;
+  late Future<List<BeduerfnisAuswahl>> _waffenartFuture;
+  late Future<List<BeduerfnisAuswahl>> _wettkampfartFuture;
   late Future<List<Disziplin>> _disziplinenFuture;
 
   @override
@@ -61,7 +61,7 @@ class _BeduerfnissantragStep2ScreenState
     _disziplinenFuture = apiService.fetchDisziplinen();
   }
 
-  Future<List<BeduerfnisseSport>> _fetchBedSportData() async {
+  Future<List<BeduerfnisSport>> _fetchBedSportData() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
     if (widget.antrag?.antragsnummer == null) {
       return [];
@@ -82,7 +82,7 @@ class _BeduerfnissantragStep2ScreenState
     }
   }
 
-  void _viewDocument(BuildContext context, BeduerfnisseDatei document) {
+  void _viewDocument(BuildContext context, BeduerfnisDatei document) {
     showDialog(
       context: context,
       builder:
@@ -327,7 +327,7 @@ class _BeduerfnissantragStep2ScreenState
                               builder:
                                   (
                                     context,
-                                  ) => BeduerfnissantragStep2DialogScreen(
+                                  ) => BeduerfnisantragStep2DialogScreen(
                                     antragsnummer: widget.antrag?.antragsnummer,
                                     onSaved: (savedData) {
                                       // Small delay to ensure data is persisted
@@ -440,15 +440,13 @@ class _BeduerfnissantragStep2ScreenState
                           }
 
                           final bedSportList =
-                              (snapshot.data?[0] as List<BeduerfnisseSport>?) ??
+                              (snapshot.data?[0] as List<BeduerfnisSport>?) ??
                               [];
                           final waffenartList =
-                              (snapshot.data?[1]
-                                  as List<BeduerfnisseAuswahl>?) ??
+                              (snapshot.data?[1] as List<BeduerfnisAuswahl>?) ??
                               [];
                           final wettkampfartList =
-                              (snapshot.data?[2]
-                                  as List<BeduerfnisseAuswahl>?) ??
+                              (snapshot.data?[2] as List<BeduerfnisAuswahl>?) ??
                               [];
                           final disziplinList =
                               (snapshot.data?[3] as List<Disziplin>?) ?? [];
@@ -1120,7 +1118,7 @@ class _BeduerfnissantragStep2ScreenState
       context,
       MaterialPageRoute(
         builder:
-            (context) => BeduerfnissantragStep3Screen(
+            (context) => BeduerfnisantragStep3Screen(
               userData: widget.userData,
               antrag: widget.antrag,
               isLoggedIn: widget.isLoggedIn,

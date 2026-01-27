@@ -2,21 +2,30 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a file association (bed_datei_zuord) in the BSSB system.
 @immutable
-class BeduerfnisseDateiZuord {
-  /// Creates a [BeduerfnisseDateiZuord] instance from a JSON map.
+class BeduerfnisDateiZuord {
+  /// Creates a [BeduerfnisDateiZuord] instance from a JSON map.
   /// Supports both snake_case (PostgREST) and uppercase formats.
-  factory BeduerfnisseDateiZuord.fromJson(Map<String, dynamic> json) {
-    return BeduerfnisseDateiZuord(
+  factory BeduerfnisDateiZuord.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisDateiZuord(
       id: (json['ID'] ?? json['id']) as int?,
-      createdAt: (json['CREATED_AT'] ?? json['created_at']) == null
-          ? null
-          : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
-      changedAt: (json['CHANGED_AT'] ?? json['changed_at']) == null
-          ? null
-          : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
-      deletedAt: (json['DELETED_AT'] ?? json['deleted_at']) == null
-          ? null
-          : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+      createdAt:
+          (json['CREATED_AT'] ?? json['created_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['CREATED_AT'] ?? json['created_at']) as String,
+              ),
+      changedAt:
+          (json['CHANGED_AT'] ?? json['changed_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['CHANGED_AT'] ?? json['changed_at']) as String,
+              ),
+      deletedAt:
+          (json['DELETED_AT'] ?? json['deleted_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['DELETED_AT'] ?? json['deleted_at']) as String,
+              ),
       antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
       dateiId: (json['DATEI_ID'] ?? json['datei_id']) as int,
       dateiArt: (json['DATEI_ART'] ?? json['datei_art']) as String,
@@ -25,8 +34,8 @@ class BeduerfnisseDateiZuord {
     );
   }
 
-  /// Creates a new instance of [BeduerfnisseDateiZuord].
-  const BeduerfnisseDateiZuord({
+  /// Creates a new instance of [BeduerfnisDateiZuord].
+  const BeduerfnisDateiZuord({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -65,7 +74,7 @@ class BeduerfnisseDateiZuord {
   /// The label for the file association (nullable).
   final String? label;
 
-  /// Converts the [BeduerfnisseDateiZuord] instance to a JSON map.
+  /// Converts the [BeduerfnisDateiZuord] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

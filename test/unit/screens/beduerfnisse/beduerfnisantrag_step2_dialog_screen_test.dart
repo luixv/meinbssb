@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step2_dialog_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step2_dialog_screen.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'beduerfnissantrag_step2_dialog_screen_test.mocks.dart';
+import 'beduerfnisantrag_step2_dialog_screen_test.mocks.dart';
 
 @GenerateMocks([ApiService])
 void main() {
@@ -60,7 +60,7 @@ void main() {
       ],
       child: MaterialApp(
         home: Scaffold(
-          body: BeduerfnissantragStep2DialogScreen(
+          body: BeduerfnisantragStep2DialogScreen(
             antragsnummer: antragsnummer,
             onSaved: onSaved ?? (data) {},
           ),

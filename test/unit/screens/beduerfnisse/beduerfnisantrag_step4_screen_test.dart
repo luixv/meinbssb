@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step4_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step4_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'beduerfnissantrag_step4_screen_test.mocks.dart';
+import 'beduerfnisantrag_step4_screen_test.mocks.dart';
 
 @GenerateMocks(
   [ApiService],
@@ -45,7 +45,7 @@ void main() {
           ChangeNotifierProvider(create: (_) => FontSizeProvider()),
         ],
         child: MaterialApp(
-          home: BeduerfnissantragStep4Screen(
+          home: BeduerfnisantragStep4Screen(
             userData: userData,
             isLoggedIn: isLoggedIn,
             onLogout: () {},
@@ -56,7 +56,7 @@ void main() {
 
     testWidgets('renders without crashing', (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
-      expect(find.byType(BeduerfnissantragStep4Screen), findsOneWidget);
+      expect(find.byType(BeduerfnisantragStep4Screen), findsOneWidget);
     });
     // Add more tests as needed for form fields, button taps, etc.
   });

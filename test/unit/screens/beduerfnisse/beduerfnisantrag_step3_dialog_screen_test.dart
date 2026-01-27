@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step3_dialog_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step3_dialog_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 
@@ -42,7 +42,7 @@ void main() {
             body: Builder(
               builder:
                   (context) => Center(
-                    child: BeduerfnissantragStep3Dialog(
+                    child: BeduerfnisantragStep3Dialog(
                       antragsnummer: antragsnummer,
                     ),
                   ),

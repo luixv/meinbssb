@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step1_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step1_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
@@ -11,7 +11,7 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'beduerfnissantrag_step1_screen_test.mocks.dart';
+import 'beduerfnisantrag_step1_screen_test.mocks.dart';
 
 @GenerateMocks([ApiService])
 void main() {
@@ -45,7 +45,7 @@ void main() {
     UserData? userData = dummyUserData,
     bool isLoggedIn = true,
     VoidCallback? onBack,
-    BeduerfnisseAntrag? antrag,
+    BeduerfnisAntrag? antrag,
     bool readOnly = false,
   }) {
     return MultiProvider(
@@ -54,7 +54,7 @@ void main() {
         Provider<ApiService>.value(value: mockApiService),
       ],
       child: MaterialApp(
-        home: BeduerfnissantragStep1Screen(
+        home: BeduerfnisantragStep1Screen(
           userData: userData,
           isLoggedIn: isLoggedIn,
           onLogout: () {},
@@ -421,7 +421,7 @@ void main() {
     testWidgets('initializes form fields from existing antrag', (
       WidgetTester tester,
     ) async {
-      final existingAntrag = BeduerfnisseAntrag(
+      final existingAntrag = BeduerfnisAntrag(
         id: 1,
         antragsnummer: 12345,
         personId: 12345,
@@ -635,7 +635,7 @@ void main() {
             Provider<ApiService>.value(value: mockApiService),
           ],
           child: MaterialApp(
-            home: BeduerfnissantragStep1Screen(
+            home: BeduerfnisantragStep1Screen(
               userData: dummyUserData,
               isLoggedIn: true,
               onLogout: () {},
