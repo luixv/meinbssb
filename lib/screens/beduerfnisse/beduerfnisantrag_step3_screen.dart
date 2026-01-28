@@ -86,42 +86,56 @@ class _BeduerfnisantragStep3ScreenState
     showDialog(
       context: context,
       builder:
-          (dialogContext) => Dialog(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.9,
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      color: UIConstants.defaultAppColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(4),
-                        topRight: Radius.circular(4),
+          (dialogContext) => Semantics(
+            label: 'Dokumentvorschau',
+            dialog: true,
+            enabled: true,
+            child: Dialog(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.9,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: const BoxDecoration(
+                        color: UIConstants.defaultAppColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(4),
+                          topRight: Radius.circular(4),
+                        ),
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.description, color: Colors.white),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: ScaledText(
-                            document.label ?? datei.dateiname,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.description, color: Colors.white),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Semantics(
+                              header: true,
+                              label: 'Dokumenttitel: ${document.label ?? datei.dateiname}',
+                              child: ScaledText(
+                                document.label ?? datei.dateiname,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Colors.white),
-                          onPressed: () => Navigator.of(dialogContext).pop(),
-                        ),
-                      ],
+                          Semantics(
+                            button: true,
+                            label: 'Dialogfenster schließen',
+                            hint: 'Dokumentvorschau schließen',
+                            child: IconButton(
+                              icon: const Icon(Icons.close, color: Colors.white),
+                              tooltip: 'Vorschau schließen',
+                              onPressed: () => Navigator.of(dialogContext).pop(),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                   Expanded(
                     child: Container(
                       color: Colors.grey[200],
@@ -204,10 +218,17 @@ class _BeduerfnisantragStep3ScreenState
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       // Back button (FAB) - always visible
-                      KeyboardFocusFAB(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: Icons.arrow_back,
-                        heroTag: 'fab_back_step3',
+                      Semantics(
+                        button: true,
+                        label: 'Zurück Button',
+                        hint: 'Zum vorherigen Schritt zurückkehren',
+                        onTap: () => Navigator.of(context).pop(),
+                        child: KeyboardFocusFAB(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icons.arrow_back,
+                          heroTag: 'fab_back_step3',
+                          tooltip: 'Zurück',
+                        ),
                       ),
                     ],
                   ),
@@ -292,10 +313,13 @@ class _BeduerfnisantragStep3ScreenState
                     const SizedBox(height: UIConstants.spacingM),
 
                     // Additional text for existing WBK (under subtitle)
-                    ScaledText(
-                      'Kopie der vorhandenen WBK\n (Vorder und Rückseite)',
-                      style: TextStyle(
-                        fontSize: 16 * fontSizeProvider.scaleFactor,
+                    Semantics(
+                      label: 'Beschreibung der erforderlichen Dokumentation',
+                      child: ScaledText(
+                        'Kopie der vorhandenen WBK\n (Vorder und Rückseite)',
+                        style: TextStyle(
+                          fontSize: 16 * fontSizeProvider.scaleFactor,
+                        ),
                       ),
                     ),
                     const SizedBox(height: UIConstants.spacingM),
@@ -342,51 +366,74 @@ class _BeduerfnisantragStep3ScreenState
                             'Keine Dokumente hochgeladen.',
                           );
                         }
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: documents.length,
-                          itemBuilder: (context, index) {
-                            final doc = documents[index];
-                            return Card(
-                              margin: const EdgeInsets.only(
-                                bottom: UIConstants.spacingM,
-                              ),
-                              child: ListTile(
-                                leading: const Icon(
-                                  Icons.description,
-                                  color: UIConstants.defaultAppColor,
-                                ),
-                                title: ScaledText(
-                                  doc.label ??
-                                      'Dokument ${doc.id ?? index + 1}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                        return Semantics(
+                          label: 'Liste mit ${documents.length} hochgeladenen Dokumenten',
+                          list: true,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: documents.length,
+                            itemBuilder: (context, index) {
+                              final doc = documents[index];
+                              final docLabel = doc.label ??
+                                  'Dokument ${doc.id ?? index + 1}';
+                              return Semantics(
+                                label: '$docLabel. Element ${index + 1} von ${documents.length}',
+                                button: true,
+                                child: Card(
+                                  margin: const EdgeInsets.only(
+                                    bottom: UIConstants.spacingM,
+                                  ),
+                                  child: ListTile(
+                                    leading: const Icon(
+                                      Icons.description,
+                                      color: UIConstants.defaultAppColor,
+                                    ),
+                                    title: ScaledText(
+                                      docLabel,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Semantics(
+                                          button: true,
+                                          label: 'Vorschau anzeigen für $docLabel',
+                                          hint: 'Zeigt eine vergrößerte Vorschau des Dokuments an',
+                                          onTap: () => _viewDocument(context, doc),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.preview,
+                                              color: UIConstants.primaryColor,
+                                            ),
+                                            tooltip: 'Vorschau',
+                                            onPressed:
+                                                () => _viewDocument(context, doc),
+                                          ),
+                                        ),
+                                        Semantics(
+                                          button: true,
+                                          label: 'Löschen von $docLabel',
+                                          hint: 'Entfernt dieses Dokument permanent',
+                                          onTap: () => _deleteDocument(doc),
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.delete_outline,
+                                              color: UIConstants.deleteIcon,
+                                            ),
+                                            tooltip: 'Löschen',
+                                            onPressed: () => _deleteDocument(doc),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.preview,
-                                        color: UIConstants.primaryColor,
-                                      ),
-                                      onPressed:
-                                          () => _viewDocument(context, doc),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.delete_outline,
-                                        color: UIConstants.deleteIcon,
-                                      ),
-                                      onPressed: () => _deleteDocument(doc),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
