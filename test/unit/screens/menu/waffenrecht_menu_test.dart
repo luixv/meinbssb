@@ -9,7 +9,17 @@ void main() {
       WidgetTester tester,
     ) async {
       bool navigated = false;
-      final testUser = UserData(personId: 1, webLoginId: 2);
+      final testUser = UserData(
+        personId: 1,
+        webLoginId: 2,
+        passnummer: '12345',
+        vereinNr: 10,
+        namen: 'Mustermann',
+        vorname: 'Max',
+        vereinName: 'Testverein',
+        passdatenId: 100,
+        mitgliedschaftId: 200,
+      );
       await tester.pumpWidget(
         MaterialApp(
           home: WaffenrechtMenuScreen(
@@ -34,8 +44,8 @@ void main() {
 }
 
 class TestNavigatorObserver extends NavigatorObserver {
-  final VoidCallback onPush;
   TestNavigatorObserver({required this.onPush});
+  final VoidCallback onPush;
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     onPush();
