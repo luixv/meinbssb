@@ -184,70 +184,81 @@ class _BeduerfnisantragStep3DialogState
   Widget build(BuildContext context) {
     return Consumer<FontSizeProvider>(
       builder: (context, fontSizeProvider, child) {
-        return Dialog(
-          insetPadding: const EdgeInsets.symmetric(
-            horizontal: UIConstants.spacingL,
-            vertical: UIConstants.spacingM,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
-          ),
-          backgroundColor: UIConstants.backgroundColor,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(UIConstants.spacingL),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Dialog Title
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.file_upload,
-                            color: UIConstants.defaultAppColor,
-                            size: 28,
-                          ),
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            child: ScaledText(
-                              'WBK-Dokument hochladen',
-                              style: UIStyles.titleStyle.copyWith(
-                                fontSize:
-                                    UIStyles.titleStyle.fontSize! *
-                                    fontSizeProvider.scaleFactor,
-                                color: UIConstants.defaultAppColor,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (_errorMessage != null) ...[
-                        const SizedBox(height: UIConstants.spacingS),
-                        Container(
-                          padding: const EdgeInsets.all(UIConstants.spacingS),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(
-                              UIConstants.cornerRadius,
-                            ),
-                          ),
+        return Semantics(
+          label: 'WBK-Dokument hochladen Dialog',
+          dialog: true,
+          enabled: true,
+          child: Dialog(
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: UIConstants.spacingL,
+              vertical: UIConstants.spacingM,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(UIConstants.cornerRadius),
+            ),
+            backgroundColor: UIConstants.backgroundColor,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(UIConstants.spacingL),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Dialog Title
+                        Semantics(
+                          header: true,
+                          label: 'Dialog Titel: WBK-Dokument hochladen',
                           child: Row(
                             children: [
-                              const Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
-                                size: 20,
+                              Icon(
+                                Icons.file_upload,
+                                color: UIConstants.defaultAppColor,
+                                size: 28,
                               ),
-                              const SizedBox(width: UIConstants.spacingS),
+                              const SizedBox(width: UIConstants.spacingM),
                               Expanded(
-                                child: Text(
-                                  _errorMessage!,
+                                child: ScaledText(
+                                  'WBK-Dokument hochladen',
+                                  style: UIStyles.titleStyle.copyWith(
+                                    fontSize:
+                                        UIStyles.titleStyle.fontSize! *
+                                        fontSizeProvider.scaleFactor,
+                                    color: UIConstants.defaultAppColor,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (_errorMessage != null) ...[
+                          const SizedBox(height: UIConstants.spacingS),
+                          Semantics(
+                            liveRegion: true,
+                            label: 'Fehlermeldung: $_errorMessage',
+                            child: Container(
+                              padding: const EdgeInsets.all(UIConstants.spacingS),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(
+                                  UIConstants.cornerRadius,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: UIConstants.spacingS),
+                                  Expanded(
+                                    child: Text(
+                                      _errorMessage!,
                                   style: UIStyles.bodyTextStyle.copyWith(
                                     color: Colors.red,
                                     fontSize:
@@ -259,173 +270,217 @@ class _BeduerfnisantragStep3DialogState
                             ],
                           ),
                         ),
-                      ],
+                          ],
+                        ],
                       const SizedBox(height: UIConstants.spacingM),
 
-                      const SizedBox(height: UIConstants.spacingXS),
-                      TextField(
-                        controller: _labelController,
-                        decoration: InputDecoration(
-                          labelText: 'Beschreibung *',
-                          hintText: 'Beschreibung des Dokuments',
-                          border: OutlineInputBorder(
+                        const SizedBox(height: UIConstants.spacingXS),
+                        Semantics(
+                          label: 'Beschreibung Eingabefeld, erforderlich',
+                          hint: 'Geben Sie eine Beschreibung des Dokuments ein',
+                          textField: true,
+                          enabled: !_isUploadingDocument,
+                          child: TextField(
+                            controller: _labelController,
+                            enabled: !_isUploadingDocument,
+                            decoration: InputDecoration(
+                              labelText: 'Beschreibung *',
+                              hintText: 'Beschreibung des Dokuments',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  UIConstants.cornerRadius,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: UIConstants.spacingM,
+                                vertical: UIConstants.spacingM,
+                              ),
+                            ),
+                            style: UIStyles.bodyTextStyle.copyWith(
+                              fontSize:
+                                  UIStyles.bodyTextStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingL),
+                        Semantics(
+                          label: 'Anleitung zur Dokumentenaufladung',
+                          child: ScaledText(
+                            'Bitte laden Sie Vorder- und Rückseite Ihrer WBK hoch oder scannen Sie diese ein.',
+                            style: UIStyles.bodyTextStyle.copyWith(
+                              fontWeight: FontWeight.normal,
+                              fontSize:
+                                  UIStyles.bodyTextStyle.fontSize! *
+                                  fontSizeProvider.scaleFactor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingL),
+                        Semantics(
+                          label: 'Dokumenten-Upload Optionen',
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Semantics(
+                                  button: true,
+                                  label: 'Hochladen Button',
+                                  hint: 'Wählen Sie ein Dokument aus der Galerie aus und laden Sie es hoch',
+                                  enabled: !_isUploadingDocument,
+                                  onTap: _isUploadingDocument ? null : () => _uploadDocument(context, 'WBK'),
+                                  child: ElevatedButton.icon(
+                                    onPressed:
+                                        _isUploadingDocument
+                                            ? null
+                                            : () => _uploadDocument(context, 'WBK'),
+                                    icon: Icon(
+                                      Icons.upload_file,
+                                      color: UIConstants.buttonTextColor,
+                                    ),
+                                    label: ScaledText(
+                                      'Hochladen',
+                                      style: UIStyles.bodyTextStyle.copyWith(
+                                        fontSize:
+                                            UIConstants.buttonFontSize *
+                                            fontSizeProvider.scaleFactor,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          UIConstants.submitButtonBackground,
+                                      foregroundColor: UIConstants.buttonTextColor,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: UIConstants.spacingM,
+                                        vertical: UIConstants.spacingM,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          UIConstants.cornerRadius,
+                                        ),
+                                      ),
+                                      elevation: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: UIConstants.spacingM),
+                              Expanded(
+                                child: Semantics(
+                                  button: true,
+                                  label: 'Scannen Button',
+                                  hint: 'Scannen Sie ein Dokument mit der Kamera ein',
+                                  enabled: !_isUploadingDocument,
+                                  onTap: _isUploadingDocument ? null : () => _scanAndUploadDocument(context, 'WBK'),
+                                  child: ElevatedButton.icon(
+                                    onPressed:
+                                        _isUploadingDocument
+                                            ? null
+                                            : () => _scanAndUploadDocument(
+                                              context,
+                                              'WBK',
+                                            ),
+                                    icon: Icon(
+                                      Icons.camera_alt,
+                                      color: UIConstants.buttonTextColor,
+                                    ),
+                                    label: ScaledText(
+                                      'Scannen',
+                                      style: UIStyles.bodyTextStyle.copyWith(
+                                        fontSize:
+                                            UIConstants.buttonFontSize *
+                                            fontSizeProvider.scaleFactor,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          UIConstants.submitButtonBackground,
+                                      foregroundColor: UIConstants.buttonTextColor,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: UIConstants.spacingM,
+                                        vertical: UIConstants.spacingM,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          UIConstants.cornerRadius,
+                                        ),
+                                      ),
+                                      elevation: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: UIConstants.spacingXXL),
+                    ],
+                  ),
+                ),
+                  // Close button (FAB)
+                  Positioned(
+                    bottom: UIConstants.spacingM,
+                    right: UIConstants.spacingM,
+                    child: Semantics(
+                      button: true,
+                      label: 'Dialog schließen Button',
+                      hint: 'Schließt den Dokument-Upload Dialog',
+                      enabled: !_isUploadingDocument,
+                      onTap: () => Navigator.of(context).pop(),
+                      child: FloatingActionButton(
+                        heroTag: 'fab_close_upload_dialog',
+                        mini: true,
+                        backgroundColor: UIConstants.submitButtonBackground,
+                        onPressed: _isUploadingDocument ? null : () => Navigator.of(context).pop(),
+                        tooltip: 'Dialog schließen',
+                        child: const Icon(
+                          Icons.close,
+                          color: UIConstants.buttonTextColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Loading overlays
+                  if (_isUploadingDocument)
+                    Positioned.fill(
+                      child: Semantics(
+                        liveRegion: true,
+                        label: 'Dokument wird hochgeladen',
+                        hint: 'Bitte warten Sie, während das Dokument hochgeladen wird',
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: UIConstants.overlayColor,
                             borderRadius: BorderRadius.circular(
                               UIConstants.cornerRadius,
                             ),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: UIConstants.spacingM,
-                            vertical: UIConstants.spacingM,
-                          ),
-                        ),
-                        style: UIStyles.bodyTextStyle.copyWith(
-                          fontSize:
-                              UIStyles.bodyTextStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingL),
-                      ScaledText(
-                        'Bitte laden Sie Vorder- und Rückseite Ihrer WBK hoch oder scannen Sie diese ein.',
-                        style: UIStyles.bodyTextStyle.copyWith(
-                          fontWeight: FontWeight.normal,
-                          fontSize:
-                              UIStyles.bodyTextStyle.fontSize! *
-                              fontSizeProvider.scaleFactor,
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingL),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  _isUploadingDocument
-                                      ? null
-                                      : () => _uploadDocument(context, 'WBK'),
-                              icon: Icon(
-                                Icons.upload_file,
-                                color: UIConstants.buttonTextColor,
-                              ),
-                              label: ScaledText(
-                                'Hochladen',
-                                style: UIStyles.bodyTextStyle.copyWith(
-                                  fontSize:
-                                      UIConstants.buttonFontSize *
-                                      fontSizeProvider.scaleFactor,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    UIConstants.submitButtonBackground,
-                                foregroundColor: UIConstants.buttonTextColor,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: UIConstants.spacingM,
-                                  vertical: UIConstants.spacingM,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    UIConstants.cornerRadius,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Semantics(
+                                  label: 'Lade-Fortschrittsanzeige',
+                                  child: const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      UIConstants.circularProgressIndicator,
+                                    ),
                                   ),
                                 ),
-                                elevation: 2,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  _isUploadingDocument
-                                      ? null
-                                      : () => _scanAndUploadDocument(
-                                        context,
-                                        'WBK',
-                                      ),
-                              icon: Icon(
-                                Icons.camera_alt,
-                                color: UIConstants.buttonTextColor,
-                              ),
-                              label: ScaledText(
-                                'Scannen',
-                                style: UIStyles.bodyTextStyle.copyWith(
-                                  fontSize:
-                                      UIConstants.buttonFontSize *
-                                      fontSizeProvider.scaleFactor,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    UIConstants.submitButtonBackground,
-                                foregroundColor: UIConstants.buttonTextColor,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: UIConstants.spacingM,
-                                  vertical: UIConstants.spacingM,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    UIConstants.cornerRadius,
+                                const SizedBox(height: UIConstants.spacingM),
+                                ScaledText(
+                                  'Wird hochgeladen...',
+                                  style: UIStyles.bodyTextStyle.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 16,
                                   ),
                                 ),
-                                elevation: 2,
-                              ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: UIConstants.spacingXXL),
-                    ],
-                  ),
-                ),
-                // Close button (FAB)
-                Positioned(
-                  bottom: UIConstants.spacingM,
-                  right: UIConstants.spacingM,
-                  child: FloatingActionButton(
-                    heroTag: 'fab_close_upload_dialog',
-                    mini: true,
-                    backgroundColor: UIConstants.submitButtonBackground,
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Icon(
-                      Icons.close,
-                      color: UIConstants.buttonTextColor,
-                    ),
-                  ),
-                ),
-                // Loading overlays
-                if (_isUploadingDocument)
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: UIConstants.overlayColor,
-                        borderRadius: BorderRadius.circular(
-                          UIConstants.cornerRadius,
-                        ),
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                UIConstants.circularProgressIndicator,
-                              ),
-                            ),
-                            const SizedBox(height: UIConstants.spacingM),
-                            ScaledText(
-                              'Wird hochgeladen...',
-                              style: UIStyles.bodyTextStyle.copyWith(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ),
-                  ),
               ],
             ),
           ),
