@@ -419,7 +419,7 @@ class _BeduerfnisantragStep4ScreenState
                                                   ),
                                                   _buildInfoRow(
                                                     Icons.monitor_weight,
-                                                    '${wb.gewicht ?? ""} g',
+                                                    '${wb.gewicht ?? ""} gr',
                                                     fontSizeProvider
                                                         .scaleFactor,
                                                     'Gewicht',

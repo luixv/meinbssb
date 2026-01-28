@@ -122,24 +122,19 @@ class ProfileScreen extends StatelessWidget {
                   );
                 },
               ),
-              _buildMenuItem(
-                context,
-                'Bedürfnisse',
-                Icons.description_outlined,
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => BeduerfnisbescheinigungScreen(
-                            userData: userData,
-                            isLoggedIn: isLoggedIn,
-                            onLogout: onLogout,
-                          ),
-                    ),
-                  );
-                },
-              ),
+              _buildMenuItem(context, 'Bedürfnisse', Icons.list_alt, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => BeduerfnisbescheinigungScreen(
+                          userData: userData,
+                          isLoggedIn: isLoggedIn,
+                          onLogout: onLogout,
+                        ),
+                  ),
+                );
+              }),
               _buildMenuItem(context, 'Passwort ändern', Icons.lock, () {
                 Navigator.push(
                   context,

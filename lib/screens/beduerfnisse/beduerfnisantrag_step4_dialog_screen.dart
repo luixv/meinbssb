@@ -607,7 +607,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                           controller: _gewichtController,
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
-                                            labelText: 'Gewicht (g) *',
+                                            labelText: 'Gewicht (gr) *',
                                             filled: true,
                                             fillColor: UIConstants.whiteColor,
                                             border: OutlineInputBorder(
@@ -822,6 +822,12 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                     style: UIStyles.bodyTextStyle,
                                     minLines: 2,
                                     maxLines: 2,
+                                    validator: (v) {
+                                      if (v != null && v.length > 500) {
+                                        return 'Maximal 500 Zeichen erlaubt';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                   const SizedBox(
                                     height: UIConstants.spacingXXL,

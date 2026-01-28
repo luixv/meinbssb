@@ -292,16 +292,13 @@ class _BeduerfnisantragStep3ScreenState
                     const SizedBox(height: UIConstants.spacingM),
 
                     // Additional text for existing WBK (under subtitle)
-                    if (widget.antrag != null &&
-                        widget.antrag!.wbkNeu == false) ...[
-                      ScaledText(
-                        'Kopie der vorhandenen WBK (Vorder und Rückseite)',
-                        style: TextStyle(
-                          fontSize: 16 * fontSizeProvider.scaleFactor,
-                        ),
+                    ScaledText(
+                      'Kopie der vorhandenen WBK\n (Vorder und Rückseite)',
+                      style: TextStyle(
+                        fontSize: 16 * fontSizeProvider.scaleFactor,
                       ),
-                      const SizedBox(height: UIConstants.spacingM),
-                    ],
+                    ),
+                    const SizedBox(height: UIConstants.spacingM),
 
                     /*
                     // Display Bedürfnisantrag type summary
