@@ -1007,7 +1007,6 @@ class ApiService {
     return _postgrestService.getBedSportByAntragsnummer(antragsnummer);
   }
 
-  //TODO: delete if not used
   Future<bool> updateBedSport(BeduerfnisSport sport) async {
     return _postgrestService.updateBedSport(sport);
   }

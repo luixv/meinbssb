@@ -345,7 +345,10 @@ class AppDrawer extends StatelessWidget {
               // Waffenrecht menu item
               ListTile(
                 key: const Key('drawer_waffenrecht'),
-                leading: const Icon(Icons.gavel, color: UIStyles.menuIconColor),
+                leading: const Icon(
+                  Icons.balance,
+                  color: UIStyles.menuIconColor,
+                ),
                 title: const ScaledText(
                   'Waffenrecht',
                   style: TextStyle(fontSize: UIConstants.menuItemFontSize),

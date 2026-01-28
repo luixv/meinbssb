@@ -1049,7 +1049,7 @@ class _BeduerfnisantragStep2ScreenState
                                                 ],
                                               ],
                                             ),
-                                            // Delete icon - only show if status is Entwurf and not read-only
+                                            // Delete and Edit icons - only show if status is Entwurf and not read-only
                                             if (!widget.readOnly &&
                                                 widget.antrag?.statusId ==
                                                     BeduerfnisAntragStatus
@@ -1057,24 +1057,88 @@ class _BeduerfnisantragStep2ScreenState
                                               Positioned(
                                                 top: 0,
                                                 right: 0,
-                                                child: Semantics(
-                                                  button: true,
-                                                  label:
-                                                      'Schießaktivität löschen',
-                                                  hint:
-                                                      'Doppeltippen um diese Schießaktivität zu löschen',
-                                                  child: IconButton(
-                                                    icon: const Icon(
-                                                      Icons.delete_outline,
-                                                      color:
-                                                          UIConstants
-                                                              .deleteIcon,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Semantics(
+                                                      button: true,
+                                                      label:
+                                                          'Schießaktivität löschen',
+                                                      hint:
+                                                          'Doppeltippen um diese Schießaktivität zu löschen',
+                                                      child: IconButton(
+                                                        icon: const Icon(
+                                                          Icons.delete_outline,
+                                                          color:
+                                                              UIConstants
+                                                                  .deleteIcon,
+                                                        ),
+                                                        tooltip: 'Löschen',
+                                                        onPressed: () {
+                                                          _deleteBedSport(
+                                                            sport.id,
+                                                          );
+                                                        },
+                                                      ),
                                                     ),
-                                                    tooltip: 'Löschen',
-                                                    onPressed: () {
-                                                      _deleteBedSport(sport.id);
-                                                    },
-                                                  ),
+                                                    Semantics(
+                                                      button: true,
+                                                      label:
+                                                          'Schießaktivität bearbeiten',
+                                                      child: Tooltip(
+                                                        message: 'Bearbeiten',
+                                                        child: InkWell(
+                                                          onTap: () async {
+                                                            await showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (
+                                                                    dialogContext,
+                                                                  ) => BeduerfnisantragStep2DialogScreen(
+                                                                    antragsnummer:
+                                                                        widget
+                                                                            .antrag
+                                                                            ?.antragsnummer,
+                                                                    onSaved: (
+                                                                      updatedData,
+                                                                    ) {
+                                                                      // Refresh after edit
+                                                                      setState(() {
+                                                                        _bedSportFuture =
+                                                                            _fetchBedSportData();
+                                                                      });
+                                                                      Navigator.of(
+                                                                        dialogContext,
+                                                                      ).pop();
+                                                                    },
+                                                                    // Optionally pass the sport entry for editing
+                                                                    // You may need to extend BeduerfnisantragStep2DialogScreen to accept an existing entry
+                                                                    // e.g. bedSport: sport
+                                                                  ),
+                                                            );
+                                                          },
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets.all(
+                                                                  8.0,
+                                                                ),
+                                                            child: Icon(
+                                                              Icons.edit,
+                                                              color:
+                                                                  UIConstants
+                                                                      .primaryColor,
+                                                              size:
+                                                                  UIConstants
+                                                                      .iconSizeS *
+                                                                  fontSizeProvider
+                                                                      .scaleFactor,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                           ],
