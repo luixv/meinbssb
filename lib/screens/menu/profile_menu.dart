@@ -1,19 +1,17 @@
-import '../personal/personal_account_delete_screen.dart';
+import 'package:meinbssb/screens/personal/personal_account_delete_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import '/widgets/scaled_text.dart';
-import '/models/user_data.dart';
-
-import '../personal/personal_data_screen.dart';
-import '/screens/contact_data_screen.dart';
-import '/screens/bankdata/bank_data_screen.dart';
-import '/screens/password/change_password_screen.dart';
-import '/screens/schulungen/absolvierte_schulungen_screen.dart';
-import '/screens/beduerfnisse/beduerfnisbescheinigung_screen.dart';
-import '/screens/logo_widget.dart';
-import '../personal/personal_pict_upload_screen.dart';
+import 'package:meinbssb/widgets/scaled_text.dart';
+import 'package:meinbssb/models/user_data.dart';
+import 'package:meinbssb/screens/personal/personal_data_screen.dart';
+import 'package:meinbssb/screens/contact_data_screen.dart';
+import 'package:meinbssb/screens/bankdata/bank_data_screen.dart';
+import 'package:meinbssb/screens/password/change_password_screen.dart';
+import 'package:meinbssb/screens/schulungen/absolvierte_schulungen_screen.dart';
+import 'package:meinbssb/screens/logo_widget.dart';
+import 'package:meinbssb/screens/personal/personal_pict_upload_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -122,19 +120,7 @@ class ProfileScreen extends StatelessWidget {
                   );
                 },
               ),
-              _buildMenuItem(context, 'Bedürfnisse', Icons.list_alt, () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => BeduerfnisbescheinigungScreen(
-                          userData: userData,
-                          isLoggedIn: isLoggedIn,
-                          onLogout: onLogout,
-                        ),
-                  ),
-                );
-              }),
+              // Bedürfnisse moved to Waffenrecht menu
               _buildMenuItem(context, 'Passwort ändern', Icons.lock, () {
                 Navigator.push(
                   context,
