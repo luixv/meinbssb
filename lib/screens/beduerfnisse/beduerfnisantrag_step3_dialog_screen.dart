@@ -26,7 +26,6 @@ class _BeduerfnisantragStep3DialogState
     setState(() {
       _errorMessage = message;
     });
-    // Show SnackBar for test compatibility
     final contextToUse = context;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final scaffoldMessenger = ScaffoldMessenger.maybeOf(contextToUse);
@@ -40,7 +39,6 @@ class _BeduerfnisantragStep3DialogState
         );
       }
     });
-    // Clear error after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
@@ -50,127 +48,151 @@ class _BeduerfnisantragStep3DialogState
     });
   }
 
-  Future<void> _scanAndUploadDocument(
-    BuildContext context,
-    String documentType,
-  ) async {
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    // Check if label is empty
-    if (_labelController.text.trim().isEmpty) {
-      _showError('Bitte geben Sie eine Beschreibung für die Datei ein.');
-      return;
-    }
-
-    try {
-      // Pick image using image picker (simulate scanning)
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.camera);
-
-      if (pickedFile == null) {
-        // User cancelled
-        return;
-      }
-
-      final bytes = await pickedFile.readAsBytes();
-
-      if (widget.antragsnummer == null) {
-        if (mounted) {
-          _showError('Antragsnummer nicht gefunden');
-        }
-        return;
-      }
-
-      setState(() {
-        _isUploadingDocument = true;
-      });
-
-      // Upload the scanned document
-      final success = await apiService.uploadBedDateiForWBK(
-        antragsnummer: widget.antragsnummer!,
-        dateiname: pickedFile.name,
-        fileBytes: bytes,
-        label: _labelController.text.trim(),
-      );
-
-      if (mounted) {
-        setState(() {
-          _isUploadingDocument = false;
-        });
-        if (success) {
-          Navigator.of(context).pop(true); // Close parent dialog on success
-        } else {
-          _showError('Fehler beim Hochladen');
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isUploadingDocument = false;
-        });
-        _showError('Fehler beim Scannen: $e');
-      }
-    }
-  }
-
   Future<void> _uploadDocument(
     BuildContext context,
     String documentType,
   ) async {
     final apiService = Provider.of<ApiService>(context, listen: false);
-    // Check if label is empty
     if (_labelController.text.trim().isEmpty) {
       _showError('Bitte geben Sie eine Beschreibung für die Datei ein.');
       return;
     }
-
+    final picker = ImagePicker();
     try {
-      // Open file explorer to pick a file
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-      if (pickedFile == null) {
-        // User cancelled
-        return;
-      }
-
-      final bytes = await pickedFile.readAsBytes();
-
-      if (widget.antragsnummer == null) {
-        if (mounted) {
-          _showError('Antragsnummer nicht gefunden');
-        }
-        return;
-      }
-
       setState(() {
         _isUploadingDocument = true;
       });
-
-      // Upload the selected document
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile == null) {
+        setState(() {
+          _isUploadingDocument = false;
+        });
+        return;
+      }
+      final bytes = await pickedFile.readAsBytes();
+      if (widget.antragsnummer == null) {
+        _showError('Antragsnummer nicht gefunden');
+        setState(() {
+          _isUploadingDocument = false;
+        });
+        return;
+      }
       final success = await apiService.uploadBedDateiForWBK(
         antragsnummer: widget.antragsnummer!,
         dateiname: pickedFile.name,
         fileBytes: bytes,
         label: _labelController.text.trim(),
       );
-
-      if (mounted) {
-        setState(() {
-          _isUploadingDocument = false;
-        });
-        if (success) {
-          Navigator.of(context).pop(true); // Close parent dialog on success
-        } else {
-          _showError('Fehler beim Hochladen');
-        }
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      if (success) {
+        Navigator.of(context).pop(true);
+      } else {
+        _showError('Fehler beim Hochladen');
       }
     } catch (e) {
-      if (mounted) {
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      _showError('Fehler beim Hochladen: $e');
+    }
+  }
+
+  Future<void> _scanAndUploadDocument(
+    BuildContext context,
+    String documentType,
+  ) async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    if (_labelController.text.trim().isEmpty) {
+      _showError('Bitte geben Sie eine Beschreibung für die Datei ein.');
+      return;
+    }
+    final picker = ImagePicker();
+    try {
+      setState(() {
+        _isUploadingDocument = true;
+      });
+      final pickedFile = await picker.pickImage(source: ImageSource.camera);
+      if (pickedFile == null) {
         setState(() {
           _isUploadingDocument = false;
         });
-        _showError('Fehler beim Scannen: $e');
+        return;
       }
+      final bytes = await pickedFile.readAsBytes();
+      if (widget.antragsnummer == null) {
+        _showError('Antragsnummer nicht gefunden');
+        setState(() {
+          _isUploadingDocument = false;
+        });
+        return;
+      }
+      final success = await apiService.uploadBedDateiForWBK(
+        antragsnummer: widget.antragsnummer!,
+        dateiname: pickedFile.name,
+        fileBytes: bytes,
+        label: _labelController.text.trim(),
+      );
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      if (success) {
+        Navigator.of(context).pop(true);
+      } else {
+        _showError('Fehler beim Hochladen');
+      }
+    } catch (e) {
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      _showError('Fehler beim Scannen: $e');
+    }
+  }
+
+  Future<void> _scanDocumentWithEdgeRecognition(BuildContext context) async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    if (_labelController.text.trim().isEmpty) {
+      _showError('Bitte geben Sie eine Beschreibung für die Datei ein.');
+      return;
+    }
+    setState(() {
+      _isUploadingDocument = true;
+    });
+    try {
+      final scanResult = await apiService.scanDocument();
+      if (scanResult == null) {
+        setState(() {
+          _isUploadingDocument = false;
+        });
+        return;
+      }
+      if (widget.antragsnummer == null) {
+        _showError('Antragsnummer nicht gefunden');
+        setState(() {
+          _isUploadingDocument = false;
+        });
+        return;
+      }
+      final success = await apiService.uploadBedDateiForWBK(
+        antragsnummer: widget.antragsnummer!,
+        dateiname: scanResult.fileName,
+        fileBytes: scanResult.bytes,
+        label: _labelController.text.trim(),
+      );
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      if (success) {
+        Navigator.of(context).pop(true);
+      } else {
+        _showError('Fehler beim Hochladen');
+      }
+    } catch (e) {
+      setState(() {
+        _isUploadingDocument = false;
+      });
+      _showError('Fehler beim Scannen: $e');
     }
   }
 
@@ -261,7 +283,6 @@ class _BeduerfnisantragStep3DialogState
                         ),
                       ],
                       const SizedBox(height: UIConstants.spacingM),
-
                       const SizedBox(height: UIConstants.spacingXS),
                       TextField(
                         controller: _labelController,
@@ -373,13 +394,51 @@ class _BeduerfnisantragStep3DialogState
                               ),
                             ),
                           ),
+                          const SizedBox(width: UIConstants.spacingM),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed:
+                                  _isUploadingDocument
+                                      ? null
+                                      : () => _scanDocumentWithEdgeRecognition(
+                                        context,
+                                      ),
+                              icon: Icon(
+                                Icons.document_scanner,
+                                color: UIConstants.buttonTextColor,
+                              ),
+                              label: ScaledText(
+                                'Scannen (mit Randerkennung)',
+                                style: UIStyles.bodyTextStyle.copyWith(
+                                  fontSize:
+                                      UIConstants.buttonFontSize *
+                                      fontSizeProvider.scaleFactor,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    UIConstants.submitButtonBackground,
+                                foregroundColor: UIConstants.buttonTextColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: UIConstants.spacingM,
+                                  vertical: UIConstants.spacingM,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.cornerRadius,
+                                  ),
+                                ),
+                                elevation: 2,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: UIConstants.spacingXXL),
                     ],
                   ),
                 ),
-                // Close button (FAB)
                 Positioned(
                   bottom: UIConstants.spacingM,
                   right: UIConstants.spacingM,
@@ -394,7 +453,6 @@ class _BeduerfnisantragStep3DialogState
                     ),
                   ),
                 ),
-                // Loading overlays
                 if (_isUploadingDocument)
                   Positioned.fill(
                     child: Container(
