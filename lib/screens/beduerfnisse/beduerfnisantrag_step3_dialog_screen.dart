@@ -360,46 +360,6 @@ class _BeduerfnisantragStep3DialogState
                               onPressed:
                                   _isUploadingDocument
                                       ? null
-                                      : () => _scanAndUploadDocument(
-                                        context,
-                                        'WBK',
-                                      ),
-                              icon: Icon(
-                                Icons.camera_alt,
-                                color: UIConstants.buttonTextColor,
-                              ),
-                              label: ScaledText(
-                                'Scannen',
-                                style: UIStyles.bodyTextStyle.copyWith(
-                                  fontSize:
-                                      UIConstants.buttonFontSize *
-                                      fontSizeProvider.scaleFactor,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    UIConstants.submitButtonBackground,
-                                foregroundColor: UIConstants.buttonTextColor,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: UIConstants.spacingM,
-                                  vertical: UIConstants.spacingM,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    UIConstants.cornerRadius,
-                                  ),
-                                ),
-                                elevation: 2,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: UIConstants.spacingM),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed:
-                                  _isUploadingDocument
-                                      ? null
                                       : () => _scanDocumentWithEdgeRecognition(
                                         context,
                                       ),
@@ -408,7 +368,7 @@ class _BeduerfnisantragStep3DialogState
                                 color: UIConstants.buttonTextColor,
                               ),
                               label: ScaledText(
-                                'Scannen (mit Randerkennung)',
+                                'Scannen',
                                 style: UIStyles.bodyTextStyle.copyWith(
                                   fontSize:
                                       UIConstants.buttonFontSize *
