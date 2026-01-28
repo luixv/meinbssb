@@ -8,6 +8,7 @@ import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -15,6 +16,8 @@ import 'beduerfnisantrag_step3_screen_test.mocks.dart';
 
 @GenerateMocks([ApiService])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences.setMockInitialValues({});
   late MockApiService mockApiService;
   late FontSizeProvider fontSizeProvider;
 
@@ -35,7 +38,8 @@ void main() {
     bool readOnly = false,
   }) {
     // Provide a default antrag with antragsnummer if not supplied
-    final effectiveAntrag = antrag ?? BeduerfnisAntrag(antragsnummer: 123, personId: 1);
+    final effectiveAntrag =
+        antrag ?? BeduerfnisAntrag(antragsnummer: 123, personId: 1);
     return MultiProvider(
       providers: [
         Provider<ApiService>.value(value: mockApiService),
