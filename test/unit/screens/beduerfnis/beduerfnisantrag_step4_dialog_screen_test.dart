@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +12,14 @@ import 'package:mockito/annotations.dart';
 import 'beduerfnisantrag_step4_dialog_screen_test.mocks.dart';
 
 @GenerateMocks([ApiService])
+class TestDropdownItem {
+  TestDropdownItem(this.id, this.beschreibung);
+  final int id;
+  final String beschreibung;
+  @override
+  String toString() => beschreibung;
+}
+
 void main() {
   group('AddWaffeBesitzDialog', () {
     late MockApiService mockApiService;
@@ -97,5 +107,40 @@ void main() {
       final fabWidget = tester.widget<FloatingActionButton>(fab);
       expect(fabWidget.onPressed, isNull);
     });
+
+    testWidgets(
+      'shows validation errors if required fields are empty and save is not called',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(createDialog());
+        await tester.pumpAndSettle();
+        // Instead of tapping the disabled FAB, trigger validation directly
+        final formFinder = find.byType(Form);
+        expect(formFinder, findsOneWidget);
+        final formState = tester.state<FormState>(formFinder);
+        final valid = formState.validate();
+        expect(valid, isFalse);
+        // Pump to allow error messages to render
+        await tester.pump();
+        // Check for validation error text
+        expect(find.text('Pflichtfeld'), findsWidgets);
+        // Ensure API is not called
+        verifyNever(
+          mockApiService.createBedWaffeBesitz(
+            antragsnummer: anyNamed('antragsnummer'),
+            wbkNr: anyNamed('wbkNr'),
+            lfdWbk: anyNamed('lfdWbk'),
+            waffenartId: anyNamed('waffenartId'),
+            kaliberId: anyNamed('kaliberId'),
+            kompensator: anyNamed('kompensator'),
+            hersteller: anyNamed('hersteller'),
+            lauflaengeId: anyNamed('lauflaengeId'),
+            gewicht: anyNamed('gewicht'),
+            beduerfnisgrundId: anyNamed('beduerfnisgrundId'),
+            verbandId: anyNamed('verbandId'),
+            bemerkung: anyNamed('bemerkung'),
+          ),
+        );
+      },
+    );
   });
 }
