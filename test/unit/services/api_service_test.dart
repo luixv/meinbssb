@@ -4022,7 +4022,7 @@ void main() {
           mockPostgrestService.getBedDateiById(10),
         ).thenAnswer((_) async => datei);
 
-        final result = await apiService.getBedDateiBySportId(5);
+        final result = await apiService.getBedDateiZuordByBedSportId(5);
 
         expect(result, equals(datei));
         verify(mockPostgrestService.getBedDateiZuordByBedSportId(5)).called(1);
@@ -4034,7 +4034,7 @@ void main() {
           mockPostgrestService.getBedDateiZuordByBedSportId(999),
         ).thenAnswer((_) async => null);
 
-        final result = await apiService.getBedDateiBySportId(999);
+        final result = await apiService.getBedDateiZuordByBedSportId(999);
 
         expect(result, isNull);
         verify(
@@ -4048,7 +4048,7 @@ void main() {
           mockPostgrestService.getBedDateiZuordByBedSportId(5),
         ).thenThrow(Exception('Database error'));
 
-        final result = await apiService.getBedDateiBySportId(5);
+        final result = await apiService.getBedDateiZuordByBedSportId(5);
 
         expect(result, isNull);
       });

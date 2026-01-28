@@ -776,7 +776,7 @@ void main() {
       ).thenAnswer((_) async => [sportData]);
       when(mockApiService.hasBedDateiSport(2)).thenAnswer((_) async => true);
       // Simulate document fetch success
-      when(mockApiService.getBedDateiBySportId(2)).thenAnswer(
+      when(mockApiService.getBedDateiById(2)).thenAnswer(
         (_) async => BeduerfnisDatei(
           id: 10,
           antragsnummer: 100,
@@ -819,7 +819,7 @@ void main() {
       when(mockApiService.hasBedDateiSport(3)).thenAnswer((_) async => true);
       // Simulate document fetch failure
       when(
-        mockApiService.getBedDateiBySportId(3),
+        mockApiService.getBedDateiById(3),
       ).thenThrow(Exception('Failed to load document'));
 
       await tester.pumpWidget(createTestWidget());

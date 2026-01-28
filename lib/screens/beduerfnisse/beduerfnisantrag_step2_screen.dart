@@ -61,6 +61,42 @@ class _BeduerfnisantragStep2ScreenState
     _disziplinenFuture = apiService.fetchDisziplinen();
   }
 
+  void _openBedSportDialog({BeduerfnisSport? bedSport}) async {
+    final result = await showDialog(
+      context: context,
+      builder:
+          (context) => BeduerfnisantragStep2DialogScreen(
+            antragsnummer: widget.antrag?.antragsnummer,
+            bedSport: bedSport,
+            onSaved: (savedData) {},
+          ),
+    );
+    if (!mounted) return;
+    if (result == true) {
+      // Force a full screen reload by popping and pushing the screen again
+      Navigator.of(context).pop();
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder:
+              (context) => BeduerfnisantragStep2Screen(
+                userData: widget.userData,
+                antrag: widget.antrag,
+                isLoggedIn: widget.isLoggedIn,
+                onLogout: widget.onLogout,
+                userRole: widget.userRole,
+                readOnly: widget.readOnly,
+              ),
+        ),
+      );
+    } else {
+      setState(() {
+        _bedSportFuture = _fetchBedSportData();
+      });
+    }
+  }
+
   Future<List<BeduerfnisSport>> _fetchBedSportData() async {
     final apiService = Provider.of<ApiService>(context, listen: false);
     if (widget.antrag?.antragsnummer == null) {
@@ -73,11 +109,10 @@ class _BeduerfnisantragStep2ScreenState
       }
       return await apiService.getBedSportByAntragsnummer(antragsnummer);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler beim Laden der Daten: $e')),
-        );
-      }
+      if (!mounted) return [];
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Fehler beim Laden der Daten: $e')),
+      );
       return [];
     }
   }
@@ -225,20 +260,18 @@ class _BeduerfnisantragStep2ScreenState
             onDelete: () => Navigator.of(dialogContext).pop(true),
           ),
     );
-
+    if (!mounted) return;
     if (confirmed != true) return;
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final success = await apiService.deleteBedSportById(sportId);
-
+      if (!mounted) return;
       if (success) {
         // Just refresh the data, no success dialog
-        if (mounted) {
-          setState(() {
-            _bedSportFuture = _fetchBedSportData();
-          });
-        }
+        setState(() {
+          _bedSportFuture = _fetchBedSportData();
+        });
       } else {
         // Show MeinBSSB-styled error dialog
         await showDialog(
@@ -253,6 +286,7 @@ class _BeduerfnisantragStep2ScreenState
         );
       }
     } catch (e) {
+      if (!mounted) return;
       await showDialog(
         context: context,
         builder:
@@ -322,48 +356,7 @@ class _BeduerfnisantragStep2ScreenState
                           semanticLabel: 'Hinzufügen Button',
                           semanticHint: 'Neue Schießaktivität hinzufügen',
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder:
-                                  (
-                                    context,
-                                  ) => BeduerfnisantragStep2DialogScreen(
-                                    antragsnummer: widget.antrag?.antragsnummer,
-                                    onSaved: (savedData) {
-                                      // Small delay to ensure data is persisted
-                                      Future.delayed(
-                                        const Duration(milliseconds: 500),
-                                        () {
-                                          if (mounted) {
-                                            setState(() {
-                                              _bedSportFuture =
-                                                  _fetchBedSportData();
-                                            });
-                                          }
-                                        },
-                                      );
-                                    },
-                                  ),
-                            ).then((result) {
-                              if (result != null &&
-                                  result is Map<String, dynamic>) {
-                                if (result.containsKey('error')) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(result['error'] as String),
-                                    ),
-                                  );
-                                } else if (result.containsKey('success')) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Schießaktivität hinzugefügt',
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            });
+                            _openBedSportDialog();
                           },
                           icon: Icons.add,
                         ),
@@ -873,7 +866,7 @@ class _BeduerfnisantragStep2ScreenState
                                                                                     false,
                                                                               );
                                                                               try {
-                                                                                final doc = await apiService.getBedDateiBySportId(
+                                                                                final doc = await apiService.getBedDateiZuordByBedSportId(
                                                                                   sport.id!,
                                                                                 );
                                                                                 if (doc !=
@@ -978,7 +971,7 @@ class _BeduerfnisantragStep2ScreenState
                                                                                       false,
                                                                                 );
                                                                                 try {
-                                                                                  final doc = await apiService.getBedDateiBySportId(
+                                                                                  final doc = await apiService.getBedDateiZuordByBedSportId(
                                                                                     sport.id!,
                                                                                   );
                                                                                   if (doc !=
@@ -1090,32 +1083,8 @@ class _BeduerfnisantragStep2ScreenState
                                                         message: 'Bearbeiten',
                                                         child: InkWell(
                                                           onTap: () async {
-                                                            await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (
-                                                                    dialogContext,
-                                                                  ) => BeduerfnisantragStep2DialogScreen(
-                                                                    antragsnummer:
-                                                                        widget
-                                                                            .antrag
-                                                                            ?.antragsnummer,
-                                                                    onSaved: (
-                                                                      updatedData,
-                                                                    ) {
-                                                                      // Refresh after edit
-                                                                      setState(() {
-                                                                        _bedSportFuture =
-                                                                            _fetchBedSportData();
-                                                                      });
-                                                                      Navigator.of(
-                                                                        dialogContext,
-                                                                      ).pop();
-                                                                    },
-                                                                    // Optionally pass the sport entry for editing
-                                                                    // You may need to extend BeduerfnisantragStep2DialogScreen to accept an existing entry
-                                                                    // e.g. bedSport: sport
-                                                                  ),
+                                                            _openBedSportDialog(
+                                                              bedSport: sport,
                                                             );
                                                           },
                                                           child: Padding(

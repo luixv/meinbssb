@@ -1210,9 +1210,11 @@ class MockApiService extends _i1.Mock implements _i12.ApiService {
           as _i14.Future<bool>);
 
   @override
-  _i14.Future<_i36.BeduerfnisDatei?> getBedDateiBySportId(int? bedSportId) =>
+  _i14.Future<_i36.BeduerfnisDatei?> getBedDateiZuordByBedSportId(
+    int? bedSportId,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#getBedDateiBySportId, [bedSportId]),
+            Invocation.method(#getBedDateiZuordByBedSportId, [bedSportId]),
             returnValue: _i14.Future<_i36.BeduerfnisDatei?>.value(),
           )
           as _i14.Future<_i36.BeduerfnisDatei?>);

@@ -13,15 +13,19 @@ import 'package:meinbssb/widgets/dialog_fabs.dart';
 import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
 import 'package:meinbssb/models/disziplin_data.dart';
 
+import 'package:meinbssb/models/beduerfnis_sport_data.dart';
+
 class BeduerfnisantragStep2DialogScreen extends StatefulWidget {
   const BeduerfnisantragStep2DialogScreen({
     required this.antragsnummer,
     required this.onSaved,
+    this.bedSport,
     super.key,
   });
 
   final int? antragsnummer;
   final Function(Map<String, dynamic>) onSaved;
+  final BeduerfnisSport? bedSport;
 
   @override
   State<BeduerfnisantragStep2DialogScreen> createState() =>
@@ -50,15 +54,29 @@ class _BeduerfnisantragStep2DialogScreenState
   void initState() {
     super.initState();
 
-    // Set default date to today
-    final now = DateTime.now();
-    _datumController.text =
-        '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}';
-
     final apiService = Provider.of<ApiService>(context, listen: false);
     _waffenartFuture = apiService.getBedAuswahlByTypId(1);
     _auswahlFuture = apiService.getBedAuswahlByTypId(2);
     _disziplinenFuture = apiService.fetchDisziplinen();
+
+    // Prefill fields if editing an existing BeduerfnisSport
+    if (widget.bedSport != null) {
+      final bedSport = widget.bedSport!;
+      final date = bedSport.schiessdatum;
+      _datumController.text =
+          '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+      _selectedWaffenartId = bedSport.waffenartId;
+      _selectedDisziplinId = bedSport.disziplinId;
+      _training = bedSport.training;
+      _selectedWettkampfartId = bedSport.wettkampfartId;
+      _wettkampfergebnisController.text =
+          bedSport.wettkampfergebnis?.toString() ?? '';
+    } else {
+      // Set default date to today
+      final now = DateTime.now();
+      _datumController.text =
+          '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}';
+    }
 
     // Add listeners to update UI when fields change
     _datumController.addListener(() {
@@ -549,67 +567,161 @@ class _BeduerfnisantragStep2DialogScreenState
         return;
       }
 
-      final response = await apiService.createBedSport(
-        antragsnummer: widget.antragsnummer!,
-        schiessdatum: schiessdatumForDb,
-        waffenartId: _selectedWaffenartId!,
-        disziplinId: _selectedDisziplinId!,
-        training: _training,
-        wettkampfartId: _selectedWettkampfartId,
-        wettkampfergebnis:
-            _wettkampfergebnisController.text.isNotEmpty
-                ? double.parse(_wettkampfergebnisController.text)
-                : null,
+      debugPrint('--- _saveBedSport called ---');
+      debugPrint('widget.bedSport: \\${widget.bedSport}');
+      debugPrint('antragsnummer: \\${widget.antragsnummer}');
+      debugPrint('schiessdatumForDb: \\$schiessdatumForDb');
+      debugPrint('_selectedWaffenartId: \\$_selectedWaffenartId');
+      debugPrint('_selectedDisziplinId: \\$_selectedDisziplinId');
+      debugPrint('_training: \\$_training');
+      debugPrint('_selectedWettkampfartId: \\$_selectedWettkampfartId');
+      debugPrint(
+        '_wettkampfergebnisController.text: \\${_wettkampfergebnisController.text}',
       );
+      debugPrint('_uploadedDateiId: \\$_uploadedDateiId');
 
-      // Store the created bedSport ID
-      final createdBedSportId = response['id'] as int?;
-      if (createdBedSportId != null) {
-        setState(() {});
+      if (widget.bedSport != null) {
+        debugPrint('Editing existing entry: updateBedSport will be called');
+        final editedBedSport = BeduerfnisSport(
+          id: widget.bedSport!.id,
+          antragsnummer: widget.antragsnummer!,
+          schiessdatum: DateTime.parse(schiessdatumForDb),
+          waffenartId: _selectedWaffenartId!,
+          disziplinId: _selectedDisziplinId!,
+          training: _training,
+          wettkampfartId: _selectedWettkampfartId,
+          wettkampfergebnis:
+              _wettkampfergebnisController.text.isNotEmpty
+                  ? double.tryParse(_wettkampfergebnisController.text)
+                  : null,
+          bemerkung: null,
+        );
 
-        // Map uploaded document to the newly created sport
-        if (_uploadedDateiId != null) {
+        // If a new document was uploaded during edit, link it to the edited sport
+        if (_uploadedDateiId != null && editedBedSport.id != null) {
+
+          // 1. Delete any existing mapping for this bedSportId (remove old mapping)
+          try {
+            final oldZuord = await apiService.getBedDateiZuordByBedSportId(
+              editedBedSport.id!,
+            );
+            if (oldZuord != null) {
+         
+              await apiService.deleteBedDateiBySportId(editedBedSport.id!);
+            } else {
+              debugPrint(
+                'No old mapping found for bedSportId ${editedBedSport.id}',
+              );
+            }
+          } catch (e) {
+            debugPrint('Exception deleting old mapping: $e');
+          }
+
+          // 2. Map the new file
           final mapped = await apiService.mapBedDateiToSport(
             antragsnummer: widget.antragsnummer!,
             dateiId: _uploadedDateiId!,
-            bedSportId: createdBedSportId,
+            bedSportId: editedBedSport.id!,
           );
+          debugPrint('mapBedDateiToSport (edit) returned: $mapped');
 
-          if (!mapped) {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Warnung: Dokument konnte nicht verknüpft werden',
-                  ),
-                ),
+          // 3. Fetch and print the new mapping for verification
+          try {
+            final newZuord = await apiService.getBedDateiZuordByBedSportId(
+              editedBedSport.id!,
+            );
+            if (newZuord != null) {
+              debugPrint(
+                'New mapping for bedSportId ${editedBedSport.id}: dateiId=${newZuord.id}',
+              );
+              final mappedFile = await apiService.getBedDateiById(newZuord.id!);
+              if (mappedFile != null) {
+                debugPrint('Mapped file after mapping:');
+                debugPrint('  id: ${mappedFile.id}');
+                debugPrint('  dateiname: ${mappedFile.dateiname}');
+                debugPrint('  createdAt: ${mappedFile.createdAt}');
+              } else {
+                debugPrint('  Mapped file not found for id ${newZuord.id}');
+              }
+            } else {
+              debugPrint(
+                'No new mapping found for bedSportId ${editedBedSport.id}',
               );
             }
-          } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Dokument erfolgreich verknüpft')),
-              );
+          } catch (e) {
+            debugPrint('Exception fetching new mapping after mapping: $e');
+          }
+
+          if (!mapped && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Warnung: Dokument konnte nicht verknüpft werden',
+                ),
+              ),
+            );
+          } else if (mapped && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Dokument erfolgreich verknüpft')),
+            );
+          }
+        }
+
+        if (mounted) Navigator.of(context).pop(true);
+      } else {
+        debugPrint('Creating new entry: createBedSport will be called');
+        final response = await apiService.createBedSport(
+          antragsnummer: widget.antragsnummer!,
+          schiessdatum: schiessdatumForDb,
+          waffenartId: _selectedWaffenartId!,
+          disziplinId: _selectedDisziplinId!,
+          training: _training,
+          wettkampfartId: _selectedWettkampfartId,
+          wettkampfergebnis:
+              _wettkampfergebnisController.text.isNotEmpty
+                  ? double.tryParse(_wettkampfergebnisController.text)
+                  : null,
+        );
+        debugPrint('apiService.createBedSport returned: \\$response');
+
+        // Store the created bedSport ID
+        final createdBedSportId = response['id'] as int?;
+        if (createdBedSportId != null) {
+          setState(() {});
+
+          // Map uploaded document to the newly created sport
+          if (_uploadedDateiId != null) {
+            final mapped = await apiService.mapBedDateiToSport(
+              antragsnummer: widget.antragsnummer!,
+              dateiId: _uploadedDateiId!,
+              bedSportId: createdBedSportId,
+            );
+            debugPrint('mapBedDateiToSport returned: \\$mapped');
+            if (!mapped) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Warnung: Dokument konnte nicht verknüpft werden',
+                    ),
+                  ),
+                );
+              }
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Dokument erfolgreich verknüpft'),
+                  ),
+                );
+              }
             }
           }
         }
-      }
-
-      if (mounted) {
-        widget.onSaved({
-          'schiessdatum': _datumController.text,
-          'waffenartId': _selectedWaffenartId!,
-          'disziplinId': _selectedDisziplinId!,
-          'training': _training,
-          'wettkampfartId': _selectedWettkampfartId,
-          'wettkampfergebnis':
-              _wettkampfergebnisController.text.isNotEmpty
-                  ? double.parse(_wettkampfergebnisController.text)
-                  : null,
-        });
-        Navigator.of(context).pop({'success': true});
+        if (mounted) Navigator.of(context).pop(true);
       }
     } catch (e) {
+      debugPrint('Exception in _saveBedSport: \\$e');
       if (mounted) {
         Navigator.of(context).pop({'error': 'Fehler beim Speichern: $e'});
       }

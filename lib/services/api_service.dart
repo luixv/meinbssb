@@ -824,7 +824,7 @@ class ApiService {
 
   /// Get the document for a specific sport activity
   /// Returns the document if one exists, null otherwise
-  Future<BeduerfnisDatei?> getBedDateiBySportId(int bedSportId) async {
+  Future<BeduerfnisDatei?> getBedDateiZuordByBedSportId(int bedSportId) async {
     try {
       // Get the zuord entry to find the datei_id
       final zuord = await _postgrestService.getBedDateiZuordByBedSportId(
