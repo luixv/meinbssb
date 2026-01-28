@@ -228,6 +228,7 @@ class _BeduerfnisantragStep3ScreenState
                             builder:
                                 (dialogContext) => BeduerfnisantragStep3Dialog(
                                   antragsnummer: widget.antrag?.antragsnummer,
+                                  parentContext: context,
                                 ),
                           ).then((_) {
                             // Refresh document list after dialog is closed

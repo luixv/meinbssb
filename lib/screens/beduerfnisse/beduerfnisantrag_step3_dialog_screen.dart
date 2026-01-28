@@ -8,8 +8,13 @@ import 'package:meinbssb/widgets/scaled_text.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BeduerfnisantragStep3Dialog extends StatefulWidget {
-  const BeduerfnisantragStep3Dialog({required this.antragsnummer, super.key});
+  const BeduerfnisantragStep3Dialog({
+    required this.antragsnummer,
+    required this.parentContext,
+    super.key,
+  });
   final int? antragsnummer;
+  final BuildContext parentContext;
 
   @override
   State<BeduerfnisantragStep3Dialog> createState() =>
@@ -26,7 +31,7 @@ class _BeduerfnisantragStep3DialogState
     setState(() {
       _errorMessage = message;
     });
-    final contextToUse = context;
+    final contextToUse = widget.parentContext;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final scaffoldMessenger = ScaffoldMessenger.maybeOf(contextToUse);
       if (scaffoldMessenger != null) {
@@ -96,57 +101,6 @@ class _BeduerfnisantragStep3DialogState
         _isUploadingDocument = false;
       });
       _showError('Fehler beim Hochladen: $e');
-    }
-  }
-
-  Future<void> _scanAndUploadDocument(
-    BuildContext context,
-    String documentType,
-  ) async {
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    if (_labelController.text.trim().isEmpty) {
-      _showError('Bitte geben Sie eine Beschreibung für die Datei ein.');
-      return;
-    }
-    final picker = ImagePicker();
-    try {
-      setState(() {
-        _isUploadingDocument = true;
-      });
-      final pickedFile = await picker.pickImage(source: ImageSource.camera);
-      if (pickedFile == null) {
-        setState(() {
-          _isUploadingDocument = false;
-        });
-        return;
-      }
-      final bytes = await pickedFile.readAsBytes();
-      if (widget.antragsnummer == null) {
-        _showError('Antragsnummer nicht gefunden');
-        setState(() {
-          _isUploadingDocument = false;
-        });
-        return;
-      }
-      final success = await apiService.uploadBedDateiForWBK(
-        antragsnummer: widget.antragsnummer!,
-        dateiname: pickedFile.name,
-        fileBytes: bytes,
-        label: _labelController.text.trim(),
-      );
-      setState(() {
-        _isUploadingDocument = false;
-      });
-      if (success) {
-        Navigator.of(context).pop(true);
-      } else {
-        _showError('Fehler beim Hochladen');
-      }
-    } catch (e) {
-      setState(() {
-        _isUploadingDocument = false;
-      });
-      _showError('Fehler beim Scannen: $e');
     }
   }
 

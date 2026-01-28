@@ -29,7 +29,7 @@ void main() {
       fontSizeProvider = FontSizeProvider();
     });
 
-    Widget buildDialog({int? antragsnummer, BuildContext? parentContext}) {
+    Widget buildDialog({int? antragsnummer}) {
       return MultiProvider(
         providers: [
           Provider<ApiService>.value(value: mockApiService),
@@ -44,6 +44,7 @@ void main() {
                   (context) => Center(
                     child: BeduerfnisantragStep3Dialog(
                       antragsnummer: antragsnummer,
+                      parentContext: context,
                     ),
                   ),
             ),
