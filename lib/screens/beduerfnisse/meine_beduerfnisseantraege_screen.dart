@@ -4,17 +4,17 @@ import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
 import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnissantrag_step1_screen.dart';
+import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step1_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 
-class MeineBeduerfnisseantraegeScreen extends StatefulWidget {
-  const MeineBeduerfnisseantraegeScreen({
+class MeineBeduerfnisantraegeScreen extends StatefulWidget {
+  const MeineBeduerfnisantraegeScreen({
     this.userData,
     required this.isLoggedIn,
     required this.onLogout,
@@ -26,13 +26,13 @@ class MeineBeduerfnisseantraegeScreen extends StatefulWidget {
   final Function() onLogout;
 
   @override
-  State<MeineBeduerfnisseantraegeScreen> createState() =>
-      _MeineBeduerfnisseantraegeScreenState();
+  State<MeineBeduerfnisantraegeScreen> createState() =>
+      _MeineBeduerfnisantraegeScreenState();
 }
 
-class _MeineBeduerfnisseantraegeScreenState
-    extends State<MeineBeduerfnisseantraegeScreen> {
-  late Future<List<BeduerfnisseAntrag>> _antragsFuture;
+class _MeineBeduerfnisantraegeScreenState
+    extends State<MeineBeduerfnisantraegeScreen> {
+  late Future<List<BeduerfnisAntrag>> _antragsFuture;
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _MeineBeduerfnisseantraegeScreenState
     _antragsFuture = _loadAntrags();
   }
 
-  Future<List<BeduerfnisseAntrag>> _loadAntrags() async {
+  Future<List<BeduerfnisAntrag>> _loadAntrags() async {
     if (widget.userData?.personId != null) {
       final apiService = Provider.of<ApiService>(context, listen: false);
       // Force refresh by always fetching fresh data from the server
@@ -90,7 +90,7 @@ class _MeineBeduerfnisseantraegeScreenState
     return [];
   }
 
-  Future<void> _deleteAntrag(BeduerfnisseAntrag antrag) async {
+  Future<void> _deleteAntrag(BeduerfnisAntrag antrag) async {
     if (antrag.id == null) return;
 
     final confirmed = await showDialog<bool>(
@@ -202,7 +202,7 @@ class _MeineBeduerfnisseantraegeScreenState
         return Semantics(
           container: true,
           liveRegion: true,
-          label: 'Bedürfnisbescheinigung - Meine Bedürfnisseanträge',
+          label: 'Bedürfnisbescheinigung - Meine Bedürfnisanträge',
           child: BaseScreenLayout(
             title: 'Bedürfnisbescheinigung',
             userData: widget.userData,
@@ -234,7 +234,7 @@ class _MeineBeduerfnisseantraegeScreenState
                         context,
                         MaterialPageRoute(
                           builder:
-                              (context) => BeduerfnissantragStep1Screen(
+                              (context) => BeduerfnisantragStep1Screen(
                                 userData: widget.userData,
                                 isLoggedIn: widget.isLoggedIn,
                                 onLogout: widget.onLogout,
@@ -258,7 +258,7 @@ class _MeineBeduerfnisseantraegeScreenState
               autofocus: true,
               child: Semantics(
                 label:
-                    'Meine Bedürfnisseanträge. Hier sehen Sie Ihre eingereichten Bedürfnisseanträge.',
+                    'Meine Bedürfnisanträge. Hier sehen Sie Ihre eingereichten Bedürfnisseanträge.',
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(UIConstants.spacingM),
                   child: Column(
@@ -267,9 +267,9 @@ class _MeineBeduerfnisseantraegeScreenState
                       // Subtitle
                       Semantics(
                         header: true,
-                        label: 'Meine Bedürfnisseanträge',
+                        label: 'Meine Bedürfnisanträge',
                         child: ScaledText(
-                          'Meine Bedürfnisseanträge',
+                          'Meine Bedürfnisanträge',
                           style: UIStyles.headerStyle.copyWith(
                             fontSize:
                                 UIStyles.headerStyle.fontSize! *
@@ -280,7 +280,7 @@ class _MeineBeduerfnisseantraegeScreenState
                       const SizedBox(height: UIConstants.spacingM),
 
                       // Bedürfnisse List from API
-                      FutureBuilder<List<BeduerfnisseAntrag>>(
+                      FutureBuilder<List<BeduerfnisAntrag>>(
                         future: _antragsFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -308,8 +308,8 @@ class _MeineBeduerfnisseantraegeScreenState
                             );
                           }
 
-                          final beduerfnisse = snapshot.data ?? [];
-                          if (beduerfnisse.isEmpty) {
+                          final beduerfnis = snapshot.data ?? [];
+                          if (beduerfnis.isEmpty) {
                             return Center(
                               child: ScaledText(
                                 'Keine Bedürfnisseanträge vorhanden',
@@ -325,14 +325,16 @@ class _MeineBeduerfnisseantraegeScreenState
 
                           return Column(
                             children: [
-                              for (int i = 0; i < beduerfnisse.length; i++) ...[
+                              for (int i = 0; i < beduerfnis.length; i++) ...[
                                 _buildBeduerfnisItem(
                                   fontSizeProvider: fontSizeProvider,
-                                  antrag: beduerfnisse[i],
+                                  antrag: beduerfnis[i],
                                 ),
-                                if (i < beduerfnisse.length - 1)
+                                if (i < beduerfnis.length - 1)
                                   const SizedBox(height: UIConstants.spacingS),
                               ],
+                              // Add extra space at the bottom
+                              const SizedBox(height: UIConstants.spacingXXXL),
                             ],
                           );
                         },
@@ -350,7 +352,7 @@ class _MeineBeduerfnisseantraegeScreenState
 
   Widget _buildBeduerfnisItem({
     required FontSizeProvider fontSizeProvider,
-    required BeduerfnisseAntrag antrag,
+    required BeduerfnisAntrag antrag,
   }) {
     final statusColor = _getStatusColor(antrag.statusId);
     final statusText = antrag.statusId?.toGermanString() ?? 'Unbekannt';
@@ -419,7 +421,7 @@ class _MeineBeduerfnisseantraegeScreenState
             if (antrag.statusId != BeduerfnisAntragStatus.entwurf)
               IconButton(
                 icon: const Icon(
-                  Icons.visibility,
+                  Icons.preview,
                   color: UIConstants.defaultAppColor,
                 ),
                 onPressed: () async {
@@ -427,7 +429,7 @@ class _MeineBeduerfnisseantraegeScreenState
                     context,
                     MaterialPageRoute(
                       builder:
-                          (context) => BeduerfnissantragStep1Screen(
+                          (context) => BeduerfnisantragStep1Screen(
                             userData: widget.userData,
                             antrag: antrag,
                             isLoggedIn: widget.isLoggedIn,
@@ -451,7 +453,7 @@ class _MeineBeduerfnisseantraegeScreenState
                     context,
                     MaterialPageRoute(
                       builder:
-                          (context) => BeduerfnissantragStep1Screen(
+                          (context) => BeduerfnisantragStep1Screen(
                             userData: widget.userData,
                             antrag: antrag,
                             isLoggedIn: widget.isLoggedIn,

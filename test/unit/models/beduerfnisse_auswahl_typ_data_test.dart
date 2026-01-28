@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_typ_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_typ_data.dart';
 
 void main() {
   group('BeduerfnisseAuswahlTyp', () {
@@ -11,7 +11,7 @@ void main() {
         'created_at': '2024-01-02T10:00:00.000Z',
         'deleted_at': '2024-01-03T10:00:00.000Z',
       };
-      final auswahlTyp = BeduerfnisseAuswahlTyp.fromJson(json);
+      final auswahlTyp = BeduerfnisAuswahlTyp.fromJson(json);
       expect(auswahlTyp.id, 2);
       expect(auswahlTyp.kuerzel, 'DI');
       expect(auswahlTyp.beschreibung, 'Disziplin');
@@ -27,7 +27,7 @@ void main() {
         'created_at': null,
         'deleted_at': null,
       };
-      final auswahlTyp = BeduerfnisseAuswahlTyp.fromJson(json);
+      final auswahlTyp = BeduerfnisAuswahlTyp.fromJson(json);
       expect(auswahlTyp.id, 3);
       expect(auswahlTyp.kuerzel, 'KA');
       expect(auswahlTyp.beschreibung, 'Kaliber');
@@ -36,19 +36,15 @@ void main() {
     });
 
     test('fromJson handles null id', () {
-      final json = {
-        'id': null,
-        'kuerzel': 'TE',
-        'beschreibung': 'Test',
-      };
-      final auswahlTyp = BeduerfnisseAuswahlTyp.fromJson(json);
+      final json = {'id': null, 'kuerzel': 'TE', 'beschreibung': 'Test'};
+      final auswahlTyp = BeduerfnisAuswahlTyp.fromJson(json);
       expect(auswahlTyp.id, isNull);
       expect(auswahlTyp.kuerzel, 'TE');
       expect(auswahlTyp.beschreibung, 'Test');
     });
 
     test('constructor creates correct object', () {
-      const auswahlTyp = BeduerfnisseAuswahlTyp(
+      const auswahlTyp = BeduerfnisAuswahlTyp(
         id: 1,
         kuerzel: 'WA',
         beschreibung: 'Waffenart',
@@ -65,7 +61,7 @@ void main() {
     test('constructor with timestamps creates correct object', () {
       final createdAt = DateTime(2024, 1, 1, 10, 0, 0);
       final deletedAt = DateTime(2024, 1, 2, 10, 0, 0);
-      final auswahlTyp = BeduerfnisseAuswahlTyp(
+      final auswahlTyp = BeduerfnisAuswahlTyp(
         id: 1,
         kuerzel: 'WA',
         beschreibung: 'Waffenart',
@@ -82,7 +78,7 @@ void main() {
     test('toJson returns correct map', () {
       final createdAt = DateTime(2024, 1, 1, 10, 0, 0);
       final deletedAt = DateTime(2024, 1, 2, 10, 0, 0);
-      final auswahlTyp = BeduerfnisseAuswahlTyp(
+      final auswahlTyp = BeduerfnisAuswahlTyp(
         id: 1,
         kuerzel: 'WA',
         beschreibung: 'Waffenart',
@@ -98,7 +94,7 @@ void main() {
     });
 
     test('toJson handles null values', () {
-      const auswahlTyp = BeduerfnisseAuswahlTyp(
+      const auswahlTyp = BeduerfnisAuswahlTyp(
         id: null,
         kuerzel: 'WA',
         beschreibung: 'Waffenart',
@@ -114,12 +110,12 @@ void main() {
     });
 
     test('inequality with different id', () {
-      const auswahlTyp1 = BeduerfnisseAuswahlTyp(
+      const auswahlTyp1 = BeduerfnisAuswahlTyp(
         id: 1,
         kuerzel: 'WA',
         beschreibung: 'Waffenart',
       );
-      const auswahlTyp2 = BeduerfnisseAuswahlTyp(
+      const auswahlTyp2 = BeduerfnisAuswahlTyp(
         id: 2,
         kuerzel: 'WA',
         beschreibung: 'Waffenart',
@@ -128,12 +124,12 @@ void main() {
     });
 
     test('inequality with different kuerzel', () {
-      const auswahlTyp1 = BeduerfnisseAuswahlTyp(
+      const auswahlTyp1 = BeduerfnisAuswahlTyp(
         id: 1,
         kuerzel: 'WA',
         beschreibung: 'Waffenart',
       );
-      const auswahlTyp2 = BeduerfnisseAuswahlTyp(
+      const auswahlTyp2 = BeduerfnisAuswahlTyp(
         id: 1,
         kuerzel: 'DI',
         beschreibung: 'Waffenart',

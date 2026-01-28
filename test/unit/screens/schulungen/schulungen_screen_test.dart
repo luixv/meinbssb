@@ -168,10 +168,47 @@ void main() {
     ),
   ];
 
-  group('SchulungenScreen', () {
-    late MockApiService mockApiService;
-    late MockCacheService mockCacheService;
+  // Declare these at the top so they are in scope for all testWidgets and helpers
+  late MockApiService mockApiService;
+  late MockCacheService mockCacheService;
 
+  Widget createTestWidget({
+    UserData? userData,
+    bool isLoggedIn = true,
+    DateTime? searchDate,
+    int? webGruppe,
+    int? bezirkId,
+    String? ort,
+    String? titel,
+    bool? fuerVerlaengerungen,
+    bool? fuerVuelVerlaengerungen,
+  }) {
+    return MaterialApp(
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<FontSizeProvider>(
+            create: (_) => FontSizeProvider(),
+          ),
+          Provider<ApiService>(create: (_) => mockApiService),
+          Provider<CacheService>(create: (_) => mockCacheService),
+        ],
+        child: SchulungenScreen(
+          userData ?? dummyUser,
+          isLoggedIn: isLoggedIn,
+          onLogout: () {},
+          searchDate: searchDate ?? DateTime.now(),
+          webGruppe: webGruppe,
+          bezirkId: bezirkId,
+          ort: ort,
+          titel: titel,
+          fuerVerlaengerungen: fuerVerlaengerungen,
+          fuerVuelVerlaengerungen: fuerVuelVerlaengerungen,
+        ),
+      ),
+    );
+  }
+
+  group('SchulungenScreen', () {
     setUp(() {
       mockApiService = MockApiService();
       mockCacheService = MockCacheService();
@@ -200,42 +237,6 @@ void main() {
       ).thenAnswer((_) async => sampleSchulungstermine[0]); // Reuse first item
       // Remove the catch-all stub that was interfering with specific stubs
     });
-
-    Widget createTestWidget({
-      UserData? userData,
-      bool isLoggedIn = true,
-      DateTime? searchDate,
-      int? webGruppe,
-      int? bezirkId,
-      String? ort,
-      String? titel,
-      bool? fuerVerlaengerungen,
-      bool? fuerVuelVerlaengerungen,
-    }) {
-      return MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<FontSizeProvider>(
-              create: (_) => FontSizeProvider(),
-            ),
-            Provider<ApiService>(create: (_) => mockApiService),
-            Provider<CacheService>(create: (_) => mockCacheService),
-          ],
-          child: SchulungenScreen(
-            userData ?? dummyUser,
-            isLoggedIn: isLoggedIn,
-            onLogout: () {},
-            searchDate: searchDate ?? DateTime.now(),
-            webGruppe: webGruppe,
-            bezirkId: bezirkId,
-            ort: ort,
-            titel: titel,
-            fuerVerlaengerungen: fuerVerlaengerungen,
-            fuerVuelVerlaengerungen: fuerVuelVerlaengerungen,
-          ),
-        ),
-      );
-    }
 
     testWidgets('renders without crashing', (WidgetTester tester) async {
       when(

@@ -29,36 +29,46 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
           container: true,
           liveRegion: true,
           label: 'Bedürfnisbescheinigung',
+          hint:
+              'Informationen zum Beantragungsprozess der Bedürfnisbescheinigung',
           child: BaseScreenLayout(
             title: 'Bedürfnisbescheinigung',
             userData: userData,
             isLoggedIn: isLoggedIn,
             onLogout: onLogout,
-            floatingActionButton: KeyboardFocusFAB(
-              heroTag: 'meineBeduerfnisseantraegeFab',
-              tooltip: 'Meine Bedürfnisseanträge',
-              semanticLabel: 'Meine Bedürfnisseanträge Button',
-              semanticHint: 'Navigieren zu Meine Bedürfnisseanträge',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => MeineBeduerfnisseantraegeScreen(
-                          userData: userData,
-                          isLoggedIn: isLoggedIn,
-                          onLogout: onLogout,
-                        ),
-                  ),
-                );
-              },
-              icon: Icons.list_alt,
+            floatingActionButton: Semantics(
+              button: true,
+              enabled: true,
+              label: 'Meine Bedürfnisanträge anzeigen',
+              hint: 'Doppeltippen um zur Übersicht Ihrer Anträge zu navigieren',
+              child: KeyboardFocusFAB(
+                heroTag: 'meineBedürfnisantraegeFab',
+                tooltip: 'Meine Bedürfnisanträge',
+                semanticLabel: 'Meine Bedürfnisanträge Button',
+                semanticHint: 'Navigieren zu Meine Bedürfnisanträge',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => MeineBeduerfnisantraegeScreen(
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                },
+                icon: Icons.list_alt,
+              ),
             ),
             body: Focus(
               autofocus: true,
               child: Semantics(
                 label:
                     'Bedürfnisbescheinigungsbereich. Hier können Sie die Bedürfnisbescheinigung beantragen und den Prozessablauf einsehen.',
+                hint:
+                    'Scrollen Sie nach unten um die vier Prozessschritte zu lesen',
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(UIConstants.spacingM),
                   child: Column(
@@ -68,6 +78,7 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
                       Semantics(
                         header: true,
                         label: 'Ablaufbeschreibung',
+                        hint: 'Überschrift der Prozessbeschreibung',
                         child: ScaledText(
                           'Ablaufbeschreibung',
                           style: UIStyles.headerStyle.copyWith(
@@ -83,6 +94,7 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
                       Semantics(
                         label:
                             'Hier können Sie die Bedürfnisbescheinigung beantragen.',
+                        hint: 'Einführungstext zum Beantragungsprozess',
                         child: ScaledText(
                           'Hier können Sie die Bedürfnisbescheinigung beantragen.',
                           style: UIStyles.bodyTextStyle.copyWith(
@@ -96,6 +108,7 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
 
                       Semantics(
                         label: 'Der Prozess sieht folgende Schritte vor:',
+                        hint: 'Überleitung zu den vier Prozessschritten',
                         child: ScaledText(
                           'Der Prozess sieht folgende Schritte vor:',
                           style: UIStyles.bodyTextStyle.copyWith(
@@ -108,46 +121,67 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
                       const SizedBox(height: UIConstants.spacingM),
 
                       // Step 1
-                      _buildStepSection(
-                        fontSizeProvider: fontSizeProvider,
-                        stepNumber: '1',
-                        title: 'Erfassen der Daten',
-                        items: [
-                          'Auswahl ob ein Bedürfnis für eine neue WBK beantragt werden soll, oder eine weitere Waffe einer bestehenden WBK hinzugefügt werden soll.',
-                          'Auswahl der WBK Art',
-                          'Erfassen der Sportschützeneigenschaft',
-                          'Ggf. erfassen der Kurz- oder Langwaffen',
-                          'Ggf. Nachweis der Teilnahme an Wettbewerben',
-                        ],
+                      Semantics(
+                        label: 'Schritt 1 von 4',
+                        hint: 'Erfassen der Daten mit 5 Unterpunkten',
+                        child: _buildStepSection(
+                          fontSizeProvider: fontSizeProvider,
+                          stepNumber: '1',
+                          title: 'Erfassen der Daten',
+                          items: [
+                            'Auswahl ob ein Bedürfnis für eine neue WBK beantragt werden soll, oder eine weitere Waffe einer bestehenden WBK hinzugefügt werden soll.',
+                            'Auswahl der WBK Art',
+                            'Erfassen der Sportschützeneigenschaft',
+                            'Ggf. erfassen der Kurz- oder Langwaffen',
+                            'Ggf. Nachweis der Teilnahme an Wettbewerben',
+                          ],
+                          stepOf: '1 von 4',
+                        ),
                       ),
                       const SizedBox(height: UIConstants.spacingM),
 
                       // Step 2
-                      _buildStepSection(
-                        fontSizeProvider: fontSizeProvider,
-                        stepNumber: '2',
-                        title:
-                            'Bestätigung der Angaben durch den Vorstand nach §26 BGB',
-                        items: [],
+                      Semantics(
+                        label: 'Schritt 2 von 4',
+                        hint: 'Bestätigung der Angaben durch den Vorstand',
+                        child: _buildStepSection(
+                          fontSizeProvider: fontSizeProvider,
+                          stepNumber: '2',
+                          title:
+                              'Bestätigung der Angaben durch den Vorstand nach §26 BGB',
+                          items: [],
+                          stepOf: '2 von 4',
+                        ),
                       ),
                       const SizedBox(height: UIConstants.spacingM),
 
                       // Step 3
-                      _buildStepSection(
-                        fontSizeProvider: fontSizeProvider,
-                        stepNumber: '3',
-                        title: 'Prüfung der Daten durch den BSSB',
-                        items: [],
+                      Semantics(
+                        label: 'Schritt 3 von 4',
+                        hint: 'Prüfung der Daten durch den BSSB',
+                        child: _buildStepSection(
+                          fontSizeProvider: fontSizeProvider,
+                          stepNumber: '3',
+                          title: 'Prüfung der Daten durch den BSSB',
+                          items: [],
+                          stepOf: '3 von 4',
+                        ),
                       ),
                       const SizedBox(height: UIConstants.spacingM),
 
                       // Step 4
-                      _buildStepSection(
-                        fontSizeProvider: fontSizeProvider,
-                        stepNumber: '4',
-                        title:
-                            'Erstellung / Ablehnung der Bedürfnisbescheinigung',
-                        items: [],
+                      Semantics(
+                        label: 'Schritt 4 von 4',
+                        hint:
+                            'Letzter Schritt: Erstellung oder Ablehnung der Bescheinigung',
+                        child: _buildStepSection(
+                          fontSizeProvider: fontSizeProvider,
+                          stepNumber: '4',
+                          title:
+                              'Erstellung / Ablehnung der Bedürfnisbescheinigung',
+                          items: [],
+                          stepOf: '4 von 4',
+                        ),
                       ),
                     ],
                   ),
@@ -165,86 +199,102 @@ class BeduerfnisbescheinigungScreen extends StatelessWidget {
     required String stepNumber,
     required String title,
     required List<String> items,
+    String? stepOf,
   }) {
     final fullStepText =
         items.isEmpty
-            ? '$stepNumber. $title'
-            : '$stepNumber. $title mit ${items.length} Unterpunkten';
+            ? '${stepOf != null ? "Schritt $stepOf: " : ""}$stepNumber. $title'
+            : '${stepOf != null ? "Schritt $stepOf: " : ""}$stepNumber. $title mit ${items.length} Unterpunkten';
 
     return Semantics(
       label: fullStepText,
+      hint:
+          items.isEmpty
+              ? 'Keine weiteren Details verfügbar'
+              : 'Enthält ${items.length} Detailpunkte',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Step title
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ScaledText(
-                '$stepNumber. ',
-                style: UIStyles.formValueBoldStyle.copyWith(
-                  fontSize:
-                      UIStyles.formValueBoldStyle.fontSize! *
-                      fontSizeProvider.scaleFactor,
-                ),
-              ),
-              Expanded(
-                child: ScaledText(
-                  title,
+          Semantics(
+            header: true,
+            label: 'Schritt $stepNumber: $title',
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ScaledText(
+                  '$stepNumber. ',
                   style: UIStyles.formValueBoldStyle.copyWith(
                     fontSize:
                         UIStyles.formValueBoldStyle.fontSize! *
                         fontSizeProvider.scaleFactor,
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: ScaledText(
+                    title,
+                    style: UIStyles.formValueBoldStyle.copyWith(
+                      fontSize:
+                          UIStyles.formValueBoldStyle.fontSize! *
+                          fontSizeProvider.scaleFactor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
 
           // Sub-items if any
           if (items.isNotEmpty) ...[
             const SizedBox(height: UIConstants.spacingS),
-            Padding(
-              padding: const EdgeInsets.only(left: UIConstants.spacingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:
-                    items.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final item = entry.value;
-                      return Semantics(
-                        label:
-                            'Unterpunkt ${index + 1} von ${items.length}: $item',
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: UIConstants.spacingS,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ScaledText(
-                                '• ',
-                                style: UIStyles.bodyTextStyle.copyWith(
-                                  fontSize:
-                                      UIStyles.bodyTextStyle.fontSize! *
-                                      fontSizeProvider.scaleFactor,
-                                ),
-                              ),
-                              Expanded(
-                                child: ScaledText(
-                                  item,
+            Semantics(
+              label: 'Liste mit ${items.length} Detailpunkten',
+              child: Padding(
+                padding: const EdgeInsets.only(left: UIConstants.spacingM),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:
+                      items.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final item = entry.value;
+                        return Semantics(
+                          label:
+                              'Punkt ${index + 1} von ${items.length}: $item',
+                          hint:
+                              index == items.length - 1
+                                  ? 'Letzter Punkt in dieser Liste'
+                                  : 'Scrollen Sie weiter für mehr Punkte',
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: UIConstants.spacingS,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ScaledText(
+                                  '• ',
                                   style: UIStyles.bodyTextStyle.copyWith(
                                     fontSize:
                                         UIStyles.bodyTextStyle.fontSize! *
                                         fontSizeProvider.scaleFactor,
                                   ),
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  child: ScaledText(
+                                    item,
+                                    style: UIStyles.bodyTextStyle.copyWith(
+                                      fontSize:
+                                          UIStyles.bodyTextStyle.fontSize! *
+                                          fontSizeProvider.scaleFactor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                ),
               ),
             ),
           ],

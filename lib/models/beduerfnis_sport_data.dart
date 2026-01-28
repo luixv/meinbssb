@@ -2,42 +2,53 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a sport record (bed_sport) in the BSSB system.
 @immutable
-class BeduerfnisseSport {
-  /// Creates a [BeduerfnisseSport] instance from a JSON map.
-  factory BeduerfnisseSport.fromJson(Map<String, dynamic> json) {
-    return BeduerfnisseSport(
+class BeduerfnisSport {
+  /// Creates a [BeduerfnisSport] instance from a JSON map.
+  factory BeduerfnisSport.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisSport(
       id: (json['ID'] ?? json['id']) as int?,
       createdAt:
           (json['CREATED_AT'] ?? json['created_at']) == null
               ? null
-              : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
+              : DateTime.parse(
+                (json['CREATED_AT'] ?? json['created_at']) as String,
+              ),
       changedAt:
           (json['CHANGED_AT'] ?? json['changed_at']) == null
               ? null
-              : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
+              : DateTime.parse(
+                (json['CHANGED_AT'] ?? json['changed_at']) as String,
+              ),
       deletedAt:
           (json['DELETED_AT'] ?? json['deleted_at']) == null
               ? null
-              : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+              : DateTime.parse(
+                (json['DELETED_AT'] ?? json['deleted_at']) as String,
+              ),
       antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
       schiessdatum:
           (json['SCHIESSDATUM'] ?? json['schiessdatum']) == null
               ? DateTime.now() // fallback to now if null
-              : DateTime.parse((json['SCHIESSDATUM'] ?? json['schiessdatum']) as String),
+              : DateTime.parse(
+                (json['SCHIESSDATUM'] ?? json['schiessdatum']) as String,
+              ),
       waffenartId: (json['WAFFENART_ID'] ?? json['waffenart_id']) as int,
       disziplinId: (json['DISZIPLIN_ID'] ?? json['disziplin_id']) as int,
       training: (json['TRAINING'] ?? json['training']) as bool,
-      wettkampfartId: (json['WETTKAMPFART_ID'] ?? json['wettkampfart_id']) as int?,
+      wettkampfartId:
+          (json['WETTKAMPFART_ID'] ?? json['wettkampfart_id']) as int?,
       wettkampfergebnis:
           (json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis']) == null
               ? null
-              : ((json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis']) as num).toDouble(),
+              : ((json['WETTKAMPFERGEBNIS'] ?? json['wettkampfergebnis'])
+                      as num)
+                  .toDouble(),
       bemerkung: (json['BEMERKUNG'] ?? json['bemerkung']) as String?,
     );
   }
 
-  /// Creates a new instance of [BeduerfnisseSport].
-  const BeduerfnisseSport({
+  /// Creates a new instance of [BeduerfnisSport].
+  const BeduerfnisSport({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -88,7 +99,7 @@ class BeduerfnisseSport {
   /// Remarks/notes (nullable).
   final String? bemerkung;
 
-  /// Converts the [BeduerfnisseSport] instance to a JSON map.
+  /// Converts the [BeduerfnisSport] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

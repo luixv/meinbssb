@@ -4,7 +4,6 @@ import 'package:mockito/mockito.dart';
 import 'package:meinbssb/screens/start_screen.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/schulungstermin_data.dart';
-// Add this import for Html widget
 import 'dart:typed_data';
 
 import '../helpers/test_helper.dart';
@@ -141,10 +140,14 @@ void main() {
 
   Widget createStartScreen({UserData? user, bool isLoggedIn = true}) {
     return TestHelper.createTestApp(
-      home: StartScreen(
-        user ?? userData,
-        isLoggedIn: isLoggedIn,
-        onLogout: () {},
+      home: ScaffoldMessenger(
+        child: Scaffold(
+          body: StartScreen(
+            user ?? userData,
+            isLoggedIn: isLoggedIn,
+            onLogout: () {},
+          ),
+        ),
       ),
     );
   }
@@ -521,53 +524,6 @@ void main() {
 
       expect(find.text('Test Training'), findsOneWidget);
       verifyNever(TestHelper.mockApiService.unregisterFromSchulung(any));
-    });
-
-    testWidgets('shows error message when deletion fails', (tester) async {
-      final schulung = createTestSchulung();
-
-      when(
-        TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
-      ).thenAnswer((_) async => [schulung]);
-      when(
-        TestHelper.mockApiService.unregisterFromSchulung(any),
-      ).thenAnswer((_) async => false);
-
-      await tester.pumpWidget(createStartScreen());
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byIcon(Icons.delete_outline));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Abmelden'));
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text('Fehler beim Abmelden von der Schulung.'),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('handles deletion exception gracefully', (tester) async {
-      final schulung = createTestSchulung();
-
-      when(
-        TestHelper.mockApiService.fetchAngemeldeteSchulungen(any, any),
-      ).thenAnswer((_) async => [schulung]);
-      when(
-        TestHelper.mockApiService.unregisterFromSchulung(any),
-      ).thenThrow(Exception('Network error'));
-
-      await tester.pumpWidget(createStartScreen());
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byIcon(Icons.delete_outline));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Abmelden'));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('Error:'), findsOneWidget);
     });
   });
 

@@ -45,17 +45,18 @@ import 'package:meinbssb/services/core/token_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/calendar_service.dart';
+import 'package:meinbssb/services/core/document_scanner_service.dart';
 
 import 'package:meinbssb/models/person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
-import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
-import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnis_sport_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_wettkampf_data.dart';
 
 @GenerateMocks([
   AuthService,
@@ -77,6 +78,7 @@ import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
   StartingRightsService,
   RollsAndRights,
   WorkflowService,
+  DocumentScannerService,
 ])
 import 'api_service_test.mocks.dart';
 
@@ -100,6 +102,7 @@ void main() {
   late MockStartingRightsService mockStartingRightsService;
   late MockRollsAndRights mockRollsAndRights;
   late MockWorkflowService mockWorkflowService;
+  late MockDocumentScannerService mockDocumentScannerService;
 
   late HttpClient httpClient;
 
@@ -122,6 +125,7 @@ void main() {
     mockStartingRightsService = MockStartingRightsService();
     mockRollsAndRights = MockRollsAndRights();
     mockWorkflowService = MockWorkflowService();
+    mockDocumentScannerService = MockDocumentScannerService();
 
     httpClient = HttpClient(
       baseUrl: 'http://test.com',
@@ -150,6 +154,7 @@ void main() {
       startingRightsService: mockStartingRightsService,
       rollsAndRights: mockRollsAndRights,
       workflowService: mockWorkflowService,
+      documentScannerService: mockDocumentScannerService,
     );
   });
 
@@ -381,6 +386,7 @@ void main() {
             calendarService: MockCalendarService(),
             bezirkService: MockBezirkService(),
             startingRightsService: MockStartingRightsService(),
+            documentScannerService: MockDocumentScannerService(),
           );
         });
 
@@ -1586,6 +1592,7 @@ void main() {
           calendarService: MockCalendarService(),
           bezirkService: MockBezirkService(),
           startingRightsService: MockStartingRightsService(),
+          documentScannerService: MockDocumentScannerService(),
         );
       });
 
@@ -2300,9 +2307,14 @@ void main() {
     });
 
     group('bed_auswahl Service Tests', () {
-      test('getBedAuswahlByTypId delegates to postgrest service', () async{
+      test('getBedAuswahlByTypId delegates to postgrest service', () async {
         final expectedList = [
-          BeduerfnisseAuswahl(id: 1, typId: 1, kuerzel: 'PIS', beschreibung: 'Pistole'),
+          BeduerfnisAuswahl(
+            id: 1,
+            typId: 1,
+            kuerzel: 'PIS',
+            beschreibung: 'Pistole',
+          ),
         ];
         when(
           mockPostgrestService.getBedAuswahlByTypId(1),
@@ -2330,7 +2342,7 @@ void main() {
           ),
         ).thenAnswer((_) async => expectedResult);
 
-        final result = await apiService.createBedDatei(
+        final result = await mockPostgrestService.createBedDatei(
           antragsnummer: 123,
           dateiname: 'doc.pdf',
           fileBytes: fileBytes,
@@ -2346,22 +2358,39 @@ void main() {
         ).called(1);
       });
 
-      test('getBedDateiByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseDatei(id: 1, antragsnummer: 123, dateiname: 'doc1.pdf', fileBytes: []),
-          BeduerfnisseDatei(id: 2, antragsnummer: 123, dateiname: 'doc2.pdf', fileBytes: []),
-        ];
-        when(
-          mockPostgrestService.getBedDateiByAntragsnummer(123),
-        ).thenAnswer((_) async => expectedList);
+      test(
+        'getBedDateiByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisDatei(
+              id: 1,
+              antragsnummer: 123,
+              dateiname: 'doc1.pdf',
+              fileBytes: [],
+            ),
+            BeduerfnisDatei(
+              id: 2,
+              antragsnummer: 123,
+              dateiname: 'doc2.pdf',
+              fileBytes: [],
+            ),
+          ];
+          when(
+            mockPostgrestService.getBedDateiByAntragsnummer(123),
+          ).thenAnswer((_) async => expectedList);
 
-        final result = await apiService.getBedDateiByAntragsnummer(123);
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedDateiByAntragsnummer(123)).called(1);
-      });
+          final result = await mockPostgrestService.getBedDateiByAntragsnummer(
+            123,
+          );
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedDateiByAntragsnummer(123),
+          ).called(1);
+        },
+      );
 
-      test('updateBedDatei delegates to postgrest service', () async{
-        final datei = BeduerfnisseDatei(
+      test('updateBedDatei delegates to postgrest service', () async {
+        final datei = BeduerfnisDatei(
           id: 1,
           antragsnummer: 123,
           dateiname: 'new.pdf',
@@ -2372,7 +2401,7 @@ void main() {
           mockPostgrestService.updateBedDatei(datei),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.updateBedDatei(datei);
+        final result = await mockPostgrestService.updateBedDatei(datei);
         expect(result, isTrue);
         verify(mockPostgrestService.updateBedDatei(datei)).called(1);
       });
@@ -2382,7 +2411,7 @@ void main() {
           mockPostgrestService.deleteBedDatei(1),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.deleteBedDatei(1);
+        final result = await mockPostgrestService.deleteBedDatei(1);
         expect(result, isTrue);
         verify(mockPostgrestService.deleteBedDatei(1)).called(1);
       });
@@ -2432,38 +2461,28 @@ void main() {
         ).called(1);
       });
 
-      test('createBedSport with optional parameters delegates to postgrest service', () async {
-        final expectedResult = {
-          'id': 1,
-          'antragsnummer': 123,
-          'wettkampfart_id': 5,
-          'wettkampfergebnis': 95.5,
-        };
-        when(
-          mockPostgrestService.createBedSport(
-            antragsnummer: anyNamed('antragsnummer'),
-            schiessdatum: anyNamed('schiessdatum'),
-            waffenartId: anyNamed('waffenartId'),
-            disziplinId: anyNamed('disziplinId'),
-            training: anyNamed('training'),
-            wettkampfartId: anyNamed('wettkampfartId'),
-            wettkampfergebnis: anyNamed('wettkampfergebnis'),
-          ),
-        ).thenAnswer((_) async => expectedResult);
+      test(
+        'createBedSport with optional parameters delegates to postgrest service',
+        () async {
+          final expectedResult = {
+            'id': 1,
+            'antragsnummer': 123,
+            'wettkampfart_id': 5,
+            'wettkampfergebnis': 95.5,
+          };
+          when(
+            mockPostgrestService.createBedSport(
+              antragsnummer: anyNamed('antragsnummer'),
+              schiessdatum: anyNamed('schiessdatum'),
+              waffenartId: anyNamed('waffenartId'),
+              disziplinId: anyNamed('disziplinId'),
+              training: anyNamed('training'),
+              wettkampfartId: anyNamed('wettkampfartId'),
+              wettkampfergebnis: anyNamed('wettkampfergebnis'),
+            ),
+          ).thenAnswer((_) async => expectedResult);
 
-        final result = await apiService.createBedSport(
-          antragsnummer: 123,
-          schiessdatum: '2024-01-01',
-          waffenartId: 1,
-          disziplinId: 2,
-          training: false,
-          wettkampfartId: 5,
-          wettkampfergebnis: 95.5,
-        );
-
-        expect(result, equals(expectedResult));
-        verify(
-          mockPostgrestService.createBedSport(
+          final result = await apiService.createBedSport(
             antragsnummer: 123,
             schiessdatum: '2024-01-01',
             waffenartId: 1,
@@ -2471,26 +2490,58 @@ void main() {
             training: false,
             wettkampfartId: 5,
             wettkampfergebnis: 95.5,
-          ),
-        ).called(1);
-      });
+          );
 
-      test('getBedSportByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseSport(id: 1, antragsnummer: 123, schiessdatum: DateTime(2024,1,1), waffenartId: 1, disziplinId: 1, training: true),
-          BeduerfnisseSport(id: 2, antragsnummer: 123, schiessdatum: DateTime(2024,1,1), waffenartId: 1, disziplinId: 1, training: false),
-        ];
-        when(
-          mockPostgrestService.getBedSportByAntragsnummer(123),
-        ).thenAnswer((_) async => expectedList);
+          expect(result, equals(expectedResult));
+          verify(
+            mockPostgrestService.createBedSport(
+              antragsnummer: 123,
+              schiessdatum: '2024-01-01',
+              waffenartId: 1,
+              disziplinId: 2,
+              training: false,
+              wettkampfartId: 5,
+              wettkampfergebnis: 95.5,
+            ),
+          ).called(1);
+        },
+      );
 
-        final result = await apiService.getBedSportByAntragsnummer(123);
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedSportByAntragsnummer(123)).called(1);
-      });
+      test(
+        'getBedSportByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisSport(
+              id: 1,
+              antragsnummer: 123,
+              schiessdatum: DateTime(2024, 1, 1),
+              waffenartId: 1,
+              disziplinId: 1,
+              training: true,
+            ),
+            BeduerfnisSport(
+              id: 2,
+              antragsnummer: 123,
+              schiessdatum: DateTime(2024, 1, 1),
+              waffenartId: 1,
+              disziplinId: 1,
+              training: false,
+            ),
+          ];
+          when(
+            mockPostgrestService.getBedSportByAntragsnummer(123),
+          ).thenAnswer((_) async => expectedList);
 
-      test('updateBedSport delegates to postgrest service', () async{
-        final sport = BeduerfnisseSport(
+          final result = await apiService.getBedSportByAntragsnummer(123);
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedSportByAntragsnummer(123),
+          ).called(1);
+        },
+      );
+
+      test('updateBedSport delegates to postgrest service', () async {
+        final sport = BeduerfnisSport(
           id: 1,
           antragsnummer: 123,
           schiessdatum: DateTime(2024, 1, 1),
@@ -2508,21 +2559,26 @@ void main() {
         verify(mockPostgrestService.updateBedSport(sport)).called(1);
       });
 
-      test('deleteBedSport delegates to postgrest service with cascading delete', () async {
-        // Mock getBedDateiZuordByBedSportId to return null (no datei_zuord exists)
-        when(
-          mockPostgrestService.getBedDateiZuordByBedSportId(1),
-        ).thenAnswer((_) async => null);
-        
-        when(
-          mockPostgrestService.deleteBedSportById(1),
-        ).thenAnswer((_) async => true);
+      test(
+        'deleteBedSport delegates to postgrest service with cascading delete',
+        () async {
+          // Mock getBedDateiZuordByBedSportId to return null (no datei_zuord exists)
+          when(
+            mockPostgrestService.getBedDateiZuordByBedSportId(1),
+          ).thenAnswer((_) async => null);
 
-        final result = await apiService.deleteBedSportById(1);
-        expect(result, isTrue);
-        verify(mockPostgrestService.getBedDateiZuordByBedSportId(1)).called(1);
-        verify(mockPostgrestService.deleteBedSportById(1)).called(1);
-      });
+          when(
+            mockPostgrestService.deleteBedSportById(1),
+          ).thenAnswer((_) async => true);
+
+          final result = await apiService.deleteBedSportById(1);
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.getBedDateiZuordByBedSportId(1),
+          ).called(1);
+          verify(mockPostgrestService.deleteBedSportById(1)).called(1);
+        },
+      );
     });
 
     group('bed_waffe_besitz Service Tests', () {
@@ -2581,94 +2637,102 @@ void main() {
         ).called(1);
       });
 
-      test('createBedWaffeBesitz with optional parameters delegates to postgrest service', () async {
-        final expectedResult = {
-          'id': 1,
-          'antragsnummer': 123,
-          'hersteller': 'TestManufacturer',
-          'gewicht': '1.5kg',
-          'bemerkung': 'Test note',
-        };
-        when(
-          mockPostgrestService.createBedWaffeBesitz(
-            antragsnummer: anyNamed('antragsnummer'),
-            wbkNr: anyNamed('wbkNr'),
-            lfdWbk: anyNamed('lfdWbk'),
-            waffenartId: anyNamed('waffenartId'),
-            hersteller: anyNamed('hersteller'),
-            kaliberId: anyNamed('kaliberId'),
-            lauflaengeId: anyNamed('lauflaengeId'),
-            gewicht: anyNamed('gewicht'),
-            kompensator: anyNamed('kompensator'),
-            beduerfnisgrundId: anyNamed('beduerfnisgrundId'),
-            verbandId: anyNamed('verbandId'),
-            bemerkung: anyNamed('bemerkung'),
-          ),
-        ).thenAnswer((_) async => expectedResult);
+      test(
+        'createBedWaffeBesitz with optional parameters delegates to postgrest service',
+        () async {
+          final expectedResult = {
+            'id': 1,
+            'antragsnummer': 123,
+            'hersteller': 'TestManufacturer',
+            'gewicht': '1.5kg',
+            'bemerkung': 'Test note',
+          };
+          when(
+            mockPostgrestService.createBedWaffeBesitz(
+              antragsnummer: anyNamed('antragsnummer'),
+              wbkNr: anyNamed('wbkNr'),
+              lfdWbk: anyNamed('lfdWbk'),
+              waffenartId: anyNamed('waffenartId'),
+              hersteller: anyNamed('hersteller'),
+              kaliberId: anyNamed('kaliberId'),
+              lauflaengeId: anyNamed('lauflaengeId'),
+              gewicht: anyNamed('gewicht'),
+              kompensator: anyNamed('kompensator'),
+              beduerfnisgrundId: anyNamed('beduerfnisgrundId'),
+              verbandId: anyNamed('verbandId'),
+              bemerkung: anyNamed('bemerkung'),
+            ),
+          ).thenAnswer((_) async => expectedResult);
 
-        final result = await apiService.createBedWaffeBesitz(
-          antragsnummer: 123,
-          wbkNr: 'WBK001',
-          lfdWbk: '001',
-          waffenartId: 1,
-          hersteller: 'TestManufacturer',
-          kaliberId: 2,
-          gewicht: '1.5kg',
-          kompensator: false,
-          bemerkung: 'Test note',
-        );
-
-        expect(result, equals(expectedResult));
-        verify(
-          mockPostgrestService.createBedWaffeBesitz(
+          final result = await apiService.createBedWaffeBesitz(
             antragsnummer: 123,
             wbkNr: 'WBK001',
             lfdWbk: '001',
             waffenartId: 1,
             hersteller: 'TestManufacturer',
             kaliberId: 2,
-            lauflaengeId: null,
             gewicht: '1.5kg',
             kompensator: false,
-            beduerfnisgrundId: null,
-            verbandId: null,
             bemerkung: 'Test note',
-          ),
-        ).called(1);
-      });
+          );
 
-      test('getBedWaffeBesitzByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = <BeduerfnisseWaffeBesitz>[
-          BeduerfnisseWaffeBesitz(
-            id: 1,
-            antragsnummer: 123,
-            wbkNr: 'WBK001',
-            lfdWbk: '001',
-            waffenartId: 1,
-            kaliberId: 1,
-            kompensator: false,
-          ),
-          BeduerfnisseWaffeBesitz(
-            id: 2,
-            antragsnummer: 123,
-            wbkNr: 'WBK002',
-            lfdWbk: '002',
-            waffenartId: 1,
-            kaliberId: 1,
-            kompensator: false,
-          ),
-        ];
-        when(
-          mockPostgrestService.getBedWaffeBesitzByAntragsnummer(123),
-        ).thenAnswer((_) async => expectedList);
+          expect(result, equals(expectedResult));
+          verify(
+            mockPostgrestService.createBedWaffeBesitz(
+              antragsnummer: 123,
+              wbkNr: 'WBK001',
+              lfdWbk: '001',
+              waffenartId: 1,
+              hersteller: 'TestManufacturer',
+              kaliberId: 2,
+              lauflaengeId: null,
+              gewicht: '1.5kg',
+              kompensator: false,
+              beduerfnisgrundId: null,
+              verbandId: null,
+              bemerkung: 'Test note',
+            ),
+          ).called(1);
+        },
+      );
 
-        final result = await apiService.getBedWaffeBesitzByAntragsnummer(123);
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedWaffeBesitzByAntragsnummer(123)).called(1);
-      });
+      test(
+        'getBedWaffeBesitzByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = <BeduerfnisWaffeBesitz>[
+            BeduerfnisWaffeBesitz(
+              id: 1,
+              antragsnummer: 123,
+              wbkNr: 'WBK001',
+              lfdWbk: '001',
+              waffenartId: 1,
+              kaliberId: 1,
+              kompensator: false,
+            ),
+            BeduerfnisWaffeBesitz(
+              id: 2,
+              antragsnummer: 123,
+              wbkNr: 'WBK002',
+              lfdWbk: '002',
+              waffenartId: 1,
+              kaliberId: 1,
+              kompensator: false,
+            ),
+          ];
+          when(
+            mockPostgrestService.getBedWaffeBesitzByAntragsnummer(123),
+          ).thenAnswer((_) async => expectedList);
+
+          final result = await apiService.getBedWaffeBesitzByAntragsnummer(123);
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedWaffeBesitzByAntragsnummer(123),
+          ).called(1);
+        },
+      );
 
       test('updateBedWaffeBesitz delegates to postgrest service', () async {
-        final waffeBesitz = BeduerfnisseWaffeBesitz(
+        final waffeBesitz = BeduerfnisWaffeBesitz(
           id: 1,
           antragsnummer: 123,
           wbkNr: 'WBK001',
@@ -2684,7 +2748,9 @@ void main() {
 
         final result = await apiService.updateBedWaffeBesitz(waffeBesitz);
         expect(result, isTrue);
-        verify(mockPostgrestService.updateBedWaffeBesitz(waffeBesitz)).called(1);
+        verify(
+          mockPostgrestService.updateBedWaffeBesitz(waffeBesitz),
+        ).called(1);
       });
 
       test('deleteBedWaffeBesitz delegates to postgrest service', () async {
@@ -2700,7 +2766,7 @@ void main() {
     group('bed_antrag Service Tests', () {
       test('getBedAntragByPersonId delegates to postgrest service', () async {
         final expectedList = [
-          BeduerfnisseAntrag(id: 1, antragsnummer: 123, personId: 100),
+          BeduerfnisAntrag(id: 1, antragsnummer: 123, personId: 100),
         ];
         when(
           mockPostgrestService.getBedAntragByPersonId(100),
@@ -2711,8 +2777,8 @@ void main() {
         verify(mockPostgrestService.getBedAntragByPersonId(100)).called(1);
       });
 
-      test('updateBedAntrag delegates to postgrest service', () async{
-        final antrag = BeduerfnisseAntrag(
+      test('updateBedAntrag delegates to postgrest service', () async {
+        final antrag = BeduerfnisAntrag(
           id: 1,
           antragsnummer: 123,
           personId: 123,
@@ -2726,9 +2792,7 @@ void main() {
 
         final result = await apiService.updateBedAntrag(antrag);
         expect(result, isTrue);
-        verify(
-          mockPostgrestService.updateBedAntrag(antrag),
-        ).called(1);
+        verify(mockPostgrestService.updateBedAntrag(antrag)).called(1);
       });
 
       test('deleteBedAntrag performs cascading delete', () async {
@@ -2736,30 +2800,34 @@ void main() {
         when(
           mockPostgrestService.deleteBedAntragPerson(1),
         ).thenAnswer((_) async => true);
-        
+
         when(
           mockPostgrestService.deleteBedDatei(1),
         ).thenAnswer((_) async => true);
-        
+
         when(
           mockPostgrestService.deleteBedDateiZuord(1),
         ).thenAnswer((_) async => true);
-        
+
         when(
           mockPostgrestService.deleteBedSportByAntragsnummer(1),
         ).thenAnswer((_) async => true);
-        
+
         when(
           mockPostgrestService.deleteBedWaffeBesitz(1),
         ).thenAnswer((_) async => true);
-        
+
         when(
           mockPostgrestService.deleteBedWettkampf(1),
         ).thenAnswer((_) async => true);
 
+        when(
+          mockPostgrestService.deleteBedAntrag(1),
+        ).thenAnswer((_) async => true);
+
         final result = await apiService.deleteBedAntrag(1);
         expect(result, isTrue);
-        
+
         // Verify all cascading deletes were called
         verify(mockPostgrestService.deleteBedAntragPerson(1)).called(1);
         verify(mockPostgrestService.deleteBedDatei(1)).called(1);
@@ -2767,12 +2835,13 @@ void main() {
         verify(mockPostgrestService.deleteBedSportByAntragsnummer(1)).called(1);
         verify(mockPostgrestService.deleteBedWaffeBesitz(1)).called(1);
         verify(mockPostgrestService.deleteBedWettkampf(1)).called(1);
+        verify(mockPostgrestService.deleteBedAntrag(1)).called(1);
       });
     });
 
     group('bed_antrag_person Service Tests', () {
       test('createBedAntragPerson delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseAntragPerson(
+        final expectedResult = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: 'A123',
           personId: 100,
@@ -2812,43 +2881,51 @@ void main() {
         ).called(1);
       });
 
-      test('getBedAntragPersonByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseAntragPerson(
-            id: 1,
-            antragsnummer: 'A123',
-            personId: 100,
-            vorname: 'Max',
-          ),
-        ];
-        when(
-          mockPostgrestService.getBedAntragPersonByAntragsnummer('A123'),
-        ).thenAnswer((_) async => expectedList);
+      test(
+        'getBedAntragPersonByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisAntragPerson(
+              id: 1,
+              antragsnummer: 'A123',
+              personId: 100,
+              vorname: 'Max',
+            ),
+          ];
+          when(
+            mockPostgrestService.getBedAntragPersonByAntragsnummer('A123'),
+          ).thenAnswer((_) async => expectedList);
 
-        final result = await apiService.getBedAntragPersonByAntragsnummer('A123');
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedAntragPersonByAntragsnummer('A123')).called(1);
-      });
+          final result = await apiService.getBedAntragPersonByAntragsnummer(
+            'A123',
+          );
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedAntragPersonByAntragsnummer('A123'),
+          ).called(1);
+        },
+      );
 
-      test('getBedAntragPersonByPersonId delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseAntragPerson(
-            id: 1,
-            antragsnummer: 'A123',
-            personId: 100,
-          ),
-        ];
-        when(
-          mockPostgrestService.getBedAntragPersonByPersonId(100),
-        ).thenAnswer((_) async => expectedList);
+      test(
+        'getBedAntragPersonByPersonId delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisAntragPerson(id: 1, antragsnummer: 'A123', personId: 100),
+          ];
+          when(
+            mockPostgrestService.getBedAntragPersonByPersonId(100),
+          ).thenAnswer((_) async => expectedList);
 
-        final result = await apiService.getBedAntragPersonByPersonId(100);
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedAntragPersonByPersonId(100)).called(1);
-      });
+          final result = await apiService.getBedAntragPersonByPersonId(100);
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedAntragPersonByPersonId(100),
+          ).called(1);
+        },
+      );
 
       test('updateBedAntragPerson delegates to postgrest service', () async {
-        final antragPerson = BeduerfnisseAntragPerson(
+        final antragPerson = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: 'A123',
           personId: 100,
@@ -2861,18 +2938,21 @@ void main() {
 
         final result = await apiService.updateBedAntragPerson(antragPerson);
         expect(result, isTrue);
-        verify(mockPostgrestService.updateBedAntragPerson(antragPerson)).called(1);
+        verify(
+          mockPostgrestService.updateBedAntragPerson(antragPerson),
+        ).called(1);
       });
     });
 
     group('bed_datei_zuord Service Tests', () {
       test('createBedDateiZuord delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseDateiZuord(
+        final expectedResult = BeduerfnisDateiZuord(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
+          label: 'Test Label',
         );
         when(
           mockPostgrestService.createBedDateiZuord(
@@ -2880,6 +2960,7 @@ void main() {
             dateiId: anyNamed('dateiId'),
             dateiArt: anyNamed('dateiArt'),
             bedSportId: anyNamed('bedSportId'),
+            label: anyNamed('label'),
           ),
         ).thenAnswer((_) async => expectedResult);
 
@@ -2888,6 +2969,7 @@ void main() {
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
+          label: 'Test Label',
         );
 
         expect(result, equals(expectedResult));
@@ -2897,17 +2979,19 @@ void main() {
             dateiId: 10,
             dateiArt: 'SPORT',
             bedSportId: 5,
+            label: 'Test Label',
           ),
         ).called(1);
       });
 
       test('updateBedDateiZuord delegates to postgrest service', () async {
-        final dateiZuord = BeduerfnisseDateiZuord(
+        final dateiZuord = BeduerfnisDateiZuord(
           id: 1,
-          antragsnummer: 'A123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 6,
+          label: 'Updated Label',
         );
 
         when(
@@ -2919,10 +3003,148 @@ void main() {
         verify(mockPostgrestService.updateBedDateiZuord(dateiZuord)).called(1);
       });
 
+      test(
+        'getBedDateiZuordByAntragsnummer returns list of BeduerfnisseDateiZuord',
+        () async {
+          final dateiZuordList = [
+            BeduerfnisDateiZuord(
+              id: 1,
+              antragsnummer: 123,
+              dateiId: 50,
+              dateiArt: 'SPORT',
+              bedSportId: 10,
+              label: 'Label 1',
+            ),
+            BeduerfnisDateiZuord(
+              id: 2,
+              antragsnummer: 123,
+              dateiId: 51,
+              dateiArt: 'SPORT',
+              bedSportId: 11,
+              label: 'Label 2',
+            ),
+          ];
+
+          when(
+            mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+          ).thenAnswer((_) async => dateiZuordList);
+
+          final result = await apiService.getBedDateiZuordByAntragsnummer(
+            123,
+            'SPORT',
+          );
+
+          expect(result, isA<List<BeduerfnisDateiZuord>>());
+          expect(result.length, equals(2));
+          expect(result[0].id, equals(1));
+          expect(result[0].dateiId, equals(50));
+          expect(result[0].dateiArt, equals('SPORT'));
+          expect(result[0].label, equals('Label 1'));
+          expect(result[1].id, equals(2));
+          expect(result[1].dateiId, equals(51));
+          expect(result[1].dateiArt, equals('SPORT'));
+          expect(result[1].label, equals('Label 2'));
+          verify(
+            mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+          ).called(1);
+          verifyNever(mockPostgrestService.getBedDateiById(any));
+        },
+      );
+
+      test(
+        'getBedDateiZuordByAntragsnummer returns empty list when not found',
+        () async {
+          when(
+            mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+          ).thenAnswer((_) async => <BeduerfnisDateiZuord>[]);
+
+          final result = await apiService.getBedDateiZuordByAntragsnummer(
+            123,
+            'SPORT',
+          );
+
+          expect(result, isEmpty);
+          verify(
+            mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+          ).called(1);
+        },
+      );
+
+      test(
+        'getBedDateiZuordByAntragsnummer handles exception gracefully',
+        () async {
+          when(
+            mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+          ).thenThrow(Exception('Database error'));
+
+          final result = await apiService.getBedDateiZuordByAntragsnummer(
+            123,
+            'SPORT',
+          );
+
+          expect(result, isEmpty);
+        },
+      );
+
+      test('getBedDateiById delegates to postgrest service', () async {
+        final expectedDatei = BeduerfnisDatei(
+          id: 100,
+          antragsnummer: 123,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3, 4, 5],
+        );
+
+        when(
+          mockPostgrestService.getBedDateiById(100),
+        ).thenAnswer((_) async => expectedDatei);
+
+        final result = await apiService.getBedDateiById(100);
+
+        expect(result, equals(expectedDatei));
+        verify(mockPostgrestService.getBedDateiById(100)).called(1);
+      });
+
+      test('getBedDateiById returns null when not found', () async {
+        when(
+          mockPostgrestService.getBedDateiById(100),
+        ).thenAnswer((_) async => null);
+
+        final result = await apiService.getBedDateiById(100);
+
+        expect(result, isNull);
+        verify(mockPostgrestService.getBedDateiById(100)).called(1);
+      });
+
+      test('getBedDateiById handles exception gracefully', () async {
+        when(
+          mockPostgrestService.getBedDateiById(100),
+        ).thenThrow(Exception('Database error'));
+
+        final result = await apiService.getBedDateiById(100);
+
+        expect(result, isNull);
+      });
+
+      test(
+        'getBedDateiZuordByAntragsnummer handles exception gracefully',
+        () async {
+          when(
+            mockPostgrestService.getBedDateiZuordByAntragsnummer(123, 'SPORT'),
+          ).thenThrow(Exception('Database error'));
+
+          final result = await apiService.getBedDateiZuordByAntragsnummer(
+            123,
+            'SPORT',
+          );
+
+          expect(result, isEmpty);
+        },
+      );
+
       test('hasBedDateiSport returns true when datei exists', () async {
-        final dateiZuord = BeduerfnisseDateiZuord(
+        final dateiZuord = BeduerfnisDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 50,
           dateiArt: 'SPORT',
           bedSportId: 10,
@@ -2938,16 +3160,21 @@ void main() {
         verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
       });
 
-      test('hasBedDateiSport returns false when datei does not exist', () async {
-        when(
-          mockPostgrestService.getBedDateiZuordByBedSportId(10),
-        ).thenAnswer((_) async => null);
+      test(
+        'hasBedDateiSport returns false when datei does not exist',
+        () async {
+          when(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => null);
 
-        final result = await apiService.hasBedDateiSport(10);
+          final result = await apiService.hasBedDateiSport(10);
 
-        expect(result, isFalse);
-        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
-      });
+          expect(result, isFalse);
+          verify(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).called(1);
+        },
+      );
 
       test('hasBedDateiSport returns false on exception', () async {
         when(
@@ -2963,7 +3190,7 @@ void main() {
 
     group('bed_wettkampf Service Tests', () {
       test('createBedWettkampf delegates to postgrest service', () async {
-        final expectedResult = BeduerfnisseWettkampf(
+        final expectedResult = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 123,
           schiessdatum: DateTime(2024, 1, 15),
@@ -3003,28 +3230,33 @@ void main() {
         ).called(1);
       });
 
-      test('getBedWettkampfByAntragsnummer delegates to postgrest service', () async {
-        final expectedList = [
-          BeduerfnisseWettkampf(
-            id: 1,
-            antragsnummer: 123,
-            schiessdatum: DateTime(2024, 1, 15),
-            wettkampfart: 'Meisterschaft',
-            disziplinId: 1,
-            wettkampfergebnis: 95.5,
-          ),
-        ];
-        when(
-          mockPostgrestService.getBedWettkampfByAntragsnummer(123),
-        ).thenAnswer((_) async => expectedList);
+      test(
+        'getBedWettkampfByAntragsnummer delegates to postgrest service',
+        () async {
+          final expectedList = [
+            BeduerfnisWettkampf(
+              id: 1,
+              antragsnummer: 123,
+              schiessdatum: DateTime(2024, 1, 15),
+              wettkampfart: 'Meisterschaft',
+              disziplinId: 1,
+              wettkampfergebnis: 95.5,
+            ),
+          ];
+          when(
+            mockPostgrestService.getBedWettkampfByAntragsnummer(123),
+          ).thenAnswer((_) async => expectedList);
 
-        final result = await apiService.getBedWettkampfByAntragsnummer(123);
-        expect(result, equals(expectedList));
-        verify(mockPostgrestService.getBedWettkampfByAntragsnummer(123)).called(1);
-      });
+          final result = await apiService.getBedWettkampfByAntragsnummer(123);
+          expect(result, equals(expectedList));
+          verify(
+            mockPostgrestService.getBedWettkampfByAntragsnummer(123),
+          ).called(1);
+        },
+      );
 
       test('updateBedWettkampf delegates to postgrest service', () async {
-        final wettkampf = BeduerfnisseWettkampf(
+        final wettkampf = BeduerfnisWettkampf(
           id: 1,
           antragsnummer: 123,
           schiessdatum: DateTime(2024, 1, 15),
@@ -3054,302 +3286,1241 @@ void main() {
     });
 
     group('Document Upload Tests', () {
-      test('uploadBedDateiForSport creates datei and datei_zuord successfully', () async {
-        final expectedDateiResponse = {
-          'id': 100,
-          'antragsnummer': 123,
-          'dateiname': 'test.pdf',
-        };
+      group('uploadBedDatei', () {
+        test('returns dateiId when datei creation succeeds', () async {
+          final expectedDateiResponse = {
+            'id': 100,
+            'antragsnummer': 123,
+            'dateiname': 'test.pdf',
+          };
 
-        final expectedDateiZuord = BeduerfnisseDateiZuord(
-          id: 1,
-          antragsnummer: '123',
-          dateiId: 100,
-          dateiArt: 'SPORT',
-          bedSportId: 5,
-        );
+          // Mock createBedDatei
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => expectedDateiResponse);
 
-        // Mock createBedDatei
-        when(
-          mockPostgrestService.createBedDatei(
+          final result = await apiService.uploadBedDatei(
             antragsnummer: 123,
             dateiname: 'test.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).thenAnswer((_) async => expectedDateiResponse);
+            fileBytes: [1, 2, 3],
+          );
 
-        // Mock createBedDateiZuord
-        when(
-          mockPostgrestService.createBedDateiZuord(
+          expect(result, equals(100));
+          verify(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).called(1);
+        });
+
+        test('returns null when datei response is empty', () async {
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => {});
+
+          final result = await apiService.uploadBedDatei(
+            antragsnummer: 123,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          );
+
+          expect(result, isNull);
+        });
+
+        test('returns null when datei response has no id', () async {
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => {'antragsnummer': 123});
+
+          final result = await apiService.uploadBedDatei(
+            antragsnummer: 123,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          );
+
+          expect(result, isNull);
+        });
+
+        test('returns null when exception occurs', () async {
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 123,
+              dateiname: 'test.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenThrow(Exception('Network error'));
+
+          final result = await apiService.uploadBedDatei(
+            antragsnummer: 123,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          );
+
+          expect(result, isNull);
+        });
+      });
+
+      group('mapBedDateiToSport', () {
+        test('returns true when mapping succeeds', () async {
+          final expectedDateiZuord = BeduerfnisDateiZuord(
+            id: 1,
             antragsnummer: 123,
             dateiId: 100,
             dateiArt: 'SPORT',
             bedSportId: 5,
-          ),
-        ).thenAnswer((_) async => expectedDateiZuord);
+          );
 
-        final result = await apiService.uploadBedDateiForSport(
-          antragsnummer: 123,
-          dateiname: 'test.pdf',
-          fileBytes: [1, 2, 3],
-          bedSportId: 5,
-        );
+          // Mock createBedDateiZuord
+          when(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 123,
+              dateiId: 100,
+              dateiArt: 'SPORT',
+              bedSportId: 5,
+              label: anyNamed('label'),
+            ),
+          ).thenAnswer((_) async => expectedDateiZuord);
 
-        expect(result, isTrue);
-        verify(
-          mockPostgrestService.createBedDatei(
-            antragsnummer: 123,
-            dateiname: 'test.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).called(1);
-        verify(
-          mockPostgrestService.createBedDateiZuord(
+          final result = await apiService.mapBedDateiToSport(
             antragsnummer: 123,
             dateiId: 100,
-            dateiArt: 'SPORT',
             bedSportId: 5,
-          ),
-        ).called(1);
-      });
+          );
 
-      test('uploadBedDateiForSport returns false when datei creation fails', () async {
-        when(
-          mockPostgrestService.createBedDatei(
-            antragsnummer: 123,
-            dateiname: 'test.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).thenAnswer((_) async => {});
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 123,
+              dateiId: 100,
+              dateiArt: 'SPORT',
+              bedSportId: 5,
+              label: null,
+            ),
+          ).called(1);
+        });
 
-        final result = await apiService.uploadBedDateiForSport(
-          antragsnummer: 123,
-          dateiname: 'test.pdf',
-          fileBytes: [1, 2, 3],
-          bedSportId: 5,
-        );
+        test('returns false when exception occurs', () async {
+          // Mock createBedDateiZuord failure
+          when(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 123,
+              dateiId: 100,
+              dateiArt: 'SPORT',
+              bedSportId: 5,
+              label: anyNamed('label'),
+            ),
+          ).thenThrow(Exception('Failed to create zuord'));
 
-        expect(result, isFalse);
-      });
-
-      test('uploadBedDateiForSport cleans up datei when datei_zuord creation fails', () async {
-        final expectedDateiResponse = {
-          'id': 100,
-          'antragsnummer': 123,
-          'dateiname': 'test.pdf',
-        };
-
-        // Mock createBedDatei success
-        when(
-          mockPostgrestService.createBedDatei(
-            antragsnummer: 123,
-            dateiname: 'test.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).thenAnswer((_) async => expectedDateiResponse);
-
-        // Mock createBedDateiZuord failure
-        when(
-          mockPostgrestService.createBedDateiZuord(
+          final result = await apiService.mapBedDateiToSport(
             antragsnummer: 123,
             dateiId: 100,
-            dateiArt: 'SPORT',
             bedSportId: 5,
-          ),
-        ).thenThrow(Exception('Failed to create zuord'));
+          );
 
-        // Mock cleanup
-        when(
-          mockPostgrestService.deleteBedDateiById(100),
-        ).thenAnswer((_) async => true);
-
-        final result = await apiService.uploadBedDateiForSport(
-          antragsnummer: 123,
-          dateiname: 'test.pdf',
-          fileBytes: [1, 2, 3],
-          bedSportId: 5,
-        );
-
-        expect(result, isFalse);
-        verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
+          expect(result, isFalse);
+        });
       });
 
-      test('uploadBedDateiForWBK creates datei and datei_zuord successfully', () async {
-        final expectedDateiResponse = {
-          'id': 200,
-          'antragsnummer': 456,
-          'dateiname': 'wbk.pdf',
-        };
+      group('uploadBedDateiForWBK', () {
+        test('creates datei and datei_zuord successfully', () async {
+          final expectedDateiResponse = {
+            'id': 200,
+            'antragsnummer': 456,
+            'dateiname': 'wbk.pdf',
+          };
 
-        final expectedDateiZuord = BeduerfnisseDateiZuord(
-          id: 2,
-          antragsnummer: '456',
-          dateiId: 200,
-          dateiArt: 'WBK',
-        );
-
-        // Mock createBedDatei
-        when(
-          mockPostgrestService.createBedDatei(
-            antragsnummer: 456,
-            dateiname: 'wbk.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).thenAnswer((_) async => expectedDateiResponse);
-
-        // Mock createBedDateiZuord
-        when(
-          mockPostgrestService.createBedDateiZuord(
-            antragsnummer: 456,
+          final expectedDateiZuord = BeduerfnisDateiZuord(
+            id: 2,
+            antragsnummer: 123,
             dateiId: 200,
             dateiArt: 'WBK',
-            bedSportId: null,
-          ),
-        ).thenAnswer((_) async => expectedDateiZuord);
+          );
 
-        final result = await apiService.uploadBedDateiForWBK(
-          antragsnummer: 456,
-          dateiname: 'wbk.pdf',
-          fileBytes: [4, 5, 6],
-        );
+          // Mock createBedDatei
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 456,
+              dateiname: 'wbk.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => expectedDateiResponse);
 
-        expect(result, isTrue);
-        verify(
-          mockPostgrestService.createBedDatei(
+          // Mock createBedDateiZuord
+          when(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 456,
+              dateiId: 200,
+              dateiArt: 'WBK',
+              bedSportId: null,
+              label: anyNamed('label'),
+            ),
+          ).thenAnswer((_) async => expectedDateiZuord);
+
+          final result = await apiService.uploadBedDateiForWBK(
             antragsnummer: 456,
             dateiname: 'wbk.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).called(1);
-        verify(
-          mockPostgrestService.createBedDateiZuord(
-            antragsnummer: 456,
-            dateiId: 200,
-            dateiArt: 'WBK',
-            bedSportId: null,
-          ),
-        ).called(1);
-      });
+            fileBytes: [4, 5, 6],
+            label: 'Test Label',
+          );
 
-      test('uploadBedDateiForWBK returns false when datei creation fails', () async {
-        when(
-          mockPostgrestService.createBedDatei(
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 456,
+              dateiname: 'wbk.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).called(1);
+          verify(
+            mockPostgrestService.createBedDateiZuord(
+              antragsnummer: 456,
+              dateiId: 200,
+              dateiArt: 'WBK',
+              bedSportId: null,
+              label: 'Test Label',
+            ),
+          ).called(1);
+        });
+
+        test('returns false when datei creation fails', () async {
+          when(
+            mockPostgrestService.createBedDatei(
+              antragsnummer: 456,
+              dateiname: 'wbk.pdf',
+              fileBytes: anyNamed('fileBytes'),
+            ),
+          ).thenAnswer((_) async => {});
+
+          final result = await apiService.uploadBedDateiForWBK(
             antragsnummer: 456,
             dateiname: 'wbk.pdf',
-            fileBytes: anyNamed('fileBytes'),
-          ),
-        ).thenAnswer((_) async => {});
+            fileBytes: [4, 5, 6],
+            label: 'Test Label',
+          );
 
-        final result = await apiService.uploadBedDateiForWBK(
-          antragsnummer: 456,
-          dateiname: 'wbk.pdf',
-          fileBytes: [4, 5, 6],
+          expect(result, isFalse);
+        });
+
+        test(
+          'creates datei and datei_zuord successfully with empty label',
+          () async {
+            final expectedDateiResponse = {
+              'id': 201,
+              'antragsnummer': 457,
+              'dateiname': 'wbk2.pdf',
+            };
+
+            final expectedDateiZuord = BeduerfnisDateiZuord(
+              id: 3,
+              antragsnummer: 457,
+              dateiId: 201,
+              dateiArt: 'WBK',
+            );
+
+            // Mock createBedDatei
+            when(
+              mockPostgrestService.createBedDatei(
+                antragsnummer: 457,
+                dateiname: 'wbk2.pdf',
+                fileBytes: anyNamed('fileBytes'),
+              ),
+            ).thenAnswer((_) async => expectedDateiResponse);
+
+            // Mock createBedDateiZuord
+            when(
+              mockPostgrestService.createBedDateiZuord(
+                antragsnummer: 457,
+                dateiId: 201,
+                dateiArt: 'WBK',
+                bedSportId: null,
+                label: '',
+              ),
+            ).thenAnswer((_) async => expectedDateiZuord);
+
+            final result = await apiService.uploadBedDateiForWBK(
+              antragsnummer: 457,
+              dateiname: 'wbk2.pdf',
+              fileBytes: [7, 8, 9],
+              label: '',
+            );
+
+            expect(result, isTrue);
+            verify(
+              mockPostgrestService.createBedDateiZuord(
+                antragsnummer: 457,
+                dateiId: 201,
+                dateiArt: 'WBK',
+                bedSportId: null,
+                label: '',
+              ),
+            ).called(1);
+          },
         );
-
-        expect(result, isFalse);
       });
     });
 
-    group('Cascading Delete Tests', () {
-      test('deleteBedDateiBySportId deletes datei_zuord and datei successfully', () async {
-        final dateiZuord = BeduerfnisseDateiZuord(
-          id: 1,
-          antragsnummer: '123',
-          dateiId: 50,
-          dateiArt: 'SPORT',
-          bedSportId: 10,
-        );
+    group('Cascading Delete - Datei Tests', () {
+      test(
+        'deleteBedDateiBySportId deletes datei_zuord and datei successfully',
+        () async {
+          final dateiZuord = BeduerfnisDateiZuord(
+            id: 1,
+            antragsnummer: 123,
+            dateiId: 50,
+            dateiArt: 'SPORT',
+            bedSportId: 10,
+          );
 
-        // Mock getBedDateiZuordByBedSportId
-        when(
-          mockPostgrestService.getBedDateiZuordByBedSportId(10),
-        ).thenAnswer((_) async => dateiZuord);
+          // Mock getBedDateiZuordByBedSportId
+          when(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => dateiZuord);
 
-        // Mock deleteBedDateiZuordByBedSportId
+          // Mock deleteBedDateiZuordByBedSportId
+          when(
+            mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => true);
+
+          // Mock deleteBedDateiById
+          when(
+            mockPostgrestService.deleteBedDateiById(50),
+          ).thenAnswer((_) async => true);
+
+          final result = await apiService.deleteBedDateiBySportId(10);
+
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).called(1);
+          verify(
+            mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+          ).called(1);
+          verify(mockPostgrestService.deleteBedDateiById(50)).called(1);
+        },
+      );
+
+      test(
+        'deleteBedDateiBySportId returns true when no datei_zuord exists',
+        () async {
+          // Mock getBedDateiZuordByBedSportId returning null
+          when(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => null);
+
+          final result = await apiService.deleteBedDateiBySportId(10);
+
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).called(1);
+          verifyNever(
+            mockPostgrestService.deleteBedDateiZuordByBedSportId(any),
+          );
+          verifyNever(mockPostgrestService.deleteBedDateiById(any));
+        },
+      );
+
+      test(
+        'deleteBedDateiBySportId returns false when datei_zuord deletion fails',
+        () async {
+          final dateiZuord = BeduerfnisDateiZuord(
+            id: 1,
+            antragsnummer: 123,
+            dateiId: 50,
+            dateiArt: 'SPORT',
+            bedSportId: 10,
+          );
+
+          when(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => dateiZuord);
+
+          when(
+            mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => false);
+
+          final result = await apiService.deleteBedDateiBySportId(10);
+
+          expect(result, isFalse);
+          verify(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).called(1);
+          verify(
+            mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+          ).called(1);
+          verifyNever(mockPostgrestService.deleteBedDateiById(any));
+        },
+      );
+
+      test(
+        'deleteBedDateiBySportId returns false when datei deletion fails',
+        () async {
+          final dateiZuord = BeduerfnisDateiZuord(
+            id: 1,
+            antragsnummer: 123,
+            dateiId: 50,
+            dateiArt: 'SPORT',
+            bedSportId: 10,
+          );
+
+          when(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => dateiZuord);
+
+          when(
+            mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => true);
+
+          when(
+            mockPostgrestService.deleteBedDateiById(50),
+          ).thenAnswer((_) async => false);
+
+          final result = await apiService.deleteBedDateiBySportId(10);
+
+          expect(result, isFalse);
+          verify(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).called(1);
+          verify(
+            mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+          ).called(1);
+          verify(mockPostgrestService.deleteBedDateiById(50)).called(1);
+        },
+      );
+
+      test('deleteBedDateiById deletes zuord and datei successfully', () async {
+        // Mock deleteBedDateiZuordByDateiId
         when(
-          mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
         ).thenAnswer((_) async => true);
 
         // Mock deleteBedDateiById
         when(
-          mockPostgrestService.deleteBedDateiById(50),
+          mockPostgrestService.deleteBedDateiById(100),
         ).thenAnswer((_) async => true);
 
-        final result = await apiService.deleteBedDateiBySportId(10);
+        final result = await apiService.deleteBedDateiById(100);
 
         expect(result, isTrue);
-        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
-        verify(mockPostgrestService.deleteBedDateiZuordByBedSportId(10)).called(1);
-        verify(mockPostgrestService.deleteBedDateiById(50)).called(1);
+        verify(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).called(1);
+        verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
       });
 
-      test('deleteBedDateiBySportId returns true when no datei_zuord exists', () async {
-        // Mock getBedDateiZuordByBedSportId returning null
+      test(
+        'deleteBedDateiById continues even if zuord deletion fails',
+        () async {
+          // Mock deleteBedDateiZuordByDateiId returning false
+          when(
+            mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+          ).thenAnswer((_) async => false);
+
+          // Mock deleteBedDateiById
+          when(
+            mockPostgrestService.deleteBedDateiById(100),
+          ).thenAnswer((_) async => true);
+
+          final result = await apiService.deleteBedDateiById(100);
+
+          expect(result, isTrue);
+          verify(
+            mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+          ).called(1);
+          verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
+        },
+      );
+
+      test(
+        'deleteBedDateiById returns false when datei deletion fails',
+        () async {
+          // Mock deleteBedDateiZuordByDateiId
+          when(
+            mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+          ).thenAnswer((_) async => true);
+
+          // Mock deleteBedDateiById returning false
+          when(
+            mockPostgrestService.deleteBedDateiById(100),
+          ).thenAnswer((_) async => false);
+
+          final result = await apiService.deleteBedDateiById(100);
+
+          expect(result, isFalse);
+          verify(
+            mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+          ).called(1);
+          verify(mockPostgrestService.deleteBedDateiById(100)).called(1);
+        },
+      );
+
+      test('deleteBedDateiById handles exception gracefully', () async {
+        // Mock deleteBedDateiZuordByDateiId throwing exception
         when(
-          mockPostgrestService.getBedDateiZuordByBedSportId(10),
-        ).thenAnswer((_) async => null);
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).thenThrow(Exception('Database error'));
 
-        final result = await apiService.deleteBedDateiBySportId(10);
-
-        expect(result, isTrue);
-        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
-        verifyNever(mockPostgrestService.deleteBedDateiZuordByBedSportId(any));
-        verifyNever(mockPostgrestService.deleteBedDateiById(any));
-      });
-
-      test('deleteBedDateiBySportId returns false when datei_zuord deletion fails', () async {
-        final dateiZuord = BeduerfnisseDateiZuord(
-          id: 1,
-          antragsnummer: '123',
-          dateiId: 50,
-          dateiArt: 'SPORT',
-          bedSportId: 10,
-        );
-
-        when(
-          mockPostgrestService.getBedDateiZuordByBedSportId(10),
-        ).thenAnswer((_) async => dateiZuord);
-
-        when(
-          mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
-        ).thenAnswer((_) async => false);
-
-        final result = await apiService.deleteBedDateiBySportId(10);
+        final result = await apiService.deleteBedDateiById(100);
 
         expect(result, isFalse);
-        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
-        verify(mockPostgrestService.deleteBedDateiZuordByBedSportId(10)).called(1);
+        verify(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(100),
+        ).called(1);
         verifyNever(mockPostgrestService.deleteBedDateiById(any));
-      });
-
-      test('deleteBedDateiBySportId returns false when datei deletion fails', () async {
-        final dateiZuord = BeduerfnisseDateiZuord(
-          id: 1,
-          antragsnummer: '123',
-          dateiId: 50,
-          dateiArt: 'SPORT',
-          bedSportId: 10,
-        );
-
-        when(
-          mockPostgrestService.getBedDateiZuordByBedSportId(10),
-        ).thenAnswer((_) async => dateiZuord);
-
-        when(
-          mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
-        ).thenAnswer((_) async => true);
-
-        when(
-          mockPostgrestService.deleteBedDateiById(50),
-        ).thenAnswer((_) async => false);
-
-        final result = await apiService.deleteBedDateiBySportId(10);
-
-        expect(result, isFalse);
-        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
-        verify(mockPostgrestService.deleteBedDateiZuordByBedSportId(10)).called(1);
-        verify(mockPostgrestService.deleteBedDateiById(50)).called(1);
       });
     });
+
+    group('Cascading Delete - Sport and Antrag Tests', () {
+      test('deleteBedSportById delegates to underlying services', () async {
+        final dateiZuord = BeduerfnisDateiZuord(
+          id: 1,
+          antragsnummer: 123,
+          dateiId: 50,
+          dateiArt: 'SPORT',
+          bedSportId: 10,
+        );
+
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => dateiZuord);
+
+        when(
+          mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedDateiById(50),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedSportById(10),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBedSportById(10);
+
+        expect(result, isTrue);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(10)).called(1);
+        verify(
+          mockPostgrestService.deleteBedDateiZuordByBedSportId(10),
+        ).called(1);
+        verify(mockPostgrestService.deleteBedDateiById(50)).called(1);
+        verify(mockPostgrestService.deleteBedSportById(10)).called(1);
+      });
+
+      test(
+        'deleteBedSportById returns false when sport deletion fails',
+        () async {
+          when(
+            mockPostgrestService.getBedDateiZuordByBedSportId(10),
+          ).thenAnswer((_) async => null);
+
+          when(
+            mockPostgrestService.deleteBedSportById(10),
+          ).thenAnswer((_) async => false);
+
+          final result = await apiService.deleteBedSportById(10);
+
+          expect(result, isFalse);
+        },
+      );
+
+      test('deleteBedAntrag delegates to all underlying services', () async {
+        when(
+          mockPostgrestService.deleteBedAntragPerson(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedDatei(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedDateiZuord(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedSportByAntragsnummer(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedWaffeBesitz(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedWettkampf(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedAntrag(123),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBedAntrag(123);
+
+        expect(result, isTrue);
+        verify(mockPostgrestService.deleteBedAntragPerson(123)).called(1);
+        verify(mockPostgrestService.deleteBedDatei(123)).called(1);
+        verify(mockPostgrestService.deleteBedDateiZuord(123)).called(1);
+        verify(
+          mockPostgrestService.deleteBedSportByAntragsnummer(123),
+        ).called(1);
+        verify(mockPostgrestService.deleteBedWaffeBesitz(123)).called(1);
+        verify(mockPostgrestService.deleteBedWettkampf(123)).called(1);
+        verify(mockPostgrestService.deleteBedAntrag(123)).called(1);
+      });
+
+      test('deleteBedAntrag returns false when any deletion fails', () async {
+        when(
+          mockPostgrestService.deleteBedAntragPerson(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedDatei(123),
+        ).thenAnswer((_) async => false); // This one fails
+
+        when(
+          mockPostgrestService.deleteBedDateiZuord(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedSportByAntragsnummer(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedWaffeBesitz(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedWettkampf(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedAntrag(123),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.deleteBedAntrag(123);
+
+        expect(result, isFalse);
+      });
+    });
+  });
+
+  group('RollsAndRights Service Tests', () {
+    test('getRoles returns WorkflowRole for given person ID', () async {
+      const personId = 123;
+      when(
+        mockRollsAndRights.getRoles(personId),
+      ).thenAnswer((_) async => WorkflowRole.mitglied);
+
+      final result = await apiService.getRoles(personId);
+
+      expect(result, WorkflowRole.mitglied);
+      verify(mockRollsAndRights.getRoles(personId)).called(1);
+    });
+
+    test('getRoles delegates to RollsAndRights service', () async {
+      const personId = 456;
+      when(
+        mockRollsAndRights.getRoles(personId),
+      ).thenAnswer((_) async => WorkflowRole.verein);
+
+      final result = await apiService.getRoles(personId);
+
+      expect(result, WorkflowRole.verein);
+      verify(mockRollsAndRights.getRoles(personId)).called(1);
+    });
+
+    test('getRoles returns BSSB role for BSSB user', () async {
+      const personId = 789;
+      when(
+        mockRollsAndRights.getRoles(personId),
+      ).thenAnswer((_) async => WorkflowRole.bssb);
+
+      final result = await apiService.getRoles(personId);
+
+      expect(result, WorkflowRole.bssb);
+      verify(mockRollsAndRights.getRoles(personId)).called(1);
+    });
+  });
+
+  group('Beduerfnisse Helper Methods Tests', () {
+    group('getBedAuswahlByTypId', () {
+      test('delegates to postgrestService and returns expected data', () async {
+        final expectedData = [
+          const BeduerfnisAuswahl(
+            id: 1,
+            typId: 5,
+            kuerzel: 'OPT1',
+            beschreibung: 'Option 1',
+            sortReihenfolge: 1,
+          ),
+          const BeduerfnisAuswahl(
+            id: 2,
+            typId: 5,
+            kuerzel: 'OPT2',
+            beschreibung: 'Option 2',
+            sortReihenfolge: 2,
+          ),
+        ];
+
+        when(
+          mockPostgrestService.getBedAuswahlByTypId(5),
+        ).thenAnswer((_) async => expectedData);
+
+        final result = await apiService.getBedAuswahlByTypId(5);
+
+        expect(result, equals(expectedData));
+        verify(mockPostgrestService.getBedAuswahlByTypId(5)).called(1);
+      });
+
+      test('returns empty list when no data found', () async {
+        when(
+          mockPostgrestService.getBedAuswahlByTypId(999),
+        ).thenAnswer((_) async => []);
+
+        final result = await apiService.getBedAuswahlByTypId(999);
+
+        expect(result, isEmpty);
+        verify(mockPostgrestService.getBedAuswahlByTypId(999)).called(1);
+      });
+    });
+
+    group('getBedDateiBySportId', () {
+      test('returns datei when zuord and datei exist', () async {
+        final zuord = BeduerfnisDateiZuord(
+          id: 1,
+          antragsnummer: 123,
+          dateiId: 10,
+          dateiArt: 'SPORT',
+          bedSportId: 5,
+        );
+
+        final datei = BeduerfnisDatei(
+          id: 10,
+          antragsnummer: 100,
+          dateiname: 'document.pdf',
+          fileBytes: [1, 2, 3],
+        );
+
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(5),
+        ).thenAnswer((_) async => zuord);
+
+        when(
+          mockPostgrestService.getBedDateiById(10),
+        ).thenAnswer((_) async => datei);
+
+        final result = await apiService.getBedDateiZuordByBedSportId(5);
+
+        expect(result, equals(datei));
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(5)).called(1);
+        verify(mockPostgrestService.getBedDateiById(10)).called(1);
+      });
+
+      test('returns null when zuord does not exist', () async {
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(999),
+        ).thenAnswer((_) async => null);
+
+        final result = await apiService.getBedDateiZuordByBedSportId(999);
+
+        expect(result, isNull);
+        verify(
+          mockPostgrestService.getBedDateiZuordByBedSportId(999),
+        ).called(1);
+        verifyNever(mockPostgrestService.getBedDateiById(any));
+      });
+
+      test('returns null when exception occurs', () async {
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(5),
+        ).thenThrow(Exception('Database error'));
+
+        final result = await apiService.getBedDateiZuordByBedSportId(5);
+
+        expect(result, isNull);
+      });
+    });
+
+    group('uploadBedDatei', () {
+      test('returns dateiId when upload succeeds', () async {
+        final response = {'id': 123};
+
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).thenAnswer((_) async => response);
+
+        final result = await apiService.uploadBedDatei(
+          antragsnummer: 100,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3],
+        );
+
+        expect(result, equals(123));
+        verify(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).called(1);
+      });
+
+      test('returns null when response is empty', () async {
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).thenAnswer((_) async => {});
+
+        final result = await apiService.uploadBedDatei(
+          antragsnummer: 100,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3],
+        );
+
+        expect(result, isNull);
+      });
+
+      test('returns null when id is missing from response', () async {
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).thenAnswer((_) async => {'other_field': 'value'});
+
+        final result = await apiService.uploadBedDatei(
+          antragsnummer: 100,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3],
+        );
+
+        expect(result, isNull);
+      });
+
+      test('returns null when exception occurs', () async {
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'test.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).thenThrow(Exception('Upload failed'));
+
+        final result = await apiService.uploadBedDatei(
+          antragsnummer: 100,
+          dateiname: 'test.pdf',
+          fileBytes: [1, 2, 3],
+        );
+
+        expect(result, isNull);
+      });
+    });
+
+    group('mapBedDateiToSport', () {
+      test('returns true when mapping succeeds', () async {
+        final zuord = BeduerfnisDateiZuord(
+          id: 1,
+          antragsnummer: 123,
+          dateiId: 10,
+          dateiArt: 'SPORT',
+          bedSportId: 5,
+        );
+
+        when(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 100,
+            dateiId: 10,
+            dateiArt: 'SPORT',
+            bedSportId: 5,
+            label: anyNamed('label'),
+          ),
+        ).thenAnswer((_) async => zuord);
+
+        final result = await apiService.mapBedDateiToSport(
+          antragsnummer: 100,
+          dateiId: 10,
+          bedSportId: 5,
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 100,
+            dateiId: 10,
+            dateiArt: 'SPORT',
+            bedSportId: 5,
+            label: null,
+          ),
+        ).called(1);
+      });
+
+      test('returns false when mapping fails', () async {
+        when(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 100,
+            dateiId: 10,
+            dateiArt: 'SPORT',
+            bedSportId: 5,
+            label: anyNamed('label'),
+          ),
+        ).thenThrow(Exception('Mapping failed'));
+
+        final result = await apiService.mapBedDateiToSport(
+          antragsnummer: 100,
+          dateiId: 10,
+          bedSportId: 5,
+        );
+
+        expect(result, isFalse);
+      });
+    });
+
+    group('uploadBedDateiForWBK', () {
+      test('returns true when upload and mapping succeed', () async {
+        final dateiResponse = {'id': 123};
+        final zuord = BeduerfnisDateiZuord(
+          id: 1,
+          antragsnummer: 123,
+          dateiId: 123,
+          dateiArt: 'WBK',
+          bedSportId: null,
+        );
+
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'wbk.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).thenAnswer((_) async => dateiResponse);
+
+        when(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 100,
+            dateiId: 123,
+            dateiArt: 'WBK',
+            bedSportId: null,
+            label: anyNamed('label'),
+          ),
+        ).thenAnswer((_) async => zuord);
+
+        final result = await apiService.uploadBedDateiForWBK(
+          antragsnummer: 100,
+          dateiname: 'wbk.pdf',
+          fileBytes: [1, 2, 3],
+          label: 'WBK Document',
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'wbk.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).called(1);
+        verify(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 100,
+            dateiId: 123,
+            dateiArt: 'WBK',
+            bedSportId: null,
+            label: 'WBK Document',
+          ),
+        ).called(1);
+      });
+
+      test('returns false when datei creation fails', () async {
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'wbk.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).thenAnswer((_) async => {});
+
+        final result = await apiService.uploadBedDateiForWBK(
+          antragsnummer: 100,
+          dateiname: 'wbk.pdf',
+          fileBytes: [1, 2, 3],
+          label: 'Test Label',
+        );
+
+        expect(result, isFalse);
+        verifyNever(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: anyNamed('antragsnummer'),
+            dateiId: anyNamed('dateiId'),
+            dateiArt: anyNamed('dateiArt'),
+            bedSportId: anyNamed('bedSportId'),
+            label: anyNamed('label'),
+          ),
+        );
+      });
+
+      test('returns false and cleans up when zuord creation fails', () async {
+        final dateiResponse = {'id': 123};
+
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'wbk.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).thenAnswer((_) async => dateiResponse);
+
+        when(
+          mockPostgrestService.createBedDateiZuord(
+            antragsnummer: 100,
+            dateiId: 123,
+            dateiArt: 'WBK',
+            bedSportId: null,
+            label: anyNamed('label'),
+          ),
+        ).thenThrow(Exception('Zuord creation failed'));
+
+        when(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(123),
+        ).thenAnswer((_) async => true);
+
+        when(
+          mockPostgrestService.deleteBedDateiById(123),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.uploadBedDateiForWBK(
+          antragsnummer: 100,
+          dateiname: 'wbk.pdf',
+          fileBytes: [1, 2, 3],
+          label: 'Test Label',
+        );
+
+        expect(result, isFalse);
+        verify(
+          mockPostgrestService.deleteBedDateiZuordByDateiId(123),
+        ).called(1);
+        verify(mockPostgrestService.deleteBedDateiById(123)).called(1);
+      });
+
+      test('returns false when exception occurs during upload', () async {
+        when(
+          mockPostgrestService.createBedDatei(
+            antragsnummer: 100,
+            dateiname: 'wbk.pdf',
+            fileBytes: [1, 2, 3],
+          ),
+        ).thenThrow(Exception('Upload failed'));
+
+        final result = await apiService.uploadBedDateiForWBK(
+          antragsnummer: 100,
+          dateiname: 'wbk.pdf',
+          fileBytes: [1, 2, 3],
+          label: 'Test Label',
+        );
+
+        expect(result, isFalse);
+      });
+    });
+
+    group('hasBedDateiSport', () {
+      test('returns true when zuord exists', () async {
+        final zuord = BeduerfnisDateiZuord(
+          id: 1,
+          antragsnummer: 123,
+          dateiId: 10,
+          dateiArt: 'SPORT',
+          bedSportId: 5,
+        );
+
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(5),
+        ).thenAnswer((_) async => zuord);
+
+        final result = await apiService.hasBedDateiSport(5);
+
+        expect(result, isTrue);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(5)).called(1);
+      });
+
+      test('returns false when zuord does not exist', () async {
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(999),
+        ).thenAnswer((_) async => null);
+
+        final result = await apiService.hasBedDateiSport(999);
+
+        expect(result, isFalse);
+        verify(
+          mockPostgrestService.getBedDateiZuordByBedSportId(999),
+        ).called(1);
+      });
+
+      test('returns false when exception occurs', () async {
+        when(
+          mockPostgrestService.getBedDateiZuordByBedSportId(5),
+        ).thenThrow(Exception('Database error'));
+
+        final result = await apiService.hasBedDateiSport(5);
+
+        expect(result, isFalse);
+        verify(mockPostgrestService.getBedDateiZuordByBedSportId(5)).called(1);
+      });
+    });
+  });
+
+  group('WorkflowService Tests', () {
+    test('canAntragChangeFromStateToState delegates to WorkflowService', () {
+      when(
+        mockWorkflowService.canAntragChangeFromStateToState(
+          currentState: BeduerfnisAntragStatus.entwurf,
+          nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
+          userRole: WorkflowRole.mitglied,
+        ),
+      ).thenReturn(true);
+
+      final result = apiService.canAntragChangeFromStateToState(
+        currentState: BeduerfnisAntragStatus.entwurf,
+        nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
+        userRole: WorkflowRole.mitglied,
+      );
+
+      expect(result, isTrue);
+      verify(
+        mockWorkflowService.canAntragChangeFromStateToState(
+          currentState: BeduerfnisAntragStatus.entwurf,
+          nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
+          userRole: WorkflowRole.mitglied,
+        ),
+      ).called(1);
+    });
+
+    test(
+      'canAntragChangeFromStateToState returns false for invalid transition',
+      () {
+        when(
+          mockWorkflowService.canAntragChangeFromStateToState(
+            currentState: BeduerfnisAntragStatus.entwurf,
+            nextState: BeduerfnisAntragStatus.genehmight,
+            userRole: WorkflowRole.mitglied,
+          ),
+        ).thenReturn(false);
+
+        final result = apiService.canAntragChangeFromStateToState(
+          currentState: BeduerfnisAntragStatus.entwurf,
+          nextState: BeduerfnisAntragStatus.genehmight,
+          userRole: WorkflowRole.mitglied,
+        );
+
+        expect(result, isFalse);
+        verify(
+          mockWorkflowService.canAntragChangeFromStateToState(
+            currentState: BeduerfnisAntragStatus.entwurf,
+            nextState: BeduerfnisAntragStatus.genehmight,
+            userRole: WorkflowRole.mitglied,
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
+      'canAntragChangeFromStateToState returns true for Verein approval',
+      () {
+        when(
+          mockWorkflowService.canAntragChangeFromStateToState(
+            currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
+            nextState: BeduerfnisAntragStatus.genehmightVonVerein,
+            userRole: WorkflowRole.verein,
+          ),
+        ).thenReturn(true);
+
+        final result = apiService.canAntragChangeFromStateToState(
+          currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
+          nextState: BeduerfnisAntragStatus.genehmightVonVerein,
+          userRole: WorkflowRole.verein,
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockWorkflowService.canAntragChangeFromStateToState(
+            currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
+            nextState: BeduerfnisAntragStatus.genehmightVonVerein,
+            userRole: WorkflowRole.verein,
+          ),
+        ).called(1);
+      },
+    );
+
+    test('canAntragChangeFromStateToState returns false for wrong role', () {
+      when(
+        mockWorkflowService.canAntragChangeFromStateToState(
+          currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
+          nextState: BeduerfnisAntragStatus.genehmightVonVerein,
+          userRole: WorkflowRole.mitglied,
+        ),
+      ).thenReturn(false);
+
+      final result = apiService.canAntragChangeFromStateToState(
+        currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
+        nextState: BeduerfnisAntragStatus.genehmightVonVerein,
+        userRole: WorkflowRole.mitglied,
+      );
+
+      expect(result, isFalse);
+      verify(
+        mockWorkflowService.canAntragChangeFromStateToState(
+          currentState: BeduerfnisAntragStatus.eingereichtAmVerein,
+          nextState: BeduerfnisAntragStatus.genehmightVonVerein,
+          userRole: WorkflowRole.mitglied,
+        ),
+      ).called(1);
+    });
+
+    test(
+      'canAntragChangeFromStateToState returns true for BSSB submission',
+      () {
+        when(
+          mockWorkflowService.canAntragChangeFromStateToState(
+            currentState: BeduerfnisAntragStatus.genehmightVonVerein,
+            nextState: BeduerfnisAntragStatus.eingereichtAnBSSB,
+            userRole: WorkflowRole.bssb,
+          ),
+        ).thenReturn(true);
+
+        final result = apiService.canAntragChangeFromStateToState(
+          currentState: BeduerfnisAntragStatus.genehmightVonVerein,
+          nextState: BeduerfnisAntragStatus.eingereichtAnBSSB,
+          userRole: WorkflowRole.bssb,
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockWorkflowService.canAntragChangeFromStateToState(
+            currentState: BeduerfnisAntragStatus.genehmightVonVerein,
+            nextState: BeduerfnisAntragStatus.eingereichtAnBSSB,
+            userRole: WorkflowRole.bssb,
+          ),
+        ).called(1);
+      },
+    );
   });
 }

@@ -30,6 +30,12 @@ class UserData {
       erstVereinId: json['ERSTVEREINID'] as int? ?? 0,
       email: json['EMAIL']?.toString() ?? '',
       role: json['ROLE']?.toString(),
+      wbkNeu:
+          json.containsKey('WBK_NEU')
+              ? (json['WBK_NEU'] is bool
+                  ? json['WBK_NEU'] as bool
+                  : (json['WBK_NEU'] is int ? json['WBK_NEU'] == 1 : false))
+              : false, // Default to false if not provided
     );
   }
 
@@ -64,7 +70,11 @@ class UserData {
     this.disziplin,
     this.email = '',
     this.role,
-  });
+    bool? wbkNeu,
+  }) : wbkNeu = wbkNeu ?? false;
+
+  /// Whether this is a new weapon permit (WBK neu) for the user (null if unknown)
+  final bool wbkNeu;
 
   /// The unique identifier for the person.
   final int personId;

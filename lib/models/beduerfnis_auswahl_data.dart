@@ -2,27 +2,34 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a selection data value (bed_auswahl_data) in the BSSB system.
 @immutable
-class BeduerfnisseAuswahl {
-  /// Creates an [BeduerfnisseAuswahl] instance from a JSON map.
+class BeduerfnisAuswahl {
+  /// Creates an [BeduerfnisAuswahl] instance from a JSON map.
   /// Supports both snake_case (PostgREST) and uppercase formats.
-  factory BeduerfnisseAuswahl.fromJson(Map<String, dynamic> json) {
-    return BeduerfnisseAuswahl(
+  factory BeduerfnisAuswahl.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisAuswahl(
       id: (json['ID'] ?? json['id']) as int?,
       typId: (json['TYP_ID'] ?? json['typ_id']) as int,
       kuerzel: (json['KUERZEL'] ?? json['kuerzel']) as String,
       beschreibung: (json['BESCHREIBUNG'] ?? json['beschreibung']) as String,
-      sortReihenfolge: (json['SORT_REIHENFOLGE'] ?? json['sort_reihenfolge']) as int?,
-      createdAt: json['CREATED_AT'] ?? json['created_at'] == null
-          ? null
-          : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
-      deletedAt: json['DELETED_AT'] ?? json['deleted_at'] == null
-          ? null
-          : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+      sortReihenfolge:
+          (json['SORT_REIHENFOLGE'] ?? json['sort_reihenfolge']) as int?,
+      createdAt:
+          json['CREATED_AT'] ?? json['created_at'] == null
+              ? null
+              : DateTime.parse(
+                (json['CREATED_AT'] ?? json['created_at']) as String,
+              ),
+      deletedAt:
+          json['DELETED_AT'] ?? json['deleted_at'] == null
+              ? null
+              : DateTime.parse(
+                (json['DELETED_AT'] ?? json['deleted_at']) as String,
+              ),
     );
   }
 
-  /// Creates a new instance of [BeduerfnisseAuswahl].
-  const BeduerfnisseAuswahl({
+  /// Creates a new instance of [BeduerfnisAuswahl].
+  const BeduerfnisAuswahl({
     this.id,
     required this.typId,
     required this.kuerzel,
@@ -53,7 +60,7 @@ class BeduerfnisseAuswahl {
   /// The deletion timestamp (nullable).
   final DateTime? deletedAt;
 
-  /// Converts the [BeduerfnisseAuswahl] instance to a JSON map.
+  /// Converts the [BeduerfnisAuswahl] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

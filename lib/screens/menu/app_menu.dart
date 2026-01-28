@@ -14,6 +14,7 @@ import '/screens/datenschutz_screen.dart';
 import '/screens/settings_screen.dart';
 import '/screens/schulungen/schulungen_search_screen.dart';
 import './preisschiessen_menu.dart';
+import 'waffenrecht_menu.dart';
 
 import '/models/user_data.dart';
 import '/widgets/scaled_text.dart';
@@ -333,6 +334,31 @@ class AppDrawer extends StatelessWidget {
                     MaterialPageRoute(
                       builder:
                           (context) => ProfileScreen(
+                            userData: userData,
+                            isLoggedIn: isLoggedIn,
+                            onLogout: onLogout,
+                          ),
+                    ),
+                  );
+                },
+              ),
+              // Waffenrecht menu item
+              ListTile(
+                key: const Key('drawer_waffenrecht'),
+                leading: const Icon(
+                  Icons.balance,
+                  color: UIStyles.menuIconColor,
+                ),
+                title: const ScaledText(
+                  'Waffenrecht',
+                  style: TextStyle(fontSize: UIConstants.menuItemFontSize),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder:
+                          (context) => WaffenrechtMenuScreen(
                             userData: userData,
                             isLoggedIn: isLoggedIn,
                             onLogout: onLogout,
