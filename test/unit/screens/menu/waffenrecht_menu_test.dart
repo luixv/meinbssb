@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/screens/menu/waffenrecht_menu.dart';
 import 'package:meinbssb/models/user_data.dart';
+import 'package:provider/provider.dart';
+import 'package:meinbssb/providers/font_size_provider.dart';
 
 void main() {
   group('WaffenrechtMenuScreen', () {
     testWidgets('renders Bedürfnisse menu item and navigates on tap', (
       WidgetTester tester,
     ) async {
-      bool navigated = false;
       final testUser = UserData(
         personId: 1,
         webLoginId: 2,
@@ -20,35 +21,34 @@ void main() {
         passdatenId: 100,
         mitgliedschaftId: 200,
       );
+      final observer = TestNavigatorObserver();
       await tester.pumpWidget(
-        MaterialApp(
-          home: WaffenrechtMenuScreen(
-            userData: testUser,
-            isLoggedIn: true,
-            onLogout: () {},
+        ChangeNotifierProvider<FontSizeProvider>(
+          create: (_) => FontSizeProvider(),
+          child: MaterialApp(
+            home: WaffenrechtMenuScreen(
+              userData: testUser,
+              isLoggedIn: true,
+              onLogout: () {},
+            ),
+            navigatorObservers: [observer],
           ),
-          navigatorObservers: [
-            TestNavigatorObserver(onPush: () => navigated = true),
-          ],
         ),
       );
-      // Check for Bedürfnisse menu item
       expect(find.text('Bedürfnisse'), findsOneWidget);
-      // Tap the Bedürfnisse menu item
       await tester.tap(find.text('Bedürfnisse'));
       await tester.pumpAndSettle();
-      // Should have navigated
-      expect(navigated, isTrue);
+      // Should have pushed a new route
+      expect(observer.pushedRoutes.isNotEmpty, isTrue);
     });
   });
 }
 
 class TestNavigatorObserver extends NavigatorObserver {
-  TestNavigatorObserver({required this.onPush});
-  final VoidCallback onPush;
+  final List<Route<dynamic>> pushedRoutes = <Route<dynamic>>[];
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    onPush();
+    pushedRoutes.add(route);
     super.didPush(route, previousRoute);
   }
 }
