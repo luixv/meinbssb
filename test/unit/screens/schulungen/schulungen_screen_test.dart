@@ -154,6 +154,152 @@ void main() {
       ).thenAnswer((_) async => result);
     }
 
+    testWidgets('shows loading indicator while waiting for API', (
+      tester,
+    ) async {
+      // Simulate a delayed API response
+      when(
+        mockApiService.fetchSchulungstermine(
+          any as String?,
+          any as String?,
+          any as String?,
+          any as String?,
+          any as String?,
+        ),
+      ).thenAnswer((_) async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        return [];
+      });
+
+      await tester.pumpWidget(createWidgetUnderTest());
+      // Should show a loading indicator before data arrives
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('shows error message when API throws', (tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any as String?,
+          any as String?,
+          any as String?,
+          any as String?,
+          any as String?,
+        ),
+      ).thenThrow(Exception('API error'));
+
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Fehler'), findsOneWidget);
+    });
+
+    testWidgets('calls onLogout callback when provided', (tester) async {
+      stubFetch([]);
+      bool didLogout = false;
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          onLogout: () {
+            didLogout = true;
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+      // Simulate logout button tap if present
+      final logoutFinder = find.byIcon(Icons.logout);
+      if (logoutFinder.evaluate().isNotEmpty) {
+        await tester.tap(logoutFinder);
+        await tester.pumpAndSettle();
+        expect(didLogout, isTrue);
+      }
+    });
+
+    testWidgets('handles null/empty API response gracefully', (tester) async {
+      when(
+        mockApiService.fetchSchulungstermine(
+          any as String?,
+          any as String?,
+          any as String?,
+          any as String?,
+          any as String?,
+        ),
+      ).thenAnswer((_) async => []);
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
+      expect(find.text('Keine Schulungen gefunden.'), findsOneWidget);
+    });
+
+    testWidgets('tapping a Schulung item shows details dialog', (tester) async {
+      stubFetch([buildTermin(bezeichnung: 'Test Schulung', geloescht: false)]);
+      // Also stub fetchSchulungstermin for dialog details
+      when(mockApiService.fetchSchulungstermin(any)).thenAnswer((
+        invocation,
+      ) async {
+        // Return a Schulungstermin with the same values as the list item
+        return buildTermin(bezeichnung: 'Test Schulung', geloescht: false);
+      });
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
+      // Tap the FAB with tooltip 'Details' to open the dialog
+      final fabFinder = find.byTooltip('Details');
+      expect(fabFinder, findsOneWidget);
+      await tester.tap(fabFinder);
+      await tester.pumpAndSettle();
+      // Accept AlertDialog (used by SchulungenDetailsDialog) or BottomSheet/modal
+      final alertDialogFinder = find.byType(AlertDialog);
+      final bottomSheetFinder = find.byWidgetPredicate(
+        (w) => w.runtimeType.toString().contains('BottomSheet'),
+      );
+      final modalBottomSheetFinder = find.byWidgetPredicate(
+        (w) => w.runtimeType.toString().contains('ModalBottomSheet'),
+      );
+      expect(
+        alertDialogFinder.evaluate().isNotEmpty ||
+            bottomSheetFinder.evaluate().isNotEmpty ||
+            modalBottomSheetFinder.evaluate().isNotEmpty,
+        isTrue,
+        reason:
+            'Expected an AlertDialog or BottomSheet/modal to appear after tapping',
+      );
+    });
+
+    testWidgets('UI adapts to different font sizes', (tester) async {
+      stubFetch([buildTermin(bezeichnung: 'Test Schulung', geloescht: false)]);
+      final fontSizeProvider = FontSizeProvider();
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            Provider<ApiService>.value(value: mockApiService),
+            ChangeNotifierProvider<FontSizeProvider>.value(
+              value: fontSizeProvider,
+            ),
+          ],
+          child: MaterialApp(
+            home: SchulungenScreen(
+              userData,
+              isLoggedIn: true,
+              onLogout: () {},
+              searchDate: DateTime(2024, 1, 1),
+              webGruppe: null,
+              bezirkId: null,
+              ort: null,
+              titel: null,
+              fuerVerlaengerungen: null,
+              fuerVuelVerlaengerungen: null,
+              showMenu: true,
+              showConnectivityIcon: true,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      // Change font size and verify UI updates
+      fontSizeProvider.setScaleFactor(1.5);
+      await tester.pumpAndSettle();
+      expect(find.text('Verfügbare Aus- und Weiterbildungen'), findsOneWidget);
+    });
+
     testWidgets('shows list when API returns results', (tester) async {
       stubFetch([buildTermin(bezeichnung: 'Test Schulung', geloescht: false)]);
 
