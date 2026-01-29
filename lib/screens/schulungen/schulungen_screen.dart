@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '/constants/ui_constants.dart';
@@ -11,18 +10,16 @@ import '/helpers/utils.dart';
 
 import '/screens/base_screen_layout.dart';
 import '/services/api_service.dart';
-import '/services/api/bank_service.dart';
 import '/widgets/scaled_text.dart';
-import '/widgets/dialog_fabs.dart';
-import '/widgets/keyboard_focus_fab.dart';
-
-import '/screens/agb/agb_screen.dart';
 
 import 'schulungen_search_screen.dart';
 import 'schulungen_register_person_dialog.dart';
 import 'schulungen_list_item.dart';
 import 'schulungen_details_dialog.dart';
-import 'package:meinbssb/providers/font_size_provider.dart';
+
+import 'dialogs/login_dialog.dart';
+import 'dialogs/booking_data_dialog.dart';
+import 'dialogs/register_another_dialog.dart';
 
 class SchulungenScreen extends StatefulWidget {
   const SchulungenScreen(
@@ -40,6 +37,7 @@ class SchulungenScreen extends StatefulWidget {
     this.showConnectivityIcon = true,
     super.key,
   });
+
   final UserData? userData;
   final bool isLoggedIn;
   final Function() onLogout;
@@ -76,6 +74,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       _errorMessage = null;
       _results = [];
     });
+
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final abDatum = formatDate(widget.searchDate);
@@ -154,11 +153,13 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
   Future<void> _showBookingDialog(
     Schulungstermin schulungsTermin, {
-    required List<_RegisteredPerson> registeredPersons,
+    required List<RegisteredPersonUi> registeredPersons,
   }) async {
     if (!mounted) return;
+
     final parentContext = context;
     final user = _userData;
+
     if (user == null) {
       ScaffoldMessenger.of(parentContext).showSnackBar(
         const SnackBar(
@@ -169,9 +170,10 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
       );
       return;
     }
+
     final apiService = Provider.of<ApiService>(parentContext, listen: false);
 
-    // Show the dialog immediately with a loading indicator
+    // Show loading indicator
     showDialog(
       context: parentContext,
       barrierDismissible: false,
@@ -194,6 +196,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
     final List<BankData> bankDataList = await bankDataFuture;
     if (!mounted) return;
+
     final List<Map<String, dynamic>> contacts = await contactsFuture;
     if (!mounted) return;
 
@@ -203,772 +206,31 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
     if (!mounted) return;
     if (!parentContext.mounted) return;
 
-    // Pop the loading indicator
+    // Pop spinner
     Navigator.of(parentContext, rootNavigator: true).pop();
 
-    // Show the actual booking dialog with the fetched data
-    bool agbChecked = false;
-    bool lastschriftChecked = false;
-    final formKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: parentContext,
-      builder: (context) {
-        final telefonController = TextEditingController(text: phoneNumber);
-        final kontoinhaberController = TextEditingController(
-          text: bankData?.kontoinhaber ?? '',
-        );
-        final ibanController = TextEditingController(
-          text: bankData?.iban ?? '',
-        );
-        final bicController = TextEditingController(text: bankData?.bic ?? '');
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            kontoinhaberController.removeListener(() {});
-            ibanController.removeListener(() {});
-            bicController.removeListener(() {});
-            kontoinhaberController.addListener(() {
-              setState(() {});
-            });
-            ibanController.addListener(() {
-              setState(() {});
-              if (formKey.currentState != null) {
-                formKey.currentState!.validate();
-              }
-            });
-            bicController.addListener(() {
-              setState(() {});
-            });
-
-            final FontSizeProvider fontSizeProvider =
-                Provider.of<FontSizeProvider>(context);
-            return SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: UIConstants.dialogMaxWidth,
-                    maxHeight: UIConstants.dialogMaxHeight,
-                  ),
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        // force the AlertDialog to respect max width
-                        width: MediaQuery.of(context).size.width.clamp(
-                          0,
-                          UIConstants.dialogMaxWidth.toDouble(),
-                        ),
-                        child: AlertDialog(
-                          backgroundColor: UIConstants.backgroundColor,
-                          insetPadding:
-                              EdgeInsets.zero, // remove default Flutter margins
-                          contentPadding: EdgeInsets.zero,
-                          title: const Center(
-                            child: ScaledText(
-                              'Buchungsdaten Erfassen',
-                              style: UIStyles.dialogTitleStyle,
-                            ),
-                          ),
-                          content: Stack(
-                            children: [
-                              SizedBox(
-                                width:
-                                    double
-                                        .maxFinite, // 👈 stretch form inside dialog
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: UIConstants.spacingM,
-                                    left: UIConstants.spacingM,
-                                    right: UIConstants.spacingM,
-                                  ),
-                                  child: Semantics(
-                                    container: true,
-                                    label:
-                                        'Formular zur Erfassung der Buchungsdaten: Bankdaten, AGB und Lastschrifteinzug bestätigen.',
-                                    child: SingleChildScrollView(
-                                      child: Form(
-                                        key: formKey,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: UIConstants.whiteColor,
-                                                border: Border.all(
-                                                  color:
-                                                      UIConstants
-                                                          .mydarkGreyColor,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                      UIConstants.cornerRadius,
-                                                    ),
-                                              ),
-                                              padding:
-                                                  UIConstants.defaultPadding,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    'Bankdaten',
-                                                    style:
-                                                        UIStyles.subtitleStyle,
-                                                  ),
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingM,
-                                                  ),
-                                                  Semantics(
-                                                    label:
-                                                        'Eingabefeld für Kontoinhaber',
-                                                    child: TextFormField(
-                                                      controller:
-                                                          kontoinhaberController,
-                                                      style: UIStyles
-                                                          .formValueStyle
-                                                          .copyWith(
-                                                            fontSize:
-                                                                UIStyles
-                                                                    .formValueStyle
-                                                                    .fontSize! *
-                                                                fontSizeProvider
-                                                                    .scaleFactor,
-                                                          ),
-                                                      decoration: UIStyles
-                                                          .formInputDecoration
-                                                          .copyWith(
-                                                            labelText:
-                                                                'Kontoinhaber',
-                                                          ),
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'Kontoinhaber ist erforderlich';
-                                                        }
-                                                        return null;
-                                                      },
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingM,
-                                                  ),
-                                                  Semantics(
-                                                    label:
-                                                        'Eingabefeld für IBAN',
-                                                    child: TextFormField(
-                                                      controller:
-                                                          ibanController,
-                                                      style: UIStyles
-                                                          .formValueStyle
-                                                          .copyWith(
-                                                            fontSize:
-                                                                UIStyles
-                                                                    .formValueStyle
-                                                                    .fontSize! *
-                                                                fontSizeProvider
-                                                                    .scaleFactor,
-                                                          ),
-                                                      decoration: UIStyles
-                                                          .formInputDecoration
-                                                          .copyWith(
-                                                            labelText: 'IBAN',
-                                                          ),
-                                                      validator: (value) {
-                                                        final apiService =
-                                                            Provider.of<
-                                                              ApiService
-                                                            >(
-                                                              context,
-                                                              listen: false,
-                                                            );
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return 'IBAN ist erforderlich';
-                                                        }
-                                                        if (!apiService
-                                                            .validateIBAN(
-                                                              value,
-                                                            )) {
-                                                          return 'Ungültige IBAN';
-                                                        }
-                                                        return null;
-                                                      },
-                                                    ),
-                                                  ),
-
-                                                  const SizedBox(
-                                                    height:
-                                                        UIConstants.spacingM,
-                                                  ),
-                                                  Semantics(
-                                                    label:
-                                                        'Eingabefeld für BIC',
-                                                    child: TextFormField(
-                                                      controller: bicController,
-                                                      style: UIStyles
-                                                          .formValueStyle
-                                                          .copyWith(
-                                                            fontSize:
-                                                                UIStyles
-                                                                    .formValueStyle
-                                                                    .fontSize! *
-                                                                fontSizeProvider
-                                                                    .scaleFactor,
-                                                          ),
-                                                      decoration: UIStyles
-                                                          .formInputDecoration
-                                                          .copyWith(
-                                                            labelText:
-                                                                isBicRequired(
-                                                                      ibanController
-                                                                          .text
-                                                                          .trim(),
-                                                                    )
-                                                                    ? 'BIC *'
-                                                                    : 'BIC (optional)',
-                                                          ),
-                                                      validator: (value) {
-                                                        final apiService =
-                                                            Provider.of<
-                                                              ApiService
-                                                            >(
-                                                              context,
-                                                              listen: false,
-                                                            );
-                                                        final iban =
-                                                            ibanController.text
-                                                                .trim()
-                                                                .toUpperCase();
-                                                        if (!iban.startsWith(
-                                                              'DE',
-                                                            ) &&
-                                                            (value == null ||
-                                                                value
-                                                                    .trim()
-                                                                    .isEmpty)) {
-                                                          return 'BIC ist erforderlich für nicht-deutsche IBANs';
-                                                        }
-                                                        if (value != null &&
-                                                            value
-                                                                .trim()
-                                                                .isNotEmpty) {
-                                                          final bicError =
-                                                              apiService
-                                                                  .validateBIC(
-                                                                    value,
-                                                                  );
-                                                          if (bicError !=
-                                                              null) {
-                                                            return bicError;
-                                                          }
-                                                        }
-                                                        return null;
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: UIConstants.spacingS,
-                                            ),
-                                            Semantics(
-                                              label:
-                                                  'AGB und Lastschrifteinzug Bestätigung',
-                                              child: ListTileTheme(
-                                                data: const ListTileThemeData(
-                                                  horizontalTitleGap:
-                                                      UIConstants.spacingXS,
-                                                  minLeadingWidth: 0,
-                                                ),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        _KeyboardFocusCheckbox(
-                                                          label:
-                                                              'Checkbox zum Akzeptieren der AGB',
-                                                          value: agbChecked,
-                                                          onChanged: (val) {
-                                                            setState(
-                                                              () =>
-                                                                  agbChecked =
-                                                                      val ??
-                                                                      false,
-                                                            );
-                                                          },
-                                                        ),
-                                                        const SizedBox(
-                                                          width:
-                                                              UIConstants
-                                                                  .spacingS,
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (
-                                                                    context,
-                                                                  ) => Dialog(
-                                                                    child: SizedBox(
-                                                                      width:
-                                                                          600,
-                                                                      height:
-                                                                          600,
-                                                                      child:
-                                                                          const AgbScreen(),
-                                                                    ),
-                                                                  ),
-                                                            );
-                                                          },
-                                                          child: Text(
-                                                            'AGB-L',
-                                                            style: UIStyles.linkStyle.copyWith(
-                                                              color:
-                                                                  UIConstants
-                                                                      .linkColor,
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .underline,
-                                                              fontSize:
-                                                                  UIStyles
-                                                                      .bodyStyle
-                                                                      .fontSize,
-                                                              fontWeight:
-                                                                  UIStyles
-                                                                      .bodyStyle
-                                                                      .fontWeight,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width:
-                                                              UIConstants
-                                                                  .spacingS,
-                                                        ),
-                                                        Text(
-                                                          'akzeptieren',
-                                                          style: UIStyles
-                                                              .bodyStyle
-                                                              .copyWith(
-                                                                fontSize:
-                                                                    UIStyles
-                                                                        .bodyStyle
-                                                                        .fontSize,
-                                                                fontWeight:
-                                                                    UIStyles
-                                                                        .bodyStyle
-                                                                        .fontWeight,
-                                                              ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width:
-                                                              UIConstants
-                                                                  .spacingS,
-                                                        ),
-                                                        const Tooltip(
-                                                          message:
-                                                              'Ich bin mit den AGB einverstanden.',
-                                                          triggerMode:
-                                                              TooltipTriggerMode
-                                                                  .tap,
-                                                          child: Icon(
-                                                            Icons.info_outline,
-                                                            color:
-                                                                UIConstants
-                                                                    .defaultAppColor,
-                                                            size:
-                                                                UIConstants
-                                                                    .tooltipIconSize,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        _KeyboardFocusCheckbox(
-                                                          label:
-                                                              'Checkbox zur Bestätigung des Lastschrifteinzugs',
-                                                          value:
-                                                              lastschriftChecked,
-                                                          onChanged: (val) {
-                                                            setState(
-                                                              () =>
-                                                                  lastschriftChecked =
-                                                                      val ??
-                                                                      false,
-                                                            );
-                                                          },
-                                                        ),
-                                                        const SizedBox(
-                                                          width:
-                                                              UIConstants
-                                                                  .spacingS,
-                                                        ),
-                                                        Text(
-                                                          'Bestätigung des\nLastschrifteinzugs',
-                                                          style: UIStyles
-                                                              .bodyStyle
-                                                              .copyWith(
-                                                                fontSize:
-                                                                    UIStyles
-                                                                        .bodyStyle
-                                                                        .fontSize,
-                                                                fontWeight:
-                                                                    UIStyles
-                                                                        .bodyStyle
-                                                                        .fontWeight,
-                                                              ),
-                                                        ),
-                                                        const SizedBox(
-                                                          width:
-                                                              UIConstants
-                                                                  .spacingS,
-                                                        ),
-                                                        const Tooltip(
-                                                          message:
-                                                              'Ich ermächtige Sie widerruflich, die von mir zu entrichtenden Zahlungen bei Fälligkeit Durch Lastschrift von meinem im MeinBSSB angegebenen Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom BSSB auf meinem Konto gezogenen Lastschriften einzulösen.',
-                                                          triggerMode:
-                                                              TooltipTriggerMode
-                                                                  .tap,
-                                                          child: Icon(
-                                                            Icons.info_outline,
-                                                            color:
-                                                                UIConstants
-                                                                    .defaultAppColor,
-                                                            size:
-                                                                UIConstants
-                                                                    .tooltipIconSize,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-
-                                                    const SizedBox(
-                                                      height:
-                                                          UIConstants.spacingM,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: UIConstants.spacingM,
-                                right: UIConstants.spacingM,
-                                child: DialogFABs(
-                                  children: [
-                                    KeyboardFocusFAB(
-                                      heroTag: 'cancelBookingFab',
-                                      mini: true,
-                                      tooltip: 'Abbrechen',
-                                      icon: Icons.close,
-                                      semanticLabel: 'Buchung abbrechen',
-                                      onPressed:
-                                          () => Navigator.of(context).pop(),
-                                    ),
-                                    KeyboardFocusFAB(
-                                      heroTag: 'submitBookingFab',
-                                      mini: true,
-                                      tooltip: 'Buchen',
-                                      icon: Icons.check,
-                                      semanticLabel:
-                                          'Button zum Buchen der Buchung',
-                                      backgroundColor:
-                                          (agbChecked &&
-                                                  lastschriftChecked &&
-                                                  kontoinhaberController.text
-                                                      .trim()
-                                                      .isNotEmpty &&
-                                                  ibanController.text
-                                                      .trim()
-                                                      .isNotEmpty &&
-                                                  BankService.validateIBAN(
-                                                    ibanController.text.trim(),
-                                                  ) &&
-                                                  (!isBicRequired(
-                                                        ibanController.text
-                                                            .trim(),
-                                                      ) ||
-                                                      bicController.text
-                                                          .trim()
-                                                          .isNotEmpty))
-                                              ? UIConstants.defaultAppColor
-                                              : UIConstants
-                                                  .cancelButtonBackground,
-                                      onPressed:
-                                          (agbChecked &&
-                                                  lastschriftChecked &&
-                                                  kontoinhaberController.text
-                                                      .trim()
-                                                      .isNotEmpty &&
-                                                  ibanController.text
-                                                      .trim()
-                                                      .isNotEmpty &&
-                                                  BankService.validateIBAN(
-                                                    ibanController.text.trim(),
-                                                  ) &&
-                                                  (!isBicRequired(
-                                                        ibanController.text
-                                                            .trim(),
-                                                      ) ||
-                                                      bicController.text
-                                                          .trim()
-                                                          .isNotEmpty))
-                                              ? () async {
-                                                if (formKey.currentState !=
-                                                        null &&
-                                                    formKey.currentState!
-                                                        .validate()) {
-                                                  Navigator.of(context).pop();
-                                                  final apiService =
-                                                      Provider.of<ApiService>(
-                                                        context,
-                                                        listen: false,
-                                                      );
-                                                  final String email =
-                                                      await apiService
-                                                          .getCachedUsername() ??
-                                                      '';
-                                                  final BankData
-                                                  safeBankData = BankData(
-                                                    id: bankData?.id ?? 0,
-                                                    webloginId: user.webLoginId,
-                                                    kontoinhaber:
-                                                        kontoinhaberController
-                                                            .text
-                                                            .trim(),
-                                                    iban:
-                                                        ibanController.text
-                                                            .trim(),
-                                                    bic:
-                                                        bicController.text
-                                                            .trim(),
-                                                    mandatSeq:
-                                                        bankData?.mandatSeq ??
-                                                        2,
-                                                    bankName:
-                                                        bankData?.bankName ??
-                                                        '',
-                                                    mandatNr:
-                                                        bankData?.mandatNr ??
-                                                        '',
-                                                    mandatName:
-                                                        bankData?.mandatName ??
-                                                        '',
-                                                  );
-                                                  await registerPersonAndShowDialog(
-                                                    schulungsTermin:
-                                                        schulungsTermin,
-                                                    registeredPersons:
-                                                        registeredPersons,
-                                                    bankData: safeBankData,
-                                                    prefillUser: user.copyWith(
-                                                      telefon:
-                                                          telefonController
-                                                              .text,
-                                                    ),
-                                                    prefillEmail: email,
-                                                  );
-                                                }
-                                              }
-                                              : null,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
+    // Show extracted dialog (moved to separate file)
+    await BookingDataDialog.show(
+      parentContext,
+      schulungsTermin: schulungsTermin,
+      user: user,
+      registeredPersons: registeredPersons,
+      phoneNumber: phoneNumber,
+      bankData: bankData,
+      onSubmit: ({
+        required BankData safeBankData,
+        required UserData prefillUser,
+        required String prefillEmail,
+        required List<RegisteredPersonUi> registeredPersons,
+      }) async {
+        await registerPersonAndShowDialog(
+          schulungsTermin: schulungsTermin,
+          registeredPersons: registeredPersons,
+          bankData: safeBankData,
+          prefillUser: prefillUser,
+          prefillEmail: prefillEmail,
         );
       },
-    );
-  }
-
-  Widget buildRegisterAnotherDialog(
-    BuildContext context,
-    Schulungstermin schulungsTermin,
-    List<_RegisteredPerson> registeredPersons,
-    BankData bankData,
-  ) {
-    return Semantics(
-      label: 'Dialog zur Anmeldung weiterer Personen für die Schulung.',
-      child: AlertDialog(
-        backgroundColor: UIConstants.backgroundColor,
-        title: Center(
-          child: ScaledText(
-            'Bereits angemeldete Personen',
-            style: UIStyles.dialogTitleStyle,
-          ),
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (registeredPersons.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...registeredPersons.map(
-                        (p) => Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  style: UIStyles.dialogContentStyle,
-                                  children: [
-                                    const TextSpan(
-                                      text: '• ',
-                                      style: UIStyles.dialogContentStyle,
-                                    ),
-                                    TextSpan(
-                                      text: '${p.vorname} ${p.nachname}',
-                                      style: UIStyles.dialogContentStyle
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    TextSpan(
-                                      text: ' (${p.passnummer})',
-                                      style: UIStyles.dialogContentStyle,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: UIConstants.spacingM),
-                    ],
-                  ),
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: UIStyles.dialogContentStyle,
-                    children: <TextSpan>[
-                      const TextSpan(
-                        text: 'Sie sind angemeldet für die Schulung\n\n',
-                      ),
-                      TextSpan(
-                        text: schulungsTermin.bezeichnung,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const TextSpan(text: '.'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: UIConstants.spacingL),
-                const Text(
-                  'Möchten Sie noch eine weitere Person für diese Schulung anmelden?',
-                  textAlign: TextAlign.center,
-                  style: UIStyles.dialogContentStyle,
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: UIConstants.dialogPadding,
-            child: Row(
-              mainAxisAlignment: UIConstants.spaceBetweenAlignment,
-              children: [
-                Expanded(
-                  child: Semantics(
-                    label: 'Button zum Abbrechen und Rückkehr zur Übersicht',
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pop('goHome');
-                      },
-                      style: UIStyles.dialogCancelButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: UIConstants.centerAlignment,
-                        children: [
-                          const Icon(Icons.close, color: UIConstants.closeIcon),
-                          const SizedBox(width: UIConstants.spacingS),
-                          ScaledText(
-                            'Nein',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.cancelButtonText,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                UIConstants.horizontalSpacingM,
-                Expanded(
-                  child: Semantics(
-                    label:
-                        'Button zum Hinzufügen einer weiteren Person zur Schulung',
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pop('registerAnother');
-                      },
-                      style: UIStyles.dialogAcceptButtonStyle,
-                      child: Row(
-                        mainAxisAlignment: UIConstants.centerAlignment,
-                        children: [
-                          const Icon(Icons.check, color: UIConstants.checkIcon),
-                          const SizedBox(width: UIConstants.spacingS),
-                          ScaledText(
-                            'Ja',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.submitButtonText,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -1034,7 +296,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                         child: ListView.separated(
                           itemCount: _results.length + 1,
                           separatorBuilder: (context, index) {
-                            // Only add separator between real items
                             if (index < _results.length - 1) {
                               return const SizedBox(
                                 height: UIConstants.spacingS,
@@ -1044,7 +305,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                           },
                           itemBuilder: (context, index) {
                             if (index == _results.length) {
-                              // Extra space after last item
                               return const SizedBox(
                                 height: UIConstants.helpSpacing,
                               );
@@ -1073,6 +333,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                   context,
                                   listen: false,
                                 );
+
                                 final termin = await apiService
                                     .fetchSchulungstermin(
                                       schulungsTermin.schulungsterminId
@@ -1083,7 +344,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                 Navigator.of(
                                   context,
                                   rootNavigator: true,
-                                ).pop(); // Remove spinner
+                                ).pop();
 
                                 if (termin == null) {
                                   showDialog(
@@ -1119,7 +380,6 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                         ? termin.lehrgangsleiterTel
                                         : schulungsTermin.lehrgangsleiterTel;
 
-                                // Show the extracted details dialog
                                 await SchulungenDetailsDialog.show(
                                   context,
                                   termin,
@@ -1141,7 +401,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                                 });
                                                 _showBookingDialog(
                                                   termin,
-                                                  registeredPersons: [],
+                                                  registeredPersons: const [],
                                                 );
                                               },
                                             ),
@@ -1149,7 +409,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
                                     } else {
                                       _showBookingDialog(
                                         termin,
-                                        registeredPersons: [],
+                                        registeredPersons: const [],
                                       );
                                     }
                                   },
@@ -1175,7 +435,7 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
 
   Future<void> registerPersonAndShowDialog({
     required Schulungstermin schulungsTermin,
-    required List<_RegisteredPerson> registeredPersons,
+    required List<RegisteredPersonUi> registeredPersons,
     required BankData bankData,
     UserData? prefillUser,
     String prefillEmail = '',
@@ -1197,40 +457,35 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         );
       },
     );
+
     if (newPerson == null) return; // User cancelled
-    final updatedRegisteredPersons = List<_RegisteredPerson>.from(
+
+    final updatedRegisteredPersons = List<RegisteredPersonUi>.from(
       registeredPersons,
     )..add(
-      _RegisteredPerson(
+      RegisteredPersonUi(
         newPerson.vorname,
         newPerson.nachname,
         newPerson.passnummer,
       ),
     );
 
-    // After registration, show the 'register another' dialog
-    final String? registerAnother = await showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return buildRegisterAnotherDialog(
-          context,
-          schulungsTermin,
-          updatedRegisteredPersons,
-          bankData,
-        );
-      },
+    // After registration, show the 'register another' dialog (moved out)
+    final String? registerAnother = await RegisterAnotherDialog.show(
+      context,
+      schulungsTermin: schulungsTermin,
+      registeredPersons: updatedRegisteredPersons,
     );
+
     if (!mounted) return;
+
     if (registerAnother == 'registerAnother') {
-      // Call the method again for the next person
       await registerPersonAndShowDialog(
         schulungsTermin: schulungsTermin,
         registeredPersons: updatedRegisteredPersons,
         bankData: bankData,
       );
     } else if (registerAnother == 'goHome') {
-      // Navigate to home screen
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil(
         '/home',
@@ -1244,282 +499,5 @@ class _SchulungenScreenState extends State<SchulungenScreen> {
         },
       );
     }
-  }
-}
-
-class _RegisteredPerson {
-  _RegisteredPerson(this.vorname, this.nachname, this.passnummer);
-  final String vorname;
-  final String nachname;
-  final String passnummer;
-}
-
-class LoginDialog extends StatefulWidget {
-  const LoginDialog({super.key, required this.onLoginSuccess});
-  final Function(UserData) onLoginSuccess;
-
-  @override
-  State<LoginDialog> createState() => _LoginDialogState();
-}
-
-class _LoginDialogState extends State<LoginDialog> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
-  bool _isLoading = false;
-  String _errorMessage = '';
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleLogin() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-    });
-    final apiService = Provider.of<ApiService>(context, listen: false);
-    try {
-      final response = await apiService.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-      if (!mounted) return;
-      if (response['ResultType'] == 1) {
-        final personId = response['PersonID'];
-        final webloginId = response['WebLoginID'];
-        var passdaten = await apiService.fetchPassdaten(personId);
-        if (!mounted) return;
-        if (passdaten != null) {
-          final userData = passdaten.copyWith(webLoginId: webloginId);
-          Navigator.of(context).pop();
-          widget.onLoginSuccess(userData);
-        } else {
-          setState(() => _errorMessage = 'Fehler beim Laden der Passdaten.');
-        }
-      } else {
-        setState(
-          () =>
-              _errorMessage =
-                  response['ResultMessage'] ?? 'Login fehlgeschlagen.',
-        );
-      }
-    } catch (e) {
-      setState(() => _errorMessage = 'Fehler: ${e.toString()}');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: UIConstants.backgroundColor,
-      title: const Center(
-        child: ScaledText(
-          'Login erforderlich',
-          style: UIStyles.dialogTitleStyle,
-        ),
-      ),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: UIConstants.dialogPadding.copyWith(
-              bottom: UIConstants.spacingS,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (_errorMessage.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: UIConstants.spacingS,
-                    ),
-                    child: ScaledText(
-                      _errorMessage,
-                      style: UIStyles.errorStyle,
-                    ),
-                  ),
-                TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'E-Mail',
-                  ),
-                  enabled: !_isLoading,
-                  style: UIStyles.dialogContentStyle,
-                ),
-                const SizedBox(height: UIConstants.spacingM),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: !_isPasswordVisible,
-                  decoration: UIStyles.formInputDecoration.copyWith(
-                    labelText: 'Passwort',
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                    ),
-                  ),
-                  enabled: !_isLoading,
-                  style: UIStyles.dialogContentStyle,
-                  onSubmitted: (_) => _handleLogin(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-          child: Row(
-            mainAxisAlignment: UIConstants.spaceBetweenAlignment,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed:
-                      _isLoading ? null : () => Navigator.of(context).pop(),
-                  style: UIStyles.dialogCancelButtonStyle,
-                  child: Row(
-                    mainAxisAlignment: UIConstants.centerAlignment,
-                    children: [
-                      const Icon(Icons.close, color: UIConstants.closeIcon),
-                      const SizedBox(width: UIConstants.spacingS),
-                      ScaledText(
-                        'Abbrechen',
-                        style: UIStyles.dialogButtonTextStyle.copyWith(
-                          color: UIConstants.cancelButtonText,
-                          fontSize: UIConstants.buttonFontSize,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              UIConstants.horizontalSpacingM,
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleLogin,
-                  style: UIStyles.dialogAcceptButtonStyle,
-                  child: Row(
-                    mainAxisAlignment: UIConstants.centerAlignment,
-                    children: [
-                      const Icon(Icons.login, color: UIConstants.checkIcon),
-                      const SizedBox(width: UIConstants.spacingS),
-                      _isLoading
-                          ? const SizedBox(
-                            width: UIConstants.loadingIndicatorSize,
-                            height: UIConstants.loadingIndicatorSize,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                UIConstants.defaultAppColor,
-                              ),
-                            ),
-                          )
-                          : ScaledText(
-                            'Login',
-                            style: UIStyles.dialogButtonTextStyle.copyWith(
-                              color: UIConstants.submitButtonText,
-                              fontSize: UIConstants.buttonFontSize,
-                            ),
-                          ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// Custom Checkbox widget with keyboard-only focus highlighting
-class _KeyboardFocusCheckbox extends StatefulWidget {
-  const _KeyboardFocusCheckbox({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String label;
-  final bool value;
-  final ValueChanged<bool?> onChanged;
-
-  @override
-  State<_KeyboardFocusCheckbox> createState() => _KeyboardFocusCheckboxState();
-}
-
-class _KeyboardFocusCheckboxState extends State<_KeyboardFocusCheckbox> {
-  final FocusNode _focusNode = FocusNode();
-  bool _isFocused = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(_onFocusChange);
-  }
-
-  @override
-  void dispose() {
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  void _onFocusChange() {
-    setState(() {
-      _isFocused = _focusNode.hasFocus;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Check if focus is from keyboard navigation
-    final isKeyboardMode =
-        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
-    final hasKeyboardFocus = _isFocused && isKeyboardMode;
-
-    return Semantics(
-      label: widget.label,
-      child: Focus(
-        focusNode: _focusNode,
-        onKey: (node, event) {
-          if (event.isKeyPressed(LogicalKeyboardKey.enter) ||
-              event.isKeyPressed(LogicalKeyboardKey.numpadEnter)) {
-            widget.onChanged(!widget.value);
-            return KeyEventResult.handled;
-          }
-          return KeyEventResult.ignored;
-        },
-        child: Container(
-          decoration:
-              hasKeyboardFocus
-                  ? BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: Colors.yellow.shade700,
-                      width: 3.0,
-                    ),
-                  )
-                  : null,
-          child: Checkbox(value: widget.value, onChanged: widget.onChanged),
-        ),
-      ),
-    );
   }
 }
