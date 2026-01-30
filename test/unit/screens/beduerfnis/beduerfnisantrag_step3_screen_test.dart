@@ -171,12 +171,30 @@ void main() {
   testWidgets('navigates forward when next button pressed', (
     WidgetTester tester,
   ) async {
+    // Stub getNextStepRoute to return a dummy route
+    when(
+      mockApiService.getNextStepRoute(
+        context: anyNamed('context'),
+        userData: anyNamed('userData'),
+        antrag: anyNamed('antrag'),
+        isLoggedIn: anyNamed('isLoggedIn'),
+        onLogout: anyNamed('onLogout'),
+        userRole: anyNamed('userRole'),
+        readOnly: anyNamed('readOnly'),
+        navigationParams: anyNamed('navigationParams'),
+      ),
+    ).thenReturn(
+      MaterialPageRoute(
+        builder: (_) => const Scaffold(body: Text('Step 4 Dummy')),
+      ),
+    );
+
     await tester.pumpWidget(createTestWidget());
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.arrow_forward));
     await tester.pumpAndSettle();
     // Should push a new route (Step 4 screen)
-    expect(find.textContaining('Bedürfnis'), findsWidgets);
+    expect(find.text('Step 4 Dummy'), findsOneWidget);
   });
 
   testWidgets('navigates back when back button pressed', (
