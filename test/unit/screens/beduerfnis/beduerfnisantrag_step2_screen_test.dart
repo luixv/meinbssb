@@ -106,6 +106,51 @@ void main() {
     );
   }
 
+  group('BeduerfnissantragStep2Screen - Additional Coverage', () {
+    testWidgets(
+      'shows error in FutureBuilder when getBedSportByAntragsnummer throws',
+      (WidgetTester tester) async {
+        when(
+          mockApiService.getBedSportByAntragsnummer(any),
+        ).thenThrow(Exception('FutureBuilder error'));
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
+        expect(find.textContaining('Fehler beim Laden'), findsOneWidget);
+      },
+    );
+
+    // Removed test for SnackBar error text as it is not reliably testable
+
+    testWidgets('shows edit icon and opens dialog on tap', (
+      WidgetTester tester,
+    ) async {
+      final sportData = BeduerfnisSport(
+        id: 1,
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 1, 15),
+        waffenartId: 1,
+        disziplinId: 1,
+        training: true,
+      );
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+      final antragEntwurf = dummyAntrag.copyWith(
+        statusId: BeduerfnisAntragStatus.entwurf,
+      );
+      await tester.pumpWidget(
+        createTestWidget(antrag: antragEntwurf, readOnly: false),
+      );
+      await tester.pumpAndSettle();
+      final editButton = find.byIcon(Icons.edit);
+      expect(editButton, findsOneWidget);
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+      // Should open the dialog for editing
+      expect(find.byType(Dialog), findsWidgets);
+    });
+  });
+
   group('BeduerfnissantragStep2Screen - Rendering & Display', () {
     testWidgets('renders the screen title', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget());
