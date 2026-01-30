@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/beduerfnis_page.dart';
 import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
 import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/services/api/beduerfnis_next_step_service.dart';
@@ -12,7 +13,6 @@ import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step2_screen.dart
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step3_screen.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step4_screen.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step5_screen.dart';
-import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
 
 void main() {
   late BeduerfnisNextStepService service;
@@ -53,6 +53,37 @@ void main() {
       currentPage: page,
     );
   }
+
+  // ---------- UNIT TESTS: getNextStep (pure logic) ----------
+
+  group('BeduerfnisNextStepService.getNextStep', () {
+    test('step1 -> step2', () {
+      final next = service.getNextStep(BeduerfnisPage.step1);
+      expect(next, BeduerfnisPage.step2);
+    });
+
+    test('step2 -> step3', () {
+      final next = service.getNextStep(BeduerfnisPage.step2);
+      expect(next, BeduerfnisPage.step3);
+    });
+
+    test('step3 -> step4', () {
+      final next = service.getNextStep(BeduerfnisPage.step3);
+      expect(next, BeduerfnisPage.step4);
+    });
+
+    test('step4 -> step5', () {
+      final next = service.getNextStep(BeduerfnisPage.step4);
+      expect(next, BeduerfnisPage.step5);
+    });
+
+    test('step5 -> default step2', () {
+      final next = service.getNextStep(BeduerfnisPage.step5);
+      expect(next, BeduerfnisPage.step2);
+    });
+  });
+
+  // ---------- WIDGET TESTS: getNextStepRoute (UI glue) ----------
 
   Future<Widget> buildNextPage(
     WidgetTester tester,
