@@ -29,6 +29,12 @@ void main() {
     ).thenAnswer((_) async => []);
     when(mockApiService.getBedDateiById(any)).thenAnswer((_) async => null);
     when(mockApiService.deleteBedDateiById(any)).thenAnswer((_) async => true);
+
+    // Add missing stubs to prevent MissingStubError
+    when(mockApiService.getBedAuswahlByTypId(any)).thenAnswer((_) async => []);
+    when(
+      mockApiService.getBedWaffeBesitzByAntragsnummer(any),
+    ).thenAnswer((_) async => []);
   });
 
   Widget createTestWidget({

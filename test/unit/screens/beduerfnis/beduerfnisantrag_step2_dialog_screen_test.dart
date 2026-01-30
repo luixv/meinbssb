@@ -484,7 +484,7 @@ void main() {
       // Tap the date field to open the calendar dialog
       final dateField = find.text('Datum *');
       expect(dateField, findsOneWidget);
-      await tester.tap(dateField);
+      await tester.tap(dateField, warnIfMissed: false);
       await tester.pumpAndSettle();
       // No assertion, just ensure no crash
     });

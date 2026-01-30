@@ -461,6 +461,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                               );
                                             }
                                             // Debugging output for lauflaenge API result
+                                            /*
                                             if (snapshot.hasData) {
                                               debugPrint(
                                                 'Lauflaenge API result:',
@@ -473,6 +474,7 @@ class _AddWaffeBesitzDialogState extends State<AddWaffeBesitzDialog> {
                                                 'Lauflaenge API error: ${snapshot.error}',
                                               );
                                             }
+                                            */
                                             if (snapshot.data == null ||
                                                 snapshot.data!.isEmpty) {
                                               // Show empty dropdown if no data
