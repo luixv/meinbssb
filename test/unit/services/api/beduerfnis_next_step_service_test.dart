@@ -17,8 +17,6 @@ import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
 
 import 'package:provider/provider.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
-
-// Add missing imports for all used services and models
 import 'package:meinbssb/services/core/token_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
@@ -138,28 +136,29 @@ void main() {
         dummyTokenService,
         dummyCacheService,
       );
+      final dummyNetworkService = NetworkService(configService: configService);
       apiService = ApiService(
         configService: configService,
         httpClient: dummyHttpClient,
         imageService: ImageService(httpClient: dummyHttpClient),
         cacheService: dummyCacheService,
-        networkService: NetworkService(configService: configService),
+        networkService: dummyNetworkService,
         trainingService: TrainingService(
           httpClient: dummyHttpClient,
           cacheService: dummyCacheService,
-          networkService: null as dynamic,
+          networkService: dummyNetworkService,
           configService: configService,
         ),
         userService: UserService(
           httpClient: dummyHttpClient,
           cacheService: dummyCacheService,
-          networkService: null as dynamic,
+          networkService: dummyNetworkService,
           configService: configService,
         ),
         authService: AuthService(
           httpClient: dummyHttpClient,
           cacheService: dummyCacheService,
-          networkService: null as dynamic,
+          networkService: dummyNetworkService,
           configService: configService,
           postgrestService: null as dynamic,
           emailService: null as dynamic,
@@ -177,7 +176,7 @@ void main() {
         bezirkService: BezirkService(
           httpClient: dummyHttpClient,
           cacheService: dummyCacheService,
-          networkService: null as dynamic,
+          networkService: dummyNetworkService,
         ),
         startingRightsService: StartingRightsService(),
         rollsAndRights: RollsAndRights(httpClient: dummyHttpClient),
