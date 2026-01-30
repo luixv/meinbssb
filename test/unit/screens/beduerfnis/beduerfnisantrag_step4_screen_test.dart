@@ -10,6 +10,9 @@ import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step5_screen.dart
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
+
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -97,6 +100,33 @@ void main() {
       when(
         mockApiService.getBedWaffeBesitzByAntragsnummer(any),
       ).thenAnswer((_) async => []);
+
+      // Mock getNextStepRoute to return a route to BeduerfnisantragStep5Screen with required navigationParams
+      when(
+        mockApiService.getNextStepRoute(
+          context: anyNamed('context'),
+          userData: anyNamed('userData'),
+          antrag: anyNamed('antrag'),
+          isLoggedIn: anyNamed('isLoggedIn'),
+          onLogout: anyNamed('onLogout'),
+          userRole: anyNamed('userRole'),
+          readOnly: anyNamed('readOnly'),
+          navigationParams: anyNamed('navigationParams'),
+        ),
+      ).thenReturn(
+        MaterialPageRoute(
+          builder:
+              (_) => BeduerfnisantragStep5Screen(
+                navigationParams: BeduerfnisNavigationParams(
+                  wbkType: 'neu',
+                  wbkColor: 'gelb',
+                  weaponType: 'kurz',
+                  anzahlWaffen: 1,
+                  currentPage: BeduerfnisPage.step5,
+                ),
+              ),
+        ),
+      );
     });
 
     Widget createWidgetUnderTest({
@@ -104,6 +134,14 @@ void main() {
       BeduerfnisAntrag? antrag,
       bool readOnly = false,
     }) {
+      // Provide a default BeduerfnisNavigationParams for all tests
+      final navigationParams = BeduerfnisNavigationParams(
+        wbkType: 'neu',
+        wbkColor: 'gelb',
+        weaponType: 'kurz',
+        anzahlWaffen: 1,
+        currentPage: BeduerfnisPage.step4,
+      );
       return MultiProvider(
         providers: [
           Provider<ApiService>.value(value: mockApiService),
@@ -116,6 +154,7 @@ void main() {
             onLogout: () {},
             antrag: antrag ?? testAntrag,
             readOnly: readOnly,
+            navigationParams: navigationParams,
           ),
         ),
       );
@@ -152,8 +191,15 @@ void main() {
       expect(find.byIcon(Icons.arrow_forward), findsOneWidget);
       await tester.tap(find.byIcon(Icons.arrow_forward));
       await tester.pumpAndSettle();
-      // Should navigate to BeduerfnisantragStep5Screen
-      expect(find.byType(BeduerfnisantragStep5Screen), findsOneWidget);
+      // Should navigate to BeduerfnisantragStep5Screen with correct navigationParams
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is BeduerfnisantragStep5Screen &&
+              widget.navigationParams.currentPage == BeduerfnisPage.step5,
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows delete and edit icons for waffenbesitz', (

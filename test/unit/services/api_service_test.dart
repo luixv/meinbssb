@@ -159,6 +159,112 @@ void main() {
   });
 
   group('ApiService', () {
+    group('DocumentScannerService wrapper', () {
+      test('scanDocument delegates to DocumentScannerService', () async {
+        when(
+          mockDocumentScannerService.scanDocument(),
+        ).thenAnswer((_) async => null);
+
+        final result = await apiService.scanDocument();
+
+        expect(result, isNull);
+        verify(mockDocumentScannerService.scanDocument()).called(1);
+      });
+    });
+    group('StartingRightsService & WorkflowService', () {
+      test(
+        'sendStartingRightsChangeNotificationsForPerson delegates to StartingRightsService',
+        () async {
+          when(
+            mockStartingRightsService.sendStartingRightsChangeNotifications(
+              personId: anyNamed('personId'),
+            ),
+          ).thenAnswer((_) async {});
+
+          await apiService.sendStartingRightsChangeNotificationsForPerson(
+            personId: 42,
+          );
+
+          verify(
+            mockStartingRightsService.sendStartingRightsChangeNotifications(
+              personId: 42,
+            ),
+          ).called(1);
+        },
+      );
+
+      test('setStartingRightsService replaces underlying service', () async {
+        final newMock = MockStartingRightsService();
+
+        when(
+          newMock.sendStartingRightsChangeNotifications(
+            personId: anyNamed('personId'),
+          ),
+        ).thenAnswer((_) async {});
+
+        apiService.setStartingRightsService(newMock);
+
+        await apiService.sendStartingRightsChangeNotificationsForPerson(
+          personId: 99,
+        );
+
+        verify(
+          newMock.sendStartingRightsChangeNotifications(personId: 99),
+        ).called(1);
+        verifyNever(
+          mockStartingRightsService.sendStartingRightsChangeNotifications(
+            personId: anyNamed('personId'),
+          ),
+        );
+      });
+
+      test('canAntragChangeFromStateToState delegates to WorkflowService', () {
+        when(
+          mockWorkflowService.canAntragChangeFromStateToState(
+            currentState: anyNamed('currentState'),
+            nextState: anyNamed('nextState'),
+            userRole: anyNamed('userRole'),
+          ),
+        ).thenReturn(true);
+
+        final result = apiService.canAntragChangeFromStateToState(
+          currentState: BeduerfnisAntragStatus.entwurf,
+          nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
+          userRole: WorkflowRole.mitglied,
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockWorkflowService.canAntragChangeFromStateToState(
+            currentState: BeduerfnisAntragStatus.entwurf,
+            nextState: BeduerfnisAntragStatus.eingereichtAmVerein,
+            userRole: WorkflowRole.mitglied,
+          ),
+        ).called(1);
+      });
+    });
+
+    group('Simple getters & cache', () {
+      test('service getters return injected instances', () {
+        expect(apiService.configService, same(mockConfigService));
+        expect(apiService.imageService, same(mockImageService));
+        expect(apiService.emailService, same(mockEmailService));
+        expect(apiService.authService, same(mockAuthService));
+        expect(apiService.cacheService, same(mockCacheService));
+      });
+
+      test('getCachedUsername delegates to CacheService', () async {
+        when(
+          mockCacheService.getString('username'),
+        ).thenAnswer((_) async => 'user@example.com');
+
+        final result = await apiService.getCachedUsername();
+
+        expect(result, 'user@example.com');
+        verify(mockCacheService.getString('username')).called(1);
+      });
+    });
+
     group('Network Service Tests', () {
       test('hasInternet returns true when network is available', () async {
         when(mockNetworkService.hasInternet()).thenAnswer((_) async => true);
@@ -1451,6 +1557,21 @@ void main() {
     });
 
     group('Verein Service Tests', () {
+      test('fetchVereinFunktionaer delegates to VereinService', () async {
+        final expected = [
+          {'id': 1, 'name': 'Funktionär'},
+        ];
+
+        when(
+          mockVereinService.fetchVereinFunktionaer(10, 2),
+        ).thenAnswer((_) async => expected);
+
+        final result = await apiService.fetchVereinFunktionaer(10, 2);
+
+        expect(result, expected);
+        verify(mockVereinService.fetchVereinFunktionaer(10, 2)).called(1);
+      });
+
       test('fetchVereine delegates to verein service', () async {
         final expectedData = [
           const Verein(id: 1, vereinsNr: 1, name: 'Test Verein'),
@@ -1622,6 +1743,141 @@ void main() {
     });
 
     group('PostgrestService Tests', () {
+      group('BeduerfnisAntrag Postgrest wrappers', () {
+        test(
+          'finalizeResetPassword delegates to AuthService.resetPasswordStep2',
+          () async {
+            final expected = {'ResultType': 1};
+            when(
+              mockAuthService.resetPasswordStep2(any, any, any),
+            ).thenAnswer((_) async => expected);
+
+            final result = await apiService.finalizeResetPassword(
+              'token123',
+              '42',
+              'newPassword',
+            );
+
+            expect(result, expected);
+            verify(
+              mockAuthService.resetPasswordStep2(
+                'token123',
+                '42',
+                'newPassword',
+              ),
+            ).called(1);
+          },
+        );
+
+        test(
+          'getUserByPasswordResetVerificationToken delegates to PostgrestService',
+          () async {
+            final expected = {'id': 1, 'token': 'abc'};
+            when(
+              mockPostgrestService.getUserByPasswordResetVerificationToken(
+                'abc',
+              ),
+            ).thenAnswer((_) async => expected);
+
+            final result = await apiService
+                .getUserByPasswordResetVerificationToken('abc');
+
+            expect(result, expected);
+            verify(
+              mockPostgrestService.getUserByPasswordResetVerificationToken(
+                'abc',
+              ),
+            ).called(1);
+          },
+        );
+
+        test('softDeleteUser delegates to PostgrestService', () async {
+          when(
+            mockPostgrestService.softDeleteUser('123'),
+          ).thenAnswer((_) async => true);
+
+          final result = await apiService.softDeleteUser('123');
+
+          expect(result, isTrue);
+          verify(mockPostgrestService.softDeleteUser('123')).called(1);
+        });
+
+        test('createBedAntrag delegates to PostgrestService', () async {
+          final expected = BeduerfnisAntrag(
+            id: 1,
+            antragsnummer: 123,
+            personId: 42,
+          );
+
+          when(
+            mockPostgrestService.createBedAntrag(
+              personId: anyNamed('personId'),
+              statusId: anyNamed('statusId'),
+              wbkNeu: anyNamed('wbkNeu'),
+              wbkArt: anyNamed('wbkArt'),
+              beduerfnisart: anyNamed('beduerfnisart'),
+              anzahlWaffen: anyNamed('anzahlWaffen'),
+              vereinsnummer: anyNamed('vereinsnummer'),
+              email: anyNamed('email'),
+              bankdaten: anyNamed('bankdaten'),
+              abbuchungErfolgt: anyNamed('abbuchungErfolgt'),
+              bemerkung: anyNamed('bemerkung'),
+            ),
+          ).thenAnswer((_) async => expected);
+
+          final result = await apiService.createBedAntrag(
+            personId: 42,
+            statusId: 1,
+            wbkNeu: true,
+            wbkArt: 'Gelb',
+            beduerfnisart: 'Neuerwerb',
+            anzahlWaffen: 2,
+            vereinsnummer: 12345,
+            email: 'user@example.com',
+            bankdaten: {'iban': 'DE...'},
+            abbuchungErfolgt: false,
+            bemerkung: 'Test',
+          );
+
+          expect(result, expected);
+          verify(
+            mockPostgrestService.createBedAntrag(
+              personId: 42,
+              statusId: 1,
+              wbkNeu: true,
+              wbkArt: 'Gelb',
+              beduerfnisart: 'Neuerwerb',
+              anzahlWaffen: 2,
+              vereinsnummer: 12345,
+              email: 'user@example.com',
+              bankdaten: {'iban': 'DE...'},
+              abbuchungErfolgt: false,
+              bemerkung: 'Test',
+            ),
+          ).called(1);
+        });
+
+        test(
+          'getBedAntragByAntragsnummer delegates to PostgrestService',
+          () async {
+            final expected = [
+              BeduerfnisAntrag(id: 1, antragsnummer: 777, personId: 42),
+            ];
+
+            when(
+              mockPostgrestService.getBedAntragByAntragsnummer(777),
+            ).thenAnswer((_) async => expected);
+
+            final result = await apiService.getBedAntragByAntragsnummer(777);
+
+            expect(result, expected);
+            verify(
+              mockPostgrestService.getBedAntragByAntragsnummer(777),
+            ).called(1);
+          },
+        );
+      });
+
       test('uploadProfilePhoto delegates to postgrest service', () async {
         final photoBytes = [1, 2, 3, 4, 5];
         when(
@@ -1908,6 +2164,176 @@ void main() {
     });
 
     group('Email Validation', () {
+      test('getRegistrationSubject delegates to EmailService', () async {
+        when(
+          mockEmailService.getRegistrationSubject(),
+        ).thenAnswer((_) async => 'Welcome!');
+
+        final result = await apiService.getRegistrationSubject();
+
+        expect(result, 'Welcome!');
+        verify(mockEmailService.getRegistrationSubject()).called(1);
+      });
+
+      test('getRegistrationContent delegates to EmailService', () async {
+        when(
+          mockEmailService.getRegistrationContent(),
+        ).thenAnswer((_) async => '<p>Hello</p>');
+
+        final result = await apiService.getRegistrationContent();
+
+        expect(result, '<p>Hello</p>');
+        verify(mockEmailService.getRegistrationContent()).called(1);
+      });
+
+      test('sendSchulungAnmeldungEmail delegates to EmailService', () async {
+        when(
+          mockEmailService.sendSchulungAnmeldungEmail(
+            personId: anyNamed('personId'),
+            schulungName: anyNamed('schulungName'),
+            schulungDate: anyNamed('schulungDate'),
+            firstName: anyNamed('firstName'),
+            lastName: anyNamed('lastName'),
+            passnumber: anyNamed('passnumber'),
+            email: anyNamed('email'),
+            schulungRegistered: anyNamed('schulungRegistered'),
+            schulungTotal: anyNamed('schulungTotal'),
+            location: anyNamed('location'),
+            eventDateTime: anyNamed('eventDateTime'),
+          ),
+        ).thenAnswer((_) async {});
+
+        await apiService.sendSchulungAnmeldungEmail(
+          personId: '1',
+          schulungName: 'Lehrgang A',
+          schulungDate: '2024-01-01',
+          firstName: 'Max',
+          lastName: 'Mustermann',
+          passnumber: '123456',
+          email: 'test@example.com',
+          schulungRegistered: 5,
+          schulungTotal: 20,
+          location: 'München',
+          eventDateTime: DateTime(2024, 1, 1),
+        );
+
+        verify(
+          mockEmailService.sendSchulungAnmeldungEmail(
+            personId: '1',
+            schulungName: 'Lehrgang A',
+            schulungDate: '2024-01-01',
+            firstName: 'Max',
+            lastName: 'Mustermann',
+            passnumber: '123456',
+            email: 'test@example.com',
+            schulungRegistered: 5,
+            schulungTotal: 20,
+            location: 'München',
+            eventDateTime: DateTime(2024, 1, 1),
+          ),
+        ).called(1);
+      });
+
+      test(
+        'sendAccountCreationNotifications delegates to EmailService',
+        () async {
+          when(
+            mockEmailService.sendAccountCreationNotifications(any, any),
+          ).thenAnswer((_) async {});
+
+          await apiService.sendAccountCreationNotifications(
+            '123',
+            'user@example.com',
+          );
+
+          verify(
+            mockEmailService.sendAccountCreationNotifications(
+              '123',
+              'user@example.com',
+            ),
+          ).called(1);
+        },
+      );
+
+      test('getEmailAddressesByPersonId delegates to EmailService', () async {
+        final expected = ['a@example.com', 'b@example.com'];
+
+        when(
+          mockEmailService.getEmailAddressesByPersonId('42'),
+        ).thenAnswer((_) async => expected);
+
+        final result = await apiService.getEmailAddressesByPersonId('42');
+
+        expect(result, expected);
+        verify(mockEmailService.getEmailAddressesByPersonId('42')).called(1);
+      });
+
+      test(
+        'sendStartingRightsChangeNotifications delegates to EmailService',
+        () async {
+          final personId = 123;
+          final zveData = PassdatenAkzeptOrAktiv(
+            passdatenId: 1,
+            passStatus: 2,
+            passStatusText: 'Aktiv',
+            digitalerPass: 1,
+            personId: personId,
+            erstVereinId: 10,
+            evVereinNr: 20,
+            evVereinName: 'Testverein',
+            passNummer: '123456',
+            erstelltAm: null,
+            erstelltVon: null,
+            zves: [],
+          );
+
+          final passdaten = UserData(
+            personId: personId,
+            webLoginId: 1,
+            passnummer: '123456',
+            vereinNr: 10,
+            namen: 'Mustermann',
+            vorname: 'Max',
+            vereinName: 'Testverein',
+            passdatenId: 1,
+            mitgliedschaftId: 1,
+          );
+
+          final zweitmitgliedschaften = <ZweitmitgliedschaftData>[];
+
+          when(
+            mockEmailService.sendStartingRightsChangeNotifications(
+              personId: anyNamed('personId'),
+              passdaten: anyNamed('passdaten'),
+              userEmailAddresses: anyNamed('userEmailAddresses'),
+              clubEmailAddresses: anyNamed('clubEmailAddresses'),
+              zweitmitgliedschaften: anyNamed('zweitmitgliedschaften'),
+              zveData: anyNamed('zveData'),
+            ),
+          ).thenAnswer((_) async {});
+
+          await apiService.sendStartingRightsChangeNotifications(
+            personId: personId,
+            passdaten: passdaten,
+            userEmailAddresses: ['user@example.com'],
+            clubEmailAddresses: ['club@example.com'],
+            zweitmitgliedschaften: zweitmitgliedschaften,
+            zveData: zveData,
+          );
+
+          verify(
+            mockEmailService.sendStartingRightsChangeNotifications(
+              personId: personId,
+              passdaten: passdaten,
+              userEmailAddresses: ['user@example.com'],
+              clubEmailAddresses: ['club@example.com'],
+              zweitmitgliedschaften: zweitmitgliedschaften,
+              zveData: zveData,
+            ),
+          ).called(1);
+        },
+      );
+
       test(
         'createEmailValidationEntry delegates to postgrest service',
         () async {
@@ -2241,6 +2667,94 @@ void main() {
     });
 
     group('OktoberfestService Tests', () {
+      test('fetchGewinneEx delegates to OktoberfestService', () async {
+        final expected = [
+          const Gewinn(
+            gewinnId: 1,
+            jahr: 2024,
+            isSachpreis: false,
+            geldpreis: 50,
+            sachpreis: 'Sachpreis',
+            wettbewerb: 'Wettbewerb',
+            abgerufenAm: '2024-01-01',
+            platz: 1,
+          ),
+        ];
+
+        when(
+          mockOktoberfestService.fetchGewinneEx(
+            jahr: 2024,
+            passnummer: '123456',
+            configService: mockConfigService,
+          ),
+        ).thenAnswer((_) async => expected);
+
+        final result = await apiService.fetchGewinneEx(2024, '123456');
+
+        expect(result, expected);
+        verify(
+          mockOktoberfestService.fetchGewinneEx(
+            jahr: 2024,
+            passnummer: '123456',
+            configService: mockConfigService,
+          ),
+        ).called(1);
+      });
+
+      test('gewinneAbrufen delegates to OktoberfestService', () async {
+        when(
+          mockOktoberfestService.gewinneAbrufen(
+            gewinnIDs: anyNamed('gewinnIDs'),
+            iban: anyNamed('iban'),
+            passnummer: anyNamed('passnummer'),
+            configService: anyNamed('configService'),
+          ),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.gewinneAbrufen(
+          gewinnIDs: [1, 2],
+          iban: 'DE89370400440532013000',
+          passnummer: '123456',
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockOktoberfestService.gewinneAbrufen(
+            gewinnIDs: [1, 2],
+            iban: 'DE89370400440532013000',
+            passnummer: '123456',
+            configService: mockConfigService,
+          ),
+        ).called(1);
+      });
+
+      test('gewinneAbrufenEx delegates to OktoberfestService', () async {
+        when(
+          mockOktoberfestService.gewinneAbrufenEx(
+            gewinnIDs: anyNamed('gewinnIDs'),
+            iban: anyNamed('iban'),
+            passnummer: anyNamed('passnummer'),
+            configService: anyNamed('configService'),
+          ),
+        ).thenAnswer((_) async => true);
+
+        final result = await apiService.gewinneAbrufenEx(
+          gewinnIDs: [3, 4],
+          iban: 'DE89370400440532013000',
+          passnummer: '654321',
+        );
+
+        expect(result, isTrue);
+        verify(
+          mockOktoberfestService.gewinneAbrufenEx(
+            gewinnIDs: [3, 4],
+            iban: 'DE89370400440532013000',
+            passnummer: '654321',
+            configService: mockConfigService,
+          ),
+        ).called(1);
+      });
+
       test(
         'fetchResults delegates to oktoberfestService and returns expected data',
         () async {

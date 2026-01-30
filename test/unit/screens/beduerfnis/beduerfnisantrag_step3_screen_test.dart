@@ -7,6 +7,8 @@ import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mockito/annotations.dart';
@@ -46,6 +48,13 @@ void main() {
     // Provide a default antrag with antragsnummer if not supplied
     final effectiveAntrag =
         antrag ?? BeduerfnisAntrag(antragsnummer: 123, personId: 1);
+    final navigationParams = BeduerfnisNavigationParams(
+      wbkType: 'neu',
+      wbkColor: 'gelb',
+      weaponType: 'kurz',
+      anzahlWaffen: 1,
+      currentPage: BeduerfnisPage.step3,
+    );
     return MultiProvider(
       providers: [
         Provider<ApiService>.value(value: mockApiService),
@@ -59,6 +68,7 @@ void main() {
           onLogout: () {},
           userRole: WorkflowRole.mitglied,
           readOnly: readOnly,
+          navigationParams: navigationParams,
         ),
       ),
     );
@@ -161,12 +171,30 @@ void main() {
   testWidgets('navigates forward when next button pressed', (
     WidgetTester tester,
   ) async {
+    // Stub getNextStepRoute to return a dummy route
+    when(
+      mockApiService.getNextStepRoute(
+        context: anyNamed('context'),
+        userData: anyNamed('userData'),
+        antrag: anyNamed('antrag'),
+        isLoggedIn: anyNamed('isLoggedIn'),
+        onLogout: anyNamed('onLogout'),
+        userRole: anyNamed('userRole'),
+        readOnly: anyNamed('readOnly'),
+        navigationParams: anyNamed('navigationParams'),
+      ),
+    ).thenReturn(
+      MaterialPageRoute(
+        builder: (_) => const Scaffold(body: Text('Step 4 Dummy')),
+      ),
+    );
+
     await tester.pumpWidget(createTestWidget());
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.arrow_forward));
     await tester.pumpAndSettle();
     // Should push a new route (Step 4 screen)
-    expect(find.textContaining('Bedürfnis'), findsWidgets);
+    expect(find.text('Step 4 Dummy'), findsOneWidget);
   });
 
   testWidgets('navigates back when back button pressed', (

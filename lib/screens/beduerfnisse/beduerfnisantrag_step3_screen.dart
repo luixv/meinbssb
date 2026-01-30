@@ -10,11 +10,12 @@ import 'package:meinbssb/screens/base_screen_layout.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step3_dialog_screen.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step4_screen.dart';
 import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
 import 'package:meinbssb/services/api_service.dart';
 
 import 'dart:typed_data';
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
 
 class BeduerfnisantragStep3Screen extends StatefulWidget {
   const BeduerfnisantragStep3Screen({
@@ -24,6 +25,7 @@ class BeduerfnisantragStep3Screen extends StatefulWidget {
     required this.onLogout,
     required this.userRole,
     this.readOnly = false,
+    required this.navigationParams,
     super.key,
   });
 
@@ -33,6 +35,7 @@ class BeduerfnisantragStep3Screen extends StatefulWidget {
   final Function() onLogout;
   final WorkflowRole userRole;
   final bool readOnly;
+  final BeduerfnisNavigationParams navigationParams;
 
   @override
   State<BeduerfnisantragStep3Screen> createState() =>
@@ -247,20 +250,23 @@ class _BeduerfnisantragStep3ScreenState
                         semanticLabel: 'Weiter Button',
                         semanticHint: 'Weiter zum nächsten Schritt',
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                return BeduerfnisantragStep4Screen(
-                                  userData: widget.userData,
-                                  isLoggedIn: widget.isLoggedIn,
-                                  onLogout: widget.onLogout,
-                                  antrag: widget.antrag,
-                                  userRole: widget.userRole,
-                                  readOnly: widget.readOnly,
-                                );
-                              },
-                            ),
+                          final apiService = Provider.of<ApiService>(
+                            context,
+                            listen: false,
                           );
+                          final updatedParams = widget.navigationParams
+                              .copyWith(currentPage: BeduerfnisPage.step3);
+                          final route = apiService.getNextStepRoute(
+                            context: context,
+                            userData: widget.userData,
+                            antrag: widget.antrag!,
+                            isLoggedIn: widget.isLoggedIn,
+                            onLogout: widget.onLogout,
+                            userRole: widget.userRole,
+                            readOnly: widget.readOnly,
+                            navigationParams: updatedParams,
+                          );
+                          Navigator.push(context, route);
                         },
                         icon: Icons.arrow_forward,
                       ),

@@ -6,9 +6,10 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/models/user_data.dart';
 import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
 import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step2_screen.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
@@ -781,6 +782,18 @@ class _BeduerfnisantragStep1ScreenState
   Future<void> _proceedToNextStep() async {
     if (!mounted) return;
 
+    // Collect navigation parameters into model
+    final navigationParams = BeduerfnisNavigationParams(
+      wbkType: _wbkType ?? 'neu',
+      wbkColor: _wbkColor ?? 'gelb',
+      weaponType: _weaponType ?? 'kurz',
+      anzahlWaffen: int.tryParse(_anzahlController.text) ?? 0,
+      currentPage: BeduerfnisPage.step1,
+    );
+
+    // Use BeduerfnisNextStepService to determine the next MaterialPageRoute
+    final apiService = Provider.of<ApiService>(context, listen: false);
+
     // Only save if there are changes
     if (_isDirty()) {
       await _saveAntrag();
@@ -801,7 +814,6 @@ class _BeduerfnisantragStep1ScreenState
     }
 
     // Fetch fresh antrag data from API to ensure we have the latest values
-    final apiService = Provider.of<ApiService>(context, listen: false);
     final antragsList = await apiService.getBedAntragByAntragsnummer(
       antragForNext.antragsnummer!,
     );
@@ -818,22 +830,19 @@ class _BeduerfnisantragStep1ScreenState
     final freshAntrag = antragsList.first;
     const userRole = WorkflowRole.mitglied;
 
-    // Always go to step 2
+    // Let the service return the correct MaterialPageRoute for navigation
     if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => BeduerfnisantragStep2Screen(
-                userData: widget.userData,
-                antrag: freshAntrag,
-                isLoggedIn: widget.isLoggedIn,
-                onLogout: widget.onLogout,
-                userRole: userRole,
-                readOnly: widget.readOnly,
-              ),
-        ),
+      final route = apiService.getNextStepRoute(
+        context: context,
+        userData: widget.userData,
+        antrag: freshAntrag,
+        isLoggedIn: widget.isLoggedIn,
+        onLogout: widget.onLogout,
+        userRole: userRole,
+        readOnly: widget.readOnly,
+        navigationParams: navigationParams,
       );
+      Navigator.push(context, route);
     }
   }
 }

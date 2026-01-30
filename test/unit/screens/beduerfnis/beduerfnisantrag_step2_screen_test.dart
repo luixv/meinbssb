@@ -15,8 +15,9 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
 import 'beduerfnisantrag_step2_screen_test.mocks.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
 
 @GenerateMocks([ApiService])
 void main() {
@@ -75,7 +76,17 @@ void main() {
     bool isLoggedIn = true,
     WorkflowRole userRole = WorkflowRole.mitglied,
     bool readOnly = false,
+    BeduerfnisNavigationParams? navigationParams,
   }) {
+    final navParams =
+        navigationParams ??
+        BeduerfnisNavigationParams(
+          wbkType: 'neu',
+          wbkColor: 'gelb',
+          weaponType: 'kurz',
+          anzahlWaffen: 0,
+          currentPage: BeduerfnisPage.step2,
+        );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FontSizeProvider>.value(value: fontSizeProvider),
@@ -89,10 +100,56 @@ void main() {
           onLogout: () {},
           userRole: userRole,
           readOnly: readOnly,
+          navigationParams: navParams,
         ),
       ),
     );
   }
+
+  group('BeduerfnissantragStep2Screen - Additional Coverage', () {
+    testWidgets(
+      'shows error in FutureBuilder when getBedSportByAntragsnummer throws',
+      (WidgetTester tester) async {
+        when(
+          mockApiService.getBedSportByAntragsnummer(any),
+        ).thenThrow(Exception('FutureBuilder error'));
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
+        expect(find.textContaining('Fehler beim Laden'), findsOneWidget);
+      },
+    );
+
+    // Removed test for SnackBar error text as it is not reliably testable
+
+    testWidgets('shows edit icon and opens dialog on tap', (
+      WidgetTester tester,
+    ) async {
+      final sportData = BeduerfnisSport(
+        id: 1,
+        antragsnummer: 100,
+        schiessdatum: DateTime(2024, 1, 15),
+        waffenartId: 1,
+        disziplinId: 1,
+        training: true,
+      );
+      when(
+        mockApiService.getBedSportByAntragsnummer(any),
+      ).thenAnswer((_) async => [sportData]);
+      final antragEntwurf = dummyAntrag.copyWith(
+        statusId: BeduerfnisAntragStatus.entwurf,
+      );
+      await tester.pumpWidget(
+        createTestWidget(antrag: antragEntwurf, readOnly: false),
+      );
+      await tester.pumpAndSettle();
+      final editButton = find.byIcon(Icons.edit);
+      expect(editButton, findsOneWidget);
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+      // Should open the dialog for editing
+      expect(find.byType(Dialog), findsWidgets);
+    });
+  });
 
   group('BeduerfnissantragStep2Screen - Rendering & Display', () {
     testWidgets('renders the screen title', (WidgetTester tester) async {
@@ -388,6 +445,24 @@ void main() {
     testWidgets(
       'forward FAB navigates in read-only mode without status change',
       (WidgetTester tester) async {
+        // Stub getNextStepRoute to return a dummy route
+        when(
+          mockApiService.getNextStepRoute(
+            context: anyNamed('context'),
+            userData: anyNamed('userData'),
+            antrag: anyNamed('antrag'),
+            isLoggedIn: anyNamed('isLoggedIn'),
+            onLogout: anyNamed('onLogout'),
+            userRole: anyNamed('userRole'),
+            readOnly: anyNamed('readOnly'),
+            navigationParams: anyNamed('navigationParams'),
+          ),
+        ).thenReturn(
+          MaterialPageRoute(
+            builder: (_) => const Scaffold(body: Text('Step 3 Dummy')),
+          ),
+        );
+
         await tester.pumpWidget(createTestWidget(readOnly: true));
         await tester.pumpAndSettle();
 
@@ -397,6 +472,8 @@ void main() {
 
         // Verify no updateBedAntrag was called in read-only mode
         verifyNever(mockApiService.updateBedAntrag(any));
+        // Confirm navigation occurred
+        expect(find.text('Step 3 Dummy'), findsOneWidget);
       },
     );
   });
@@ -434,6 +511,24 @@ void main() {
     testWidgets('navigates to step 3 when forward button is tapped', (
       WidgetTester tester,
     ) async {
+      // Stub getNextStepRoute to return a dummy route
+      when(
+        mockApiService.getNextStepRoute(
+          context: anyNamed('context'),
+          userData: anyNamed('userData'),
+          antrag: anyNamed('antrag'),
+          isLoggedIn: anyNamed('isLoggedIn'),
+          onLogout: anyNamed('onLogout'),
+          userRole: anyNamed('userRole'),
+          readOnly: anyNamed('readOnly'),
+          navigationParams: anyNamed('navigationParams'),
+        ),
+      ).thenReturn(
+        MaterialPageRoute(
+          builder: (_) => const Scaffold(body: Text('Step 3 Dummy')),
+        ),
+      );
+
       final antragEntwurf = dummyAntrag.copyWith(
         statusId: BeduerfnisAntragStatus.entwurf,
       );
@@ -448,7 +543,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // After navigation, step 2 screen should no longer be visible
-      expect(find.byType(BeduerfnisantragStep2Screen), findsNothing);
+      expect(find.text('Step 3 Dummy'), findsOneWidget);
     });
   });
 

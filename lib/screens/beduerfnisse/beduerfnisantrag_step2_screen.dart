@@ -1,6 +1,7 @@
 import 'package:meinbssb/widgets/delete_confirm_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:meinbssb/constants/ui_constants.dart';
@@ -15,11 +16,11 @@ import 'package:meinbssb/models/disziplin_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/screens/base_screen_layout.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step3_screen.dart';
 import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/widgets/scaled_text.dart';
 import '/widgets/keyboard_focus_fab.dart';
 import 'beduerfnisantrag_step2_dialog_screen.dart';
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
 
 class BeduerfnisantragStep2Screen extends StatefulWidget {
   const BeduerfnisantragStep2Screen({
@@ -29,6 +30,7 @@ class BeduerfnisantragStep2Screen extends StatefulWidget {
     required this.onLogout,
     required this.userRole,
     this.readOnly = false,
+    required this.navigationParams,
     super.key,
   });
 
@@ -38,6 +40,7 @@ class BeduerfnisantragStep2Screen extends StatefulWidget {
   final Function() onLogout;
   final WorkflowRole userRole;
   final bool readOnly;
+  final BeduerfnisNavigationParams navigationParams;
 
   @override
   State<BeduerfnisantragStep2Screen> createState() =>
@@ -87,6 +90,7 @@ class _BeduerfnisantragStep2ScreenState
                 onLogout: widget.onLogout,
                 userRole: widget.userRole,
                 readOnly: widget.readOnly,
+                navigationParams: widget.navigationParams,
               ),
         ),
       );
@@ -1146,20 +1150,21 @@ class _BeduerfnisantragStep2ScreenState
       return;
     }
 
-    // Navigate to step 3 screen
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => BeduerfnisantragStep3Screen(
-              userData: widget.userData,
-              antrag: widget.antrag,
-              isLoggedIn: widget.isLoggedIn,
-              onLogout: widget.onLogout,
-              userRole: widget.userRole,
-              readOnly: widget.readOnly,
-            ),
-      ),
+    // Use BeduerfnisNextStepService for navigation
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    final updatedParams = widget.navigationParams.copyWith(
+      currentPage: BeduerfnisPage.step2,
     );
+    final route = apiService.getNextStepRoute(
+      context: context,
+      userData: widget.userData,
+      antrag: widget.antrag!,
+      isLoggedIn: widget.isLoggedIn,
+      onLogout: widget.onLogout,
+      userRole: widget.userRole,
+      readOnly: widget.readOnly,
+      navigationParams: updatedParams,
+    );
+    Navigator.push(context, route);
   }
 }
