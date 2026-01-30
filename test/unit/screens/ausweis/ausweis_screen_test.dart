@@ -28,6 +28,7 @@ import 'package:meinbssb/providers/theme_provider.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/calendar_service.dart';
+import 'package:meinbssb/services/core/document_scanner_service.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:mockito/annotations.dart';
@@ -393,6 +394,8 @@ class DummyWorkflowService extends WorkflowService {
   DummyWorkflowService() : super();
 }
 
+class DummyDocumentScannerService extends DocumentScannerService {}
+
 class MockApiService extends ApiService {
   MockApiService({this.fetchResult, this.shouldThrow = false})
     : _dummyStartingRightsService = DummyStartingRightsService(),
@@ -417,6 +420,7 @@ class MockApiService extends ApiService {
         startingRightsService: DummyStartingRightsService(),
         rollsAndRights: DummyRollsAndRights(),
         workflowService: DummyWorkflowService(),
+        documentScannerService: DummyDocumentScannerService(),
       ) {
     // Replace the instance in ApiService with our stored instance and set apiService
     // This ensures we use the same instance and can set the apiService on it

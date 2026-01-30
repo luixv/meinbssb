@@ -132,7 +132,8 @@ CREATE TABLE IF NOT EXISTS bed_datei_zuord (
     antragsnummer   TEXT NOT NULL,
     datei_id        INT NOT NULL,
     datei_art       VARCHAR(50) NOT NULL CHECK (datei_art IN ('SPORT', 'WBK')),
-    bed_sport_id    INT
+    bed_sport_id    INT,
+    label            TEXT
 );
 
 -- Create bed_antrag_person table (Application Person)
@@ -287,6 +288,33 @@ CREATE TABLE IF NOT EXISTS his_bed_antrag (
     action              TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS his_bed_datei_zuord (
+    id              INT,
+    created_at      TIMESTAMP,
+    changed_at      TIMESTAMP,
+    deleted_at      TIMESTAMP,
+    antragsnummer   TEXT,
+    datei_id        INT,
+    datei_art       VARCHAR(50),
+    bed_sport_id    INT,
+    label            TEXT,
+    action          TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS his_bed_antrag_person (
+    id              INT,
+    created_at      TIMESTAMP,
+    changed_at      TIMESTAMP,
+    deleted_at      TIMESTAMP,
+    antragsnummer   TEXT,
+    person_id       BIGINT,
+    status_id       INT,
+    vorname         VARCHAR(255),
+    nachname        VARCHAR(255),
+    vereinsname     VARCHAR(255),
+    action          TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS his_bed_wettkampf (
     id                  INT,
     created_at          TIMESTAMP,
@@ -417,13 +445,13 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_his_bed_datei_zuord() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        INSERT INTO his_bed_datei_zuord VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.datei_id, NEW.datei_art, NEW.bed_sport_id, 'insert');
+        INSERT INTO his_bed_datei_zuord VALUES (NEW.id, NEW.created_at, NEW.changed_at, NEW.deleted_at, NEW.antragsnummer, NEW.datei_id, NEW.datei_art, NEW.bed_sport_id, NEW.label, 'insert');
         RETURN NEW;
     ELSIF TG_OP = 'UPDATE' THEN
-        INSERT INTO his_bed_datei_zuord VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.datei_id, OLD.datei_art, OLD.bed_sport_id, 'update');
+        INSERT INTO his_bed_datei_zuord VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.datei_id, OLD.datei_art, OLD.bed_sport_id, OLD.label, 'update');
         RETURN NEW;
     ELSIF TG_OP = 'DELETE' THEN
-        INSERT INTO his_bed_datei_zuord VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.datei_id, OLD.datei_art, OLD.bed_sport_id, 'delete');
+        INSERT INTO his_bed_datei_zuord VALUES (OLD.id, OLD.created_at, OLD.changed_at, OLD.deleted_at, OLD.antragsnummer, OLD.datei_id, OLD.datei_art, OLD.bed_sport_id, OLD.label, 'delete');
         RETURN OLD;
     END IF;
     RETURN NULL;

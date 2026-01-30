@@ -33,15 +33,15 @@ import 'package:meinbssb/models/person_data.dart';
 import 'package:meinbssb/models/result_data.dart';
 import 'package:meinbssb/models/bezirk_data.dart';
 import 'package:meinbssb/models/schulungstermine_zusatzfelder_data.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
-import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
-import 'package:meinbssb/models/beduerfnisse_wettkampf_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_data.dart';
+import 'package:meinbssb/models/beduerfnis_sport_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnis_wettkampf_data.dart';
 
 import 'core/cache_service.dart';
 import 'core/config_service.dart';
@@ -51,6 +51,7 @@ import 'core/network_service.dart';
 import 'core/postgrest_service.dart';
 import 'core/email_service.dart';
 import 'core/calendar_service.dart';
+import 'core/document_scanner_service.dart';
 
 class NetworkException implements Exception {
   NetworkException(this.message);
@@ -80,6 +81,7 @@ class ApiService {
     required StartingRightsService startingRightsService,
     required RollsAndRights rollsAndRights,
     required WorkflowService workflowService,
+    required DocumentScannerService documentScannerService,
   }) : _configService = configService,
        _imageService = imageService,
        _cacheService = cacheService,
@@ -95,7 +97,8 @@ class ApiService {
        _bezirkService = bezirkService,
        _startingRightsService = startingRightsService,
        _rollsAndRights = rollsAndRights,
-       _workflowService = workflowService;
+       _workflowService = workflowService,
+       _documentScannerService = documentScannerService;
 
   final ConfigService _configService;
   final ImageService _imageService;
@@ -113,6 +116,7 @@ class ApiService {
   StartingRightsService _startingRightsService;
   final RollsAndRights _rollsAndRights;
   final WorkflowService _workflowService;
+  final DocumentScannerService _documentScannerService;
 
   /// Sets the StartingRightsService instance.
   /// This is used to break the circular dependency during initialization.
@@ -144,6 +148,18 @@ class ApiService {
       personId,
       getCacheExpirationDuration(),
     );
+  }
+
+  //
+  // --- Document Scanner Service Methods ---
+  //
+  /// Scans a document using the device camera
+  /// Returns the scanned image bytes and filename if successful
+  /// Returns null if scanning was cancelled
+  /// Throws UnsupportedPlatformException if platform doesn't support scanning
+  /// Throws ScanException if scanning fails
+  Future<ScanResult?> scanDocument() async {
+    return _documentScannerService.scanDocument();
   }
 
   //
@@ -763,60 +779,85 @@ class ApiService {
   //--- Beduerfnisse Service Methods ---
   //
 
-
   //
   // --- bed_auswahl Service Methods ---
   //
 
-  Future<List<BeduerfnisseAuswahl>> getBedAuswahlByTypId(int typId) async {
+  Future<List<BeduerfnisAuswahl>> getBedAuswahlByTypId(int typId) async {
     return _postgrestService.getBedAuswahlByTypId(typId);
   }
   //
   // --- bed_datei Service Methods ---
   //
 
-  Future<Map<String, dynamic>> createBedDatei({
+  /// Delete bed_datei by ID and all associated bed_datei_zuord entries
+  /// First deletes bed_datei_zuord entries, then deletes bed_datei
+  Future<bool> deleteBedDateiById(int dateiId) async {
+    try {
+      // Step 1: Delete all associated bed_datei_zuord entries
+      final zuordDeleted = await _postgrestService.deleteBedDateiZuordByDateiId(
+        dateiId,
+      );
+      if (!zuordDeleted) {
+        LoggerService.logError(
+          'Failed to delete bed_datei_zuord entries for datei_id: $dateiId',
+        );
+        // Continue with datei deletion even if zuord deletion fails
+      }
+
+      // Step 2: Delete the bed_datei entry
+      final dateiDeleted = await _postgrestService.deleteBedDateiById(dateiId);
+      if (!dateiDeleted) {
+        LoggerService.logError('Failed to delete bed_datei for id: $dateiId');
+        return false;
+      }
+
+      LoggerService.logInfo(
+        'Successfully deleted bed_datei and associated bed_datei_zuord entries for id: $dateiId',
+      );
+      return true;
+    } catch (e) {
+      LoggerService.logError('Error deleting bed_datei by id $dateiId: $e');
+      return false;
+    }
+  }
+
+  /// Get the document for a specific sport activity
+  /// Returns the document if one exists, null otherwise
+  Future<BeduerfnisDatei?> getBedDateiZuordByBedSportId(int bedSportId) async {
+    try {
+      // Get the zuord entry to find the datei_id
+      final zuord = await _postgrestService.getBedDateiZuordByBedSportId(
+        bedSportId,
+      );
+      if (zuord == null) {
+        return null;
+      }
+
+      // Get the datei by ID using the api_service method
+      return await getBedDateiById(zuord.dateiId);
+    } catch (e) {
+      LoggerService.logError(
+        'Error getting document for sport_id $bedSportId: $e',
+      );
+      return null;
+    }
+  }
+
+  /// Upload a document and create an entry in bed_datei
+  /// Returns the dateiId on success, null on failure
+  Future<int?> uploadBedDatei({
     required int antragsnummer,
     required String dateiname,
     required List<int> fileBytes,
-  }) async {
-    return _postgrestService.createBedDatei(
-      antragsnummer: antragsnummer,
-      dateiname: dateiname,
-      fileBytes: fileBytes,
-    );
-  }
-
-  Future<List<BeduerfnisseDatei>> getBedDateiByAntragsnummer(
-    int antragsnummer,
-  ) async {
-    return _postgrestService.getBedDateiByAntragsnummer(antragsnummer);
-  }
-
-  Future<bool> updateBedDatei(BeduerfnisseDatei datei) async {
-    return _postgrestService.updateBedDatei(datei);
-  }
-
-  Future<bool> deleteBedDatei(int antragsnummer) async {
-    return _postgrestService.deleteBedDatei(antragsnummer);
-  }
-
-  /// Upload a document and create entries in both bed_datei and bed_datei_zuord
-  /// This is used when uploading documents for bed_sport records
-  /// Returns true on success, false on failure
-  Future<bool> uploadBedDateiForSport({
-    required int antragsnummer,
-    required String dateiname,
-    required List<int> fileBytes,
-    required int bedSportId,
   }) async {
     try {
       LoggerService.logInfo(
-        'Uploading document for bed_sport_id: $bedSportId',
+        'Uploading document for antragsnummer: $antragsnummer',
       );
 
-      // Step 1: Create bed_datei entry
-      final dateiResponse = await createBedDatei(
+      // Create bed_datei entry
+      final dateiResponse = await _postgrestService.createBedDatei(
         antragsnummer: antragsnummer,
         dateiname: dateiname,
         fileBytes: fileBytes,
@@ -825,45 +866,45 @@ class ApiService {
       // Check if datei was created successfully
       if (dateiResponse.isEmpty || dateiResponse['id'] == null) {
         LoggerService.logError('Failed to create bed_datei: empty response');
-        return false;
+        return null;
       }
 
       final dateiId = dateiResponse['id'] as int;
       LoggerService.logInfo('bed_datei created with id: $dateiId');
 
-      // Step 2: Create bed_datei_zuord entry
-      try {
-        await createBedDateiZuord(
-          antragsnummer: antragsnummer,
-          dateiId: dateiId,
-          dateiArt: 'SPORT',
-          bedSportId: bedSportId,
-        );
-
-        LoggerService.logInfo(
-          'bed_datei_zuord created successfully for datei_id: $dateiId',
-        );
-
-        return true;
-      } catch (e) {
-        // If bed_datei_zuord creation fails, we should clean up the bed_datei
-        LoggerService.logError(
-          'Failed to create bed_datei_zuord: $e. Cleaning up bed_datei...',
-        );
-        
-        // Attempt to delete the created bed_datei
-        try {
-          await _postgrestService.deleteBedDateiById(dateiId);
-        } catch (cleanupError) {
-          LoggerService.logError(
-            'Failed to cleanup bed_datei: $cleanupError',
-          );
-        }
-
-        return false;
-      }
+      return dateiId;
     } catch (e) {
-      LoggerService.logError('Error uploading document for sport: $e');
+      LoggerService.logError('Error uploading document: $e');
+      return null;
+    }
+  }
+
+  /// Map a bed_datei to a bed_sport by creating a bed_datei_zuord entry
+  /// Returns true on success, false on failure
+  Future<bool> mapBedDateiToSport({
+    required int antragsnummer,
+    required int dateiId,
+    required int bedSportId,
+  }) async {
+    try {
+      LoggerService.logInfo(
+        'Mapping datei_id: $dateiId to bed_sport_id: $bedSportId',
+      );
+
+      await createBedDateiZuord(
+        antragsnummer: antragsnummer,
+        dateiId: dateiId,
+        dateiArt: 'SPORT',
+        bedSportId: bedSportId,
+      );
+
+      LoggerService.logInfo(
+        'bed_datei_zuord created successfully for datei_id: $dateiId',
+      );
+
+      return true;
+    } catch (e) {
+      LoggerService.logError('Failed to create bed_datei_zuord: $e');
       return false;
     }
   }
@@ -875,6 +916,7 @@ class ApiService {
     required int antragsnummer,
     required String dateiname,
     required List<int> fileBytes,
+    required String label,
   }) async {
     try {
       LoggerService.logInfo(
@@ -882,7 +924,7 @@ class ApiService {
       );
 
       // Step 1: Create bed_datei entry
-      final dateiResponse = await createBedDatei(
+      final dateiResponse = await _postgrestService.createBedDatei(
         antragsnummer: antragsnummer,
         dateiname: dateiname,
         fileBytes: fileBytes,
@@ -903,7 +945,8 @@ class ApiService {
           antragsnummer: antragsnummer,
           dateiId: dateiId,
           dateiArt: 'WBK',
-          bedSportId: null, // WBK documents are not linked to a specific sport
+          bedSportId: null,
+          label: label,
         );
 
         LoggerService.logInfo(
@@ -916,14 +959,12 @@ class ApiService {
         LoggerService.logError(
           'Failed to create bed_datei_zuord: $e. Cleaning up bed_datei...',
         );
-        
-        // Attempt to delete the created bed_datei
+
+        // Attempt to delete the created bed_datei (and any associated zuord entries)
         try {
-          await _postgrestService.deleteBedDateiById(dateiId);
+          await deleteBedDateiById(dateiId);
         } catch (cleanupError) {
-          LoggerService.logError(
-            'Failed to cleanup bed_datei: $cleanupError',
-          );
+          LoggerService.logError('Failed to cleanup bed_datei: $cleanupError');
         }
 
         return false;
@@ -960,13 +1001,13 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseSport>> getBedSportByAntragsnummer(
+  Future<List<BeduerfnisSport>> getBedSportByAntragsnummer(
     int antragsnummer,
   ) async {
     return _postgrestService.getBedSportByAntragsnummer(antragsnummer);
   }
 
-  Future<bool> updateBedSport(BeduerfnisseSport sport) async {
+  Future<bool> updateBedSport(BeduerfnisSport sport) async {
     return _postgrestService.updateBedSport(sport);
   }
 
@@ -1004,24 +1045,28 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
+  Future<List<BeduerfnisWaffeBesitz>> getBedWaffeBesitzByAntragsnummer(
     int antragsnummer,
   ) async {
     return _postgrestService.getBedWaffeBesitzByAntragsnummer(antragsnummer);
   }
 
-  Future<bool> updateBedWaffeBesitz(BeduerfnisseWaffeBesitz waffeBesitz) async {
+  Future<bool> updateBedWaffeBesitz(BeduerfnisWaffeBesitz waffeBesitz) async {
     return _postgrestService.updateBedWaffeBesitz(waffeBesitz);
   }
 
   Future<bool> deleteBedWaffeBesitz(int antragsnummer) async {
     return _postgrestService.deleteBedWaffeBesitz(antragsnummer);
   }
+
+  Future<bool> deleteBedWaffeBesitzById(int id) async {
+    return _postgrestService.deleteBedWaffeBesitzById(id);
+  }
   //
   // --- bed_antrag Service Methods ---
   //
 
-  Future<BeduerfnisseAntrag> createBedAntrag({
+  Future<BeduerfnisAntrag> createBedAntrag({
     required int personId,
     int? statusId,
     bool? wbkNeu,
@@ -1049,25 +1094,24 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseAntrag>> getBedAntragByAntragsnummer(
+  Future<List<BeduerfnisAntrag>> getBedAntragByAntragsnummer(
     int antragsnummer,
   ) async {
     return _postgrestService.getBedAntragByAntragsnummer(antragsnummer);
   }
 
-  Future<List<BeduerfnisseAntrag>> getBedAntragByPersonId(int personId) async {
+  Future<List<BeduerfnisAntrag>> getBedAntragByPersonId(int personId) async {
     return _postgrestService.getBedAntragByPersonId(personId);
   }
 
-
-  Future<bool> updateBedAntrag(BeduerfnisseAntrag antrag) async {
+  Future<bool> updateBedAntrag(BeduerfnisAntrag antrag) async {
     return _postgrestService.updateBedAntrag(antrag);
   }
   //
   // --- bed_antrag_person Service Methods ---
   //
 
-  Future<BeduerfnisseAntragPerson> createBedAntragPerson({
+  Future<BeduerfnisAntragPerson> createBedAntragPerson({
     required String antragsnummer,
     required int personId,
     int? statusId,
@@ -1085,20 +1129,20 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByAntragsnummer(
+  Future<List<BeduerfnisAntragPerson>> getBedAntragPersonByAntragsnummer(
     String antragsnummer,
   ) async {
     return _postgrestService.getBedAntragPersonByAntragsnummer(antragsnummer);
   }
 
-  Future<List<BeduerfnisseAntragPerson>> getBedAntragPersonByPersonId(
+  Future<List<BeduerfnisAntragPerson>> getBedAntragPersonByPersonId(
     int personId,
   ) async {
     return _postgrestService.getBedAntragPersonByPersonId(personId);
   }
 
   Future<bool> updateBedAntragPerson(
-    BeduerfnisseAntragPerson bedAntragPerson,
+    BeduerfnisAntragPerson bedAntragPerson,
   ) async {
     return _postgrestService.updateBedAntragPerson(bedAntragPerson);
   }
@@ -1106,42 +1150,74 @@ class ApiService {
   // --- bed_datei_zuord Service Methods ---
   //
 
-  Future<BeduerfnisseDateiZuord> createBedDateiZuord({
+  Future<BeduerfnisDateiZuord> createBedDateiZuord({
     required int antragsnummer,
     required int dateiId,
     required String dateiArt,
     int? bedSportId,
+    String? label,
   }) async {
     return _postgrestService.createBedDateiZuord(
       antragsnummer: antragsnummer,
       dateiId: dateiId,
       dateiArt: dateiArt,
       bedSportId: bedSportId,
+      label: label,
     );
   }
 
-  Future<bool> updateBedDateiZuord(BeduerfnisseDateiZuord dateiZuord) async {
+  Future<bool> updateBedDateiZuord(BeduerfnisDateiZuord dateiZuord) async {
     return _postgrestService.updateBedDateiZuord(dateiZuord);
   }
 
-  Future<bool> deleteBedDateiZuord(int antragsnummer) async {
-    return _postgrestService.deleteBedDateiZuord(antragsnummer);
+  /// Get bed_datei_zuord entries by antragsnummer and datei_art
+  /// Returns a list of BeduerfnisseDateiZuord
+  Future<List<BeduerfnisDateiZuord>> getBedDateiZuordByAntragsnummer(
+    int antragsnummer,
+    String dateiArt,
+  ) async {
+    try {
+      return await _postgrestService.getBedDateiZuordByAntragsnummer(
+        antragsnummer,
+        dateiArt,
+      );
+    } catch (e) {
+      LoggerService.logError(
+        'Error getting bed_datei_zuord for antragsnummer $antragsnummer and datei_art $dateiArt: $e',
+      );
+      return [];
+    }
+  }
+
+  /// Get bed_datei entry by ID
+  /// Returns the BeduerfnisseDatei if found, null otherwise
+  Future<BeduerfnisDatei?> getBedDateiById(int dateiId) async {
+    try {
+      return await _postgrestService.getBedDateiById(dateiId);
+    } catch (e) {
+      LoggerService.logError('Error getting bed_datei by id $dateiId: $e');
+      return null;
+    }
   }
 
   /// Check if a bed_datei_zuord entry exists for the given bed_sport_id
   /// Returns true if an entry exists, false otherwise
   Future<bool> hasBedDateiSport(int sportId) async {
     try {
-      final dateiZuord = await _postgrestService.getBedDateiZuordByBedSportId(sportId);
+      final dateiZuord = await _postgrestService.getBedDateiZuordByBedSportId(
+        sportId,
+      );
       return dateiZuord != null;
     } catch (e) {
-      LoggerService.logError('Error checking bed_datei_zuord for sport_id $sportId: $e');
+      LoggerService.logError(
+        'Error checking bed_datei_zuord for sport_id $sportId: $e',
+      );
       return false;
     }
   }
 
   // --- Bed Wettkampf ---
-  Future<BeduerfnisseWettkampf> createBedWettkampf({
+  Future<BeduerfnisWettkampf> createBedWettkampf({
     required int antragsnummer,
     required DateTime schiessdatum,
     required String wettkampfart,
@@ -1159,13 +1235,13 @@ class ApiService {
     );
   }
 
-  Future<List<BeduerfnisseWettkampf>> getBedWettkampfByAntragsnummer(
+  Future<List<BeduerfnisWettkampf>> getBedWettkampfByAntragsnummer(
     int antragsnummer,
   ) async {
     return _postgrestService.getBedWettkampfByAntragsnummer(antragsnummer);
   }
 
-  Future<bool> updateBedWettkampf(BeduerfnisseWettkampf wettkampf) async {
+  Future<bool> updateBedWettkampf(BeduerfnisWettkampf wettkampf) async {
     return _postgrestService.updateBedWettkampf(wettkampf);
   }
 
@@ -1178,7 +1254,7 @@ class ApiService {
     return _rollsAndRights.getRoles(personId);
   }
 
-//
+  //
   // --- Workflow Service Methods ---
   //
   bool canAntragChangeFromStateToState({
@@ -1205,8 +1281,9 @@ class ApiService {
       );
 
       // Get the bed_datei_zuord record to find the datei_id
-      final dateiZuord = 
-          await _postgrestService.getBedDateiZuordByBedSportId(bedSportId);
+      final dateiZuord = await _postgrestService.getBedDateiZuordByBedSportId(
+        bedSportId,
+      );
 
       // If no datei_zuord exists, nothing to delete
       if (dateiZuord == null) {
@@ -1219,8 +1296,8 @@ class ApiService {
       final dateiId = dateiZuord.dateiId;
 
       // Delete bed_datei_zuord record
-      final dateiZuordDeleted = 
-          await _postgrestService.deleteBedDateiZuordByBedSportId(bedSportId);
+      final dateiZuordDeleted = await _postgrestService
+          .deleteBedDateiZuordByBedSportId(bedSportId);
 
       if (!dateiZuordDeleted) {
         LoggerService.logError(
@@ -1231,7 +1308,7 @@ class ApiService {
 
       // Delete associated bed_datei record
       final dateiDeleted = await _postgrestService.deleteBedDateiById(dateiId);
-      
+
       if (!dateiDeleted) {
         LoggerService.logError('Failed to delete bed_datei with id: $dateiId');
         return false;
@@ -1253,9 +1330,7 @@ class ApiService {
   /// Cascading soft delete for bed_sport and associated bed_datei_zuord/bed_datei
   Future<bool> deleteBedSportById(int id) async {
     try {
-      LoggerService.logInfo(
-        'Cascading delete for bed_sport with id: $id',
-      );
+      LoggerService.logInfo('Cascading delete for bed_sport with id: $id');
 
       // Delete associated bed_datei_zuord and bed_datei for each sport
       final dateienDeleted = await deleteBedDateiBySportId(id);
@@ -1300,24 +1375,36 @@ class ApiService {
       final results = <String, bool>{};
 
       // Soft delete bed_antrag_person
-      results['bed_antrag_person'] = 
-          await _postgrestService.deleteBedAntragPerson(antragsnummer);
+      results['bed_antrag_person'] = await _postgrestService
+          .deleteBedAntragPerson(antragsnummer);
 
       // Soft delete bed_datei
-      results['bed_datei'] = await _postgrestService.deleteBedDatei(antragsnummer);
+      results['bed_datei'] = await _postgrestService.deleteBedDatei(
+        antragsnummer,
+      );
 
       // Soft delete bed_datei_zuord
-      results['bed_datei_zuord'] = 
-          await _postgrestService.deleteBedDateiZuord(antragsnummer);
+      results['bed_datei_zuord'] = await _postgrestService.deleteBedDateiZuord(
+        antragsnummer,
+      );
 
       // Soft delete bed_sport
-      results['bed_sport'] = await _postgrestService.deleteBedSportByAntragsnummer(antragsnummer);
+      results['bed_sport'] = await _postgrestService
+          .deleteBedSportByAntragsnummer(antragsnummer);
 
       // Soft delete bed_waffe_besitz
-      results['bed_waffe_besitz'] = await _postgrestService.deleteBedWaffeBesitz(antragsnummer);
+      results['bed_waffe_besitz'] = await _postgrestService
+          .deleteBedWaffeBesitz(antragsnummer);
 
       // Soft delete bed_wettkampf
-      results['bed_wettkampf'] = await _postgrestService.deleteBedWettkampf(antragsnummer);
+      results['bed_wettkampf'] = await _postgrestService.deleteBedWettkampf(
+        antragsnummer,
+      );
+
+      // Soft delete bed_antrag
+      results['bed_antrag'] = await _postgrestService.deleteBedAntrag(
+        antragsnummer,
+      );
 
       // Check if all deletions were successful
       final allSuccessful = results.values.every((result) => result);

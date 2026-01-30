@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
 
 void main() {
   group('BeduerfnisseAuswahl', () {
@@ -12,7 +12,7 @@ void main() {
         'created_at': '2024-01-02T10:00:00.000Z',
         'deleted_at': '2024-01-03T10:00:00.000Z',
       };
-      final auswahl = BeduerfnisseAuswahl.fromJson(json);
+      final auswahl = BeduerfnisAuswahl.fromJson(json);
       expect(auswahl.id, 2);
       expect(auswahl.typId, 20);
       expect(auswahl.kuerzel, 'REV');
@@ -30,7 +30,7 @@ void main() {
         'created_at': null,
         'deleted_at': null,
       };
-      final auswahl = BeduerfnisseAuswahl.fromJson(json);
+      final auswahl = BeduerfnisAuswahl.fromJson(json);
       expect(auswahl.id, 3);
       expect(auswahl.typId, 30);
       expect(auswahl.kuerzel, 'GEW');
@@ -46,7 +46,7 @@ void main() {
         'kuerzel': 'TE',
         'beschreibung': 'Test',
       };
-      final auswahl = BeduerfnisseAuswahl.fromJson(json);
+      final auswahl = BeduerfnisAuswahl.fromJson(json);
       expect(auswahl.id, isNull);
       expect(auswahl.typId, 40);
       expect(auswahl.kuerzel, 'TE');
@@ -54,7 +54,7 @@ void main() {
     });
 
     test('constructor creates correct object', () {
-      const auswahl = BeduerfnisseAuswahl(
+      const auswahl = BeduerfnisAuswahl(
         id: 1,
         typId: 10,
         kuerzel: 'PIS',
@@ -73,7 +73,7 @@ void main() {
     test('constructor with timestamps creates correct object', () {
       final createdAt = DateTime(2024, 1, 1, 10, 0, 0);
       final deletedAt = DateTime(2024, 1, 2, 10, 0, 0);
-      final auswahl = BeduerfnisseAuswahl(
+      final auswahl = BeduerfnisAuswahl(
         id: 1,
         typId: 10,
         kuerzel: 'PIS',
@@ -92,7 +92,7 @@ void main() {
     test('toJson returns correct map', () {
       final createdAt = DateTime(2024, 1, 1, 10, 0, 0);
       final deletedAt = DateTime(2024, 1, 2, 10, 0, 0);
-      final auswahl = BeduerfnisseAuswahl(
+      final auswahl = BeduerfnisAuswahl(
         id: 1,
         typId: 10,
         kuerzel: 'PIS',
@@ -110,7 +110,7 @@ void main() {
     });
 
     test('toJson handles null values', () {
-      const auswahl = BeduerfnisseAuswahl(
+      const auswahl = BeduerfnisAuswahl(
         id: null,
         typId: 10,
         kuerzel: 'PIS',
@@ -127,13 +127,13 @@ void main() {
       expect(json['DELETED_AT'], isNull);
     });
     test('inequality with different typId', () {
-      const auswahl1 = BeduerfnisseAuswahl(
+      const auswahl1 = BeduerfnisAuswahl(
         id: 1,
         typId: 10,
         kuerzel: 'PIS',
         beschreibung: 'Pistole',
       );
-      const auswahl2 = BeduerfnisseAuswahl(
+      const auswahl2 = BeduerfnisAuswahl(
         id: 1,
         typId: 20,
         kuerzel: 'PIS',
@@ -143,13 +143,13 @@ void main() {
     });
 
     test('inequality with different kuerzel', () {
-      const auswahl1 = BeduerfnisseAuswahl(
+      const auswahl1 = BeduerfnisAuswahl(
         id: 1,
         typId: 10,
         kuerzel: 'PIS',
         beschreibung: 'Pistole',
       );
-      const auswahl2 = BeduerfnisseAuswahl(
+      const auswahl2 = BeduerfnisAuswahl(
         id: 1,
         typId: 10,
         kuerzel: 'REV',

@@ -2,21 +2,30 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a bed_antrag_person entry in the BSSB system.
 @immutable
-class BeduerfnisseAntragPerson {
-  /// Creates a [BeduerfnisseAntragPerson] instance from a JSON map.
+class BeduerfnisAntragPerson {
+  /// Creates a [BeduerfnisAntragPerson] instance from a JSON map.
   /// Supports both snake_case (PostgREST) and uppercase formats.
-  factory BeduerfnisseAntragPerson.fromJson(Map<String, dynamic> json) {
-    return BeduerfnisseAntragPerson(
+  factory BeduerfnisAntragPerson.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisAntragPerson(
       id: (json['ID'] ?? json['id']) as int?,
-      createdAt: (json['CREATED_AT'] ?? json['created_at']) == null
-          ? null
-          : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
-      changedAt: (json['CHANGED_AT'] ?? json['changed_at']) == null
-          ? null
-          : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
-      deletedAt: (json['DELETED_AT'] ?? json['deleted_at']) == null
-          ? null
-          : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+      createdAt:
+          (json['CREATED_AT'] ?? json['created_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['CREATED_AT'] ?? json['created_at']) as String,
+              ),
+      changedAt:
+          (json['CHANGED_AT'] ?? json['changed_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['CHANGED_AT'] ?? json['changed_at']) as String,
+              ),
+      deletedAt:
+          (json['DELETED_AT'] ?? json['deleted_at']) == null
+              ? null
+              : DateTime.parse(
+                (json['DELETED_AT'] ?? json['deleted_at']) as String,
+              ),
       antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as String,
       personId: (json['PERSON_ID'] ?? json['person_id']) as int,
       statusId: (json['STATUS_ID'] ?? json['status_id']) as int?,
@@ -26,8 +35,8 @@ class BeduerfnisseAntragPerson {
     );
   }
 
-  /// Creates a new instance of [BeduerfnisseAntragPerson].
-  const BeduerfnisseAntragPerson({
+  /// Creates a new instance of [BeduerfnisAntragPerson].
+  const BeduerfnisAntragPerson({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -70,7 +79,7 @@ class BeduerfnisseAntragPerson {
   /// The club/association name.
   final String? vereinsname;
 
-  /// Converts the [BeduerfnisseAntragPerson] instance to a JSON map.
+  /// Converts the [BeduerfnisAntragPerson] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

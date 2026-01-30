@@ -7,19 +7,16 @@ import 'package:http/http.dart' as http;
 
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/config_service.dart';
-import 'package:meinbssb/models/beduerfnisse_auswahl_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_person_data.dart';
-import 'package:meinbssb/models/beduerfnisse_antrag_status_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_data.dart';
-import 'package:meinbssb/models/beduerfnisse_sport_data.dart';
-import 'package:meinbssb/models/beduerfnisse_waffe_besitz_data.dart';
-import 'package:meinbssb/models/beduerfnisse_datei_zuord_data.dart';
+import 'package:meinbssb/models/beduerfnis_auswahl_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_person_data.dart';
+import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_data.dart';
+import 'package:meinbssb/models/beduerfnis_sport_data.dart';
+import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
+import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
 
-@GenerateMocks([
-  ConfigService,
-  http.Client,
-])
+@GenerateMocks([ConfigService, http.Client])
 import 'postgrest_service_test.mocks.dart';
 
 void main() {
@@ -41,10 +38,7 @@ void main() {
       when(mockConfig.getString('postgrestPath')).thenReturn('/rest/v1');
       when(mockConfig.getString('postgrestApiKey')).thenReturn('test-api-key');
 
-      service = PostgrestService(
-        configService: mockConfig,
-        client: mockClient,
-      );
+      service = PostgrestService(configService: mockConfig, client: mockClient);
     });
 
     group('Service Configuration', () {
@@ -55,11 +49,11 @@ void main() {
 
       test('includes API key in headers when configured', () async {
         Map<String, String>? capturedHeaders;
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((invocation) async {
-          capturedHeaders = invocation.namedArguments[#headers] as Map<String, String>?;
+        when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer((
+          invocation,
+        ) async {
+          capturedHeaders =
+              invocation.namedArguments[#headers] as Map<String, String>?;
           return http.Response('[]', 200);
         });
 
@@ -81,11 +75,11 @@ void main() {
         );
 
         Map<String, String>? capturedHeaders;
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((invocation) async {
-          capturedHeaders = invocation.namedArguments[#headers] as Map<String, String>?;
+        when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer((
+          invocation,
+        ) async {
+          capturedHeaders =
+              invocation.namedArguments[#headers] as Map<String, String>?;
           return http.Response('[]', 200);
         });
 
@@ -98,11 +92,13 @@ void main() {
 
     group('User Creation', () {
       test('createUser creates user successfully', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 201));
 
         final result = await service.createUser(
           firstName: 'John',
@@ -114,19 +110,23 @@ void main() {
         );
 
         expect(result, isA<Map<String, dynamic>>());
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('createUser throws exception on failure', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 400));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 400));
 
         expect(
           () => service.createUser(
@@ -151,36 +151,30 @@ void main() {
             'firstname': 'John',
             'lastname': 'Doe',
             'email': 'john@example.com',
-          }
+          },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getUserByEmail('john@example.com');
         expect(result, equals(mockResponse[0]));
-        verify(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).called(1);
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
       });
 
       test('getUserByEmail returns null when user not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.getUserByEmail('notfound@example.com');
         expect(result, isNull);
       });
 
       test('getUserByEmail returns null on error', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('Server error', 500));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('Server error', 500));
 
         final result = await service.getUserByEmail('john@example.com');
         expect(result, isNull);
@@ -194,22 +188,20 @@ void main() {
             'firstname': 'John',
             'lastname': 'Doe',
             'email': 'john@example.com',
-          }
+          },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getUserByPersonId('123');
         expect(result, equals(mockResponse[0]));
       });
 
       test('getUserByPersonId returns null when user not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.getUserByPersonId('999');
         expect(result, isNull);
@@ -223,22 +215,20 @@ void main() {
             'firstname': 'John',
             'lastname': 'Doe',
             'email': 'john@example.com',
-          }
+          },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getUserByPassNumber('12345678');
         expect(result, equals(mockResponse[0]));
       });
 
       test('getUserByPassNumber returns null when user not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.getUserByPassNumber('99999999');
         expect(result, isNull);
@@ -252,22 +242,20 @@ void main() {
             'verification_token': 'token123',
             'firstname': 'John',
             'lastname': 'Doe',
-          }
+          },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getUserByVerificationToken('token123');
         expect(result, equals(mockResponse[0]));
       });
 
       test('getUserByVerificationToken returns null when not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.getUserByVerificationToken('invalid');
         expect(result, isNull);
@@ -276,27 +264,33 @@ void main() {
 
     group('User Verification', () {
       test('verifyUser updates verification status successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.verifyUser('token123');
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('verifyUser returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Server error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Server error', 500));
 
         final result = await service.verifyUser('token123');
         expect(result, isFalse);
@@ -305,35 +299,32 @@ void main() {
 
     group('User Deletion', () {
       test('deleteUserRegistration deletes user successfully', () async {
-        when(mockClient.delete(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('', 204));
+        when(
+          mockClient.delete(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('', 204));
 
         final result = await service.deleteUserRegistration(123);
         expect(result, isTrue);
-        verify(mockClient.delete(
-          any,
-          headers: anyNamed('headers'),
-        )).called(1);
+        verify(mockClient.delete(any, headers: anyNamed('headers'))).called(1);
       });
 
       test('deleteUserRegistration returns false on error', () async {
-        when(mockClient.delete(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('Server error', 500));
+        when(
+          mockClient.delete(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('Server error', 500));
 
         final result = await service.deleteUserRegistration(123);
         expect(result, isFalse);
       });
 
       test('softDeleteUser sets is_deleted to true', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.softDeleteUser('123');
         expect(result, isTrue);
@@ -341,11 +332,13 @@ void main() {
       });
 
       test('softDeleteUser returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Server error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Server error', 500));
 
         final result = await service.softDeleteUser('123');
         expect(result, isFalse);
@@ -354,83 +347,100 @@ void main() {
 
     group('User Updates', () {
       test('updateUserByVerificationToken updates user successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.updateUserByVerificationToken(
-          'token123',
-          {'firstname': 'Jane'},
-        );
+        final result = await service.updateUserByVerificationToken('token123', {
+          'firstname': 'Jane',
+        });
         expect(result.statusCode, equals(200));
       });
     });
 
     group('Password Reset', () {
       test('createPasswordResetEntry creates entry successfully', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 201));
 
         await service.createPasswordResetEntry(
           personId: '123',
           verificationToken: 'token123',
         );
 
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
-      test('getUserByPasswordResetVerificationToken returns entry when found', () async {
-        final mockResponse = [
-          {
-            'id': 1,
-            'person_id': '123',
-            'verification_token': 'token123',
-            'created_at': '2024-01-01T00:00:00Z',
-            'is_used': false,
-          }
-        ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+      test(
+        'getUserByPasswordResetVerificationToken returns entry when found',
+        () async {
+          final mockResponse = [
+            {
+              'id': 1,
+              'person_id': '123',
+              'verification_token': 'token123',
+              'created_at': '2024-01-01T00:00:00Z',
+              'is_used': false,
+            },
+          ];
+          when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+            (_) async => http.Response(jsonEncode(mockResponse), 200),
+          );
 
-        final result = await service.getUserByPasswordResetVerificationToken('token123');
-        expect(result, equals(mockResponse[0]));
-      });
+          final result = await service.getUserByPasswordResetVerificationToken(
+            'token123',
+          );
+          expect(result, equals(mockResponse[0]));
+        },
+      );
 
-      test('getUserByPasswordResetVerificationToken returns null when not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+      test(
+        'getUserByPasswordResetVerificationToken returns null when not found',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.getUserByPasswordResetVerificationToken('invalid');
-        expect(result, isNull);
-      });
+          final result = await service.getUserByPasswordResetVerificationToken(
+            'invalid',
+          );
+          expect(result, isNull);
+        },
+      );
 
       test('markPasswordResetEntryUsed marks entry as used', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         await service.markPasswordResetEntryUsed(verificationToken: 'token123');
 
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('getLatestPasswordResetForPerson returns latest entry', () async {
@@ -441,35 +451,38 @@ void main() {
             'verification_token': 'token123',
             'created_at': '2024-01-01T00:00:00Z',
             'is_used': false,
-          }
+          },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getLatestPasswordResetForPerson('123');
         expect(result, equals(mockResponse[0]));
       });
 
-      test('getLatestPasswordResetForPerson returns null when not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+      test(
+        'getLatestPasswordResetForPerson returns null when not found',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.getLatestPasswordResetForPerson('999');
-        expect(result, isNull);
-      });
+          final result = await service.getLatestPasswordResetForPerson('999');
+          expect(result, isNull);
+        },
+      );
     });
 
     group('Email Validation', () {
       test('createEmailValidationEntry creates entry successfully', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 201));
 
         await service.createEmailValidationEntry(
           personId: '123',
@@ -478,11 +491,13 @@ void main() {
           verificationToken: 'token123',
         );
 
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('getEmailValidationByToken returns entry when found', () async {
@@ -495,49 +510,53 @@ void main() {
             'verification_token': 'token123',
             'created_on': '2024-01-01T00:00:00Z',
             'validated': false,
-          }
+          },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getEmailValidationByToken('token123');
         expect(result, equals(mockResponse[0]));
       });
 
       test('getEmailValidationByToken returns null when not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.getEmailValidationByToken('invalid');
         expect(result, isNull);
       });
 
       test('markEmailValidationAsValidated marks entry as validated', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.markEmailValidationAsValidated('token123');
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('markEmailValidationAsValidated returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Server error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Server error', 500));
 
         final result = await service.markEmailValidationAsValidated('token123');
         expect(result, isFalse);
@@ -545,26 +564,30 @@ void main() {
     });
 
     group('Profile Photo', () {
-      test('getProfilePhoto returns cached photo without network call', () async {
-        const userId = 'cacheTest';
-        final bytes = Uint8List.fromList([10, 20, 30]);
-        service.profilePhotoCache[userId] = bytes;
+      test(
+        'getProfilePhoto returns cached photo without network call',
+        () async {
+          const userId = 'cacheTest';
+          final bytes = Uint8List.fromList([10, 20, 30]);
+          service.profilePhotoCache[userId] = bytes;
 
-        final result = await service.getProfilePhoto(userId);
-        expect(result, equals(bytes));
-        verifyNever(mockClient.get(any, headers: anyNamed('headers')));
-      });
+          final result = await service.getProfilePhoto(userId);
+          expect(result, equals(bytes));
+          verifyNever(mockClient.get(any, headers: anyNamed('headers')));
+        },
+      );
 
       test('getProfilePhoto fetches and caches new photo', () async {
         const userId = 'newPhoto';
         const photoHex = '\\x010203';
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode([{'profile_photo': photoHex}]),
-          200,
-        ));
+        when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response(
+            jsonEncode([
+              {'profile_photo': photoHex},
+            ]),
+            200,
+          ),
+        );
 
         final result = await service.getProfilePhoto(userId);
         expect(result, isA<Uint8List>());
@@ -574,13 +597,14 @@ void main() {
 
       test('getProfilePhoto returns null when no photo found', () async {
         const userId = 'noPhoto';
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode([{'profile_photo': null}]),
-          200,
-        ));
+        when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response(
+            jsonEncode([
+              {'profile_photo': null},
+            ]),
+            200,
+          ),
+        );
 
         final result = await service.getProfilePhoto(userId);
         expect(result, isNull);
@@ -590,59 +614,70 @@ void main() {
         const userId = 'existingUser';
         final bytes = [1, 2, 3];
 
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode([{'person_id': userId}]),
-          200,
-        ));
+        when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response(
+            jsonEncode([
+              {'person_id': userId},
+            ]),
+            200,
+          ),
+        );
 
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.uploadProfilePhoto(userId, bytes);
         expect(result, isTrue);
-        expect(service.profilePhotoCache[userId], equals(Uint8List.fromList(bytes)));
+        expect(
+          service.profilePhotoCache[userId],
+          equals(Uint8List.fromList(bytes)),
+        );
       });
 
       test('uploadProfilePhoto creates new user with photo', () async {
         const userId = 'newUser';
         final bytes = [1, 2, 3];
 
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 201));
 
         final result = await service.uploadProfilePhoto(userId, bytes);
         expect(result, isTrue);
-        expect(service.profilePhotoCache[userId], equals(Uint8List.fromList(bytes)));
+        expect(
+          service.profilePhotoCache[userId],
+          equals(Uint8List.fromList(bytes)),
+        );
       });
 
       test('uploadProfilePhoto returns false on error', () async {
         const userId = 'errorUser';
         final bytes = [1, 2, 3];
 
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 400));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 400));
 
         final result = await service.uploadProfilePhoto(userId, bytes);
         expect(result, isFalse);
@@ -652,11 +687,13 @@ void main() {
         const userId = 'deleteTest';
         service.profilePhotoCache[userId] = Uint8List.fromList([1, 2, 3]);
 
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteProfilePhoto(userId);
         expect(result, isTrue);
@@ -665,11 +702,13 @@ void main() {
 
       test('deleteProfilePhoto returns false on error', () async {
         const userId = 'errorDelete';
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
         final result = await service.deleteProfilePhoto(userId);
         expect(result, isFalse);
@@ -678,20 +717,18 @@ void main() {
 
     group('Error Handling', () {
       test('handles network exceptions gracefully', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenThrow(Exception('Network error'));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenThrow(Exception('Network error'));
 
         final result = await service.getUserByEmail('test@example.com');
         expect(result, isNull);
       });
 
       test('handles JSON decode errors gracefully', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('invalid json', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('invalid json', 200));
 
         final result = await service.getUserByEmail('test@example.com');
         expect(result, isNull);
@@ -703,14 +740,13 @@ void main() {
         final mockResponse = [
           {'id': 1, 'typ_id': 1, 'kuerzel': 'PIS', 'beschreibung': 'Pistole'},
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedAuswahlByTypId(1);
         expect(result, hasLength(1));
-        expect(result[0], isA<BeduerfnisseAuswahl>());
+        expect(result[0], isA<BeduerfnisAuswahl>());
         expect(result[0].typId, equals(1));
       });
     });
@@ -720,11 +756,13 @@ void main() {
         final mockResponse = [
           {'id': 1, 'antragsnummer': 'A123', 'dateiname': 'doc.pdf'},
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedDatei(
           antragsnummer: 123,
@@ -733,11 +771,13 @@ void main() {
         );
 
         expect(result, equals(mockResponse[0]));
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('getBedDateiByAntragsnummer returns list of files', () async {
@@ -755,24 +795,25 @@ void main() {
             'file_bytes': [],
           },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedDateiByAntragsnummer(123);
         expect(result, hasLength(2));
         expect(result[0].dateiname, equals('doc1.pdf'));
       });
 
-      test('updateBedDatei updates file entry successfully', () async{
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+      test('updateBedDatei updates file entry successfully', () async {
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        const datei = BeduerfnisseDatei(
+        const datei = BeduerfnisDatei(
           id: 1,
           antragsnummer: 123,
           dateiname: 'new.pdf',
@@ -781,19 +822,23 @@ void main() {
 
         final result = await service.updateBedDatei(datei);
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('deleteBedDatei soft deletes file entry successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteBedDatei(1);
         expect(result, isTrue);
@@ -812,11 +857,13 @@ void main() {
             'training': true,
           },
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedSport(
           antragsnummer: 123,
@@ -827,11 +874,13 @@ void main() {
         );
 
         expect(result, equals(mockResponse[0]));
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('createBedSport includes optional parameters', () async {
@@ -843,11 +892,13 @@ void main() {
             'wettkampfergebnis': 95.5,
           },
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedSport(
           antragsnummer: 123,
@@ -882,23 +933,24 @@ void main() {
             'training': false,
           },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedSportByAntragsnummer(123);
         expect(result, hasLength(2));
       });
 
       test('updateBedSport updates record successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final sport = BeduerfnisseSport(
+        final sport = BeduerfnisSport(
           id: 1,
           antragsnummer: 123,
           schiessdatum: DateTime(2024, 1, 1),
@@ -909,19 +961,23 @@ void main() {
 
         final result = await service.updateBedSport(sport);
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('deleteBedSport soft deletes record successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteBedSportById(1);
         expect(result, isTrue);
@@ -941,11 +997,13 @@ void main() {
             'kompensator': false,
           },
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedWaffeBesitz(
           antragsnummer: 123,
@@ -957,11 +1015,13 @@ void main() {
         );
 
         expect(result, equals(mockResponse[0]));
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('createBedWaffeBesitz includes optional parameters', () async {
@@ -974,11 +1034,13 @@ void main() {
             'bemerkung': 'Test note',
           },
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedWaffeBesitz(
           antragsnummer: 123,
@@ -996,46 +1058,50 @@ void main() {
         expect(result['gewicht'], equals('1.5kg'));
       });
 
-      test('getBedWaffeBesitzByAntragsnummer returns list of weapons', () async {
-        final mockResponse = [
-          {
-            'ID': 1,
-            'ANTRAGSNUMMER': 123,
-            'WBK_NR': 'WBK001',
-            'LFD_WBK': '1',
-            'WAFFENART_ID': 1,
-            'KALIBER_ID': 1,
-            'KOMPENSATOR': false,
-          },
-          {
-            'ID': 2,
-            'ANTRAGSNUMMER': 123,
-            'WBK_NR': 'WBK002',
-            'LFD_WBK': '2',
-            'WAFFENART_ID': 1,
-            'KALIBER_ID': 1,
-            'KOMPENSATOR': false,
-          },
-        ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+      test(
+        'getBedWaffeBesitzByAntragsnummer returns list of weapons',
+        () async {
+          final mockResponse = [
+            {
+              'ID': 1,
+              'ANTRAGSNUMMER': 123,
+              'WBK_NR': 'WBK001',
+              'LFD_WBK': '1',
+              'WAFFENART_ID': 1,
+              'KALIBER_ID': 1,
+              'KOMPENSATOR': false,
+            },
+            {
+              'ID': 2,
+              'ANTRAGSNUMMER': 123,
+              'WBK_NR': 'WBK002',
+              'LFD_WBK': '2',
+              'WAFFENART_ID': 1,
+              'KALIBER_ID': 1,
+              'KOMPENSATOR': false,
+            },
+          ];
+          when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+            (_) async => http.Response(jsonEncode(mockResponse), 200),
+          );
 
-        final result = await service.getBedWaffeBesitzByAntragsnummer(123);
-        expect(result, hasLength(2));
-        expect(result, isA<List<BeduerfnisseWaffeBesitz>>());
-        expect(result[0].wbkNr, equals('WBK001'));
-      });
+          final result = await service.getBedWaffeBesitzByAntragsnummer(123);
+          expect(result, hasLength(2));
+          expect(result, isA<List<BeduerfnisWaffeBesitz>>());
+          expect(result[0].wbkNr, equals('WBK001'));
+        },
+      );
 
-      test('updateBedWaffeBesitz updates weapon record successfully', () async{
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+      test('updateBedWaffeBesitz updates weapon record successfully', () async {
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        const waffeBesitz = BeduerfnisseWaffeBesitz(
+        const waffeBesitz = BeduerfnisWaffeBesitz(
           id: 1,
           antragsnummer: 123,
           wbkNr: 'WBK001',
@@ -1047,23 +1113,30 @@ void main() {
 
         final result = await service.updateBedWaffeBesitz(waffeBesitz);
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
-      test('deleteBedWaffeBesitz soft deletes weapon record successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+      test(
+        'deleteBedWaffeBesitz soft deletes weapon record successfully',
+        () async {
+          when(
+            mockClient.patch(
+              any,
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.deleteBedWaffeBesitz(1);
-        expect(result, isTrue);
-      });
+          final result = await service.deleteBedWaffeBesitz(1);
+          expect(result, isTrue);
+        },
+      );
     });
 
     group('bed_antrag Service Methods', () {
@@ -1083,11 +1156,13 @@ void main() {
             'abbuchung_erfolgt': false,
           },
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedAntrag(
           personId: 100,
@@ -1099,44 +1174,42 @@ void main() {
           email: 'test@example.com',
         );
 
-        expect(result, isA<BeduerfnisseAntrag>());
+        expect(result, isA<BeduerfnisAntrag>());
         expect(result.id, equals(1));
         expect(result.antragsnummer, equals(123));
         expect(result.personId, equals(100));
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('createBedAntrag throws exception on failure', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 400));
-
-        expect(
-          () => service.createBedAntrag(
-            personId: 100,
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
           ),
-          throwsException,
-        );
+        ).thenAnswer((_) async => http.Response('Error', 400));
+
+        expect(() => service.createBedAntrag(personId: 100), throwsException);
       });
 
-      test('getBedAntragByAntragsnummer returns filtered list', () async{
+      test('getBedAntragByAntragsnummer returns filtered list', () async {
         final mockResponse = [
           {'id': 1, 'antragsnummer': 123, 'person_id': 100},
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedAntragByAntragsnummer(123);
         expect(result, hasLength(1));
-        expect(result[0], isA<BeduerfnisseAntrag>());
+        expect(result[0], isA<BeduerfnisAntrag>());
         expect(result[0].antragsnummer, equals(123));
       });
 
@@ -1145,14 +1218,13 @@ void main() {
           {'id': 1, 'antragsnummer': 123, 'person_id': 100},
           {'id': 2, 'antragsnummer': 124, 'person_id': 100},
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedAntragByPersonId(100);
         expect(result, hasLength(2));
-        expect(result[0], isA<BeduerfnisseAntrag>());
+        expect(result[0], isA<BeduerfnisAntrag>());
         expect(result[0].personId, equals(100));
       });
 
@@ -1160,14 +1232,13 @@ void main() {
         final mockResponse = [
           {'id': 1, 'antragsnummer': 123, 'person_id': 100, 'status_id': 1},
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedAntragByStatusId(1);
         expect(result, hasLength(1));
-        expect(result[0], isA<BeduerfnisseAntrag>());
+        expect(result[0], isA<BeduerfnisAntrag>());
         expect(result[0].statusId, equals(BeduerfnisAntragStatus.entwurf));
       });
 
@@ -1175,35 +1246,35 @@ void main() {
         final mockResponse = [
           {'id': 1, 'antragsnummer': 123, 'person_id': 100},
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedAntragById(1);
         expect(result, isNotNull);
-        expect(result, isA<BeduerfnisseAntrag>());
+        expect(result, isA<BeduerfnisAntrag>());
         expect(result!.antragsnummer, equals(123));
       });
 
       test('getBedAntragById returns null when not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.getBedAntragById(999);
         expect(result, isNull);
       });
 
       test('updateBedAntrag updates entry successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        const antrag = BeduerfnisseAntrag(
+        const antrag = BeduerfnisAntrag(
           id: 1,
           antragsnummer: 123,
           personId: 100,
@@ -1212,21 +1283,25 @@ void main() {
 
         final result = await service.updateBedAntrag(antrag);
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('updateBedAntrag returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
-        const antrag = BeduerfnisseAntrag(
+        const antrag = BeduerfnisAntrag(
           id: 1,
           antragsnummer: 123,
           personId: 100,
@@ -1238,19 +1313,23 @@ void main() {
       });
 
       test('deleteBedAntrag soft deletes entry successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteBedAntrag(1);
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
     });
 
@@ -1267,11 +1346,13 @@ void main() {
             'vereinsname': 'SV Test',
           },
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedAntragPerson(
           antragsnummer: '123',
@@ -1282,7 +1363,7 @@ void main() {
           vereinsname: 'SV Test',
         );
 
-        expect(result, isA<BeduerfnisseAntragPerson>());
+        expect(result, isA<BeduerfnisAntragPerson>());
         expect(result.id, equals(1));
         expect(result.antragsnummer, equals('A123'));
         expect(result.personId, equals(100));
@@ -1290,19 +1371,23 @@ void main() {
         expect(result.vorname, equals('Max'));
         expect(result.nachname, equals('Mustermann'));
         expect(result.vereinsname, equals('SV Test'));
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('createBedAntragPerson throws exception on failure', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 400));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 400));
 
         expect(
           () => service.createBedAntragPerson(
@@ -1313,21 +1398,26 @@ void main() {
         );
       });
 
-      test('createBedAntragPerson throws exception on empty response', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 201));
+      test(
+        'createBedAntragPerson throws exception on empty response',
+        () async {
+          when(
+            mockClient.post(
+              any,
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer((_) async => http.Response('[]', 201));
 
-        expect(
-          () => service.createBedAntragPerson(
-            antragsnummer: '123',
-            personId: 100,
-          ),
-          throwsException,
-        );
-      });
+          expect(
+            () => service.createBedAntragPerson(
+              antragsnummer: '123',
+              personId: 100,
+            ),
+            throwsException,
+          );
+        },
+      );
 
       test('getBedAntragPersonByAntragsnummer returns filtered list', () async {
         final mockResponse = [
@@ -1346,29 +1436,32 @@ void main() {
             'nachname': 'Muster',
           },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedAntragPersonByAntragsnummer('A123');
         expect(result, hasLength(2));
-        expect(result[0], isA<BeduerfnisseAntragPerson>());
+        expect(result[0], isA<BeduerfnisAntragPerson>());
         expect(result[0].antragsnummer, equals('A123'));
         expect(result[0].vorname, equals('Max'));
         expect(result[1].vorname, equals('Maria'));
         verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
       });
 
-      test('getBedAntragPersonByAntragsnummer returns empty list on error', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+      test(
+        'getBedAntragPersonByAntragsnummer returns empty list on error',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer((_) async => http.Response('Error', 500));
 
-        final result = await service.getBedAntragPersonByAntragsnummer('A123');
-        expect(result, isEmpty);
-      });
+          final result = await service.getBedAntragPersonByAntragsnummer(
+            'A123',
+          );
+          expect(result, isEmpty);
+        },
+      );
 
       test('getBedAntragPersonByPersonId returns filtered list', () async {
         final mockResponse = [
@@ -1385,38 +1478,41 @@ void main() {
             'vorname': 'Max',
           },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedAntragPersonByPersonId(100);
         expect(result, hasLength(2));
-        expect(result[0], isA<BeduerfnisseAntragPerson>());
+        expect(result[0], isA<BeduerfnisAntragPerson>());
         expect(result[0].personId, equals(100));
         expect(result[0].antragsnummer, equals('A123'));
         expect(result[1].antragsnummer, equals('A124'));
         verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
       });
 
-      test('getBedAntragPersonByPersonId returns empty list on error', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+      test(
+        'getBedAntragPersonByPersonId returns empty list on error',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer((_) async => http.Response('Error', 500));
 
-        final result = await service.getBedAntragPersonByPersonId(100);
-        expect(result, isEmpty);
-      });
+          final result = await service.getBedAntragPersonByPersonId(100);
+          expect(result, isEmpty);
+        },
+      );
 
       test('updateBedAntragPerson updates entry successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        const antragPerson = BeduerfnisseAntragPerson(
+        const antragPerson = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: '123',
           personId: 100,
@@ -1425,36 +1521,42 @@ void main() {
 
         final result = await service.updateBedAntragPerson(antragPerson);
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('updateBedAntragPerson returns false when id is null', () async {
-        const antragPerson = BeduerfnisseAntragPerson(
+        const antragPerson = BeduerfnisAntragPerson(
           antragsnummer: '123',
           personId: 100,
         );
 
         final result = await service.updateBedAntragPerson(antragPerson);
         expect(result, isFalse);
-        verifyNever(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        ));
+        verifyNever(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        );
       });
 
       test('updateBedAntragPerson returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
-        const antragPerson = BeduerfnisseAntragPerson(
+        const antragPerson = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: '123',
           personId: 100,
@@ -1462,21 +1564,25 @@ void main() {
 
         final result = await service.updateBedAntragPerson(antragPerson);
         expect(result, isFalse);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('updateBedAntragPerson handles exception gracefully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenThrow(Exception('Network error'));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenThrow(Exception('Network error'));
 
-        const antragPerson = BeduerfnisseAntragPerson(
+        const antragPerson = BeduerfnisAntragPerson(
           id: 1,
           antragsnummer: '123',
           personId: 100,
@@ -1492,44 +1598,53 @@ void main() {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': 'A123',
+            'antragsnummer': 123,
             'datei_id': 10,
             'datei_art': 'SPORT',
             'bed_sport_id': 5,
+            'label': 'Test Label',
           },
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedDateiZuord(
           antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 5,
+          label: 'Test Label',
         );
 
-        expect(result, isA<BeduerfnisseDateiZuord>());
+        expect(result, isA<BeduerfnisDateiZuord>());
         expect(result.id, equals(1));
-        expect(result.antragsnummer, equals('A123'));
+        expect(result.antragsnummer, equals(123));
         expect(result.dateiId, equals(10));
         expect(result.dateiArt, equals('SPORT'));
         expect(result.bedSportId, equals(5));
-        verify(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        expect(result.label, equals('Test Label'));
+        verify(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('createBedDateiZuord throws exception on failure', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 400));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 400));
 
         expect(
           () => service.createBedDateiZuord(
@@ -1542,11 +1657,13 @@ void main() {
       });
 
       test('createBedDateiZuord throws exception on empty response', () async {
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 201));
 
         expect(
           () => service.createBedDateiZuord(
@@ -1560,18 +1677,15 @@ void main() {
 
       test('createBedDateiZuord works without optional bedSportId', () async {
         final mockResponse = [
-          {
-            'id': 2,
-            'antragsnummer': 'A124',
-            'datei_id': 11,
-            'datei_art': 'WBK',
-          },
+          {'id': 2, 'antragsnummer': 124, 'datei_id': 11, 'datei_art': 'WBK'},
         ];
-        when(mockClient.post(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
 
         final result = await service.createBedDateiZuord(
           antragsnummer: 124,
@@ -1579,139 +1693,277 @@ void main() {
           dateiArt: 'WBK',
         );
 
-        expect(result, isA<BeduerfnisseDateiZuord>());
+        expect(result, isA<BeduerfnisDateiZuord>());
+        expect(result.antragsnummer, equals(124));
         expect(result.dateiArt, equals('WBK'));
         expect(result.bedSportId, isNull);
+        expect(result.label, isNull);
+      });
+
+      test('createBedDateiZuord works with label only', () async {
+        final mockResponse = [
+          {
+            'id': 3,
+            'antragsnummer': 125,
+            'datei_id': 12,
+            'datei_art': 'WBK',
+            'label': 'WBK Document',
+          },
+        ];
+        when(
+          mockClient.post(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 201));
+
+        final result = await service.createBedDateiZuord(
+          antragsnummer: 125,
+          dateiId: 12,
+          dateiArt: 'WBK',
+          label: 'WBK Document',
+        );
+
+        expect(result, isA<BeduerfnisDateiZuord>());
+        expect(result.antragsnummer, equals(125));
+        expect(result.dateiArt, equals('WBK'));
+        expect(result.bedSportId, isNull);
+        expect(result.label, equals('WBK Document'));
       });
 
       test('updateBedDateiZuord updates entry successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
-        const dateiZuord = BeduerfnisseDateiZuord(
+        const dateiZuord = BeduerfnisDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
           bedSportId: 6,
+          label: 'Updated Label',
         );
 
         final result = await service.updateBedDateiZuord(dateiZuord);
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('updateBedDateiZuord returns false when id is null', () async {
-        const dateiZuord = BeduerfnisseDateiZuord(
-          antragsnummer: '123',
+        const dateiZuord = BeduerfnisDateiZuord(
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
+          label: 'Test Label',
         );
 
         final result = await service.updateBedDateiZuord(dateiZuord);
         expect(result, isFalse);
-        verifyNever(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        ));
+        verifyNever(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        );
       });
 
       test('updateBedDateiZuord returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
-        const dateiZuord = BeduerfnisseDateiZuord(
+        const dateiZuord = BeduerfnisDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
+          label: 'Test Label',
         );
 
         final result = await service.updateBedDateiZuord(dateiZuord);
         expect(result, isFalse);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('updateBedDateiZuord handles exception gracefully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenThrow(Exception('Network error'));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenThrow(Exception('Network error'));
 
-        const dateiZuord = BeduerfnisseDateiZuord(
+        const dateiZuord = BeduerfnisDateiZuord(
           id: 1,
-          antragsnummer: '123',
+          antragsnummer: 123,
           dateiId: 10,
           dateiArt: 'SPORT',
+          label: 'Test Label',
         );
 
         final result = await service.updateBedDateiZuord(dateiZuord);
         expect(result, isFalse);
       });
+
+      test('getBedDateiZuordByAntragsnummer returns list of records', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': 123,
+            'datei_id': 50,
+            'datei_art': 'SPORT',
+            'bed_sport_id': 10,
+          },
+          {
+            'id': 2,
+            'antragsnummer': 123,
+            'datei_id': 51,
+            'datei_art': 'SPORT',
+            'bed_sport_id': 11,
+          },
+        ];
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedDateiZuordByAntragsnummer(
+          123,
+          'SPORT',
+        );
+
+        expect(result, isA<List<BeduerfnisDateiZuord>>());
+        expect(result.length, equals(2));
+        expect(result[0].id, equals(1));
+        expect(result[0].antragsnummer, equals(123));
+        expect(result[0].dateiId, equals(50));
+        expect(result[0].dateiArt, equals('SPORT'));
+        expect(result[0].bedSportId, equals(10));
+        expect(result[1].id, equals(2));
+        expect(result[1].antragsnummer, equals(123));
+        expect(result[1].dateiId, equals(51));
+        expect(result[1].dateiArt, equals('SPORT'));
+        expect(result[1].bedSportId, equals(11));
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+      });
+
+      test(
+        'getBedDateiZuordByAntragsnummer returns empty list when not found',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer((_) async => http.Response('[]', 200));
+
+          final result = await service.getBedDateiZuordByAntragsnummer(
+            123,
+            'WBK',
+          );
+
+          expect(result, isA<List<BeduerfnisDateiZuord>>());
+          expect(result.isEmpty, isTrue);
+          verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+        },
+      );
+
+      test(
+        'getBedDateiZuordByAntragsnummer returns empty list on error status',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer((_) async => http.Response('Error', 500));
+
+          final result = await service.getBedDateiZuordByAntragsnummer(
+            123,
+            'SPORT',
+          );
+
+          expect(result, isA<List<BeduerfnisDateiZuord>>());
+          expect(result.isEmpty, isTrue);
+        },
+      );
+
+      test(
+        'getBedDateiZuordByAntragsnummer handles exception gracefully',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenThrow(Exception('Network error'));
+
+          final result = await service.getBedDateiZuordByAntragsnummer(
+            123,
+            'SPORT',
+          );
+
+          expect(result, isA<List<BeduerfnisDateiZuord>>());
+          expect(result.isEmpty, isTrue);
+        },
+      );
 
       test('getBedDateiZuordByBedSportId returns single record', () async {
         final mockResponse = [
           {
             'id': 1,
-            'antragsnummer': '123',
+            'antragsnummer': 123,
             'datei_id': 50,
             'datei_art': 'SPORT',
             'bed_sport_id': 10,
           },
         ];
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
 
         final result = await service.getBedDateiZuordByBedSportId(10);
 
         expect(result, isNotNull);
         expect(result!.id, equals(1));
+        expect(result.antragsnummer, equals(123));
         expect(result.dateiId, equals(50));
         expect(result.bedSportId, equals(10));
-        verify(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).called(1);
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
       });
 
-      test('getBedDateiZuordByBedSportId returns null when not found', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+      test(
+        'getBedDateiZuordByBedSportId returns null when not found',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer((_) async => http.Response('[]', 200));
 
-        final result = await service.getBedDateiZuordByBedSportId(10);
+          final result = await service.getBedDateiZuordByBedSportId(10);
 
-        expect(result, isNull);
-        verify(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).called(1);
-      });
+          expect(result, isNull);
+          verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+        },
+      );
 
       test('getBedDateiZuordByBedSportId returns null on error', () async {
-        when(mockClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
         final result = await service.getBedDateiZuordByBedSportId(10);
 
@@ -1719,59 +1971,183 @@ void main() {
       });
 
       test('deleteBedDateiZuordByBedSportId deletes successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteBedDateiZuordByBedSportId(10);
 
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('deleteBedDateiZuordByBedSportId returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
         final result = await service.deleteBedDateiZuordByBedSportId(10);
 
         expect(result, isFalse);
       });
+
+      test('getBedDateiZuordByDateiId returns list of records', () async {
+        final mockResponse = [
+          {
+            'id': 1,
+            'antragsnummer': 123,
+            'datei_id': 100,
+            'datei_art': 'WBK',
+            'bed_sport_id': null,
+            'label': 'Test Label',
+          },
+          {
+            'id': 2,
+            'antragsnummer': 123,
+            'datei_id': 100,
+            'datei_art': 'SPORT',
+            'bed_sport_id': 10,
+            'label': 'Sport Label',
+          },
+        ];
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedDateiZuordByDateiId(100);
+
+        expect(result, isA<List<BeduerfnisDateiZuord>>());
+        expect(result.length, equals(2));
+        expect(result[0].id, equals(1));
+        expect(result[0].dateiId, equals(100));
+        expect(result[0].label, equals('Test Label'));
+        expect(result[1].id, equals(2));
+        expect(result[1].dateiId, equals(100));
+        expect(result[1].label, equals('Sport Label'));
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+      });
+
+      test(
+        'getBedDateiZuordByDateiId returns empty list when not found',
+        () async {
+          when(
+            mockClient.get(any, headers: anyNamed('headers')),
+          ).thenAnswer((_) async => http.Response('[]', 200));
+
+          final result = await service.getBedDateiZuordByDateiId(100);
+
+          expect(result, isEmpty);
+          verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+        },
+      );
+
+      test('getBedDateiZuordByDateiId handles exception gracefully', () async {
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenThrow(Exception('Network error'));
+
+        final result = await service.getBedDateiZuordByDateiId(100);
+
+        expect(result, isEmpty);
+      });
+
+      test('deleteBedDateiZuordByDateiId deletes successfully', () async {
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.deleteBedDateiZuordByDateiId(100);
+
+        expect(result, isTrue);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
+      });
+
+      test('deleteBedDateiZuordByDateiId returns false on error', () async {
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.deleteBedDateiZuordByDateiId(100);
+
+        expect(result, isFalse);
+      });
+
+      test(
+        'deleteBedDateiZuordByDateiId handles exception gracefully',
+        () async {
+          when(
+            mockClient.patch(
+              any,
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenThrow(Exception('Network error'));
+
+          final result = await service.deleteBedDateiZuordByDateiId(100);
+
+          expect(result, isFalse);
+        },
+      );
     });
 
     group('bed_datei Additional Methods', () {
       test('deleteBedDateiById deletes successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteBedDateiById(100);
 
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('deleteBedDateiById returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
         final result = await service.deleteBedDateiById(100);
 
@@ -1779,42 +2155,101 @@ void main() {
       });
 
       test('deleteBedDateiById handles exception gracefully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenThrow(Exception('Network error'));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenThrow(Exception('Network error'));
 
         final result = await service.deleteBedDateiById(100);
 
         expect(result, isFalse);
       });
+
+      test('getBedDateiById returns datei successfully', () async {
+        final mockResponse = [
+          {
+            'id': 100,
+            'antragsnummer': 123,
+            'dateiname': 'document.pdf',
+            'file_bytes': [],
+          },
+        ];
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response(jsonEncode(mockResponse), 200));
+
+        final result = await service.getBedDateiById(100);
+
+        expect(result, isNotNull);
+        expect(result!.id, equals(100));
+        expect(result.dateiname, equals('document.pdf'));
+        verify(mockClient.get(any, headers: anyNamed('headers'))).called(1);
+      });
+
+      test('getBedDateiById returns null when no datei found', () async {
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('[]', 200));
+
+        final result = await service.getBedDateiById(100);
+
+        expect(result, isNull);
+      });
+
+      test('getBedDateiById returns null on error status code', () async {
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('Error', 500));
+
+        final result = await service.getBedDateiById(100);
+
+        expect(result, isNull);
+      });
+
+      test('getBedDateiById handles exception gracefully', () async {
+        when(
+          mockClient.get(any, headers: anyNamed('headers')),
+        ).thenThrow(Exception('Network error'));
+
+        final result = await service.getBedDateiById(100);
+
+        expect(result, isNull);
+      });
     });
 
     group('bed_sport Additional Methods', () {
       test('deleteBedSportById deletes successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteBedSportById(10);
 
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('deleteBedSportById returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
         final result = await service.deleteBedSportById(10);
 
@@ -1822,11 +2257,13 @@ void main() {
       });
 
       test('deleteBedSportById handles exception gracefully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenThrow(Exception('Network error'));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenThrow(Exception('Network error'));
 
         final result = await service.deleteBedSportById(10);
 
@@ -1834,28 +2271,34 @@ void main() {
       });
 
       test('deleteBedSportByAntragsnummer deletes successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteBedSportByAntragsnummer(123);
 
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('deleteBedSportByAntragsnummer returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
         final result = await service.deleteBedSportByAntragsnummer(123);
 
@@ -1865,28 +2308,34 @@ void main() {
 
     group('bed_antrag_person Additional Methods', () {
       test('deleteBedAntragPerson deletes successfully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('[]', 200));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('[]', 200));
 
         final result = await service.deleteBedAntragPerson(123);
 
         expect(result, isTrue);
-        verify(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).called(1);
+        verify(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).called(1);
       });
 
       test('deleteBedAntragPerson returns false on error', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenAnswer((_) async => http.Response('Error', 500));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('Error', 500));
 
         final result = await service.deleteBedAntragPerson(123);
 
@@ -1894,11 +2343,13 @@ void main() {
       });
 
       test('deleteBedAntragPerson handles exception gracefully', () async {
-        when(mockClient.patch(
-          any,
-          headers: anyNamed('headers'),
-          body: anyNamed('body'),
-        )).thenThrow(Exception('Network error'));
+        when(
+          mockClient.patch(
+            any,
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenThrow(Exception('Network error'));
 
         final result = await service.deleteBedAntragPerson(123);
 

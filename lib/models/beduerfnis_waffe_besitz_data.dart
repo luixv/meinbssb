@@ -2,23 +2,29 @@ import 'package:flutter/foundation.dart';
 
 /// Represents a weapon possession record (bed_waffe_besitz) in the BSSB system.
 @immutable
-class BeduerfnisseWaffeBesitz {
-  /// Creates a [BeduerfnisseWaffeBesitz] instance from a JSON map.
-  factory BeduerfnisseWaffeBesitz.fromJson(Map<String, dynamic> json) {
-    return BeduerfnisseWaffeBesitz(
+class BeduerfnisWaffeBesitz {
+  /// Creates a [BeduerfnisWaffeBesitz] instance from a JSON map.
+  factory BeduerfnisWaffeBesitz.fromJson(Map<String, dynamic> json) {
+    return BeduerfnisWaffeBesitz(
       id: (json['ID'] ?? json['id']) as int?,
       createdAt:
           (json['CREATED_AT'] ?? json['created_at']) == null
               ? null
-              : DateTime.parse((json['CREATED_AT'] ?? json['created_at']) as String),
+              : DateTime.parse(
+                (json['CREATED_AT'] ?? json['created_at']) as String,
+              ),
       changedAt:
           (json['CHANGED_AT'] ?? json['changed_at']) == null
               ? null
-              : DateTime.parse((json['CHANGED_AT'] ?? json['changed_at']) as String),
+              : DateTime.parse(
+                (json['CHANGED_AT'] ?? json['changed_at']) as String,
+              ),
       deletedAt:
           (json['DELETED_AT'] ?? json['deleted_at']) == null
               ? null
-              : DateTime.parse((json['DELETED_AT'] ?? json['deleted_at']) as String),
+              : DateTime.parse(
+                (json['DELETED_AT'] ?? json['deleted_at']) as String,
+              ),
       antragsnummer: (json['ANTRAGSNUMMER'] ?? json['antragsnummer']) as int,
       wbkNr: (json['WBK_NR'] ?? json['wbk_nr']) as String,
       lfdWbk: (json['LFD_WBK'] ?? json['lfd_wbk']) as String,
@@ -28,14 +34,15 @@ class BeduerfnisseWaffeBesitz {
       lauflaengeId: (json['LAUFLAENGE_ID'] ?? json['lauflaenge_id']) as int?,
       gewicht: (json['GEWICHT'] ?? json['gewicht']) as String?,
       kompensator: (json['KOMPENSATOR'] ?? json['kompensator']) as bool,
-      beduerfnisgrundId: (json['BEDUERFNISGRUND_ID'] ?? json['beduerfnisgrund_id']) as int?,
+      beduerfnisgrundId:
+          (json['BEDUERFNISGRUND_ID'] ?? json['beduerfnisgrund_id']) as int?,
       verbandId: (json['VERBAND_ID'] ?? json['verband_id']) as int?,
       bemerkung: (json['BEMERKUNG'] ?? json['bemerkung']) as String?,
     );
   }
 
-  /// Creates a new instance of [BeduerfnisseWaffeBesitz].
-  const BeduerfnisseWaffeBesitz({
+  /// Creates a new instance of [BeduerfnisWaffeBesitz].
+  const BeduerfnisWaffeBesitz({
     this.id,
     this.createdAt,
     this.changedAt,
@@ -102,7 +109,7 @@ class BeduerfnisseWaffeBesitz {
   /// Remarks (nullable).
   final String? bemerkung;
 
-  /// Converts the [BeduerfnisseWaffeBesitz] instance to a JSON map.
+  /// Converts the [BeduerfnisWaffeBesitz] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'ID': id,

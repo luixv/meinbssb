@@ -200,10 +200,13 @@ void main() {
       expect(find.text('Anzeigen'), findsOneWidget);
       expect(find.text('Startrechte'), findsOneWidget);
       // Bestellen button is now invisible, so we don't check for it
-      expect(find.byIcon(Icons.visibility), findsOneWidget);
+      expect(find.byIcon(Icons.preview), findsOneWidget);
       expect(find.byIcon(Icons.rule), findsOneWidget);
       // search_off icon is now invisible, so we don't check for it
-      expect(find.byIcon(Icons.chevron_right), findsNWidgets(2)); // Only 2 visible menu items
+      expect(
+        find.byIcon(Icons.chevron_right),
+        findsNWidgets(2),
+      ); // Only 2 visible menu items
     });
 
     testWidgets('navigates to SchuetzenausweisScreen on tap', (tester) async {

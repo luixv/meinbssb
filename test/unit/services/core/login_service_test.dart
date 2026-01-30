@@ -22,6 +22,7 @@ import 'package:meinbssb/services/core/config_service.dart';
 import 'package:meinbssb/services/core/postgrest_service.dart';
 import 'package:meinbssb/services/core/email_service.dart';
 import 'package:meinbssb/services/core/calendar_service.dart';
+import 'package:meinbssb/services/core/document_scanner_service.dart';
 import 'package:meinbssb/exceptions/network_exception.dart' as network_ex;
 
 import 'login_service_test.mocks.dart';
@@ -46,6 +47,7 @@ import 'login_service_test.mocks.dart';
   StartingRightsService,
   RollsAndRights,
   WorkflowService,
+  DocumentScannerService,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -69,6 +71,7 @@ void main() {
   late MockBezirkService mockBezirkService;
   late MockStartingRightsService mockStartingRightsService;
   late MockRollsAndRights mockRollsAndRights;
+  late MockDocumentScannerService mockDocumentScannerService;
 
   const int testWebLoginId = 27;
   const int testPersonId = 4711;
@@ -92,6 +95,7 @@ void main() {
     mockBezirkService = MockBezirkService();
     mockStartingRightsService = MockStartingRightsService();
     mockRollsAndRights = MockRollsAndRights();
+    mockDocumentScannerService = MockDocumentScannerService();
 
     apiService = ApiService(
       configService: mockConfigService,
@@ -112,6 +116,7 @@ void main() {
       startingRightsService: mockStartingRightsService,
       rollsAndRights: mockRollsAndRights,
       workflowService: MockWorkflowService(),
+      documentScannerService: mockDocumentScannerService,
     );
   });
 
