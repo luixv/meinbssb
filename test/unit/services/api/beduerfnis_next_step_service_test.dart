@@ -1,3 +1,5 @@
+// Minimal dummy HttpClient for test
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
@@ -37,15 +39,54 @@ import 'package:meinbssb/services/api/starting_rights_service.dart';
 import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
 import 'package:meinbssb/services/core/document_scanner_service.dart';
 
-// No DummyCacheService needed; use null as dynamic for cacheService in test context
+// Minimal dummy CacheService for test
+import 'package:meinbssb/services/core/cache_service.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+class DummyHttpClient extends HttpClient {
+  DummyHttpClient(TokenService tokenService, CacheService cacheService)
+    : super(
+        baseUrl: '',
+        serverTimeout: 1,
+        tokenService: tokenService,
+        configService: ConfigService.instance,
+        cacheService: cacheService,
+      );
+}
+
+class DummyCacheService extends CacheService {
+  DummyCacheService(SharedPreferences prefs)
+    : super(prefs: prefs, configService: ConfigService.instance);
+  @override
+  Future<void> clear() async {}
+  Future<void> clearAll() async {}
+  Future<void> clearByPrefix(String prefix) async {}
+  Future<void> clearExpired() async {}
+  Future<void> clearKey(String key) async {}
+  @override
+  Future<bool> containsKey(String key) async => false;
+  @override
+  Future<int?> getInt(String key) async => null;
+  @override
+  Future<String?> getString(String key) async => null;
+  @override
+  Future<void> remove(String key) async {}
+  @override
+  Future<void> setInt(String key, int value) async {}
+  @override
+  Future<void> setString(String key, String value) async {}
+  static Future<DummyCacheService> create() async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    return DummyCacheService(prefs);
+  }
+}
 
 // Minimal dummy TokenService for test
 class DummyTokenService extends TokenService {
-  DummyTokenService()
-    : super(
-        configService: ConfigService.instance,
-        cacheService: null as dynamic,
-      );
+  DummyTokenService(CacheService cacheService)
+    : super(configService: ConfigService.instance, cacheService: cacheService);
   @override
   Future<String> getAuthToken() async => '';
   @override
@@ -58,7 +99,11 @@ void main() {
   setUpAll(() async {
     await ConfigService.load('assets/config.json');
   });
+
   group('BeduerfnisNextStepService.getNextStepRoute', () {
+    late DummyCacheService dummyCacheService;
+    // Removed unused dummyTokenService variable
+    late ApiService apiService;
     final service = BeduerfnisNextStepService();
     final userData = UserData(
       personId: 1,
@@ -85,60 +130,63 @@ void main() {
     );
     final workflowRole = WorkflowRole.mitglied;
 
-    Widget wrapWithMaterialApp(Widget child) {
+    setUpAll(() async {
+      dummyCacheService = await DummyCacheService.create();
       final configService = ConfigService.instance;
-      final apiService = ApiService(
+      final dummyTokenService = DummyTokenService(dummyCacheService);
+      final dummyHttpClient = DummyHttpClient(
+        dummyTokenService,
+        dummyCacheService,
+      );
+      apiService = ApiService(
         configService: configService,
-        httpClient: HttpClient(
-          baseUrl: '',
-          serverTimeout: 1,
-          tokenService: DummyTokenService(),
-          configService: configService,
-          cacheService: null as dynamic,
-        ),
-        imageService: ImageService(httpClient: null as dynamic),
-        cacheService: null as dynamic,
+        httpClient: dummyHttpClient,
+        imageService: ImageService(httpClient: dummyHttpClient),
+        cacheService: dummyCacheService,
         networkService: NetworkService(configService: configService),
         trainingService: TrainingService(
-          httpClient: null as dynamic,
-          cacheService: null as dynamic,
+          httpClient: dummyHttpClient,
+          cacheService: dummyCacheService,
           networkService: null as dynamic,
           configService: configService,
         ),
         userService: UserService(
-          httpClient: null as dynamic,
-          cacheService: null as dynamic,
+          httpClient: dummyHttpClient,
+          cacheService: dummyCacheService,
           networkService: null as dynamic,
           configService: configService,
         ),
         authService: AuthService(
-          httpClient: null as dynamic,
-          cacheService: null as dynamic,
+          httpClient: dummyHttpClient,
+          cacheService: dummyCacheService,
           networkService: null as dynamic,
           configService: configService,
           postgrestService: null as dynamic,
           emailService: null as dynamic,
         ),
-        bankService: BankService.withClient(httpClient: null as dynamic),
-        vereinService: VereinService(httpClient: null as dynamic),
+        bankService: BankService.withClient(httpClient: dummyHttpClient),
+        vereinService: VereinService(httpClient: dummyHttpClient),
         postgrestService: PostgrestService(configService: configService),
         emailService: EmailService(
           emailSender: null as dynamic,
           configService: configService,
-          httpClient: null as dynamic,
+          httpClient: dummyHttpClient,
         ),
-        oktoberfestService: OktoberfestService(httpClient: null as dynamic),
+        oktoberfestService: OktoberfestService(httpClient: dummyHttpClient),
         calendarService: CalendarService(),
         bezirkService: BezirkService(
-          httpClient: null as dynamic,
-          cacheService: null as dynamic,
+          httpClient: dummyHttpClient,
+          cacheService: dummyCacheService,
           networkService: null as dynamic,
         ),
         startingRightsService: StartingRightsService(),
-        rollsAndRights: RollsAndRights(httpClient: null as dynamic),
+        rollsAndRights: RollsAndRights(httpClient: dummyHttpClient),
         workflowService: WorkflowService(),
         documentScannerService: DocumentScannerService(),
       );
+    });
+
+    Widget wrapWithMaterialApp(Widget child) {
       return MultiProvider(
         providers: [
           Provider<ApiService>.value(value: apiService),
