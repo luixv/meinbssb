@@ -7,6 +7,8 @@ import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnis_datei_zuord_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/services/api_service.dart';
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mockito/annotations.dart';
@@ -46,6 +48,13 @@ void main() {
     // Provide a default antrag with antragsnummer if not supplied
     final effectiveAntrag =
         antrag ?? BeduerfnisAntrag(antragsnummer: 123, personId: 1);
+    final navigationParams = BeduerfnisNavigationParams(
+      wbkType: 'neu',
+      wbkColor: 'gelb',
+      weaponType: 'kurz',
+      anzahlWaffen: 1,
+      currentPage: BeduerfnisPage.step3,
+    );
     return MultiProvider(
       providers: [
         Provider<ApiService>.value(value: mockApiService),
@@ -59,6 +68,7 @@ void main() {
           onLogout: () {},
           userRole: WorkflowRole.mitglied,
           readOnly: readOnly,
+          navigationParams: navigationParams,
         ),
       ),
     );

@@ -15,8 +15,9 @@ import 'package:meinbssb/services/api_service.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
 import 'beduerfnisantrag_step2_screen_test.mocks.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
 
 @GenerateMocks([ApiService])
 void main() {
@@ -75,7 +76,17 @@ void main() {
     bool isLoggedIn = true,
     WorkflowRole userRole = WorkflowRole.mitglied,
     bool readOnly = false,
+    BeduerfnisNavigationParams? navigationParams,
   }) {
+    final navParams =
+        navigationParams ??
+        BeduerfnisNavigationParams(
+          wbkType: 'neu',
+          wbkColor: 'gelb',
+          weaponType: 'kurz',
+          anzahlWaffen: 0,
+          currentPage: BeduerfnisPage.step2,
+        );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FontSizeProvider>.value(value: fontSizeProvider),
@@ -89,6 +100,7 @@ void main() {
           onLogout: () {},
           userRole: userRole,
           readOnly: readOnly,
+          navigationParams: navParams,
         ),
       ),
     );

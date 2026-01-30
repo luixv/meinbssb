@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data'; // Import Uint8List
+import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:meinbssb/models/gewinn_data.dart';
@@ -14,6 +15,7 @@ import 'package:meinbssb/services/api/bezirk_service.dart';
 import 'package:meinbssb/services/api/starting_rights_service.dart';
 import 'package:meinbssb/services/api/rolls_and_rights_service.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
+import 'package:meinbssb/services/api/beduerfnis_next_step_service.dart';
 import 'package:meinbssb/services/core/logger_service.dart';
 
 import 'package:meinbssb/models/bank_data.dart';
@@ -53,6 +55,8 @@ import 'core/email_service.dart';
 import 'core/calendar_service.dart';
 import 'core/document_scanner_service.dart';
 
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
+
 class NetworkException implements Exception {
   NetworkException(this.message);
   final String message;
@@ -82,7 +86,10 @@ class ApiService {
     required RollsAndRights rollsAndRights,
     required WorkflowService workflowService,
     required DocumentScannerService documentScannerService,
-  }) : _configService = configService,
+    BeduerfnisNextStepService? beduerfnisNextStepService,
+  }) : _beduerfnisNextStepService =
+           beduerfnisNextStepService ?? BeduerfnisNextStepService(),
+       _configService = configService,
        _imageService = imageService,
        _cacheService = cacheService,
        _networkService = networkService,
@@ -100,6 +107,7 @@ class ApiService {
        _workflowService = workflowService,
        _documentScannerService = documentScannerService;
 
+  final BeduerfnisNextStepService _beduerfnisNextStepService;
   final ConfigService _configService;
   final ImageService _imageService;
   final CacheService _cacheService;
@@ -1426,5 +1434,31 @@ class ApiService {
       );
       return false;
     }
+  }
+
+  // beduerfnisNextStepService.getNextStepRoute
+  // --- Starting Rights Service Methods ---
+  //
+
+  MaterialPageRoute getNextStepRoute({
+    required BuildContext context,
+    required UserData? userData,
+    required BeduerfnisAntrag antrag,
+    required bool isLoggedIn,
+    required void Function()? onLogout,
+    required WorkflowRole userRole,
+    required bool readOnly,
+    required BeduerfnisNavigationParams navigationParams,
+  }) {
+    return _beduerfnisNextStepService.getNextStepRoute(
+      context: context,
+      userData: userData,
+      antrag: antrag,
+      isLoggedIn: isLoggedIn,
+      onLogout: onLogout,
+      userRole: userRole,
+      readOnly: readOnly,
+      navigationParams: navigationParams,
+    );
   }
 }

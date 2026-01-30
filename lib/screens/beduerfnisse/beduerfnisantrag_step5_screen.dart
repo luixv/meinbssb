@@ -8,6 +8,7 @@ import 'package:meinbssb/constants/ui_styles.dart';
 import 'package:meinbssb/providers/font_size_provider.dart';
 import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
 import 'beduerfnisantrag_step5_dialog_screen.dart';
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
 
 import 'package:meinbssb/services/api/workflow_service.dart';
 
@@ -20,6 +21,7 @@ class BeduerfnisantragStep5Screen extends StatefulWidget {
     this.antrag,
     this.userRole = WorkflowRole.mitglied,
     this.readOnly = false,
+    required this.navigationParams,
   });
 
   final dynamic userData;
@@ -28,6 +30,7 @@ class BeduerfnisantragStep5Screen extends StatefulWidget {
   final BeduerfnisAntrag? antrag;
   final WorkflowRole userRole;
   final bool readOnly;
+  final BeduerfnisNavigationParams navigationParams;
 
   @override
   State<BeduerfnisantragStep5Screen> createState() =>

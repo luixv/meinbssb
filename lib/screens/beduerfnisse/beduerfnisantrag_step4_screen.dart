@@ -13,7 +13,8 @@ import 'package:meinbssb/models/beduerfnis_antrag_data.dart';
 import 'package:meinbssb/models/beduerfnis_antrag_status_data.dart';
 import 'package:meinbssb/services/api/workflow_service.dart';
 import 'package:meinbssb/models/beduerfnis_waffe_besitz_data.dart';
-import 'package:meinbssb/screens/beduerfnisse/beduerfnisantrag_step5_screen.dart';
+import 'package:meinbssb/models/beduerfnis_navigation_params.dart';
+import 'package:meinbssb/models/beduerfnis_page.dart';
 
 class BeduerfnisantragStep4Screen extends StatefulWidget {
   const BeduerfnisantragStep4Screen({
@@ -24,6 +25,7 @@ class BeduerfnisantragStep4Screen extends StatefulWidget {
     this.antrag,
     this.userRole = WorkflowRole.mitglied,
     this.readOnly = false,
+    required this.navigationParams,
   });
 
   final dynamic userData;
@@ -32,6 +34,7 @@ class BeduerfnisantragStep4Screen extends StatefulWidget {
   final BeduerfnisAntrag? antrag;
   final WorkflowRole userRole;
   final bool readOnly;
+  final BeduerfnisNavigationParams navigationParams;
 
   @override
   State<BeduerfnisantragStep4Screen> createState() =>
@@ -189,19 +192,24 @@ class _BeduerfnisantragStep4ScreenState
                   semanticLabel: 'Weiter Button',
                   semanticHint: 'Weiter zum nächsten Schritt',
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder:
-                            (_) => BeduerfnisantragStep5Screen(
-                              userData: widget.userData,
-                              isLoggedIn: widget.isLoggedIn,
-                              onLogout: widget.onLogout,
-                              antrag: widget.antrag,
-                              userRole: widget.userRole,
-                              readOnly: widget.readOnly,
-                            ),
-                      ),
+                    final apiService = Provider.of<ApiService>(
+                      context,
+                      listen: false,
                     );
+                    final updatedParams = widget.navigationParams.copyWith(
+                      currentPage: BeduerfnisPage.step4,
+                    );
+                    final route = apiService.getNextStepRoute(
+                      context: context,
+                      userData: widget.userData,
+                      antrag: widget.antrag!,
+                      isLoggedIn: widget.isLoggedIn,
+                      onLogout: widget.onLogout,
+                      userRole: widget.userRole,
+                      readOnly: widget.readOnly,
+                      navigationParams: updatedParams,
+                    );
+                    Navigator.push(context, route);
                   },
                   icon: Icons.arrow_forward,
                 ),
