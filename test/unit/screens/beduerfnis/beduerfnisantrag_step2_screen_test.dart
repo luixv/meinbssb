@@ -400,6 +400,24 @@ void main() {
     testWidgets(
       'forward FAB navigates in read-only mode without status change',
       (WidgetTester tester) async {
+        // Stub getNextStepRoute to return a dummy route
+        when(
+          mockApiService.getNextStepRoute(
+            context: anyNamed('context'),
+            userData: anyNamed('userData'),
+            antrag: anyNamed('antrag'),
+            isLoggedIn: anyNamed('isLoggedIn'),
+            onLogout: anyNamed('onLogout'),
+            userRole: anyNamed('userRole'),
+            readOnly: anyNamed('readOnly'),
+            navigationParams: anyNamed('navigationParams'),
+          ),
+        ).thenReturn(
+          MaterialPageRoute(
+            builder: (_) => const Scaffold(body: Text('Step 3 Dummy')),
+          ),
+        );
+
         await tester.pumpWidget(createTestWidget(readOnly: true));
         await tester.pumpAndSettle();
 
@@ -409,6 +427,8 @@ void main() {
 
         // Verify no updateBedAntrag was called in read-only mode
         verifyNever(mockApiService.updateBedAntrag(any));
+        // Confirm navigation occurred
+        expect(find.text('Step 3 Dummy'), findsOneWidget);
       },
     );
   });
@@ -446,6 +466,24 @@ void main() {
     testWidgets('navigates to step 3 when forward button is tapped', (
       WidgetTester tester,
     ) async {
+      // Stub getNextStepRoute to return a dummy route
+      when(
+        mockApiService.getNextStepRoute(
+          context: anyNamed('context'),
+          userData: anyNamed('userData'),
+          antrag: anyNamed('antrag'),
+          isLoggedIn: anyNamed('isLoggedIn'),
+          onLogout: anyNamed('onLogout'),
+          userRole: anyNamed('userRole'),
+          readOnly: anyNamed('readOnly'),
+          navigationParams: anyNamed('navigationParams'),
+        ),
+      ).thenReturn(
+        MaterialPageRoute(
+          builder: (_) => const Scaffold(body: Text('Step 3 Dummy')),
+        ),
+      );
+
       final antragEntwurf = dummyAntrag.copyWith(
         statusId: BeduerfnisAntragStatus.entwurf,
       );
@@ -460,7 +498,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // After navigation, step 2 screen should no longer be visible
-      expect(find.byType(BeduerfnisantragStep2Screen), findsNothing);
+      expect(find.text('Step 3 Dummy'), findsOneWidget);
     });
   });
 
